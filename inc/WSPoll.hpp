@@ -6,21 +6,28 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:07:12 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/26 19:32:13 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/10/27 14:10:06 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef __WSPOLL_H__
-# define __WSPOLL_H__
+#ifndef __WSPOLL_HPP__
+# define __WSPOLL_HPP__
 
-#include <poll.h>
-#include "Defines.hpp"
+# include <poll.h>
+# include <unistd.h>
+
+# include <iostream>
+
+# include "Defines.hpp"
+# include "Utils.hpp"
 
 class WSPoll
 {
 	private:
 		struct pollfd	*_polls;
 		unsigned int	_maxSize;
+		unsigned int	_size;
+		unsigned int	_serverSizeFd;
 	private:
 		WSPoll( void );
 	public:
@@ -29,14 +36,24 @@ class WSPoll
 		~WSPoll( void );
 		WSPoll	operator=( const WSPoll& wspl );
 	public:
-		void	deletePolls( void );
-		void	setPollFd( unsigned int pos, socket_t fd, int events, int revents );
-		int		checkPollReturn( int ret );
-		void	restartPoll( unsigned int pos );
-		void	restartPoll( unsigned int start, unsigned int end );
-		void	closePoll( unsigned int pos );
-		void	closePoll( int start, int end );
-		void	reallocPolls( int start );
+		const struct pollfd&	operator[]( unsigned int pos ) const;
+		struct pollfd&			operator[]( unsigned int pos );
+	public:
+		unsigned int	getMaxSize( void ) const;
+		unsigned int	getSize( void ) const;
+		unsigned int	getServerSizeFd( void ) const;
+	public:
+		void		deletePolls( void );
+		bool		addPollfd( socket_t fd, int events, int revents, int type );
+		int			checkPollReturn( int ret ) const;
+		void		restartPoll( unsigned int pos );
+		void		restartPoll( unsigned int start, unsigned int end );
+		void		closePoll( unsigned int pos );
+		void		closePoll( unsigned int start, unsigned int end );
+		void		compressPolls( unsigned int start );
+		int			wait( int timeout );
+		socket_t	isNewClient( void );
+		socket_t	getPerformClient( void );
 };
 
 #endif

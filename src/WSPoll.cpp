@@ -6,21 +6,30 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:05:51 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/26 19:33:03 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/10/27 14:08:44 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WSPoll.hpp"
 
+//OCCF = Orthodox canonical class form
+
+//OCCF: Default constructor
 WSPoll::WSPoll( void ) {}
 
-WSPoll::WSPoll( unsigned int maxSize ): _maxSize( maxSize ), pos( 0 )
+//Constructor with max size as parameter
+WSPoll::WSPoll( unsigned int maxSize ): _maxSize( maxSize ), \
+										_size( 0 ), \
+										_serverSizeFd( 0 )
 {
 	this->_polls = new struct pollfd[ maxSize ];
-	restartPolls( 0, this->_maxSize );
+	restartPoll( 0, this->_maxSize );
 }
 
-WSPoll::WSPoll( const WSPoll& wspoll ): _maxSize( wspoll._maxSize ), _pos( wspoll._pos )
+//OCCF: Copy constructor
+WSPoll::WSPoll( const WSPoll& wspoll ): _maxSize( wspoll._maxSize ), \
+										_size( wspoll._size ), \
+										_serverSizeFd( wspoll._serverSizeFd )
 {
 	if ( wspoll._polls != NULL )
 	{
@@ -31,19 +40,24 @@ WSPoll::WSPoll( const WSPoll& wspoll ): _maxSize( wspoll._maxSize ), _pos( wspol
 	}
 }
 
+//OCCF: Default destructor
 WSPoll::~WSPoll( void )
 {
 	if ( this->_polls != NULL )
+	{
+		closePoll( 0, this->_size );
 		delete this->_polls;
+	}
 }
 
+//OCCF: Assignment operator
 WSPoll	WSPoll::operator=( const WSPoll& wspoll )
 {
 	if ( wspoll._polls != NULL )
 	{
 		this->deletePolls();
 		this->_maxSize = wspoll._maxSize;
-		this->_pos = wspoll._pos;
+		this->_size = wspoll._size;
 		this->_polls = new struct pollfd[ this->_maxSize ];
 		for ( unsigned int i = 0; i < this->_maxSize; i++ )
 			this->_polls[ i ] = wspoll._polls[ i ];
@@ -51,6 +65,45 @@ WSPoll	WSPoll::operator=( const WSPoll& wspoll )
 	return ( *this );
 }
 
+//Getter: Get maxSize
+unsigned int	WSPoll::getMaxSize( void ) const
+{
+	return ( this->_maxSize );
+}
+
+//Getter: Get size
+unsigned int	WSPoll::getSize( void ) const
+{
+	return ( this->_size );
+}
+
+//Getter: Get size of fd that are from server
+unsigned int	WSPoll::getServerSizeFd( void ) const
+{
+	return ( this->_serverSizeFd );
+}
+
+//Getter: Get constant reference of pollfd in 'pos' index
+const struct pollfd&	WSPoll::operator[]( unsigned int pos ) const
+{
+	if ( pos >= this->_maxSize )
+		throw std::out_of_range( "Index out of range [ 0 - " \
+								+ SUtils::LongToString( this->_maxSize - 1 ) \
+								+ " ]" );
+	return ( this->_polls[ pos ] );
+}
+
+//Getter: Get reference of pollfd in 'pos' index
+struct pollfd&	WSPoll::operator[]( unsigned int pos )
+{
+	if ( pos >= this->_maxSize )
+		throw std::out_of_range( "Index out of range [ 0 - " \
+								+ SUtils::LongToString( this->_maxSize - 1 ) \
+								+ " ]" );
+	return ( this->_polls[ pos ] );
+}
+
+//Delete array of pollfd's if it's not NULL
 void	WSPoll::deletePolls( void )
 {
 	if ( this->_polls != NULL )
@@ -60,16 +113,22 @@ void	WSPoll::deletePolls( void )
 	}
 }
 
-void	WSPoll::addPollFd( socket_t fd, int events, int revents )
+//Add new pollfd to array
+bool	WSPoll::addPollfd( socket_t fd, int events, int revents, int type )
 {
-	if ( this->_pos >= this->_maxSize )
-		return ;
-	this->_poll[ this->_pos ].fd = fd;
-	this->_poll[ this->_pos ].events = events;
-	this->_poll[ this->_pos ].revents = revents;
+	if ( this->_size >= this->_maxSize )
+		return ( false );
+	this->_polls[ this->_size ].fd = fd;
+	this->_polls[ this->_size ].events = events;
+	this->_polls[ this->_size ].revents = revents;
+	this->_size++;
+	if ( type == SPOLLFD )
+		this->_serverSizeFd++;
+	return ( true );
 }
 
-int	WSPoll::checkPollReturn( int ret )
+//Check return of poll() function
+int	WSPoll::checkPollReturn( int ret ) const
 {
 	if ( ret < 0 )
 		std::cerr << "Error: Poll" << std::endl;
@@ -78,48 +137,82 @@ int	WSPoll::checkPollReturn( int ret )
 	return ( ret );
 }
 
+//Restart value of pollfd in 'pos' index
 void	WSPoll::restartPoll( unsigned int pos )
 {
 	if ( pos >= this->_maxSize )
 		return ;
-	this->_poll[ pos ].fd = 0;
-	this->_poll[ pos ].events = 0;
-	this->_poll[ pos ].revents = 0;
+	this->_polls[ pos ].fd = 0;
+	this->_polls[ pos ].events = 0;
+	this->_polls[ pos ].revents = 0;
 }
 
+//Restart value of pollfds in range start-end index
 void	WSPoll::restartPoll( unsigned int start, unsigned int end )
 {
 	for ( unsigned int i = start; i < end && i < this->_maxSize; i++ )
 	{
-		this->_poll[ i ].fd = 0;
-		this->_poll[ i ].events = 0;
-		this->_poll[ i ].revents = 0;
+		this->_polls[ i ].fd = 0;
+		this->_polls[ i ].events = 0;
+		this->_polls[ i ].revents = 0;
 	}
 }
 
+//Close fd of pollfd in 'pos' index and restart it value
 void	WSPoll::closePoll( unsigned int pos )
 {
 	if ( pos >= this->_maxSize )
 		return ;
 	close( this->_polls[ pos ].fd );
 	restartPoll( pos );
-	this->_pos--;
+	this->_size--;
 }
 
-void	WSPoll::closePoll( int start, int end )
+//Close fd of pollfds in range start-end index and restart it value
+void	WSPoll::closePoll( unsigned int start, unsigned int end )
 {
 	for ( unsigned int i = start; i < end && i < this->_maxSize; i++ )
 	{
 		close( this->_polls[ i ].fd );
 		restartPoll( i );
-		this->_pos--;
+		this->_size--;
 	}
 }
 
-void	WSPoll::reallocPolls( unsigned int start )
+//Compress pollfd array after closing poll
+void	WSPoll::compressPolls( unsigned int start )
 {
 	for ( unsigned int i = start; i < this->_maxSize - 1; i++ )
 		this->_polls[ i ] = this->_polls[ i + 1 ];
 	restartPoll( this->_maxSize - 1 );
 }
 
+//Wait a fd to become ready to perform I/O
+int	WSPoll::wait( int timeout )
+{
+	if ( checkPollReturn( poll( this->_polls, this->_size, timeout ) ) <= 0 )
+		return ( -1 );
+	return ( 0 );
+}
+
+//Return if fd ready to perform I/O is from server or client
+socket_t	WSPoll::isNewClient( void )
+{
+	for ( unsigned int i = 0; i < this->_serverSizeFd; i++ )
+	{
+		if ( this->_polls[ i ].revents & POLLIN )
+			return ( this->_polls[ i ].fd );
+	}
+	return ( 0 );
+}
+
+//Return client fd ready to perform I/O
+socket_t	WSPoll::getPerformClient( void )
+{
+	for ( unsigned int i = this->_serverSizeFd; i < this->_size; i++ )
+	{
+		if ( this->_polls[ i ].revents & POLLIN )
+			return ( this->_polls[ i ].fd );
+	}
+	return ( 0 );
+}

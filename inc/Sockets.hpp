@@ -1,22 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Sockets.h                                          :+:      :+:    :+:   */
+/*   Sockets.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/26 17:31:17 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/26 17:44:21 by eralonso         ###   ########.fr       */
+/*   Created: 2023/10/27 13:56:30 by eralonso          #+#    #+#             */
+/*   Updated: 2023/10/27 14:01:38 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef __SOCKETS_H__
-# define __SOCKETS_H__
+#ifndef __SOCKETS_HPP__
+# define __SOCKETS_HPP__
 
-#include <sys/socket.h>
-#include <netinet/in.h>
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <iostream>
 
-typedef int	socket_t;
+# include "Defines.hpp"
 
 class Sockets
 {
