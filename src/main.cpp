@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/24 16:44:41 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/27 13:58:02 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/10/27 19:02:19 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ int	main( void )
 	int			backlog = 20;
 	socket_t	serverFd;
 	socket_t	clientFd;
+	char		buffer[ BUFFER_SIZE + 1 ];
 
 
 	serverFd = Sockets::createPassiveSocket( port, backlog );
@@ -80,7 +81,16 @@ int	main( void )
 		{
 			clientFd = polls.getPerformClient();
 			if ( clientFd > 0 )
+			{
+				std::memset( buffer, 0, BUFFER_SIZE );
+				if ( read( clientFd, buffer, BUFFER_SIZE ) <= 0 )
+				{
+					polls.closePoll( clientFd );
+					continue ;
+				}
 				write( clientFd, "Hola\n", 5 );
+				std::cout << "Read: " << buffer << std::endl;
+			}
 		}
 	}
 	return ( 0 );

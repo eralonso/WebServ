@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:07:12 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/27 14:10:06 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/10/27 17:36:54 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ class WSPoll
 		void		restartPoll( unsigned int start, unsigned int end );
 		void		closePoll( unsigned int pos );
 		void		closePoll( unsigned int start, unsigned int end );
+		void		closePoll( socket_t fd );
 		void		compressPolls( unsigned int start );
 		int			wait( int timeout );
 		socket_t	isNewClient( void );

@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:05:51 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/27 14:08:44 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/10/27 18:26:06 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,8 +163,10 @@ void	WSPoll::closePoll( unsigned int pos )
 {
 	if ( pos >= this->_maxSize )
 		return ;
+	std::cout << "Log: Connection closed with pos [ " << this->_polls[ pos ].fd << " ]" << std::endl;
 	close( this->_polls[ pos ].fd );
 	restartPoll( pos );
+	compressPolls( pos );
 	this->_size--;
 }
 
@@ -173,9 +175,28 @@ void	WSPoll::closePoll( unsigned int start, unsigned int end )
 {
 	for ( unsigned int i = start; i < end && i < this->_maxSize; i++ )
 	{
+		std::cout << "Log: Connection closed with range [ " << this->_polls[ i ].fd << " ]" << std::endl;
 		close( this->_polls[ i ].fd );
 		restartPoll( i );
 		this->_size--;
+	}
+	compressPolls( start );
+}
+
+//Close fd of pollfd that coincide with the fd passed as parameter and restart it value
+void	WSPoll::closePoll( socket_t fd )
+{
+	for ( unsigned int i = 0; i < this->_size; i++ )
+	{
+		if ( this->_polls[ i ].fd == fd )
+		{
+			close( this->_polls[ i ].fd );
+			std::cout << "Log: Connection closed with socket_t [ " << fd << " ]" << std::endl;
+			restartPoll( i );
+			this->_size--;
+			compressPolls( i );
+			break ;
+		}
 	}
 }
 
