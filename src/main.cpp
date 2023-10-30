@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/24 16:44:41 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/27 19:02:19 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/10/30 19:22:50 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,56 +16,68 @@
 #include <iostream>
 #include <unistd.h>
 
-//int	getRequest( socket_t connected, std::string& request, struct pollfd *polls, int i )
-//{
-//	char	buffer[ BUFFER_SIZE + 1 ];
-//	ssize_t	bytes_read;
-//
-//	bytes_read = read( connected, buffer, BUFFER_SIZE );
-//	if ( bytes_read < 0 )
-//	{
-//		std::cerr << "Error: Failed to read request" << std::endl;
-//		closeClient( polls, i );
-//		return ( -1 );
-//	}
-//	buffer[ bytes_read ] = 0;
-//	//PUtils::printInAscii( buffer );
-//	std::cout << "Log: Request readed ->" << buffer << "<-" << std::endl;
-//	request = std::string( buffer, std::strlen( buffer ) );
-//	return ( 1 );
-//}
-//
-//bool	analyzeRequest( std::string request )
-//{
-//	if ( request == "finish" || request.length() == 0 )
-//		return ( true );
-//	return ( false );
-//}
-//
-//void	sendResponse( socket_t connected, std::string response )
-//{
-//	if ( write( connected, response.c_str(), response.size() ) < 0 )
-//	{
-//		std::cerr << "Error: Failed to send response" << std::endl;
-//		exit( 1 );
-//	}
-//	std::cout << "Log: Response sended" << std::endl;
-//}
+bool	isSig = false;
+
+void	sighandler( int )
+{
+	Log::Info( "Signal detected" );
+	isSig = true;
+}
+
+void	sendResponse( socket_t connected, std::string response )
+{
+	if ( write( connected, response.c_str(), response.size() ) < 0 )
+	{
+		std::cerr << "Error: Failed to send response" << std::endl;
+		exit( 1 );
+	}
+	Log::Success( "Response sended [ " + SUtils::longToString( connected ) + " ]" );
+}
+
+std::string	getHtml( void )
+{
+	return ( "<!DOCTYPE html>\n\
+<html lang=\"en\">\n\
+<head>\n\
+<meta charset=\"UTF-8\">\n\
+<title>Document</title>\n\
+</head>\n\
+<body>\n\
+<h1 style=\"color: #00FFFF;\">Message from server</h1>\n\
+ \n\
+</body>\n\
+</html>" );
+}
+
+std::string	getHeader( void )
+{
+	return ( "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " + SUtils::longToString( getHtml().length() ) + "\nServer: OREginx\n\n" );
+}
+
+std::string	getResponse( void )
+{
+	return ( getHeader() + getHtml() );
+}
 
 int	main( void )
 {
-	WSPoll		polls( MAX_CLIENTS );
-	int			port = 9375;
-	int			backlog = 20;
-	socket_t	serverFd;
-	socket_t	clientFd;
-	char		buffer[ BUFFER_SIZE + 1 ];
-
+	WSPoll			polls( MAX_CLIENTS );
+	struct pollfd	*clientPoll = NULL;
+	int				port = 9375;
+	int				backlog = 20;
+	socket_t		serverFd;
+	socket_t		clientFd;
+	char			buffer[ BUFFER_SIZE + 1 ];
 
 	serverFd = Sockets::createPassiveSocket( port, backlog );
 	polls.addPollfd( serverFd, POLLIN, 0, SPOLLFD );
+	signal( SIGINT, sighandler );
+	signal( SIGQUIT, sighandler );
 	while ( true )
 	{
+		if ( isSig == true )
+			return ( 1 );
+		Log::Info( "Waiting for any fd ready to I/O" );
 		if ( polls.wait( -1 ) < 0 )
 			return ( 1 );
 		serverFd = polls.isNewClient();
@@ -82,19 +94,32 @@ int	main( void )
 			clientFd = polls.getPerformClient();
 			if ( clientFd > 0 )
 			{
-				std::memset( buffer, 0, BUFFER_SIZE );
-				if ( read( clientFd, buffer, BUFFER_SIZE ) <= 0 )
+				clientPoll = &polls[ clientFd ];
+				if ( clientPoll->revents & POLLIN )
 				{
-					polls.closePoll( clientFd );
-					continue ;
+					std::memset( buffer, 0, BUFFER_SIZE + 1 );
+					if (read( clientFd, buffer, BUFFER_SIZE ) <= 0 )
+					{
+						polls.closePoll( clientFd );
+						continue ;
+					}
+					std::cout << "Read [ " \
+						+ SUtils::longToString( clientFd ) \
+						+ " ]: " << buffer << std::endl;
+					clientPoll->events |= POLLOUT;
 				}
-				write( clientFd, "Hola\n", 5 );
-				std::cout << "Read: " << buffer << std::endl;
+				else if ( clientPoll->revents & POLLOUT )
+				{
+					sendResponse( clientFd, getResponse() );
+					clientPoll->events &= ~POLLOUT;
+				}
 			}
 		}
 	}
 	return ( 0 );
 }
+
+
 /*
 int	main( void )
 {
@@ -151,3 +176,29 @@ The document has moved\n\
 	close( fd );
 	return ( 0 );
 }*/
+
+//int	getRequest( socket_t connected, std::string& request, struct pollfd *polls, int i )
+//{
+//	char	buffer[ BUFFER_SIZE + 1 ];
+//	ssize_t	bytes_read;
+//
+//	bytes_read = read( connected, buffer, BUFFER_SIZE );
+//	if ( bytes_read < 0 )
+//	{
+//		std::cerr << "Error: Failed to read request" << std::endl;
+//		closeClient( polls, i );
+//		return ( -1 );
+//	}
+//	buffer[ bytes_read ] = 0;
+//	//PUtils::printInAscii( buffer );
+//	std::cout << "Log: Request readed ->" << buffer << "<-" << std::endl;
+//	request = std::string( buffer, std::strlen( buffer ) );
+//	return ( 1 );
+//}
+//
+//bool	analyzeRequest( std::string request )
+//{
+//	if ( request == "finish" || request.length() == 0 )
+//		return ( true );
+//	return ( false );
+//}

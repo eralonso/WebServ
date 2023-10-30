@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:34:13 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/27 13:55:07 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/10/29 10:44:48 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,27 @@ namespace PUtils
 	}
 }
 
+namespace Log
+{
+	void	Info( const std::string str )
+	{
+		std::cout << YELLOW << "Info: "<< str << DEF << std::endl;
+	}
+	
+	void	Error( const std::string str )
+	{
+		std::cout << RED << "Error: " << str << DEF << std::endl;
+	}
+
+	void	Success( const std::string str )
+	{
+		std::cout << GREEN << "Success: "<< str << DEF << std::endl;
+	}	
+}
+
 namespace SUtils
 {
-	std::string	LongToString( long int num )
+	std::string	longToString( long int num )
 	{
 		std::stringstream	ss;
 	

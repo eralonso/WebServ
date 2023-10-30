@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 17:38:14 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/27 13:14:34 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/10/29 10:44:31 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,12 @@ socket_t	Sockets::socketCreate( int domain, int type, int protocol )
 	fd = socket( domain, type, protocol );
 	if ( fd < 0 )
 	{
-		std::cerr << "Error: Socket create" << std::endl;
+		Log::Error( "Socket create" );
 		exit ( 1 );
 	}
-	std::cout << "Log: Socket create [ " << fd << " ]" << std::endl;
+	Log::Success( "Socket create [ " \
+				+ SUtils::longToString( fd ) \
+				+ " ]" );
 	return ( fd );
 }
 
@@ -57,9 +59,12 @@ struct sockaddr_in	Sockets::fillSockAddr( int family, uint16_t port, uint32_t ip
 	addr.sin_family = family;
 	addr.sin_port = htons( port );
 	addr.sin_addr.s_addr = htonl( ip_addr );
-	std::cout << "Log: Socket address filled: Port -> " << port \
-		<< " && Host -> " << std::bitset< 32 >( addr.sin_port ) \
-		<< " && Network -> " << ntohs( addr.sin_port ) << std::endl;
+	Log::Info( "Socket address filled: Port -> " \
+				+ SUtils::longToString( port ) \
+				+ " && Host -> " \
+				+ std::bitset< 32 >( addr.sin_port ).to_string() \
+				+ " && Network -> " \
+				+ SUtils::longToString( ntohs( addr.sin_port ) ) );
 	return ( addr );
 }
 
@@ -71,21 +76,34 @@ void	Sockets::bindSocket( socket_t fd, struct sockaddr_in addr )
 	ret = bind( fd, ( struct sockaddr * )&addr, sizeof( addr ) );
 	if ( ret < 0 )
 	{
-		std::cerr << "Error: Bind socket [ " << ret << " ] && errno [ " \
-					<< errno << " ] = [ " << EADDRINUSE <<  " ]" \
-					<< " or [ " << EACCES << " ] or [ " << EBADF << " ]" \
-					<< std::endl;
+		Log::Error( "Error: Bind socket [ " \
+					+ SUtils::longToString( ret ) \
+					+ " ] && errno [ " \
+					+ SUtils::longToString( errno ) \
+					+ " ] = [ " \
+					+ SUtils::longToString( EADDRINUSE ) \
+					+ " ] or [ " \
+					+ SUtils::longToString( EACCES ) \
+					+ " ] or [ " \
+					+ SUtils::longToString( EBADF ) \
+					+ " ]" );
 		exit ( 1 );
 	}
-	std::cout << "Log: Socket binded" << std::endl;
+	Log::Success( "Socket binded [ " \
+			+ SUtils::longToString( fd ) \
+			+ " ]" );
 }
 
 //Establish socket as listen mode and set maximum number of connections pending in queue
 void	Sockets::listenFromSocket( socket_t fd, int backlog )
 {
 	if ( listen( fd, backlog ) < 0 )
-		std::cerr << "Error: Listen from socket" << std::endl;
-	std::cout << "Log: Starting listen " << std::endl;
+		Log::Error( "Listen from socket[ " \
+				+ SUtils::longToString( fd ) \
+				+ " ]" );
+	Log::Success( "Starting listen [ " \
+			+ SUtils::longToString( fd ) \
+			+ " ]" );
 }
 
 //Accept a connection from socket
@@ -98,10 +116,12 @@ socket_t	Sockets::acceptConnection( socket_t fd )
 	connected = accept( fd, ( struct sockaddr * )&addr, &addr_size );
 	if ( connected < 0 )
 	{
-		std::cerr << "Error: Failed to accept incoming connection" << std::endl;
+		Log::Error( "Failed to accept incoming connection" );
 		return ( -1 );
 	}
-	std::cout << "Log: Connection accepted [ " << connected << " ]" << std::endl;
+	Log::Success( "Connection accepted [ " \
+			+ SUtils::longToString( connected ) \
+			+ " ]" );
 	return ( connected );
 }
 

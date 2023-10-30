@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:05:51 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/27 18:26:06 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/10/30 17:00:04 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ WSPoll	WSPoll::operator=( const WSPoll& wspoll )
 		this->deletePolls();
 		this->_maxSize = wspoll._maxSize;
 		this->_size = wspoll._size;
+		this->_serverSizeFd = wspoll._serverSizeFd;
 		this->_polls = new struct pollfd[ this->_maxSize ];
 		for ( unsigned int i = 0; i < this->_maxSize; i++ )
 			this->_polls[ i ] = wspoll._polls[ i ];
@@ -86,9 +87,10 @@ unsigned int	WSPoll::getServerSizeFd( void ) const
 //Getter: Get constant reference of pollfd in 'pos' index
 const struct pollfd&	WSPoll::operator[]( unsigned int pos ) const
 {
+	//Log::Info( "const operator[](unsigned int)" );
 	if ( pos >= this->_maxSize )
 		throw std::out_of_range( "Index out of range [ 0 - " \
-								+ SUtils::LongToString( this->_maxSize - 1 ) \
+								+ SUtils::longToString( this->_maxSize - 1 ) \
 								+ " ]" );
 	return ( this->_polls[ pos ] );
 }
@@ -96,11 +98,46 @@ const struct pollfd&	WSPoll::operator[]( unsigned int pos ) const
 //Getter: Get reference of pollfd in 'pos' index
 struct pollfd&	WSPoll::operator[]( unsigned int pos )
 {
+	//Log::Info( "operator[](unsigned int)" );
 	if ( pos >= this->_maxSize )
 		throw std::out_of_range( "Index out of range [ 0 - " \
-								+ SUtils::LongToString( this->_maxSize - 1 ) \
+								+ SUtils::longToString( this->_maxSize - 1 ) \
 								+ " ]" );
 	return ( this->_polls[ pos ] );
+}
+
+//Getter: Get constant reference of pollfd with 'fd'
+const struct pollfd&	WSPoll::operator[]( socket_t fd ) const
+{
+	unsigned int	i;
+
+	//Log::Info( "const operator[](socket_t)" );
+	for ( i = 0; i < this->_size; i++ )
+	{
+		if ( this->_polls[ i ].fd == fd )
+			return ( this->_polls[ i ] );
+	}
+	throw std::out_of_range( "Poll with fd [ " \
+							+ SUtils::longToString( fd ) \
+							+ " ] not found" );
+	return ( this->_polls[ 0 ] );
+}
+
+//Getter: Get constant reference of pollfd with 'fd'
+struct pollfd&	WSPoll::operator[]( socket_t fd )
+{
+	unsigned int	i;
+
+	//Log::Info( "operator[](socket_t)" );
+	for ( i = 0; i < this->_size; i++ )
+	{
+		if ( this->_polls[ i ].fd == fd )
+			return ( this->_polls[ i ] );
+	}
+	throw std::out_of_range( "Poll with fd [ " \
+							+ SUtils::longToString( fd ) \
+							+ " ] not found" );
+	return ( this->_polls[ 0 ] );
 }
 
 //Delete array of pollfd's if it's not NULL
@@ -131,9 +168,9 @@ bool	WSPoll::addPollfd( socket_t fd, int events, int revents, int type )
 int	WSPoll::checkPollReturn( int ret ) const
 {
 	if ( ret < 0 )
-		std::cerr << "Error: Poll" << std::endl;
+		Log::Error( "Poll" );
 	else if ( ret == 0 )
-		std::cerr << "Error: Poll timeout" << std::endl;
+		Log::Error( "Poll timeout" );
 	return ( ret );
 }
 
@@ -163,11 +200,15 @@ void	WSPoll::closePoll( unsigned int pos )
 {
 	if ( pos >= this->_maxSize )
 		return ;
-	std::cout << "Log: Connection closed with pos [ " << this->_polls[ pos ].fd << " ]" << std::endl;
+	Log::Info( "Connection closed with pos [ " \
+				+ SUtils::longToString( this->_polls[ pos ].fd ) \
+				+ " ]" );
 	close( this->_polls[ pos ].fd );
 	restartPoll( pos );
 	compressPolls( pos );
 	this->_size--;
+	if ( pos < this->_serverSizeFd )
+		this->_serverSizeFd--;
 }
 
 //Close fd of pollfds in range start-end index and restart it value
@@ -175,10 +216,14 @@ void	WSPoll::closePoll( unsigned int start, unsigned int end )
 {
 	for ( unsigned int i = start; i < end && i < this->_maxSize; i++ )
 	{
-		std::cout << "Log: Connection closed with range [ " << this->_polls[ i ].fd << " ]" << std::endl;
+		Log::Info( "Connection closed with range [ " \
+				+ SUtils::longToString( this->_polls[ i ].fd ) \
+				+ " ]" );
 		close( this->_polls[ i ].fd );
 		restartPoll( i );
 		this->_size--;
+		if ( i < this->_serverSizeFd )
+			this->_serverSizeFd--;
 	}
 	compressPolls( start );
 }
@@ -191,9 +236,13 @@ void	WSPoll::closePoll( socket_t fd )
 		if ( this->_polls[ i ].fd == fd )
 		{
 			close( this->_polls[ i ].fd );
-			std::cout << "Log: Connection closed with socket_t [ " << fd << " ]" << std::endl;
+			Log::Info( "Connection closed with socket_t [ " \
+				+ SUtils::longToString( fd ) 
+				+ " ]" );
 			restartPoll( i );
 			this->_size--;
+			if ( i < this->_serverSizeFd )
+				this->_serverSizeFd--;
 			compressPolls( i );
 			break ;
 		}
@@ -223,6 +272,8 @@ socket_t	WSPoll::isNewClient( void )
 	{
 		if ( this->_polls[ i ].revents & POLLIN )
 			return ( this->_polls[ i ].fd );
+		else if ( this->_polls[ i ].revents != 0 )
+			closePoll( i );
 	}
 	return ( 0 );
 }
@@ -232,8 +283,10 @@ socket_t	WSPoll::getPerformClient( void )
 {
 	for ( unsigned int i = this->_serverSizeFd; i < this->_size; i++ )
 	{
-		if ( this->_polls[ i ].revents & POLLIN )
+		if ( ( this->_polls[ i ].revents & POLLIN ) || ( this->_polls[ i ].revents & POLLOUT ) )
 			return ( this->_polls[ i ].fd );
+		else if ( this->_polls[ i ].revents != 0 )
+			closePoll( i );
 	}
 	return ( 0 );
 }

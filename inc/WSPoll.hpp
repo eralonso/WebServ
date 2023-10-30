@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:07:12 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/27 17:36:54 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/10/30 19:16:28 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ class WSPoll
 	public:
 		const struct pollfd&	operator[]( unsigned int pos ) const;
 		struct pollfd&			operator[]( unsigned int pos );
+		const struct pollfd&	operator[]( socket_t fd ) const;
+		struct pollfd&			operator[]( socket_t fd );
 	public:
 		unsigned int	getMaxSize( void ) const;
 		unsigned int	getSize( void ) const;
