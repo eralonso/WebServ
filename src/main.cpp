@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/24 16:44:41 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/31 11:33:55 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/10/31 19:38:24 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	sendResponse( socket_t connected, std::string response )
 {
 	if ( send( connected, response.c_str(), response.size(), 0 ) < 0 )
 	{
-		std::cerr << "Error: Failed to send response" << std::endl;
+		Log::Error( "Failed to send response" );
 		exit( 1 );
 	}
 	Log::Success( "Response sended [ " + SUtils::longToString( connected ) + " ]" );
@@ -69,6 +69,7 @@ int	main( void )
 	socket_t		clientFd;
 	char			buffer[ BUFFER_SIZE + 1 ];
 
+	Binary::printInOctets( 12 );
 	serverFd = Sockets::createPassiveSocket( port, backlog );
 	polls.addPollfd( serverFd, POLLIN, 0, SPOLLFD );
 	signal( SIGINT, sighandler );

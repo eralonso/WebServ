@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:10:16 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/29 10:50:02 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/10/31 19:24:13 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,6 @@
 # define PURPLE "\033[1;95m"
 # define CYAN "\033[1;96m"
 
-typedef int	socket_t;
+typedef int				socket_t;
 
 #endif

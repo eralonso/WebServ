@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:31:42 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/29 10:40:13 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/10/31 19:33:02 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,11 @@ namespace Log
 	void	Info( const std::string str );
 	void	Error( const std::string str );
 	void	Success( const std::string str );
+}
+
+namespace Binary
+{
+	void	printInOctets( unsigned int num );
 }
 
 #endif
