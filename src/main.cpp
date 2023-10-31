@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/24 16:44:41 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/30 19:22:50 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/10/31 11:33:55 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	sighandler( int )
 
 void	sendResponse( socket_t connected, std::string response )
 {
-	if ( write( connected, response.c_str(), response.size() ) < 0 )
+	if ( send( connected, response.c_str(), response.size(), 0 ) < 0 )
 	{
 		std::cerr << "Error: Failed to send response" << std::endl;
 		exit( 1 );
@@ -39,11 +39,11 @@ std::string	getHtml( void )
 	return ( "<!DOCTYPE html>\n\
 <html lang=\"en\">\n\
 <head>\n\
-<meta charset=\"UTF-8\">\n\
-<title>Document</title>\n\
+\t<meta charset=\"UTF-8\">\n\
+\t<title>ª</title>\n\
 </head>\n\
 <body>\n\
-<h1 style=\"color: #00FFFF;\">Message from server</h1>\n\
+\t<h1 style=\"color: #00FFFF;\">Message from server</h1>\n\
  \n\
 </body>\n\
 </html>" );
@@ -51,7 +51,7 @@ std::string	getHtml( void )
 
 std::string	getHeader( void )
 {
-	return ( "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: " + SUtils::longToString( getHtml().length() ) + "\nServer: OREginx\n\n" );
+	return ( "HTTP/1.1 200 OK\r\nServer: OREginx\r\nContent-Length: " + SUtils::longToString( getHtml().length() ) + "\r\nContent-Type: text/html\r\n\r\n" );
 }
 
 std::string	getResponse( void )
@@ -98,7 +98,7 @@ int	main( void )
 				if ( clientPoll->revents & POLLIN )
 				{
 					std::memset( buffer, 0, BUFFER_SIZE + 1 );
-					if (read( clientFd, buffer, BUFFER_SIZE ) <= 0 )
+					if (recv( clientFd, buffer, BUFFER_SIZE, 0 ) <= 0 )
 					{
 						polls.closePoll( clientFd );
 						continue ;
