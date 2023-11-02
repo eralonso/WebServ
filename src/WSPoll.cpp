@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:05:51 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/30 17:00:04 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/02 11:29:12 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,7 +283,7 @@ socket_t	WSPoll::getPerformClient( void )
 {
 	for ( unsigned int i = this->_serverSizeFd; i < this->_size; i++ )
 	{
-		if ( ( this->_polls[ i ].revents & POLLIN ) || ( this->_polls[ i ].revents & POLLOUT ) )
+		if ( this->_polls[ i ].revents & ( POLLIN | POLLOUT ) )
 			return ( this->_polls[ i ].fd );
 		else if ( this->_polls[ i ].revents != 0 )
 			closePoll( i );
