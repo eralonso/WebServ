@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 17:38:14 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/29 10:44:31 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/04 13:09:22 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,18 @@ struct sockaddr_in	Sockets::fillSockAddr( int family, uint16_t port, uint32_t ip
 				+ SUtils::longToString( port ) \
 				+ " && Host -> " \
 				+ std::bitset< 32 >( addr.sin_port ).to_string() \
-				+ " && Network -> " \
-				+ SUtils::longToString( ntohs( addr.sin_port ) ) );
+				+ " && Network [ ntohs ] -> " \
+				+ SUtils::longToString( ntohs( addr.sin_port ) ) \
+				+ " && addr.sin_port -> " \
+		   		+ SUtils::longToString( addr.sin_port ) \
+				+ " && addr.sin_port [ ntohl ] -> " \
+		   		+ SUtils::longToString( ntohl( addr.sin_port ) ) \
+				+ " && addr.sin_port [ htonl ] -> " \
+		   		+ SUtils::longToString( htonl( addr.sin_port ) ) \
+				+ " && addr.sin_port [ htons ] -> " \
+		   		+ SUtils::longToString( htons( addr.sin_port ) ) \
+				+ " && addr.sin_addr.s_addr -> " \
+		   		+ SUtils::longToString( addr.sin_addr.s_addr ) );
 	return ( addr );
 }
 
@@ -129,9 +139,12 @@ socket_t	Sockets::acceptConnection( socket_t fd )
 socket_t	Sockets::createPassiveSocket( int port, int backlog )
 {
 	int					fd;
+	int					optVal;
 	struct sockaddr_in	addr;
 
+	optVal = 1;
 	fd = socketCreate( AF_INET, SOCK_STREAM, 0 );
+	setsockopt( fd, SOL_SOCKET, SO_REUSEADDR, &optVal, sizeof( int ) );
 	addr = fillSockAddr( AF_INET, port, INADDR_ANY );
 	bindSocket( fd, addr );
 	listenFromSocket( fd, backlog );

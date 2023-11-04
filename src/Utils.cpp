@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:34:13 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/31 19:40:26 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/03 13:16:51 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,12 @@ namespace Log
 {
 	void	Info( const std::string str )
 	{
-		std::cout << YELLOW << "Info: "<< str << DEF << std::endl;
+		std::cout << YELLOW << "Info: " << str << DEF << std::endl;
 	}
 	
 	void	Error( const std::string str )
 	{
-		std::cout << RED << "Error: " << str << DEF << std::endl;
+		std::cerr << RED << "Error: " << str << DEF << std::endl;
 	}
 
 	void	Success( const std::string str )
