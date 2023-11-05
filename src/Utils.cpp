@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:34:13 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/03 13:16:51 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/05 14:07:32 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,21 +59,54 @@ namespace SUtils
 
 namespace Binary
 {
-	void	printInOctets( unsigned int num )
+	std::string	formatBits( std::string bits )
 	{
-		unsigned int	iter;
-		int				i;
+		std::string	formated;
 
-		iter = 0;
-		i = 24;
-		while ( i >= 0 )
+		for ( unsigned int i = 0; bits[ i ] != '\0'; i++ )
 		{
-			for ( int j = 7; j >= 0; j-- )
-				std::cout << ( ( ( num >> i ) >> j ) & 1 );
-			if ( i - 8 >= 0 )
-				std::cout << ".";
-			i -= 8;
+			if ( i > 0 && i % 8 == 0 )
+				formated += ".";
+			formated += bits[ i ];
 		}
-		std::cout << std::endl;
+		return ( formated );
+	}
+	
+	uint32_t	codeAddress( std::string address )
+	{
+		uint32_t	number;
+		uint32_t	code;
+		size_t		pos;
+
+		code = 0;
+		for ( int i = 0; i < 4; i++ )
+		{
+			pos = address.find( "." );
+			number = std::atoi( address.substr( 0, pos ).c_str() );
+			code |= number;
+			if ( i + 1 < 4 )
+				code <<= 8;
+			if ( pos != std::string::npos )
+				pos++;
+			address.erase( 0, pos );
+		}
+		return ( code );
+	}
+	
+	std::string	decodeAddress( uint32_t address )
+	{
+		int			number;
+		std::string	decode;
+
+		for ( int i = 0; i < 4; i++ )
+		{
+			number = 0;
+			for ( int j = 0; j < 8; j++ )
+				number |= ( ( address >> ( i * 8 ) ) & ( 1 << j ) );
+			decode += SUtils::longToString( number );
+			if ( i + 1 < 4 )
+				decode += ".";
+		}
+		return ( decode );
 	}
 }

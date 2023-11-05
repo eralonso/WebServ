@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 17:38:14 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/04 13:09:22 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/05 14:07:44 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ struct sockaddr_in	Sockets::fillSockAddr( int family, uint16_t port, uint32_t ip
 	Log::Info( "Socket address filled: Port -> " \
 				+ SUtils::longToString( port ) \
 				+ " && Host -> " \
-				+ std::bitset< 32 >( addr.sin_port ).to_string() \
+				+ Binary::formatBits( std::bitset< 32 >( addr.sin_port ).to_string() ) \
 				+ " && Network [ ntohs ] -> " \
 				+ SUtils::longToString( ntohs( addr.sin_port ) ) \
 				+ " && addr.sin_port -> " \
@@ -74,7 +74,9 @@ struct sockaddr_in	Sockets::fillSockAddr( int family, uint16_t port, uint32_t ip
 				+ " && addr.sin_port [ htons ] -> " \
 		   		+ SUtils::longToString( htons( addr.sin_port ) ) \
 				+ " && addr.sin_addr.s_addr -> " \
-		   		+ SUtils::longToString( addr.sin_addr.s_addr ) );
+		   		+ SUtils::longToString( addr.sin_addr.s_addr ) \
+				+ " && addr.sin_addr.s_addr [ decode ] -> " \
+		   		+ Binary::decodeAddress( addr.sin_addr.s_addr ) );
 	return ( addr );
 }
 
@@ -145,7 +147,8 @@ socket_t	Sockets::createPassiveSocket( int port, int backlog )
 	optVal = 1;
 	fd = socketCreate( AF_INET, SOCK_STREAM, 0 );
 	setsockopt( fd, SOL_SOCKET, SO_REUSEADDR, &optVal, sizeof( int ) );
-	addr = fillSockAddr( AF_INET, port, INADDR_ANY );
+	//addr = fillSockAddr( AF_INET, port, INADDR_ANY );
+	addr = fillSockAddr( AF_INET, port, Binary::codeAddress( "127.0.0.1" ) );
 	bindSocket( fd, addr );
 	listenFromSocket( fd, backlog );
 	return ( fd );

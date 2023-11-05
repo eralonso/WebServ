@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/24 16:44:41 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/04 12:23:12 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/05 12:09:54 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,10 +139,10 @@ int	main( void )
 	WSPoll			polls( MAX_CLIENTS );
 	int				port = 9375;
 	int				backlog = 20;
+	int				timeout = -1;
 	socket_t		serverFd;
 	socket_t		clientFd;
 
-	Binary::printInOctets( 12 );
 	signalHandler();
 	serverFd = Sockets::createPassiveSocket( port, backlog );
 	polls.addPollfd( serverFd, POLLIN, 0, SPOLLFD );
@@ -151,7 +151,7 @@ int	main( void )
 		if ( isSig == true )
 			return ( 1 );
 		Log::Info( "Waiting for any fd ready to I/O" );
-		if ( polls.wait( -1 ) < 0 )
+		if ( polls.wait( timeout ) < 0 )
 			return ( 1 );
 		serverFd = polls.isNewClient();
 		if ( serverFd > 0 )
