@@ -1,22 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   WSSignals.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/24 16:44:41 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/06 12:39:28 by omoreno-         ###   ########.fr       */
+/*   Created: 2023/11/06 11:59:50 by omoreno-          #+#    #+#             */
+/*   Updated: 2023/11/06 12:39:16 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <WSSignals.hpp>
-#include <Receptionist.hpp>
+#ifndef _WSSIGNALS_HPP_
+# define _WSSIGNALS_HPP_
 
-int	main( void )
+# include <Utils.hpp>
+
+class WSSignals
 {
-	WSSignals::signalHandler();
-	Receptionist receptionist;
+	public:
+		static bool	isSig;
 
-	return (receptionist.mainLoop());
-}
+		static void	sighandler( int );
+		static void	signalHandler( void );
+};
+
+#endif
