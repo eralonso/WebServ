@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:59:50 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/06 12:44:36 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/06 13:04:58 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ class WSSignals
 		WSSignals();
 		~WSSignals();
 		WSSignals(const WSSignals& b);
-		WSSignals& operator==(const WSSignals& b);
+		WSSignals& operator=(const WSSignals& b);
 	public:
 		static bool	isSig;
 		static void	sighandler( int );

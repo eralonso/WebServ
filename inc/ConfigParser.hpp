@@ -1,33 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   WSSignals.cpp                                      :+:      :+:    :+:   */
+/*   ConfigParser.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/06 12:04:00 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/06 13:04:48 by omoreno-         ###   ########.fr       */
+/*   Created: 2023/11/06 12:49:11 by omoreno-          #+#    #+#             */
+/*   Updated: 2023/11/06 12:52:16 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <WSSignals.hpp>
+#ifndef _CONFIGPARSER_HPP_
+# define _CONFIGPARSER_HPP_
 
-WSSignals::WSSignals(){}
-WSSignals::~WSSignals(){}
-WSSignals::WSSignals(const WSSignals&){}
-WSSignals& WSSignals::operator=(const WSSignals&){return *this;}
-
-bool	WSSignals::isSig = false;
-
-void	WSSignals::sighandler( int )
+class ConfigParser
 {
-	Log::Info( "Signal detected" );
-	isSig = true;
-}
+private:
+	/* data */
+public:
+	ConfigParser(int argc, char **argv);
+	~ConfigParser();
+};
 
-void	WSSignals::signalHandler( void )
-{
-	signal( SIGINT, sighandler );
-	signal( SIGQUIT, sighandler );
-}
-
+#endif
