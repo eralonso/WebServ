@@ -6,7 +6,7 @@
 #    By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/22 10:08:41 by eralonso          #+#    #+#              #
-#    Updated: 2023/11/06 13:18:03 by omoreno-         ###   ########.fr        #
+#    Updated: 2023/11/06 17:46:02 by omoreno-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -56,7 +56,8 @@ SRC_DIRS	:=	$(addprefix $(SRC_ROOT),$(SRC_DIRS))
 SRC_DIRS	:=	$(subst $(SPACE),:,$(SRC_DIRS))
 
 #<--------------------------------->FILES<---------------------------------->#
-FILES		:=	main Sockets WSPoll Utils Receptionist WSSignals ConfigParser
+FILES		:=	main Sockets WSPoll Utils Receptionist WSSignals ConfigParser\
+				TreeSplit ServerConfig
 
 #<---------------------------------->LANG<---------------------------------->#
 LANG		:=	CPP

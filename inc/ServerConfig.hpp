@@ -1,31 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ConfigParser.hpp                                   :+:      :+:    :+:   */
+/*   ServerConfig.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/06 12:49:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/06 16:47:06 by omoreno-         ###   ########.fr       */
+/*   Created: 2023/11/06 16:40:55 by omoreno-          #+#    #+#             */
+/*   Updated: 2023/11/06 16:50:47 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef _CONFIGPARSER_HPP_
-# define _CONFIGPARSER_HPP_
-#include <vector>
-#include <ServerConfig.hpp>
+#ifndef _SERVERCONFIG_HPP
+# define _SERVERCONFIG_HPP
 
-class ConfigParser
+class ServerConfig
 {
 private:
-	std::vector<ServerConfig> serversConfig;
-	std::vector<std::string>& split(std::vector<std::string>& v,
-		std::string strArr,	
-		std::string delimiter);
+	/* data */
 public:
-	ConfigParser(int argc, char **argv);
-	~ConfigParser();
-	std::vector<ServerConfig>& getServersConfig(void);
+	ServerConfig();
+	~ServerConfig();
 };
+
+
 
 #endif
