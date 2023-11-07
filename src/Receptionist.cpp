@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/06 12:39:34 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/07 14:44:18 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,23 @@ Receptionist::Receptionist(int port, int backlog, int timeout):
 
 Receptionist::~Receptionist()
 {
+}
+
+Receptionist::Receptionist(const Receptionist& b) :
+	polls((const WSPoll &)b.polls)
+{
+	port = b.port;
+	backlog = b.backlog;
+	timeout = b.timeout;
+}
+
+Receptionist& 	Receptionist::operator=(const Receptionist& b)
+{
+	polls = WSPoll((const WSPoll &)b.polls);
+	port = b.port;
+	backlog = b.backlog;
+	timeout = b.timeout;
+	return *this;
 }
 
 int	Receptionist::addNewClient( socket_t serverFd, WSPoll& polls )

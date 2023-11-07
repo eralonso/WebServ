@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:15:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 12:49:30 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/07 14:50:24 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,22 @@ CGIService::~CGIService()
 {
 }
 
+CGIService::CGIService(const CGIService& b)
+{
+	this->name = b.name;
+	this->port = b.port;
+	this->url = b.url;
+	this->extension = b.extension;
+}
+
+CGIService& CGIService::operator=(const CGIService& b)
+{
+	this->name = b.name;
+	this->port = b.port;
+	this->url = b.url;
+	this->extension = b.extension;
+	return (*this);
+}
 unsigned int	CGIService::getPort(void)
 {
 	return port;

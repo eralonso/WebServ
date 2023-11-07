@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:06:08 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 12:40:17 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/07 14:27:25 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ public:
 	ActionMask();
 	ActionMask(t_action value);
 	~ActionMask();
+	ActionMask(const ActionMask& b);
+	ActionMask& operator=(const ActionMask& b);
 	void		setAllowed(t_action allowed);
 	t_action	getAllowed(void);
 	void		setGetAction(bool value);

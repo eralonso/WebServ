@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:14:43 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 12:47:59 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/07 14:29:52 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ public:
 	CGIService(std::string name, unsigned int port, std::string url,
 		std::string extension);
 	~CGIService();
+	CGIService(const CGIService& b);
+	CGIService& 	operator=(const CGIService& b);
 	unsigned int	getPort(void);
 	std::string		getName(void);
 	std::string		getUrl(void);

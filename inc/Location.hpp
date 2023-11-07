@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 12:57:11 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/07 14:32:17 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ private:
 public:
 	Location(/* args */);
 	~Location();
+	Location(const Location& b);
+	Location& 					operator=(const Location& b);
 	std::string					getPath(void);
 	RootDir						getRootDir(void);
 	ActionMask					getActionMask(void);
