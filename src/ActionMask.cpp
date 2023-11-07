@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:06:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 12:42:12 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/07 14:22:27 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,10 @@ ActionMask::ActionMask()
 ActionMask::ActionMask(t_action value)
 {
 	allowed = value;
+}
+
+ActionMask::~ActionMask()
+{
 }
 
 void					ActionMask::setAllowed(ActionMask::t_action allowed)
