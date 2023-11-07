@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:48:38 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/06 16:48:49 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/07 15:13:03 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <TreeSplit.hpp>
 
 std::vector<std::string>& ConfigParser::split(std::vector<std::string>& v,
 	std::string strArr,
@@ -56,8 +57,24 @@ ConfigParser::ConfigParser(int argc, char **argv)
 	while (std::getline (myfile, line))
 		content += line + "\n";
 	myfile.close();
-	
-	//procesar content
+	while (content.length() > 0)
+	{
+		std::string head;
+		std::string body;
+		if (TreeSplit::get_pair(head, body, content))
+		{
+			try
+			{
+				ServerConfig sc(head, body);
+				serversConfig.push_back(sc);
+			}
+			catch(const std::exception& e)
+			{
+				//TODO LogError and clean
+				;
+			}
+		}
+	}
 }
 
 ConfigParser::~ConfigParser()

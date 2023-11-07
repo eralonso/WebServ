@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 14:32:17 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/07 15:15:39 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ private:
 	ActionMask				actionMask;
 	std::vector<CGIService>	servicesCGI;
 public:
-	Location(/* args */);
+	Location();
+	Location(std::string head, std::string body);
 	~Location();
 	Location(const Location& b);
 	Location& 					operator=(const Location& b);

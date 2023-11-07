@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:14:43 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 14:29:52 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/07 15:32:02 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ private:
 	std::string		extension;
 public:
 	CGIService();
+	CGIService(std::string head, std::string body);
 	CGIService(std::string name, unsigned int port, std::string url,
 		std::string extension);
 	~CGIService();

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:15:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 14:50:24 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/07 15:35:10 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,18 @@
 
 CGIService::CGIService()
 {
+}
+
+CGIService::CGIService(std::string head, std::string body)
+{
+	(void)head;
+	//TODO Analyze head to obtain attributes
+	//and assert body is empty
+	if (body.length() > 0)
+	{
+		//TODO LogError and throw to inform parent to clean
+		;
+	}
 }
 
 CGIService::CGIService(std::string name, unsigned int port, std::string url,
