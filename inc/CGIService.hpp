@@ -1,31 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ConfigParser.hpp                                   :+:      :+:    :+:   */
+/*   CGIService.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/06 12:49:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 11:22:49 by omoreno-         ###   ########.fr       */
+/*   Created: 2023/11/07 11:14:43 by omoreno-          #+#    #+#             */
+/*   Updated: 2023/11/07 12:47:59 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef _CONFIGPARSER_HPP_
-# define _CONFIGPARSER_HPP_
-#include <vector>
-#include <ServerConfig.hpp>
+#ifndef _CGISERVICE_HPP_
+# define _CGISERVICE_HPP_
+# include <string>
 
-class ConfigParser
+class CGIService
 {
 private:
-	std::vector<ServerConfig> serversConfig;
-	std::vector<std::string>& split(std::vector<std::string>& v,
-		std::string strArr,	
-		std::string delimiter);
+	std::string		name;
+	unsigned int	port;
+	std::string		url;
+	std::string		extension;
 public:
-	ConfigParser(int argc, char **argv);
-	~ConfigParser();
-	std::vector<ServerConfig>& getServersConfig(void);
+	CGIService();
+	CGIService(std::string name, unsigned int port, std::string url,
+		std::string extension);
+	~CGIService();
+	unsigned int	getPort(void);
+	std::string		getName(void);
+	std::string		getUrl(void);
+	std::string		getExtension(void);
 };
+
 
 #endif

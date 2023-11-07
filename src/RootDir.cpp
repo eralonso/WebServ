@@ -1,33 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ServerConfig.cpp                                   :+:      :+:    :+:   */
+/*   RootDir.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/06 16:41:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 12:52:35 by omoreno-         ###   ########.fr       */
+/*   Created: 2023/11/07 11:02:57 by omoreno-          #+#    #+#             */
+/*   Updated: 2023/11/07 11:04:46 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <ServerConfig.hpp>
+#include <RootDir.hpp>
 
-
-ServerConfig::ServerConfig(/* args */)
+RootDir::RootDir(/* args */)
 {
 }
 
-ServerConfig::~ServerConfig()
+RootDir::~RootDir()
 {
-}
-
-ServerConfig::ServerConfig(const ServerConfig& b)
-{
-	(void)b;
-}
-
-ServerConfig& ServerConfig::operator=(const ServerConfig& b)
-{
-	(void)b;
-	return (*this);
 }

@@ -1,33 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ServerConfig.cpp                                   :+:      :+:    :+:   */
+/*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/06 16:41:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 12:52:35 by omoreno-         ###   ########.fr       */
+/*   Created: 2023/11/07 10:58:05 by omoreno-          #+#    #+#             */
+/*   Updated: 2023/11/07 13:11:32 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <ServerConfig.hpp>
+#include <Location.hpp>
 
-
-ServerConfig::ServerConfig(/* args */)
+Location::Location(/* args */)
 {
 }
 
-ServerConfig::~ServerConfig()
+Location::~Location()
 {
 }
 
-ServerConfig::ServerConfig(const ServerConfig& b)
+std::string					Location::getPath(void)
 {
-	(void)b;
+	return path;
 }
 
-ServerConfig& ServerConfig::operator=(const ServerConfig& b)
+RootDir						Location::getRootDir(void)
 {
-	(void)b;
-	return (*this);
+	return rootDir;
+}
+
+ActionMask					Location::getActionMask(void)
+{
+	return actionMask;
+}
+
+std::vector<CGIService>		Location::getServicesCGI(void)
+{
+	return servicesCGI;
 }

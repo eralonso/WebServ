@@ -1,32 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ServerConfig.hpp                                   :+:      :+:    :+:   */
+/*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/06 16:40:55 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 12:20:45 by omoreno-         ###   ########.fr       */
+/*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
+/*   Updated: 2023/11/07 12:57:11 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef _SERVERCONFIG_HPP
-# define _SERVERCONFIG_HPP
+#ifndef _LOCATION_HPP_
+# define _LOCATION_HPP_
 # include <vector>
-# include <Location.hpp>
+# include <string>
 # include <RootDir.hpp>
+# include <ActionMask.hpp>
+# include <CGIService.hpp>
 
-class ServerConfig
+class Location
 {
 private:
-	std::vector<unsigned int>	ports;
-	std::vector<Location>		locations;
-	RootDir						rootDir;
+	std::string				path;
+	RootDir					rootDir;
+	ActionMask				actionMask;
+	std::vector<CGIService>	servicesCGI;
 public:
-	ServerConfig();
-	~ServerConfig();
-	ServerConfig(const ServerConfig& b);
-	ServerConfig& operator=(const ServerConfig& b);
+	Location(/* args */);
+	~Location();
+	std::string					getPath(void);
+	RootDir						getRootDir(void);
+	ActionMask					getActionMask(void);
+	std::vector<CGIService>		getServicesCGI(void);
 };
 
 #endif
