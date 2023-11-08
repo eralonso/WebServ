@@ -6,13 +6,14 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:40:55 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 14:56:28 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/08 19:36:58 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _SERVERCONFIG_HPP
 # define _SERVERCONFIG_HPP
 # include <vector>
+# include <array>
 # include <string>
 # include <Location.hpp>
 # include <RootDir.hpp>

@@ -6,56 +6,64 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:41:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 15:36:39 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/08 19:36:10 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ServerConfig.hpp>
 #include <TreeSplit.hpp>
 
-ServerConfig::ServerConfig()
+#define SIZE_SERVER_OPTIONS 6
+
+ServerConfig::ServerConfig( void )
 {
 }
 
-ServerConfig::ServerConfig(std::string head, std::string body)
+ServerConfig::ServerConfig(std::string server, std::string options)
 {
 	//TODO get attributes from get and
 	//process the body to obtain more attributes
-	(void)head;
-	std::string content = body;
+	std::string content;
+	std::string head;
+	std::string body;
+	std::array< std::string, SIZE_SERVER_OPTIONS >::iterator	it;
+	std::array< std::string, SIZE_SERVER_OPTIONS >	availablesOptions = { \
+										"root", "location", \
+										"listen", "server_name", \
+										"error_page", "client_max_body_size" };
+
+	content = options;
+	if (server != "server")
+		throw std::logic_error( "Invalid option" );
 	while (content.length() > 0)
 	{
-		std::string head;
-		std::string body;
+		head = "";
+		body = "";
 		if (TreeSplit::get_pair(head, body, content))
 		{
+			it = std::find( availablesOptions.begin(), availablesOptions.end(), head );
+			if ( it == availablesOptions.end() )
+				throw std::logic_error( "Unavailable server option" );
 			//TODO Analyze Head n Body to look for attributes and
 			//set them or add them to the containers
 			// ports;
 			// locations;
 			// rootDir;
-			if (head == "server")
+			try
 			{
-				try
-				{
-					Location lc;
-					locations.push_back(lc);
-				}
-				catch(const std::exception& e)
-				{
-					;
-					//TODO LogError and thow exception to inform parent to clean
-				}
+				Location lc;
+				locations.push_back(lc);
 			}
-			else
+			catch(const std::exception& e)
 			{
-					//TODO LogError and thow exception to inform parent to clean
+				;
+				//TODO LogError and thow exception to inform parent to clean
 			}
 		}
 	}
 }
 
-ServerConfig::~ServerConfig()
+ServerConfig::~ServerConfig( void )
 {
 }
 
