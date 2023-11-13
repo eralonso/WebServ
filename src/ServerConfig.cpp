@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:41:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/13 13:18:43 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/13 19:35:06 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,11 @@ ServerConfig::ServerConfig( std::string server, std::string options )
 					&ServerConfig::parseErrorPage, &ServerConfig::parseClientMaxBodySize };
 
 	content = options;
-	if (server != "server")
+	if ( server != "server" )
 		throw std::logic_error( "Invalid option" );
-	while (content.length() > 0)
+	while ( content.length() > 0 )
 	{
-		if (TreeSplit::get_pair(head, body, content))
+		if ( TreeSplit::get_pair( head, body, content ) )
 		{
 			it = std::find( availablesOptions.begin(), availablesOptions.end(), head );
 			if ( it == availablesOptions.end() )
@@ -60,9 +60,9 @@ ServerConfig::ServerConfig( std::string server, std::string options )
 			try
 			{
 				Location lc;
-				locations.push_back(lc);
+				locations.push_back( lc );
 			}
-			catch(const std::exception& e)
+			catch ( const std::exception& e )
 			{
 				;
 				//TODO LogError and thow exception to inform parent to clean
