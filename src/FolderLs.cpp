@@ -6,13 +6,16 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 11:47:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/13 16:50:40 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/14 13:18:58 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <FolderLs.hpp>
 #include <iostream>
 #include <sstream>
+#include <sys/stat.h>
+#include <iomanip>
+#include <ctime>
 
 FolderLs::FolderLs(/* args */)
 {
@@ -33,8 +36,8 @@ std::string	FolderLs::entryType(uint8_t input)
 {
 	uint8_t val[] = {DT_UNKNOWN, DT_FIFO, DT_CHR, DT_DIR, DT_BLK,
 		DT_REG, DT_LNK, DT_SOCK, DT_WHT};
-	std::string strVal[] = {"DT_UNKNOWN", "DT_FIFO", "DT_CHR", "DT_DIR", "DT_BLK",
-		"DT_REG", "DT_LNK", "DT_SOCK", "DT_WHT"};
+	std::string strVal[] = {"UNKNOWN", "FIFO", "CHR", "DIR", "BLK",
+		"REG", "LNK", "SOCK", "WHT"};
 	u_int8_t i = 0;
 	u_int8_t n = sizeof(val) / sizeof(uint8_t);
 	while (i < n)
@@ -46,6 +49,39 @@ std::string	FolderLs::entryType(uint8_t input)
 	std::stringstream	st;
 	st << std::string("DT out of range [") << (unsigned int)input << std::string("]");
 	return (st.str());
+}
+
+std::string	FolderLs::epochsToDate(unsigned long int epochs)
+{
+	struct stat statbuf;
+	std::stringstream	st;
+	time_t tt = static_cast<std::time_t>(epochs);
+	struct tm * timeinfo;
+	timeinfo = std::localtime (&tt);
+	st << std::setw(4) << std::setfill('0') << timeinfo->tm_year + 1900 << "/";
+	st << std::setw(2) << std::setfill('0') << timeinfo->tm_mon + 1 << "/";
+	st << std::setw(2) << std::setfill('0') << timeinfo->tm_mday + 1 << " ";
+	st << std::setw(2) << std::setfill('0') << timeinfo->tm_hour << ":";
+	st << std::setw(2) << std::setfill('0') << timeinfo->tm_min;
+	return (st.str());
+}
+
+void	FolderLs::entryInfo(std::string& cat, const std::string& path)
+{
+	struct stat statbuf;
+	std::stringstream	st;
+	if (!stat(path.c_str() , &statbuf))
+	{
+		st << std::string("<td>");
+		st << (unsigned int)statbuf.st_size;
+		st << std::string("</td>");
+		st << std::string("<td>");
+		st << epochsToDate(statbuf.st_mtimespec.tv_sec);
+		st << std::string("</td>");
+		cat += st.str();
+		return;
+	}
+	cat += std::string("<td>?</td>");
 }
 
 FolderLs::t_error FolderLs::processLsEntry(std::string& cat, struct dirent *pDirent,
@@ -60,14 +96,9 @@ FolderLs::t_error FolderLs::processLsEntry(std::string& cat, struct dirent *pDir
 	cat += std::string("<td>");
 	cat += entryType(pDirent->d_type);
 	cat += std::string("</td>");
-	cat += std::string("<td>");
-	cat += recLen(pDirent->d_reclen);
-	cat += std::string("</td>");
+	entryInfo(cat, path + newContent);
 	cat += std::string("</tr>");
 	cat += "\n";
-	// ino_t d_ino;                    /* file number of entry */
-	// pDirent->d_type;              /* file type, see below */
-	// pDirent->d_namlen;
 	return (NONE);
 }
 
@@ -82,9 +113,16 @@ FolderLs::t_error FolderLs::getLs(std::string& res,
 	if (pDir == NULL)
 		return (CANTOPENDIR);
 	res = std::string("<table>\n");
+	res += std::string("<thead>");
+	res += std::string("<tr>");
+	res += std::string("<th>Name</th><th>Type</th><th>Size</th><th>Last Modif.</th>");
+	res += std::string("</tr>");
+	res += std::string("</thead>");
+	res += std::string("<tbody>");
 	while ((pDirent = readdir(pDir)) != NULL)
 		err = processLsEntry(res, pDirent, path, route);
 	closedir (pDir);
+	res += std::string("</tbody>");
 	res += std::string("<table>\n");
 	return (NONE);
 }
