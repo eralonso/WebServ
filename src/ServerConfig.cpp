@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:41:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/14 13:51:44 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/14 19:39:30 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,12 @@ ServerConfig&	ServerConfig::operator=( const ServerConfig& b )
 
 void	ServerConfig::parseRoot( std::string body )
 {
-	( void )body;
+	std::vector< std::string >	args;
+
+	SUtils::split( args, body, ISSPACE );
+	if ( args.size() != 1 )
+		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( std::string( "root" ) ) );
+	root = args[ 0 ];
 }
 
 void	ServerConfig::parseLocation( std::string body )
@@ -87,7 +92,9 @@ void	ServerConfig::parseListen( std::string body )
 
 void	ServerConfig::parseServerName( std::string body )
 {
-	( void )body;
+	if ( body == "" )
+		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( std::string( "server_name" ) ) );
+	server_name = body;
 }
 
 void	ServerConfig::parseErrorPage( std::string body )
@@ -97,5 +104,12 @@ void	ServerConfig::parseErrorPage( std::string body )
 
 void	ServerConfig::parseClientMaxBodySize( std::string body )
 {
-	( void )body;
+	std::vector< std::string >	args;
+
+	SUtils::split( args, body, ISSPACE );
+	if ( args.size() != 1 )
+		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( std::string( "client_max_body_size" ) ) );
+	if ( isNum( args[ 0 ] ) == false && args[ 0 ] > std::numeric_limits< long >::max() )
+		throw std::logic_error( INVALID_VALUE_DIRECTIVE( std::string( "client_max_body_size" ) ) );
+	clientMaxBodySize = std::atol( args[ 0 ] );
 }

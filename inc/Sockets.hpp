@@ -6,15 +6,16 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 13:56:30 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/28 11:43:51 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/14 16:29:03 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef __SOCKETS_HPP__
-# define __SOCKETS_HPP__
+#ifndef _SOCKETS_HPP_
+# define _SOCKETS_HPP_
 
 # include <sys/socket.h>
 # include <netinet/in.h>
+# include <fcntl.h>
 # include <iostream>
 
 # include "Defines.hpp"

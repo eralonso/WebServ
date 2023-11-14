@@ -6,24 +6,22 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:48:38 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/14 12:12:50 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/14 17:06:08 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ConfigParser.hpp"
-#include "Utils.hpp"
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <TreeSplit.hpp>
 
-std::vector<std::string>& ConfigParser::split( std::vector<std::string>& v,
+std::vector<std::string>&	split( std::vector<std::string>& v,
 	std::string strArr,
 	std::string delimiter )
 {
 	std::string	temp;
-    int starting = 0;
-    int ending = strArr.find( delimiter );
+    int starting;
+    int ending;
+
+	starting = 0;
+	ending = strArr.find( delimiter );
     while ( ending != -1 )
 	{
 		temp = strArr.substr( starting, ending-starting );

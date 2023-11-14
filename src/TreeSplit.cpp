@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 17:11:41 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/14 13:50:47 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/14 17:11:17 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ namespace TreeSplit
 		size_t	pos;
 
 		head = SUtils::leftTrim( str );
-		pos = head.find_first_of( " \t\n\v\f\r" );
+		pos = head.find_first_of( ISSPACE );
 		body = head.substr( pos, head.length() );
 		head = head.substr( 0, pos );
 		body = SUtils::trim( body );

@@ -6,12 +6,12 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:07:12 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/30 19:16:28 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/14 15:10:56 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef __WSPOLL_HPP__
-# define __WSPOLL_HPP__
+#ifndef _WSPOLL_HPP_
+# define _WSPOLL_HPP_
 
 # include <poll.h>
 # include <unistd.h>

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:49:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/13 12:50:50 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/14 17:04:52 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,13 @@
 # define _CONFIGPARSER_HPP_
 
 # include <vector>
+# include <string>
+# include <iostream>
+# include <fstream>
 
 # include <ServerConfig.hpp>
+# include <TreeSplit.hpp>
+# include <Utils.hpp>
 
 class ConfigParser
 {

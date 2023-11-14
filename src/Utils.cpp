@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:34:13 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/14 11:30:45 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/14 17:07:46 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,30 @@ namespace SUtils
 	{
 		return ( rightTrim( leftTrim( str ) ) );
 	}
+
+	std::vector<std::string>&	split( std::vector<std::string>& v, \
+										std::string strArr, \
+										std::string delimiter )
+	{
+		std::string	temp;
+		int starting;
+		int ending;
+
+		starting = 0;
+		ending = strArr.find( delimiter );
+		while ( ending != -1 )
+		{
+			temp = strArr.substr( starting, ending-starting );
+			if ( temp.length() > 0 )
+				v.push_back( temp );
+			starting = ending + delimiter.size();
+			ending = strArr.find( delimiter, starting );
+		}
+		temp = strArr.substr( starting, ending-starting );
+		if ( temp.length() > 0 )
+			v.push_back( temp );
+		return ( v );
+	}
 }
 
 namespace Binary
@@ -105,12 +129,12 @@ namespace Binary
 		size_t		pos;
 
 		code = 0;
-		for ( int i = 0; i < 4; i++ )
+		for ( int i = 3; i >= 0; i-- )
 		{
 			pos = address.find( "." );
 			number = std::atoi( address.substr( 0, pos ).c_str() );
 			code |= number;
-			if ( i + 1 < 4 )
+			if ( i != 0 )
 				code <<= 8;
 			if ( pos != std::string::npos )
 				pos++;
@@ -124,13 +148,13 @@ namespace Binary
 		int			number;
 		std::string	decode;
 
-		for ( int i = 0; i < 4; i++ )
+		for ( int i = 3; i >= 0; i-- )
 		{
 			number = 0;
 			for ( int j = 0; j < 8; j++ )
 				number |= ( ( address >> ( i * 8 ) ) & ( 1 << j ) );
 			decode += SUtils::longToString( number );
-			if ( i + 1 < 4 )
+			if ( i != 0 )
 				decode += ".";
 		}
 		return ( decode );
