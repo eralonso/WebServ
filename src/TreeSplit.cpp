@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 17:11:41 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/13 19:42:03 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/14 13:50:47 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,29 @@
 
 namespace TreeSplit
 {
-	bool get_pair( std::string& head, std::string& body, std::string& src )
+	void	splitSemicolon( std::string str, std::string& head, std::string& body )
+	{
+		size_t	pos;
+
+		head = SUtils::leftTrim( str );
+		pos = head.find_first_of( " \t\n\v\f\r" );
+		body = head.substr( pos, head.length() );
+		head = head.substr( 0, pos );
+		body = SUtils::trim( body );
+	}
+
+	bool	get_pair( std::string& head, std::string& body, std::string& src )
 	{
 		int		level;
 		size_t	pos;
 		size_t	bracket;
-		size_t	aux;
 
 		pos = src.find_first_of( "{;" );
 		if ( pos == std::string::npos )
 			return ( false );
 		if ( src[ pos ] == ';' )
 		{
-			aux = src.substr( 0, pos ).find_first_of( "\t " ) != std::string::npos ? \
-				  src.substr( 0, pos ).find_first_of( "\t " ) : pos;
-			head = src.substr( 0, aux );
-			body = aux == pos ? "" : src.substr( aux, pos);
+			splitSemicolon( src.substr( 0, pos ), head, body );
 			src.erase( 0, pos + 1 );
 			return ( true );
 		}
@@ -41,8 +48,8 @@ namespace TreeSplit
 				return ( false );
 			level += src[ bracket ] == '{' ? 1 : -1;
 		}
-		head = src.substr( 0, pos );
-		body = src.substr( pos + 1, bracket - pos );
+		head = SUtils::trim( src.substr( 0, pos ) );
+		body = SUtils::trim( src.substr( pos + 1, bracket - pos ) );
 		src.erase( 0, bracket + 1 );
 		return ( true );
 	}

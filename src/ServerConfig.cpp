@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:41:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/13 19:35:06 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/14 13:51:44 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@ ServerConfig::ServerConfig( void )
 
 ServerConfig::ServerConfig( std::string server, std::string options )
 {
-	//TODO get attributes from get and
-	//process the body to obtain more attributes
 	std::string content;
 	std::string head;
 	std::string body;
@@ -35,39 +33,19 @@ ServerConfig::ServerConfig( std::string server, std::string options )
 					&ServerConfig::parseErrorPage, &ServerConfig::parseClientMaxBodySize };
 
 	content = options;
-	if ( server != "server" )
-		throw std::logic_error( "Invalid option" );
+	if ( SUtils::trim( server ) != "server" )
+		throw std::logic_error( "Unkown directive \"" + server + "\"" );
 	while ( content.length() > 0 )
 	{
 		if ( TreeSplit::get_pair( head, body, content ) )
 		{
 			it = std::find( availablesOptions.begin(), availablesOptions.end(), head );
 			if ( it == availablesOptions.end() )
-				throw std::logic_error( "Unavailable server option" );
-			try
-			{
-				( this->*parseOption[ it - availablesOptions.begin() ] )( body );
-			}
-			catch ( std::exception& e )
-			{
-				Log::Error( e.what() );
-			}
-			//TODO Analyze Head n Body to look for attributes and
-			//set them or add them to the containers
-			// ports;
-			// locations;
-			// rootDir;
-			try
-			{
-				Location lc;
-				locations.push_back( lc );
-			}
-			catch ( const std::exception& e )
-			{
-				;
-				//TODO LogError and thow exception to inform parent to clean
-			}
+				throw std::logic_error( "Unknown directive \"" + head + "\"" );
+			( this->*parseOption[ it - availablesOptions.begin() ] )( body );
 		}
+		else if ( content.length() > 0 )
+			throw std::logic_error( "Unxpected \"}\"" );
 		head.clear();
 		body.clear();
 	}

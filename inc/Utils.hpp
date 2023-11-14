@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:31:42 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/05 13:41:47 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/14 11:31:07 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@ namespace PUtils
 namespace SUtils
 {
 	std::string	longToString( long int num );
+	std::string	trim( std::string str );
+	std::string	leftTrim( std::string str );
+	std::string	rightTrim( std::string str );
 }
 
 namespace Log

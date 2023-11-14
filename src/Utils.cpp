@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:34:13 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/05 14:07:32 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/14 11:30:45 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,32 @@ namespace SUtils
 	
 		ss << num;
 		return ( ss.str() );
+	}
+
+	std::string	leftTrim( std::string str )
+	{
+		size_t	i;
+	
+		i = 0;
+		while ( str[ i ] != '\0' && std::isspace( str[ i ] ) )
+			i++;
+		return ( str.substr( i, std::string::npos ) );
+	}
+
+	std::string	rightTrim( std::string str )
+	{
+		int	i;
+
+		i = str.length();
+		while ( i >= 0 && std::isspace( str[ i ] ) )
+			i--;
+		i = i < 0 ? 0 : i;
+		return ( str.substr( 0, i ) );
+	}
+
+	std::string	trim( std::string str )
+	{
+		return ( rightTrim( leftTrim( str ) ) );
 	}
 }
 

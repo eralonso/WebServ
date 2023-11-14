@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:48:38 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/13 12:52:10 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/14 12:12:50 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,13 @@ ConfigParser::ConfigParser( int argc, char **argv )
 			{
 				Log::Error( e.what() );
 				//TODO LogError and clean
-				;
+				return ;
 			}
+		}
+		else if ( content.length() > 0 )
+		{
+			Log::Error( "Unexpected end of file, expecting \";\" or \"}\"" );
+			return ;
 		}
 		head.clear();
 		body.clear();
