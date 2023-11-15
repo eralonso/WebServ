@@ -6,16 +6,14 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:07 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/15 13:24:35 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/15 14:15:33 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _RESPONSE_HPP_
 # define _RESPONSE_HPP_
 # include <string>
-# include <vector>
 # include <Headers.hpp>
-# include <map>
 
 class Response
 {

@@ -6,15 +6,13 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/15 13:10:07 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/15 15:50:35 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _REQUEST_HPP_
 # define _REQUEST_HPP_
 # include <string>
-# include <vector>
-# include <map>
 # include <Headers.hpp>
 
 class Request
@@ -26,10 +24,14 @@ private:
 	Headers						headers;
 	std::string					body;
 public:
+	Request(void);
 	Request(const std::string& received);
 	~Request();
 	Request(const Request& b);
 	Request&	operator=(const Request& b);
+	void parseFirstLine(const std::string &line);
+	void parseHeader(const std::string &line);
+	void parseHead(const std::string &head);
 	void								parse(const std::string& received);
 	std::string							getMethod() const;
 	std::string							getRoute() const;
@@ -39,6 +41,7 @@ public:
 	std::string							getBody() const;
 	std::string							toString();
 	void								setBody(const std::string& content);
+
 };
 
 #endif
