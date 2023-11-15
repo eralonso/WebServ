@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:34:13 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/15 14:23:43 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/15 18:22:30 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,14 @@ namespace SUtils
 		return ( ss.str() );
 	}
 
+	bool	isNum( std::string num )
+	{
+		for ( size_t i = 0; num[ i ] != '\0'; i++ )
+			if ( !std::isdigit( num[ i ] ) )
+				return ( false );
+		return ( true );
+	}
+
 	std::string	leftTrim( std::string str )
 	{
 		size_t	i;
@@ -87,20 +95,20 @@ namespace SUtils
 										std::string delimiter )
 	{
 		std::string	temp;
-		int starting;
-		int ending;
+		size_t		starting;
+		size_t		ending;
 
 		starting = 0;
 		ending = strArr.find( delimiter );
-		while ( ending != -1 )
+		while ( ending != std::string::npos )
 		{
-			temp = strArr.substr( starting, ending-starting );
+			temp = strArr.substr( starting, ending - starting );
 			if ( temp.length() > 0 )
 				v.push_back( temp );
 			starting = ending + delimiter.size();
 			ending = strArr.find( delimiter, starting );
 		}
-		temp = strArr.substr( starting, ending-starting );
+		temp = strArr.substr( starting, ending - starting );
 		if ( temp.length() > 0 )
 			v.push_back( temp );
 		return ( v );
@@ -113,7 +121,7 @@ namespace SUtils
 			return ( 1 );
 		if ( num1.length() < num2.length() )
 			return ( -1 );
-		return ( std::strcmp( num1, num2 ) );
+		return ( std::strcmp( num1.c_str(), num2.c_str() ) );
 	}
 }
 

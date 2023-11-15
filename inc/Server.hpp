@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:40:55 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/15 13:17:35 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/15 17:47:19 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,17 +16,20 @@
 # include <string>
 
 # include <ServerConfig.hpp>
+# include <ServerParser.hpp>
 
 class Server: public ServerConfig
 {
 public:
 	Server( void );
 	Server( const Server& s );
+	Server( const ServerParser& s );
 	~Server( void );
 	Server&	operator=( const Server& s );
+	Server&	operator=( const ServerParser& sp );
 public:
-	Location&		getLocationAtPath( std::string path ) const;
-	std::string&	getErrorPageWithCode( unsigned int code ) const;
+	Location	getLocationAtPath( std::string path ) const;
+	std::string	getErrorPageWithCode( unsigned int code ) const;
 };
 
 //# define SIZE_SERVER_OPTIONS 6

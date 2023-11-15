@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/15 13:16:59 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/15 17:47:50 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ Server::Server( void ): ServerConfig() {}
 
 Server::Server( const Server& s ): ServerConfig( s ) {}
 
+Server::Server( const ServerParser& sp ): ServerConfig( sp ) {}
+
 Server::~Server( void ) {}
 
 Server&	Server::operator=( const Server& s )
@@ -24,13 +26,19 @@ Server&	Server::operator=( const Server& s )
 	return ( *this );
 }
 
-Location&		getLocationAtPath( std::string path ) const
+Server&	Server::operator=( const ServerParser& sp )
 {
-	( void ) path;
-	return ( _locations[ 0 ] );
+	ServerConfig::operator=( sp );
+	return ( *this );
 }
 
-std::string&	getErrorPageWithCode( unsigned int code ) const
+Location	Server::getLocationAtPath( std::string path ) const
+{
+	( void ) path;
+	return ( this->_locations[ 0 ] );
+}
+
+std::string	Server::getErrorPageWithCode( unsigned int code ) const
 {
 	( void ) code;
 	return ( "a" );

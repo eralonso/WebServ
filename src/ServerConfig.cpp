@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 12:36:45 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/15 13:21:17 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/15 17:44:57 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,27 +39,27 @@ ServerConfig&	ServerConfig::operator=( const ServerConfig& s )
 	return ( *this );
 }
 
-PortsVector&	ServerConfig::getPorts( void ) const
+PortsVector	ServerConfig::getPorts( void ) const
 {
 	return ( this->_ports );
 }
 
-std::string&	ServerConfig::getHost( void ) const
+std::string	ServerConfig::getHost( void ) const
 {
 	return ( this->_address );
 }
 
-LocationsVector&	ServerConfig::getLocations( void ) const
+LocationsVector	ServerConfig::getLocations( void ) const
 {
 	return ( this->_locations );
 }
 
-std::string&	ServerConfig::getRoot( void ) const
+std::string	ServerConfig::getRoot( void ) const
 {
 	return ( this->_rootDir );
 }
 
-std::string&	ServerConfig::getServerName( void ) const
+std::string	ServerConfig::getServerName( void ) const
 {
 	return ( this->_serverName );
 }
@@ -69,7 +69,7 @@ unsigned int	ServerConfig::getClientMaxBodySize( void ) const
 	return ( this->_clientMaxBodySize );
 }
 
-ErrorPagesMap&	ServerConfig::getErrorPagesMap( void ) const
+ErrorPagesMap	ServerConfig::getErrorPages( void ) const
 {
 	return ( this->_errorPages );
 }

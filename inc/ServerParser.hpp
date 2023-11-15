@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:10:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/15 12:51:40 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/15 17:59:35 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,12 @@
 # define _SERVERPARSER_HPP_
 
 # include <string>
+# include <limits>
+# include <array>
 
 # include <ServerConfig.hpp>
+# include <TreeSplit.hpp>
+# include <Utils.hpp>
 
 # define SIZE_SERVER_OPTIONS 6
 
