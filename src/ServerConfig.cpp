@@ -3,113 +3,73 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfig.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/06 16:41:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/14 19:39:30 by eralonso         ###   ########.fr       */
+/*   Created: 2023/11/15 12:36:45 by eralonso          #+#    #+#             */
+/*   Updated: 2023/11/15 13:21:17 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ServerConfig.hpp>
 
-ServerConfig::ServerConfig( void )
-{
-	clientMaxBodySize = 0;
-}
+ServerConfig::ServerConfig( void ): _clientMaxBodySize( 0 ) {}
 
-ServerConfig::ServerConfig( std::string server, std::string options )
-{
-	std::string content;
-	std::string head;
-	std::string body;
-	std::array< std::string, SIZE_SERVER_OPTIONS >::iterator	it;
-	std::array< std::string, SIZE_SERVER_OPTIONS >	availablesOptions = { \
-										"root", "location", \
-										"listen", "server_name", \
-										"error_page", "client_max_body_size" };
-	std::array< t_parse, SIZE_SERVER_OPTIONS >	parseOption = { \
-					&ServerConfig::parseRoot, &ServerConfig::parseLocation, \
-					&ServerConfig::parseListen, &ServerConfig::parseServerName, \
-					&ServerConfig::parseErrorPage, &ServerConfig::parseClientMaxBodySize };
+ServerConfig::ServerConfig( const ServerConfig& s ): _ports( s._ports ), \
+								_address( s._address ), \
+								_locations( s._locations ), \
+								_rootDir( s._rootDir ), \
+								_serverName( s._serverName ), \
+								_clientMaxBodySize( s._clientMaxBodySize ), \
+								_errorPages( s._errorPages ) {}
 
-	content = options;
-	if ( SUtils::trim( server ) != "server" )
-		throw std::logic_error( "Unkown directive \"" + server + "\"" );
-	while ( content.length() > 0 )
+ServerConfig::~ServerConfig( void ) {}
+
+ServerConfig&	ServerConfig::operator=( const ServerConfig& s )
+{
+	if ( this != &s )
 	{
-		if ( TreeSplit::get_pair( head, body, content ) )
-		{
-			it = std::find( availablesOptions.begin(), availablesOptions.end(), head );
-			if ( it == availablesOptions.end() )
-				throw std::logic_error( "Unknown directive \"" + head + "\"" );
-			( this->*parseOption[ it - availablesOptions.begin() ] )( body );
-		}
-		else if ( content.length() > 0 )
-			throw std::logic_error( "Unxpected \"}\"" );
-		head.clear();
-		body.clear();
+		this->_ports = s._ports;
+		this->_address = s._address;
+		this->_locations = s._locations;
+		this->_rootDir = s._rootDir;
+		this->_serverName = s._serverName;
+		this->_clientMaxBodySize = s._clientMaxBodySize;
+		this->_errorPages = s._errorPages;
 	}
-}
-
-ServerConfig::~ServerConfig( void )
-{
-}
-
-ServerConfig::ServerConfig( const ServerConfig& b )
-{
-	ports = b.ports;
-	locations = b.locations;
-	rootDir = b.rootDir;
-}
-
-ServerConfig&	ServerConfig::operator=( const ServerConfig& b )
-{
-	ports = b.ports;
-	locations = b.locations;
-	rootDir = b.rootDir;
 	return ( *this );
 }
 
-void	ServerConfig::parseRoot( std::string body )
+PortsVector&	ServerConfig::getPorts( void ) const
 {
-	std::vector< std::string >	args;
-
-	SUtils::split( args, body, ISSPACE );
-	if ( args.size() != 1 )
-		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( std::string( "root" ) ) );
-	root = args[ 0 ];
+	return ( this->_ports );
 }
 
-void	ServerConfig::parseLocation( std::string body )
+std::string&	ServerConfig::getHost( void ) const
 {
-	( void )body;
+	return ( this->_address );
 }
 
-void	ServerConfig::parseListen( std::string body )
+LocationsVector&	ServerConfig::getLocations( void ) const
 {
-	( void )body;
+	return ( this->_locations );
 }
 
-void	ServerConfig::parseServerName( std::string body )
+std::string&	ServerConfig::getRoot( void ) const
 {
-	if ( body == "" )
-		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( std::string( "server_name" ) ) );
-	server_name = body;
+	return ( this->_rootDir );
 }
 
-void	ServerConfig::parseErrorPage( std::string body )
+std::string&	ServerConfig::getServerName( void ) const
 {
-	( void )body;
+	return ( this->_serverName );
 }
 
-void	ServerConfig::parseClientMaxBodySize( std::string body )
+unsigned int	ServerConfig::getClientMaxBodySize( void ) const
 {
-	std::vector< std::string >	args;
+	return ( this->_clientMaxBodySize );
+}
 
-	SUtils::split( args, body, ISSPACE );
-	if ( args.size() != 1 )
-		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( std::string( "client_max_body_size" ) ) );
-	if ( isNum( args[ 0 ] ) == false && args[ 0 ] > std::numeric_limits< long >::max() )
-		throw std::logic_error( INVALID_VALUE_DIRECTIVE( std::string( "client_max_body_size" ) ) );
-	clientMaxBodySize = std::atol( args[ 0 ] );
+ErrorPagesMap&	ServerConfig::getErrorPagesMap( void ) const
+{
+	return ( this->_errorPages );
 }

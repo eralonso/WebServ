@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:48:38 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/14 17:06:08 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/15 13:23:50 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ ConfigParser::ConfigParser( int argc, char **argv )
 	std::string		head;
 	std::string		body;
 
-	if ( argc != 2 )
+	if ( argc > 2 )
 	{
 		Log::Error( "Usage: " + std::string( argv[0] ) + " <config_file>" );
 		return ;

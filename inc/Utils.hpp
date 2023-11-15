@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:31:42 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/14 17:08:16 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/15 13:27:11 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ namespace SUtils
 	std::vector<std::string>&	split( std::vector<std::string>& v, \
 										std::string strArr, \
 										std::string delimiter );
+	int	compareNumbersAsStrings( const std::string num1, \
+								const std::string num2 );
 }
 
 namespace Log

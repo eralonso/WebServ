@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:10:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/14 16:18:01 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/15 12:51:40 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 # include <string>
 
 # include <ServerConfig.hpp>
+
+# define SIZE_SERVER_OPTIONS 6
 
 class ServerParser: public ServerConfig
 {
@@ -29,13 +31,10 @@ private:
 	void	parseErrorPage( std::string body );
 	void	parseClientMaxBodySize( std::string body );
 public:
-	ServerParser( void );
 	ServerParser( std::string configs );
 	~ServerParser( void );
 	ServerParser( const ServerParser& b );
 	ServerParser&	operator=( const ServerParser& b );
-public:
-	ServerConfig	getServerConfig( void ) const;
 };
 
 #endif

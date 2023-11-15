@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:34:13 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/14 17:07:46 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/15 14:23:43 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,16 @@ namespace SUtils
 		if ( temp.length() > 0 )
 			v.push_back( temp );
 		return ( v );
+	}
+
+	int	compareNumbersAsStrings( const std::string num1, \
+								const std::string num2 )
+	{
+		if ( num1.length() > num2.length() )
+			return ( 1 );
+		if ( num1.length() < num2.length() )
+			return ( -1 );
+		return ( std::strcmp( num1, num2 ) );
 	}
 }
 
