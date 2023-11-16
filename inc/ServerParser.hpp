@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:10:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/15 17:59:35 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/16 12:59:57 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ private:
 	typedef void ( ServerParser::*t_parse )( std::string );
 private:
 	void	parseRoot( std::string body );
-	void	parseLocation( std::string body );
+	void	parseLocation( std::string head, std::string body );
 	void	parseListen( std::string body );
 	void	parseServerName( std::string body );
 	void	parseErrorPage( std::string body );

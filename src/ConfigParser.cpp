@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:48:38 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/15 17:56:59 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/16 19:39:42 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	ConfigParser::readConfig( void )
 	while ( std::getline ( myfile, line ) )
 		content += line + "\n";
 	myfile.close();
-	this->_content = content;
+	this->_content = SUtils::trim( content );
 }
 
 void	ConfigParser::parseConfigFile( void )
@@ -52,6 +52,9 @@ void	ConfigParser::parseConfigFile( void )
 	{
 		if ( TreeSplit::get_pair( head, body, this->_content ) )
 		{
+			//std::cout << "ConfigParser -> this->_content [" << this->_content << "] <-" << std::endl;
+			//std::cout << "ConfigParser -> head [" << head << "] <-" << std::endl;
+			//std::cout << "ConfigParser -> body [" << body << "] <-" << std::endl;
 			if ( head != "server" )
 				throw std::logic_error( UNKNOWN_DIRECTIVE( head ) );
 			ServerParser	sp( body );
