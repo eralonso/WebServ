@@ -6,18 +6,20 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 13:53:05 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/16 18:13:06 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <PendingCgiTask.hpp>
-#include <Utils.hpp>
-#define BUFFER_SIZE 99
+#include "../inc/PendingCgiTask.hpp"
+#include "../inc/Utils.hpp"
 
-PendingCgiTask::PendingCgiTask(pid_t pid, Request &request, int fd) :
+PendingCgiTask::PendingCgiTask()
+{
+}
+PendingCgiTask::PendingCgiTask(pid_t pid, Request *request, int fd) :
 	pid(pid), request(request), fd(fd)
 {
-	timestamp = std::chrono::high_resolution_clock::now();
+	timestamp = std::clock();  
 }
 
 PendingCgiTask::PendingCgiTask(const PendingCgiTask &b) :
@@ -43,21 +45,20 @@ pid_t PendingCgiTask::getPid() const
 	return pid;
 }
 
-Request& PendingCgiTask::getRequest() const
+Request* PendingCgiTask::getRequest() const
 {
 	return request;
 }
 
-std::chrono::steady_clock::time_point	PendingCgiTask::getTimestamp() const
+std::clock_t	PendingCgiTask::getTimestamp() const
 {
 	return timestamp;
 }
 
-bool	PendingCgiTask::isTimeout(std::chrono::duration<double> toDuration) const
+bool	PendingCgiTask::isTimeout(std::clock_t toDuration) const
 {
-	std::chrono::steady_clock::time_point now;
-	now = std::chrono::high_resolution_clock::now();
-	std::chrono::duration<double> duration = now - timestamp;
+	std::clock_t now = std::clock();
+	std::clock_t duration = now - timestamp;
 	return (duration < toDuration);
 }
 
@@ -73,13 +74,13 @@ std::string PendingCgiTask::getTaskOutput()
 	size_t bytes_read = read(fd, buf, BUFFER_SIZE);
 	while (bytes_read == BUFFER_SIZE)
 	{
-		buf[BUFFER_SIZE] = NULL;
+		buf[BUFFER_SIZE] = 0;
 		resBody += std::string(buf);
 		size_t bytes_read = read(fd, buf, BUFFER_SIZE);
 	}
 	if (bytes_read < 0)
 		Log::Error(std::string("Read from child failed"));
-	buf[bytes_read] = NULL;
+	buf[bytes_read] = 0;
 	resBody += std::string(buf);
 	close(fd);
 	return resBody;

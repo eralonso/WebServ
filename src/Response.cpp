@@ -6,12 +6,12 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/15 13:25:15 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/16 18:03:16 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <Response.hpp>
-#include <Utils.hpp>
+#include "../inc/Utils.hpp"
+#include "../inc/Response.hpp"
 
 Response::Response()
 {

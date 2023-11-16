@@ -6,11 +6,11 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:31 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 14:02:18 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/16 18:01:42 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <PendingCgiTasks.hpp>
+#include "../inc/PendingCgiTasks.hpp"
 
 PendingCgiTasks::PendingCgiTasks()
 {

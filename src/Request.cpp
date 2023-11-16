@@ -6,14 +6,14 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 10:26:11 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/16 18:02:45 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <Request.hpp>
 #include <string>
-#include <Utils.hpp>
-#include <SplitString.hpp>
+#include "../inc/Utils.hpp"
+#include "../inc/SplitString.hpp"
+#include "../inc/Request.hpp"
 
 Request::Request(void)
 {

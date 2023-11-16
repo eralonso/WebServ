@@ -6,14 +6,14 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:30:49 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 13:59:51 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/16 18:09:23 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _PENDINGCGITASKS_HPP_
 # define _PENDINGCGITASKS_HPP_
 # include <map>
-# include <PendingCgiTask.hpp>
+# include "PendingCgiTask.hpp"
 
 
 class PendingCgiTasks : public std::map<pid_t, PendingCgiTask>

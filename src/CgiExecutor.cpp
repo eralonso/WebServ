@@ -6,11 +6,11 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 14:39:37 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/16 18:21:03 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <CgiExecutor.hpp>
+#include "../inc/CgiExecutor.hpp"
 #define FDIN 0
 #define FDOUT 1
 
@@ -63,7 +63,7 @@ void CgiExecutor::onChildProcess(void)
 		close(fdFromChild[FDIN]);
 		if (dup2(fdToChild[FDIN], FDIN))
 			Log::Error(std::string("dup2: fdToChild[0] to 0 failed"));
-		if (dup2(fdFromChild[FDOUT], FDOUT));
+		if (dup2(fdFromChild[FDOUT], FDOUT))
 			Log::Error(std::string("dup2: fdFromChild[1] to 1 failed"));
 		close(fdToChild[FDIN]);
 		close(fdFromChild[FDOUT]);
@@ -83,30 +83,19 @@ void CgiExecutor::onParentProcess(pid_t childPid)
 	close(fdFromChild[FDOUT]);
 	write(fdToChild[FDOUT], reqBody, reqBodySize);
 	close(fdToChild[FDOUT]);
-	new PendingCgiTask(childPid, request, fdFromChild[FDIN]);
-	//waitpid(childPid, NULL, 0);
+	PendingCgiTask* task =
+		new PendingCgiTask(childPid, &request, fdFromChild[FDIN]);
+	if (task)
+		pendingTasks.appendTask(*task);
+	else
+		Log::Error("CGI Task couldnt be created");
 }
 
 std::string CgiExecutor::getChildOutput(PendingCgiTask *task)
 {
 	if (!task)
 		return (std::string(""));
-	int fd = task->getFd();
-	char buf[BUFFER_SIZE + 1];
-	std::string	resBody;
-	size_t bytes_read = read(fd, buf, BUFFER_SIZE);
-	while (bytes_read == BUFFER_SIZE)
-	{
-		buf[BUFFER_SIZE] = NULL;
-		resBody += std::string(buf);
-		size_t bytes_read = read(fd, buf, BUFFER_SIZE);
-	}
-	if (bytes_read < 0)
-		Log::Error(std::string("Read from child failed"));
-	buf[bytes_read] = NULL;
-	resBody += std::string(buf);
-	close(fd);
-	return resBody;
+	return task->getTaskOutput();
 }
 
 int CgiExecutor::execute(void)
@@ -134,15 +123,15 @@ PendingCgiTask *CgiExecutor::getCompletedTask()
 	return &(pendingTasks[pid]);
 }
 
-PendingCgiTask *CgiExecutor::getTimeoutedTask(std::chrono::duration<double> to)
+PendingCgiTask *CgiExecutor::getTimeoutedTask(clock_t to)
 {
 	pid_t	pid;
 	PendingCgiTasks::iterator it = pendingTasks.begin();
 	PendingCgiTasks::iterator ite= pendingTasks.end();
 	while (it != ite)
 	{
-		if(it->second.isTimeout(to));
-		return (&(it->second));
+		if(it->second.isTimeout(to))
+			return (&(it->second));
 		it++;
 	}
 	return nullptr;
@@ -160,8 +149,7 @@ std::string CgiExecutor::getCompletedTaskOutput(void)
 	return std::string();
 }
 
-size_t	CgiExecutor::purgeTimeoutedTasks(std::chrono::duration<double> to,
-	size_t max)
+size_t	CgiExecutor::purgeTimeoutedTasks(clock_t to, size_t max)
 {
 	size_t i = 0;
 	PendingCgiTask *task = nullptr;

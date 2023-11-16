@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:34 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 14:08:44 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/16 18:08:36 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,11 @@
 # include <string>
 # include <unistd.h>
 # include <sys/wait.h>
-# include <Utils.hpp>
-# include <Request.hpp>
-# include <PendingCgiTasks.hpp>
+# include <ctime>
+# include "Utils.hpp"
+# include "Request.hpp"
+# include "PendingCgiTask.hpp"
+# include "PendingCgiTasks.hpp"
 
 class CgiExecutor
 {
@@ -43,10 +45,9 @@ public:
 	~CgiExecutor();
 	int execute(void);
 	static PendingCgiTask*	getCompletedTask();
-	static PendingCgiTask*	getTimeoutedTask(std::chrono::duration<double> to);
+	static PendingCgiTask*	getTimeoutedTask(clock_t to);
 	static std::string		getCompletedTaskOutput(void);
-	static size_t			purgeTimeoutedTasks(
-								std::chrono::duration<double> to, size_t max);
+	static size_t			purgeTimeoutedTasks(clock_t to, size_t max);
 };
 
 #endif

@@ -6,14 +6,14 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 10:19:37 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/15 13:01:37 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/16 18:09:00 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _HEADERS_HPP_
 # define _HEADERS_HPP_
 # include <vector>
-# include <Header.hpp>
+# include "Header.hpp"
 
 class Headers : public std::vector<Header>
 {
