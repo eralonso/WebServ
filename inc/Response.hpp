@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:07 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 18:09:36 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/16 19:28:34 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define _RESPONSE_HPP_
 # include <string>
 # include "Headers.hpp"
+# include "StatusCodes.hpp"
 
 class Response
 {

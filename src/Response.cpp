@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 18:03:16 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/16 19:34:13 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,8 @@ std::string				Response::getResult() const
 	bool successful = hundreds == 2;
 	bool redirection = hundreds == 3;
 	bool OK = (informational || successful || redirection);
-	return (std::string(OK ? "OK" : "KO"));
+	(void)OK;
+	return (StatusCodes::decode(status));
 }
 
 std::string				Response::getQuery() const
@@ -151,9 +152,9 @@ std::string				Response::toString()
 {
 	std::string ret;
 	ret = protocol + " " + SUtils::longToString(status);
-	ret += std::string(" ") + getResult() + "\r\n";
+	ret += std::string(" ") + getResult() + HEADER_SEP;
 	ret += headers.toString();
-	ret += "\r\n";
+	ret += HEADER_SEP;
 	ret += body;
 	return (ret);
 }
