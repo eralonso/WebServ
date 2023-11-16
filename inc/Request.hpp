@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/15 15:50:35 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/16 10:14:38 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 class Request
 {
 private:
+	std::string					protocol;
 	std::string					method;
 	std::string					route;
 	std::string					query;
@@ -29,10 +30,12 @@ public:
 	~Request();
 	Request(const Request& b);
 	Request&	operator=(const Request& b);
+	void parseRoute(void);
 	void parseFirstLine(const std::string &line);
 	void parseHeader(const std::string &line);
 	void parseHead(const std::string &head);
 	void								parse(const std::string& received);
+	std::string							getProtocol() const;
 	std::string							getMethod() const;
 	std::string							getRoute() const;
 	std::string							getQuery() const;
@@ -41,6 +44,8 @@ public:
 	std::string							getBody() const;
 	std::string							toString();
 	void								setBody(const std::string& content);
+
+	;
 
 };
 

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/15 15:54:00 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/16 10:26:11 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,12 @@
 
 Request::Request(void)
 {
-	std::string init("GET / Http 1.1\r\n");
-	init += std::string("Content-Type: text/html\r\n");
+	std::string init("GET / Http/1.1\r\n");
+	init += std::string("Host: localhost\r\n");
+	init += std::string("Content-Type: text/xml; charset=utf-8\r\n");
 	init += std::string("Content-Lenght: 6\r\n");
+	init += std::string("Accept-Language: en-us\r\n");
+	init += std::string("Accept-Encoding: gzip, deflate\r\n");
 	init += std::string("\r\n");
 	init += std::string("NoBody\r\n");
 	parse(init);
@@ -53,6 +56,24 @@ Request&	Request::operator=(const Request& b)
 	return (*this);
 }
 
+void Request::parseRoute(void)
+{
+	std::vector<std::string> tokens = SplitString::split(route,
+										std::string("?"));
+
+	size_t	len = tokens.end() - tokens.begin();
+	if (len > 2)
+	{
+		Log::Error("Request query string invalid");
+		return ;
+	}
+	if (len > 1)
+	{
+		route = tokens[0];
+		query = tokens[1];
+	}
+}
+
 void Request::parseFirstLine(const std::string &line)
 {
 	std::vector<std::string> tokens = SplitString::split(line,
@@ -62,6 +83,10 @@ void Request::parseFirstLine(const std::string &line)
 		Log::Error("Request first line incomplete");
 		return ;
 	}
+	method = tokens[0];
+	route = tokens[1];
+	protocol = tokens[2];
+	parseRoute();
 }
 
 void Request::parseHeader(const std::string &line)
@@ -119,6 +144,11 @@ void	Request::parse(const std::string& received)
 	parseHead(head);
 }
 
+std::string 						Request::getProtocol() const
+{
+	return (protocol);
+}
+
  std::string						Request::getMethod() const
 {
 	return (method);
@@ -152,7 +182,7 @@ std::string							Request::getBody() const
 std::string							Request::toString()
 {
 	std::string ret = headers.toString();
-	ret += "\r\n";
+	ret += HEADER_SEP;
 	ret += body;
 	return (ret);
 }
