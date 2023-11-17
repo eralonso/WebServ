@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 18:02:45 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/17 13:25:25 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,23 +14,19 @@
 #include "../inc/Utils.hpp"
 #include "../inc/SplitString.hpp"
 #include "../inc/Request.hpp"
+#include "Request.hpp"
 
 Request::Request(void)
 {
-	std::string init("GET / Http/1.1\r\n");
-	init += std::string("Host: localhost\r\n");
-	init += std::string("Content-Type: text/xml; charset=utf-8\r\n");
-	init += std::string("Content-Lenght: 6\r\n");
-	init += std::string("Accept-Language: en-us\r\n");
-	init += std::string("Accept-Encoding: gzip, deflate\r\n");
-	init += std::string("\r\n");
-	init += std::string("NoBody\r\n");
-	parse(init);
+	clientPoll = nullptr;
+	status = IDLE;
+	parse();
 }
 
-Request::Request(const std::string&	received)
+Request::Request(struct pollfd *clientPoll)
 {
-	parse(received);
+	this->clientPoll = clientPoll;
+	status = WAITING_RECV;
 }
 
 Request::~Request()
@@ -39,6 +35,8 @@ Request::~Request()
 
 Request::Request(const Request& b)
 {
+	clientPoll = clientPoll;
+	status = b.status;
 	method = b.method;
 	route = b.route;
 	query = b.query;
@@ -48,12 +46,32 @@ Request::Request(const Request& b)
 
 Request&	Request::operator=(const Request& b)
 {
+	clientPoll = clientPoll;
+	status = b.status;
 	method = b.method;
 	route = b.route;
 	query = b.query;
 	headers = b.headers;
 	body = b.body;
 	return (*this);
+}
+
+int Request::bindClient(struct pollfd *clientPoll)
+{
+	this->clientPoll = clientPoll;
+	status = WAITING_RECV;
+	return (status);
+}
+
+int Request::appendRecv(const std::string &recv, bool finish)
+{
+	if (status == WAITING_RECV)
+	{
+		received += recv;
+		if (finish)
+			status = RECV_ALL;
+	}
+	return (status);
 }
 
 void Request::parseRoute(void)
@@ -103,12 +121,6 @@ void Request::parseHeader(const std::string &line)
 
 void Request::parseHead(const std::string &head)
 {
-	// method = std::string("GET");
-	// route = std::string("/");
-	// query = std::string("\"arg1\"=\"value\"");
-	// body = std::string("{\"data\":\"something\"}");
-	// headers.append("Content-Lenght", SUtils::longToString(body.length()));
-	// headers.append("Content-Type", "text/html");
 	std::vector<std::string> lines = SplitString::split(head,
 										std::string(HEADER_SEP));
 	std::vector<std::string>::iterator itb = lines.begin();
@@ -124,27 +136,42 @@ void Request::parseHead(const std::string &head)
 	}
 }
 
-void	Request::parse(const std::string& received)
+int	Request::parse()
 {
-	std::string sep(HEADER_SEP);
-	sep += sep;
-	std::string head;
-	size_t loc = received.find(sep);
-	if (loc != std::string::npos)
+	if (status == RECV_ALL)
 	{
-		head = received.substr(0 ,loc);
-		size_t beginBody = loc + sep.length();
-		setBody(received.substr(beginBody ,received.length() - beginBody));
+		std::string sep(HEADER_SEP);
+		sep += sep;
+		std::string head;
+		size_t loc = received.find(sep);
+		if (loc != std::string::npos)
+		{
+			head = received.substr(0 ,loc);
+			size_t beginBody = loc + sep.length();
+			setBody(received.substr(beginBody ,received.length() - beginBody));
+		}
+		else
+		{
+			head = received;
+			setBody(std::string(""));
+		}
+		parseHead(head);
+		status = RECV_DECODED;
 	}
-	else
-	{
-		head = received;
-		setBody(std::string(""));
-	}
-	parseHead(head);
+	return (status);
 }
 
-std::string 						Request::getProtocol() const
+Request::t_status Request::getStatus() const
+{
+	return (status);
+}
+
+struct pollfd* Request::getClientPoll() const
+{
+	return (clientPoll);
+}
+
+std::string Request::getProtocol() const
 {
 	return (protocol);
 }
@@ -179,6 +206,11 @@ std::string							Request::getBody() const
 	return (body);
 }
 
+bool								Request::isReadyToSend() const
+{
+	return (status == RESP_RENDERED);
+}
+
 std::string							Request::toString()
 {
 	std::string ret = headers.toString();
@@ -192,4 +224,20 @@ void								Request::setBody(const std::string& content)
 	body = content;
 	Header h("Content-Lenght", SUtils::longToString(body.length()));
 	headers.replace(h);
+}
+
+int Request::setDummyRecv()
+{
+	if (status == WAITING_RECV)
+	{
+		std::string init("GET / Http/1.1\r\n");
+		init += std::string("Host: localhost\r\n");
+		init += std::string("Content-Type: text/xml; charset=utf-8\r\n");
+		init += std::string("Content-Lenght: 6\r\n");
+		init += std::string("Accept-Language: en-us\r\n");
+		init += std::string("Accept-Encoding: gzip, deflate\r\n");
+		init += std::string("\r\n");
+		init += std::string("NoBody\r\n");
+		return (appendRecv(init, true));
+	}
 }

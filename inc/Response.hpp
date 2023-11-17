@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:07 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 19:28:34 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/17 14:02:06 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ public:
 	std::string					getResult() const;
 	std::string					getQuery() const;
 	const Headers&				getHeaders() const;
+	Header*						getHeader(std::string key);
 	size_t						getContentLength() const;
 	std::string					getBody() const;
 	std::string					toString();

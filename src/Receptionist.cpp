@@ -6,11 +6,12 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 14:44:18 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/17 14:04:47 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Receptionist.hpp>
+#include <Response.hpp>
 
 Receptionist::Receptionist(int port, int backlog, int timeout):
 	polls(MAX_CLIENTS), port(port), backlog(backlog), timeout(timeout)
@@ -46,8 +47,8 @@ Receptionist& 	Receptionist::operator=(const Receptionist& b)
 int	Receptionist::addNewClient( socket_t serverFd, WSPoll& polls )
 {
 	socket_t	clientFd;
-
-
+	struct pollfd	*clientPoll;
+	
 	clientFd = Sockets::acceptConnection( serverFd );
 	if ( clientFd < 0 )
 		return ( -1 );
@@ -55,6 +56,21 @@ int	Receptionist::addNewClient( socket_t serverFd, WSPoll& polls )
 	{
 		Log::Error( "Too many clients trying to connect to server" );
 		close( clientFd );
+	}
+	try
+	{
+		clientPoll = &polls[ clientFd ];
+	}
+	catch ( std::out_of_range& e ) { 
+		Log::Error( "Failed to insert clientPoll" );
+		close( clientFd );
+		return ( -1 );
+	}
+	if (!requests.appendRequest(&polls[ clientFd ]))
+	{
+		Log::Error( "Failed to append Request" );
+		close( clientFd );
+		return ( -1 );
 	}
 	return ( 1 );
 }
@@ -96,6 +112,25 @@ std::string	Receptionist::getResponse( void )
 	return ( getHeader() + getHtml() );
 }
 
+std::string Receptionist::getResponse(Request *req)
+{
+	Response res;
+	res.setServer("OREginx");
+	res.appendHeader(Header("Content-Type", std::string("text/html")));
+	if (!req)
+	{
+		res.setStatus(500);
+		res.setBody("Error: 500");
+	}
+	else
+	{
+		res.setStatus(200);
+		res.setMethod(req->getMethod());
+		res.setBody(getHtml());
+	}
+	return res.toString();
+}
+
 void	Receptionist::sendResponse( socket_t connected, std::string response )
 {
 	if ( send( connected, response.c_str(), response.size(), 0 ) < 0 )
@@ -129,6 +164,8 @@ void	Receptionist::manageClient( socket_t clientFd, WSPoll& polls )
 	catch ( std::out_of_range& e ) { return ; }
 	if ( clientPoll->revents & POLLIN )
 	{
+		//Locate Request
+		Request * req = requests[clientPoll];
 		if ( readRequest( clientFd, readed ) < 0 )
 		{
 			polls.closePoll( clientFd );
@@ -138,12 +175,19 @@ void	Receptionist::manageClient( socket_t clientFd, WSPoll& polls )
 				+ SUtils::longToString( clientFd )\
 				+ " ]: " \
 				+ readed);
+		if (req)
+			req->appendRecv(readed, true);
+		//TODO Check if Request is complete.
 		clientPoll->events |= POLLOUT;
 	}
 	else if ( clientPoll->revents & POLLOUT )
 	{
-		sendResponse( clientFd, getResponse() );
-		clientPoll->events &= ~POLLOUT;
+		Request * req = requests[clientPoll];
+		if (req && req->isReadyToSend())
+		{
+			sendResponse( clientFd, getResponse() );
+			clientPoll->events &= ~POLLOUT;
+		}
 	}
 }
 

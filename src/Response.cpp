@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 19:34:13 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/17 14:01:54 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,11 @@ std::string				Response::getQuery() const
 const Headers&			Response::getHeaders() const
 {
 	return (headers);
+}
+
+Header*					Response::getHeader(std::string key)
+{
+	return (headers.firstWithKey(key));
 }
 
 size_t					Response::getContentLength() const
