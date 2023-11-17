@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/17 13:25:25 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/17 16:27:48 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,11 @@
 #include "../inc/Utils.hpp"
 #include "../inc/SplitString.hpp"
 #include "../inc/Request.hpp"
-#include "Request.hpp"
 
 Request::Request(void)
 {
+	headerSize = std::string::npos;
+	bodySize = std::string::npos;
 	clientPoll = nullptr;
 	status = IDLE;
 	parse();
@@ -25,6 +26,8 @@ Request::Request(void)
 
 Request::Request(struct pollfd *clientPoll)
 {
+	headerSize = std::string::npos;
+	bodySize = std::string::npos;
 	this->clientPoll = clientPoll;
 	status = WAITING_RECV;
 }
@@ -35,7 +38,9 @@ Request::~Request()
 
 Request::Request(const Request& b)
 {
-	clientPoll = clientPoll;
+	headerSize = b.headerSize;
+	bodySize = b.bodySize;
+	clientPoll = b.clientPoll;
 	status = b.status;
 	method = b.method;
 	route = b.route;
@@ -46,7 +51,9 @@ Request::Request(const Request& b)
 
 Request&	Request::operator=(const Request& b)
 {
-	clientPoll = clientPoll;
+	headerSize = b.headerSize;
+	bodySize = b.bodySize;
+	clientPoll = b.clientPoll;
 	status = b.status;
 	method = b.method;
 	route = b.route;
@@ -63,14 +70,10 @@ int Request::bindClient(struct pollfd *clientPoll)
 	return (status);
 }
 
-int Request::appendRecv(const std::string &recv, bool finish)
+int Request::appendRecv(const std::string &recv)
 {
 	if (status == WAITING_RECV)
-	{
 		received += recv;
-		if (finish)
-			status = RECV_ALL;
-	}
 	return (status);
 }
 
@@ -134,31 +137,23 @@ void Request::parseHead(const std::string &head)
 			parseHeader(*it);
 		it++;
 	}
+	status = RECV_HEADER;
 }
 
 int	Request::parse()
 {
-	if (status == RECV_ALL)
+	if (checkHeaderCompleteRecv())
 	{
-		std::string sep(HEADER_SEP);
-		sep += sep;
-		std::string head;
-		size_t loc = received.find(sep);
-		if (loc != std::string::npos)
-		{
-			head = received.substr(0 ,loc);
-			size_t beginBody = loc + sep.length();
-			setBody(received.substr(beginBody ,received.length() - beginBody));
-		}
-		else
-		{
-			head = received;
-			setBody(std::string(""));
-		}
+		std::string	head = received.substr(0, headerSize);
 		parseHead(head);
+		headerSize += std::string(HEADER_SEP).size() * 2;
+	}
+	if (status == RECV_HEADER && checkCompleteRecv())
+	{
+		setBody(received.substr(headerSize ,received.length() - headerSize));
 		status = RECV_DECODED;
 	}
-	return (status);
+	return (status == RECV_DECODED);
 }
 
 Request::t_status Request::getStatus() const
@@ -206,9 +201,43 @@ std::string							Request::getBody() const
 	return (body);
 }
 
+bool Request::checkHeaderCompleteRecv()
+{
+	std::string sep(HEADER_SEP);
+	sep += sep;
+	std::string head;
+	if (status == WAITING_RECV)
+	{
+		headerSize = received.find(sep);
+		if (headerSize != std::string::npos)
+			status = RECV_HEADER;
+	}
+	return (status == RECV_HEADER);
+}
+
+bool Request::checkCompleteRecv()
+{
+	if (status == RECV_HEADER)
+	{
+		Header *head = headers.firstWithKey("Content-Lenght");
+		if (!head)
+			return false;
+		//TODO: atol could be used?
+		size_t contentSize = atol(head->getValue().c_str());
+		if (received.length() - headerSize >= contentSize)
+			status = RECV_ALL;
+	}
+	return (status == RECV_ALL);
+}
+
 bool								Request::isReadyToSend() const
 {
 	return (status == RESP_RENDERED);
+}
+
+bool								Request::isDecoded() const
+{
+	return (status == RECV_DECODED);
 }
 
 std::string							Request::toString()
@@ -238,6 +267,7 @@ int Request::setDummyRecv()
 		init += std::string("Accept-Encoding: gzip, deflate\r\n");
 		init += std::string("\r\n");
 		init += std::string("NoBody\r\n");
-		return (appendRecv(init, true));
+		return (appendRecv(init));
 	}
+	return (0);
 }

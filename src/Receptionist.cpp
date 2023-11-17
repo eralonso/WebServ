@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/17 14:04:47 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/17 16:20:12 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,9 +176,11 @@ void	Receptionist::manageClient( socket_t clientFd, WSPoll& polls )
 				+ " ]: " \
 				+ readed);
 		if (req)
-			req->appendRecv(readed, true);
-		//TODO Check if Request is complete.
-		clientPoll->events |= POLLOUT;
+		{
+			req->appendRecv(readed);
+			if (req->parse())
+				clientPoll->events |= POLLOUT;
+		}
 	}
 	else if ( clientPoll->revents & POLLOUT )
 	{
