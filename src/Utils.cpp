@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:34:13 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/16 12:49:33 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/17 19:42:02 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,15 +98,16 @@ namespace SUtils
 		size_t		ending;
 
 		starting = 0;
-		ending = strArr.find( delimiter );
+		ending = strArr.find_first_of( delimiter );
 		while ( ending != std::string::npos )
 		{
 			temp = strArr.substr( starting, ending - starting );
 			if ( temp.length() > 0 )
 				v.push_back( temp );
-			starting = ending + delimiter.size();
-			ending = strArr.find( delimiter, starting );
+			starting = ending + 1;
+			ending = strArr.find_first_of( delimiter, starting );
 		}
+		if ( ending == std::string::npos )
 		temp = strArr.substr( starting, ending - starting );
 		if ( temp.length() > 0 )
 			v.push_back( temp );

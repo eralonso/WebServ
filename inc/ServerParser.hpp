@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:10:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/16 12:59:57 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/17 19:29:22 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,17 +16,29 @@
 # include <string>
 # include <limits>
 # include <array>
+# include <algorithm>
 
 # include <ServerConfig.hpp>
 # include <TreeSplit.hpp>
 # include <Utils.hpp>
 
-# define SIZE_SERVER_OPTIONS 6
+# define SIZE_SIMPLE_OPTIONS 5
+# define SIZE_COMPLEX_OPTIONS 1
+
+typedef std::array< std::string, SIZE_SIMPLE_OPTIONS >	simpleDirectiveArray;
+typedef std::array< std::string, SIZE_COMPLEX_OPTIONS >	complexDirectiveArray;
 
 class ServerParser: public ServerConfig
 {
 private:
-	typedef void ( ServerParser::*t_parse )( std::string );
+	typedef void ( ServerParser::*t_parseSimpleDirective )( std::string );
+	typedef void ( ServerParser::*t_parseComplexDirective )( std::string, std::string );
+	typedef std::array< t_parseSimpleDirective, SIZE_SIMPLE_OPTIONS >	t_parseSimpleDirectiveArray;
+	typedef std::array< t_parseComplexDirective, SIZE_COMPLEX_OPTIONS >	t_parseComplexDirectiveArray;
+private:
+	void	parseDirective( std::string head, std::string body );
+	int		isSimpleDirective( std::string head );
+	int		isComplexDirective( std::string head );
 private:
 	void	parseRoot( std::string body );
 	void	parseLocation( std::string head, std::string body );

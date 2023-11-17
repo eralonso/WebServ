@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:41:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 19:40:26 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/17 19:45:22 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,37 +17,12 @@ ServerParser::ServerParser( std::string options ): ServerConfig()
 	std::string content;
 	std::string head;
 	std::string body;
-	std::array< std::string, SIZE_SERVER_OPTIONS - 1 >::iterator	it;
-	std::array< std::string, SIZE_SERVER_OPTIONS - 1 >	availablesOptions = { \
-										"root", "listen", \
-										"server_name", "error_page", \
-										"client_max_body_size" };
-	std::array< t_parse, SIZE_SERVER_OPTIONS - 1 >	parseOption = { \
-					&ServerParser::parseRoot, &ServerParser::parseListen, \
-					&ServerParser::parseServerName, &ServerParser::parseErrorPage, \
-					&ServerParser::parseClientMaxBodySize };
 
 	content = options;
 	while ( content.length() > 0 )
 	{
-		//std::cout << "ServerParser -> content <Before> [" << content << "] <-" << std::endl;
 		if ( TreeSplit::get_pair( head, body, content ) )
-		{
-			it = std::find( availablesOptions.begin(), availablesOptions.end(), head );
-			if ( it == availablesOptions.end() )
-			{
-			//	std::cout << "ServerParser -> content <After> [" << content << "]" << std::endl;
-			//	std::cout << "ServerParser -> head[" << head << "]" << std::endl;
-			//	std::cout << "ServerParser -> body[" << body << "]\n\n" << std::endl;
-				if ( head.compare( 0, 8, "location" ) == 0 && \
-						( head.length() == 8 || std::isspace( head[ 8 ] ) ) )
-					parseLocation( head, body );
-				else
-					throw std::logic_error( UNKNOWN_DIRECTIVE( head ) );
-			}
-			else
-				( this->*parseOption[ it - availablesOptions.begin() ] )( body );
-		}
+			parseDirective( head, body );
 		else if ( content.length() > 0 )
 			throw std::logic_error( "Unxpected \"}\"" );
 		head.clear();
@@ -63,6 +38,52 @@ ServerParser&	ServerParser::operator=( const ServerParser& s )
 {
 	ServerConfig::operator=( s );
 	return ( *this );
+}
+
+void	ServerParser::parseDirective( std::string head, std::string body )
+{
+	int								idx;
+	t_parseSimpleDirectiveArray		parseSimple = { \
+					&ServerParser::parseRoot, &ServerParser::parseListen, \
+					&ServerParser::parseServerName, &ServerParser::parseErrorPage, \
+					&ServerParser::parseClientMaxBodySize };
+	t_parseComplexDirectiveArray	parseComplex = { \
+					&ServerParser::parseLocation };
+
+	if ( ( idx = isSimpleDirective( head ) ) >= 0 )
+		( this->*parseSimple[ idx ] )( body );
+	else if ( ( idx = isComplexDirective( head ) ) >= 0 )
+		( this->*parseComplex[ idx ] )( head, body );
+	else
+		throw std::logic_error( UNKNOWN_DIRECTIVE( head ) );
+}
+
+int	ServerParser::isSimpleDirective( std::string head )
+{
+	simpleDirectiveArray::iterator	it;
+	simpleDirectiveArray			simpleDirective = { \
+												"root", "listen", \
+												"server_name", "error_page", \
+												"client_max_body_size" };
+
+	it = std::find( simpleDirective.begin(), simpleDirective.end(), head );
+	if ( it == simpleDirective.end() )
+		return ( -1 );
+	return ( it - simpleDirective.begin() );
+}
+
+int	ServerParser::isComplexDirective( std::string head )
+{
+	std::vector< std::string >		args;
+	simpleDirectiveArray::iterator	it;
+	simpleDirectiveArray			complexDirective = { \
+												"location" };
+
+	SUtils::split( args, head, ISSPACE );
+	it = std::find( complexDirective.begin(), complexDirective.end(), args[ 0 ] );
+	if ( it == complexDirective.end() )
+		return ( -1 );
+	return ( it - complexDirective.begin() );
 }
 
 void	ServerParser::parseRoot( std::string body )
@@ -98,6 +119,8 @@ void	ServerParser::parseErrorPage( std::string body )
 	( void )body;
 }
 
+//TODO: Accept unit measures like m/M(Megabytes)
+//i.e: client_max_body_size 1M;
 void	ServerParser::parseClientMaxBodySize( std::string body )
 {
 	std::vector< std::string >	args;

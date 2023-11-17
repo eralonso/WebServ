@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 17:11:41 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 19:40:15 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/17 13:05:42 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,21 @@ namespace TreeSplit
 {
 	void	splitOnce( std::string str, std::string& head, std::string& body )
 	{
-		size_t	pos;
+		size_t		pos;
+		std::string	aux;
 
-		head = SUtils::leftTrim( str );
-		pos = head.find_first_of( ISSPACE );
-		body = head.substr( pos, head.length() );
-		head = head.substr( 0, pos );
-		body = SUtils::trim( body );
+		head = "";
+		body = "";
+		aux = SUtils::trim( str );
+		pos = aux.find_first_of( ISSPACE );
+		if ( pos != std::string::npos )
+		{
+			head = aux.substr( 0, pos );
+			body = aux.substr( pos, std::string::npos );
+			body = SUtils::leftTrim( body );
+		}
+		else
+			head = aux;
 	}
 
 	size_t	checkBracets( std::string src )
