@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:41:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/17 19:45:22 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/18 15:29:59 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,28 +121,64 @@ void	ServerParser::parseErrorPage( std::string body )
 
 //TODO: Accept unit measures like m/M(Megabytes)
 //i.e: client_max_body_size 1M;
+long	ServerParser::getMeasureLimit( int unit )
+{
+	return ( LONG_MAX >> ( 10 * unit ) );
+}
+
+int	ServerParser::parseMeasure( std::string number )
+{
+	std::array< char, 4 >			units = { 'b', 'k', 'm', 'g' };
+	std::array< char, 4 >::iterator	it;
+	size_t							i;
+	char							unit;
+	int								res;
+
+	res = 0;
+	i = number.find_first_not_of( "0123456789" );
+	if ( i != std::string::npos )
+	{
+		unit = std::tolower( number[ i ] );
+		it = std::find( units.begin(), units.end(), unit );
+		if ( it == units.end() || number[ i + 1 ] != '\0' )
+			return ( -1 );
+		res = it - units.begin();
+	}
+	return ( res );
+}
+
+long	ServerParser::parseSize( std::string number )
+{
+	int		measure;
+
+	measure = parseMeasure( number );
+	if ( measure == -1 )
+		throw std::logic_error( "Invalid measurement unit" );
+	if ( number.find_first_not_of( "0123456789" ) != std::string::npos )
+		number.erase( number.length() - 1, 1 );
+	if ( SUtils::compareNumbersAsStrings( number, \
+				SUtils::longToString( getMeasureLimit( measure ) ) ) > 0 )
+		throw std::logic_error( "Number too large" );
+	return ( std::atol( number.c_str() ) << ( 10 * measure ) );
+}
+
 void	ServerParser::parseClientMaxBodySize( std::string body )
 {
 	std::vector< std::string >	args;
-	size_t						init;
-	std::string					num;
-	std::string					maxValue;
 
 	SUtils::split( args, body, ISSPACE );
 	if ( args.size() != 1 )
 		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
 					std::string( "client_max_body_size" ) ) );
-	if ( SUtils::isNum( args[ 0 ] ) == false )
-		throw std::logic_error( INVALID_VALUE_DIRECTIVE( \
+	try
+	{
+		this->_clientMaxBodySize = parseSize( args[ 0 ] );
+		Log::Info( "client_max_body_size: " \
+				+ SUtils::longToString( this->_clientMaxBodySize ) );
+	}
+	catch ( const std::logic_error& e )
+	{
+		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
 					std::string( "client_max_body_size" ) ) );
-	num = args[ 0 ];
-	init = num.find_first_not_of( "0" );
-	if ( init == std::string::npos )
-		num = "0";
-	else
-		num.erase( 0, init + 1 );
-	maxValue = SUtils::longToString( std::numeric_limits< long >::max() );
-	if ( SUtils::compareNumbersAsStrings( num, maxValue ) > 0 )
-		throw std::logic_error( INVALID_VALUE_DIRECTIVE( std::string( "client_max_body_size" ) ) );
-	this->_clientMaxBodySize = std::atol( args[ 0 ].c_str() );
+	}
 }

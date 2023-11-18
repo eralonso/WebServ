@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:10:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/17 19:29:22 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/18 15:10:25 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,10 @@ private:
 	void	parseDirective( std::string head, std::string body );
 	int		isSimpleDirective( std::string head );
 	int		isComplexDirective( std::string head );
+private:
+	long	getMeasureLimit( int unit );
+	int		parseMeasure( std::string number );
+	long	parseSize( std::string number );
 private:
 	void	parseRoot( std::string body );
 	void	parseLocation( std::string head, std::string body );

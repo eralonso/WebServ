@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:34:13 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/17 19:42:02 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/18 15:30:08 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,16 +107,31 @@ namespace SUtils
 			starting = ending + 1;
 			ending = strArr.find_first_of( delimiter, starting );
 		}
-		if ( ending == std::string::npos )
 		temp = strArr.substr( starting, ending - starting );
 		if ( temp.length() > 0 )
 			v.push_back( temp );
 		return ( v );
 	}
 
-	int	compareNumbersAsStrings( const std::string num1, \
-								const std::string num2 )
+	std::string	deleteExtraZeros( const std::string number )
 	{
+		std::string res( number );
+		size_t		idx;
+
+		idx = res.find_first_not_of( "0" );
+		if ( idx != std::string::npos )
+			res.erase( 0, idx );
+		else
+			res = "0";
+		return ( res );
+	}
+
+	int	compareNumbersAsStrings( const std::string number1, \
+								const std::string number2 )
+	{
+		std::string	num1( deleteExtraZeros( number1 ) );
+		std::string	num2( deleteExtraZeros( number2 ) );
+
 		if ( num1.length() > num2.length() )
 			return ( 1 );
 		if ( num1.length() < num2.length() )

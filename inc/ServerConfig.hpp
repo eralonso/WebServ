@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 12:25:25 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/15 17:59:50 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/18 15:24:48 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ protected:
 	LocationsVector	_locations;
 	std::string		_rootDir;
 	std::string		_serverName;
-	unsigned int	_clientMaxBodySize;
+	long			_clientMaxBodySize;
 	ErrorPagesMap	_errorPages;
 public:
 	ServerConfig( void );
