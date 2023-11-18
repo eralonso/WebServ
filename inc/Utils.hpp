@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:31:42 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/15 18:01:02 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/18 18:49:31 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,14 @@ namespace SUtils
 								const std::string num2 );
 }
 
+namespace STLUtils
+{
+	template < typename T >
+	std::string	vectorToString( typename T::iterator begin, typename T::iterator end );
+	template < typename T >
+	std::string	mapToString( typename T::iterator begin, typename T::iterator end );
+}
+
 namespace Log
 {
 	void	Info( const std::string str );
@@ -52,5 +60,7 @@ namespace Binary
 	std::string	decodeAddress( uint32_t address );
 	uint32_t	codeAddress( std::string address );
 }
+
+#include "Utils.ipp"
 
 #endif
