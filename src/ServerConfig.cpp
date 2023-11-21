@@ -6,16 +6,17 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 12:36:45 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/18 16:02:36 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/21 12:21:41 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ServerConfig.hpp>
 
-ServerConfig::ServerConfig( void ): _clientMaxBodySize( 1 << 20 ) {}
+ServerConfig::ServerConfig( void ): _clientMaxBodySize( 1 << 20 ), \
+										_port( 8000 ), _host( "0.0.0.0" ) {}
 
-ServerConfig::ServerConfig( const ServerConfig& s ): _ports( s._ports ), \
-								_address( s._address ), \
+ServerConfig::ServerConfig( const ServerConfig& s ): _port( s._port ), \
+								_host( s._host ), \
 								_locations( s._locations ), \
 								_rootDir( s._rootDir ), \
 								_serverNames( s._serverNames ), \
@@ -39,9 +40,9 @@ ServerConfig&	ServerConfig::operator=( const ServerConfig& s )
 	return ( *this );
 }
 
-PortsVector	ServerConfig::getPorts( void ) const
+int	ServerConfig::getPort( void ) const
 {
-	return ( this->_ports );
+	return ( this->_port );
 }
 
 std::string	ServerConfig::getHost( void ) const

@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:34:13 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/18 17:53:18 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/21 13:38:40 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,22 @@ namespace SUtils
 		if ( temp.length() > 0 )
 			v.push_back( temp );
 		return ( v );
+	}
+
+	std::vector< std::string >	splitOnce( std::string str, std::string del )
+	{
+		std::vector< std::string >	args;
+		size_t						pos;
+
+		pos = str.find_first_of( del );
+		if ( pos != std::string::npos )
+		{
+			args[ 0 ] = str.substr( 0, pos );
+			args[ 1 ] = str.substr( pos, std::string::npos );
+		}
+		else
+			args[ 0 ] = str;
+		return ( args );
 	}
 
 	std::string	deleteExtraZeros( const std::string number )

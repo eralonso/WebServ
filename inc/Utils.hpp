@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:31:42 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/18 18:49:31 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/21 13:38:15 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,16 +27,19 @@ namespace PUtils
 
 namespace SUtils
 {
-	std::string	longToString( long int num );
-	bool		isNum( std::string num );
-	std::string	trim( std::string str );
-	std::string	leftTrim( std::string str );
-	std::string	rightTrim( std::string str );
-	std::vector<std::string>&	split( std::vector<std::string>& v, \
-										std::string strArr, \
-										std::string delimiter );
-	int	compareNumbersAsStrings( const std::string num1, \
-								const std::string num2 );
+	std::string					longToString( long int num );
+	bool						isNum( std::string num );
+	std::string					trim( std::string str );
+	std::string					leftTrim( std::string str );
+	std::string					rightTrim( std::string str );
+	std::vector< std::string >&	split( std::vector<std::string>& v, \
+									std::string strArr, \
+									std::string delimiter );
+	std::vector< std::string >	splitOnce( std::string str, \
+									std::string del );
+	int							compareNumbersAsStrings( \
+									const std::string num1, \
+									const std::string num2 );
 }
 
 namespace STLUtils

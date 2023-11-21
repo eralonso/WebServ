@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:41:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/18 19:01:17 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/21 13:46:31 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,8 @@ void	ServerParser::parseRoot( std::string body )
 
 	SUtils::split( args, body, ISSPACE );
 	if ( args.size() != 1 )
-		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( std::string( "root" ) ) );
+		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
+					std::string( "root" ) ) );
 	this->_rootDir = args[ 0 ];
 }
 
@@ -122,7 +123,88 @@ void	ServerParser::parseLocation( std::string head, std::string body )
 //listen
 void	ServerParser::parseListen( std::string body )
 {
-	( void )body;
+	StringVector	args;
+	size_t			sep
+	std::string		host;
+	std::string		port;
+
+	SUtils::split( args, body, ISSPACE );
+	if ( args.size() != 1 )
+		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
+					std::string( "listen" ) ) );
+	sep = args[ 0 ].find( ":" );
+	if ( sep != std::string::npos )
+	{
+		host = parseHost( args[ 0 ].substr( 0, sep ) );
+		port = parsePort( args[ 0 ].substr( sep + 1, std::string::npos ) );
+	}
+
+	//host = parseHost( args[ 0 ] );
+	//port = parsePort( args[ 0 ] );
+	//sep = args[ 0 ].find( ":" );
+	//if ( sep != std::string::npos )
+	//{
+	//	if ( isValidPort( args[ 0 ].substr( sep + 1, std::string::npos ) == false ) )
+	//		throw std::logic_error( "invalid port in \"" \
+	//				+ args[ 0 ] + "\" of the \"listen\" directive" );
+	//	
+	//}
+	//else if ( isNum( args[ 0 ] ) == true )
+	//{
+	//	if ( isValidPort( args[ 0 ] ) == false )
+	//		throw std::logic_error( "invalid port in \"" \
+	//				+ args[ 0 ] + "\" of the \"listen\" directive" );
+	//}
+	//else
+	//{
+
+	//}
+}
+
+std::string	ServerParser::parseHost( std::string arg, size_t sep )
+{
+	std::string	host;
+
+	if ( sep != std::string::npos )
+	{
+		if ( isNum( arg ) == true )
+		{
+
+		}
+	}
+	if ( isNum( arg ) == false )
+	{
+		if ( sep == 0 )
+			throw std::logic_error( "no host in \"" \
+					+ arg + "\" of the \"listen\" directive" );
+		if ( sep != std::string::npos )
+			host = arg.substr( 0, sep );
+	}
+	return ( host );
+}
+
+std::string	ServerParser::parsePort( std::string arg )
+{
+	std::string	port;
+	size_t		sep;
+
+	host = "8000";
+	if ( isNum( arg ) == false )
+	{
+		sep = arg.find( ":" );
+		if ( sep == 0 )
+			throw std::logic_error( "no host in \"" \
+					+ arg + "\" of the \"listen\" directive" );
+		if ( sep != std::string::npos )
+			host = arg.substr( 0, sep );
+	}
+	return ( host );
+}
+
+bool	ServerParser::isValidPort( std::string port )
+{
+	return ( !( compareNumbersAsStrings( args[ 0 ], std::numeric_limits< short >::max() ) > 0 \
+			|| compareNumbersAsStrings( args[ 0 ], "0" ) == 0 ) );
 }
 
 //server_name {list of server names}
@@ -130,7 +212,8 @@ void	ServerParser::parseServerNames( std::string body )
 {
 	SUtils::split( this->_serverNames, body, ISSPACE );
 	if ( this->_serverNames.size() == 0 )
-		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( std::string( "server_name" ) ) );
+		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
+					std::string( "server_name" ) ) );
 }
 
 //error_page [ code - uri ]
@@ -152,7 +235,8 @@ void	ServerParser::parseErrorPage( std::string body )
 	{
 		code = parseErrorCode( *it );
 		if ( code < 0 )
-			throw std::logic_error( INVALID_VALUE_DIRECTIVE( *it ) );
+			throw std::logic_error( INVALID_VALUE_DIRECTIVE( \
+						std::string( "error_page" ), *it ) );
 		else if ( code == 0 )
 			throw std::logic_error( INVALID_RANGE_DIRECTIVE( *it, \
 					SUtils::longToString( MIN_ERROR_CODE ), \
@@ -165,8 +249,10 @@ int	ServerParser::parseErrorCode( std::string code )
 {
 	if ( SUtils::isNum( code ) == false )
 		return ( -1 );
-	if ( SUtils::compareNumbersAsStrings( code, SUtils::longToString( MIN_ERROR_CODE ) ) < 0 \
-			|| SUtils::compareNumbersAsStrings( code, SUtils::longToString( MAX_ERROR_CODE ) ) > 0 )
+	if ( SUtils::compareNumbersAsStrings( code, \
+				SUtils::longToString( MIN_ERROR_CODE ) ) < 0 \
+			|| SUtils::compareNumbersAsStrings( code, \
+				SUtils::longToString( MAX_ERROR_CODE ) ) > 0 )
 		return ( 0 );
 	return ( std::atol( code.c_str() ) );
 }
@@ -193,7 +279,7 @@ void	ServerParser::parseClientMaxBodySize( std::string body )
 
 long	ServerParser::getMeasureLimit( int unit )
 {
-	return ( LONG_MAX >> ( 10 * unit ) );
+	return ( std::numeric_limits< long >::max() >> ( 10 * unit ) );
 }
 
 int	ServerParser::parseMeasure( std::string number )

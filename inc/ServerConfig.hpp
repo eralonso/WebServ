@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 12:25:25 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/18 18:33:51 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/21 12:14:35 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@
 # define MIN_ERROR_CODE 300 
 # define MAX_ERROR_CODE 599 
 
-typedef std::vector< unsigned int >				PortsVector;
 typedef std::map< unsigned int, std::string >	ErrorPagesMap;
 typedef std::vector< Location >					LocationsVector;
 typedef std::vector< std::string >				StringVector;
@@ -32,8 +31,8 @@ typedef std::vector< std::string >				StringVector;
 class ServerConfig
 {
 protected:
-	PortsVector		_ports;
-	std::string		_address;
+	int				_port;
+	std::string		_host;
 	LocationsVector	_locations;
 	std::string		_rootDir;
 	StringVector	_serverNames;
@@ -45,7 +44,7 @@ public:
 	virtual ~ServerConfig( void );
 	ServerConfig&	operator=( const ServerConfig& s );
 public:
-	PortsVector		getPorts( void ) const;
+	int				getPort( void ) const;
 	std::string		getHost( void ) const;
 	LocationsVector	getLocations( void ) const;
 	std::string		getRoot( void ) const;

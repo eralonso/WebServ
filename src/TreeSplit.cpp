@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 17:11:41 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/17 13:05:42 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/21 13:32:11 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 namespace TreeSplit
 {
-	void	splitOnce( std::string str, std::string& head, std::string& body )
+	void	splitOnceBySpace( std::string str, std::string& head, std::string& body )
 	{
 		size_t		pos;
 		std::string	aux;
@@ -67,7 +67,7 @@ namespace TreeSplit
 			return ( false );
 		if ( src[ pos ] == ';' )
 		{
-			splitOnce( src.substr( 0, pos ), head, body );
+			splitOnceBySpace( src.substr( 0, pos ), head, body );
 			src.erase( 0, pos + 1 );
 			src = SUtils::leftTrim( src );
 			return ( true );
