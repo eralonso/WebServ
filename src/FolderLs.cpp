@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 11:47:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/14 13:18:58 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/22 13:03:55 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ std::string	FolderLs::entryType(uint8_t input)
 
 std::string	FolderLs::epochsToDate(unsigned long int epochs)
 {
-	struct stat statbuf;
+	// struct stat statbuf;
 	std::stringstream	st;
 	time_t tt = static_cast<std::time_t>(epochs);
 	struct tm * timeinfo;

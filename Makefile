@@ -6,7 +6,7 @@
 #    By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/22 10:08:41 by eralonso          #+#    #+#              #
-#    Updated: 2023/11/18 17:35:23 by eralonso         ###   ########.fr        #
+#    Updated: 2023/11/22 13:03:14 by omoreno-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -58,7 +58,9 @@ SRC_DIRS	:=	$(subst $(SPACE),:,$(SRC_DIRS))
 #<--------------------------------->FILES<---------------------------------->#
 FILES		:=	main Sockets Utils WSPoll Receptionist WSSignals ConfigParser \
 				TreeSplit RootDir ActionMask CGIService Location ServerConfig \
-				Server ServerParser 
+				Server ServerParser Header Headers Request Requests Response \
+				SplitString FolderLs StatusCodes PendingCgiTask \
+				PendingCgiTasks CgiExecutor
 
 #<---------------------------------->LANG<---------------------------------->#
 LANG		:=	CPP

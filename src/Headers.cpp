@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 10:20:03 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/15 13:03:40 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/22 12:57:02 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ Headers		Headers::filterKey(const std::string& key)
 	Headers::iterator ite = end();
 	while (it != ite)
 	{
-		fil.push_back(*it);
+		if (it->getKey() == key)
+			fil.push_back(*it);
 		it++;
 	}
 	return (fil);

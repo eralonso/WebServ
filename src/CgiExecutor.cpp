@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 18:21:03 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/22 13:12:45 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,17 @@
 #define FDIN 0
 #define FDOUT 1
 
+PendingCgiTasks	CgiExecutor::pendingTasks;
+
 CgiExecutor::CgiExecutor(const std::string& binary, const std::string& argument,
 		Request& request, char **env) :
 		binary(binary), argument(argument), request(request)
 {
 	const std::string	reqBody;
-	char				*envPath;
-	argv[0] = (char *)binary.c_str();
-	argv[1] = (char *)argument.c_str();
+	(void)env;
+	// char				*envPath;
+	argv[0] = (char *)this->binary.c_str();
+	argv[1] = (char *)this->argument.c_str();
 	argv[2] = NULL;
 	childEnv[0] = NULL;
 	childEnv[9] = NULL;
@@ -125,7 +128,6 @@ PendingCgiTask *CgiExecutor::getCompletedTask()
 
 PendingCgiTask *CgiExecutor::getTimeoutedTask(clock_t to)
 {
-	pid_t	pid;
 	PendingCgiTasks::iterator it = pendingTasks.begin();
 	PendingCgiTasks::iterator ite= pendingTasks.end();
 	while (it != ite)

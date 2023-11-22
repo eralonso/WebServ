@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 18:13:06 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/22 12:58:36 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ PendingCgiTask::PendingCgiTask(pid_t pid, Request *request, int fd) :
 }
 
 PendingCgiTask::PendingCgiTask(const PendingCgiTask &b) :
-	pid(b.pid), request(b.request), fd(b.fd), timestamp(b.timestamp)
+	pid(b.pid), request(b.request), timestamp(b.timestamp), fd(b.fd) 
 {
 }
 
@@ -76,7 +76,7 @@ std::string PendingCgiTask::getTaskOutput()
 	{
 		buf[BUFFER_SIZE] = 0;
 		resBody += std::string(buf);
-		size_t bytes_read = read(fd, buf, BUFFER_SIZE);
+		bytes_read = read(fd, buf, BUFFER_SIZE);
 	}
 	if (bytes_read < 0)
 		Log::Error(std::string("Read from child failed"));

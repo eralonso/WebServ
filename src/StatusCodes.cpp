@@ -6,28 +6,13 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 19:06:01 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 19:26:54 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/22 13:22:02 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/StatusCodes.hpp"
 
-StatusCodes::StatusCodes(){}
-StatusCodes::StatusCodes(const StatusCodes&){}
-StatusCodes::~StatusCodes(){}
-StatusCodes StatusCodes::operator+(const StatusCodes&){return *this;}
-
-const std::string StatusCodes::decode(unsigned int code)
-{
-	size_t i = 0;
-	while (i < CODES_NB && dict[i].code != code)
-		i++;
-	if (i < CODES_NB)
-		return (std::string(dict[i].desc));
-	return (std::string("Unknown status"));
-}
-
-StatusCodes::t_dict dict[CODES_NB] = 
+const StatusCodes::t_dict StatusCodes::dict[CODES_NB] = 
 {
 	//1xx "Informational"
 	{100, "Continue"},
@@ -104,3 +89,19 @@ StatusCodes::t_dict dict[CODES_NB] =
 	{598, "Network read timeout error"},
 	{599, "Network connect timeout error"}
 };
+
+StatusCodes::StatusCodes(){}
+StatusCodes::StatusCodes(const StatusCodes&){}
+StatusCodes::~StatusCodes(){}
+StatusCodes StatusCodes::operator+(const StatusCodes&){return *this;}
+
+const std::string StatusCodes::decode(unsigned int code)
+{
+	size_t i = 0;
+	while (i < CODES_NB && dict[i].code != code)
+		i++;
+	if (i < CODES_NB)
+		return (std::string(dict[i].desc));
+	return (std::string("Unknown status"));
+}
+
