@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:10:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/18 18:40:47 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/22 12:39:54 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,10 @@
 # define SIZE_SIMPLE_OPTIONS 5
 # define SIZE_COMPLEX_OPTIONS 1
 
+# define PARSE_LISTEN_ERRORS_SIZE 3
+
+# define IP_VALID_CHARS "0123456789."
+
 typedef std::array< std::string, SIZE_SIMPLE_OPTIONS >	simpleDirectiveArray;
 typedef std::array< std::string, SIZE_COMPLEX_OPTIONS >	complexDirectiveArray;
 
@@ -40,10 +44,20 @@ private:
 	int		isSimpleDirective( std::string head );
 	int		isComplexDirective( std::string head );
 private:
-	int		parseErrorCode( std::string code );
-	long	getMeasureLimit( int unit );
-	int		parseMeasure( std::string number );
-	long	parseSize( std::string number );
+	int				parseErrorCode( std::string code );
+	long			getMeasureLimit( int unit );
+	int				parseMeasure( std::string number );
+	long			parseSize( std::string number );
+	std::string		parseListenStrError( int ret, std::string aux );
+	std::string		parseHost( std::string arg, int& ret );
+	std::string		decompressIp( std::string ip );
+	std::string		decompressBytes( std::string compressed, size_t pos, size_t size );
+	unsigned int	getMaskLimit( size_t octetPos );
+	bool			checkValidIp( std::string ip );
+	bool			checkValidRangeIpMask( std::string num, size_t pos, size_t size );
+	bool			checkSyntaxIp( std::string ip );
+	std::string		parsePort( std::string arg, int& ret );
+	bool			isValidPort( std::string port );
 private:
 	void	parseRoot( std::string body );
 	void	parseLocation( std::string head, std::string body );

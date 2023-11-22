@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:41:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/21 13:46:31 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/22 12:43:01 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ int	ServerParser::isComplexDirective( std::string head )
 	simpleDirectiveArray			complexDirective = { \
 										"location" };
 
-	TreeSplit::splitOnce( head, name, args );
+	TreeSplit::splitOnceBySpace( head, name, args );
 	it = std::find( complexDirective.begin(), complexDirective.end(), name );
 	if ( it == complexDirective.end() )
 		return ( -1 );
@@ -124,20 +124,24 @@ void	ServerParser::parseLocation( std::string head, std::string body )
 void	ServerParser::parseListen( std::string body )
 {
 	StringVector	args;
-	size_t			sep
+	size_t			sep;
 	std::string		host;
 	std::string		port;
+	int				ret;
 
 	SUtils::split( args, body, ISSPACE );
 	if ( args.size() != 1 )
 		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
 					std::string( "listen" ) ) );
+	ret = 0;
 	sep = args[ 0 ].find( ":" );
 	if ( sep != std::string::npos )
-	{
-		host = parseHost( args[ 0 ].substr( 0, sep ) );
-		port = parsePort( args[ 0 ].substr( sep + 1, std::string::npos ) );
-	}
+		port = parsePort( args[ 0 ].substr( sep + 1, std::string::npos ), ret );
+	if ( ret < 0 )
+		throw std::logic_error( parseListenStrError( ret, args[ 0 ] ) );
+	host = parseHost( args[ 0 ].substr( 0, sep ), ret );
+	if ( ret < 0 )
+		throw std::logic_error( parseListenStrError( ret, args[ 0 ] ) );
 
 	//host = parseHost( args[ 0 ] );
 	//port = parsePort( args[ 0 ] );
@@ -161,50 +165,139 @@ void	ServerParser::parseListen( std::string body )
 	//}
 }
 
-std::string	ServerParser::parseHost( std::string arg, size_t sep )
+std::string	ServerParser::parseListenStrError( int ret, std::string aux )
+{
+	std::array< std::string, PARSE_LISTEN_ERRORS_SIZE >	errors = { \
+		"invalid port in \"" + aux + "\" of the \"listen\"", \
+		"no host in \"" + aux + "\" of the \"listen\" directive", \
+   		"host not found in \"" + aux + "\" of the \"listen\" directive" };
+
+	ret = ret < 0 ? -ret : ret;
+	ret--;
+	if ( ret >= 0 && ret < PARSE_LISTEN_ERRORS_SIZE )
+		return ( errors[ ret ] );
+	return ( "Success" );
+}
+
+std::string	ServerParser::parseHost( std::string arg, int& ret )
 {
 	std::string	host;
 
-	if ( sep != std::string::npos )
-	{
-		if ( isNum( arg ) == true )
-		{
-
-		}
-	}
-	if ( isNum( arg ) == false )
-	{
-		if ( sep == 0 )
-			throw std::logic_error( "no host in \"" \
-					+ arg + "\" of the \"listen\" directive" );
-		if ( sep != std::string::npos )
-			host = arg.substr( 0, sep );
-	}
+	host = "0.0.0.0";
+	ret = -2;
+	if ( arg.length() == 0 )
+		return ( host );
+	host = arg;
+	ret = -3;
+	if ( checkValidIp( arg ) == true )
+		host = decompressIp( arg );
 	return ( host );
 }
 
-std::string	ServerParser::parsePort( std::string arg )
+std::string	ServerParser::decompressIp( std::string ip )
+{
+	std::vector< std::string >	args;
+	std::string					decompress;
+	
+	SUtils::split( args, ip, "." );
+	for ( size_t i = 0; i < args.size(); i++ )
+	{
+		decompress += decompressBytes( args[ 0 ], i, args.size() );
+		if ( i + 1 < args.size() )
+			decompress += ".";
+	}
+	return ( decompress );
+}
+
+std::string	ServerParser::decompressBytes( std::string compressed, size_t pos, size_t size )
+{
+	std::string		decompress;
+	unsigned int	num;
+
+	decompress = compressed;
+	if ( pos == ( size - 1 ) )
+	{
+		num = std::atol( compressed.c_str() );
+		//for ( size_t i = 0; i < ( 4 - pos ); i++ )
+		//{
+		//	
+		//}
+	}
+	return ( decompress );
+}
+
+unsigned int	ServerParser::getMaskLimit( size_t octetPos )
+{
+	return ( std::numeric_limits< unsigned int >::max() >> ( octetPos * 8 ) );
+}
+
+bool	ServerParser::checkValidIp( std::string ip )
+{
+	std::vector< std::string >	masks;
+
+	if ( checkSyntaxIp( ip ) == false )
+		return ( false );
+	SUtils::split( masks, ip, "." );
+	if ( masks.size() > 4 )
+		return ( false );
+	for ( size_t i = 0; i < masks.size(); i++ )
+	{
+		if ( checkValidRangeIpMask( masks[ i ], i, masks.size() ) == false )
+			return ( false );
+	}
+	return ( true );
+}
+
+bool	ServerParser::checkValidRangeIpMask( std::string num, size_t pos, size_t size )
+{
+	std::string	limit;
+
+	limit = SUtils::longToString( ( pos == ( size - 1 ) ) ? getMaskLimit( pos ) : 0xFF );
+	if ( SUtils::compareNumbersAsStrings( num, limit ) > 0 )
+		return ( false );
+	return ( true );
+}
+
+bool	ServerParser::checkSyntaxIp( std::string ip )
+{
+	bool	dot;
+	size_t	pos;
+
+	dot = false;
+	pos = ip.find_first_not_of( IP_VALID_CHARS );
+	if ( pos != std::string::npos || ip[ 0 ] == '.' )
+		return ( false );
+	pos = 0;
+	while ( pos != std::string::npos )
+	{
+		pos = ip.find_first_of( "." );
+		if ( pos != std::string::npos )
+		{
+			if ( ip[ pos + 1 ] == '\0' || ip[ pos + 1 ] == '.' )
+				return ( false );
+			ip.erase( 0, pos + 1 );
+		}
+	}
+	return ( true );
+}
+
+std::string	ServerParser::parsePort( std::string arg, int& ret )
 {
 	std::string	port;
-	size_t		sep;
 
-	host = "8000";
-	if ( isNum( arg ) == false )
-	{
-		sep = arg.find( ":" );
-		if ( sep == 0 )
-			throw std::logic_error( "no host in \"" \
-					+ arg + "\" of the \"listen\" directive" );
-		if ( sep != std::string::npos )
-			host = arg.substr( 0, sep );
-	}
-	return ( host );
+	port = "0";
+	ret = -1;
+	if ( arg.length() == 0 || SUtils::isNum( arg ) == false || isValidPort( arg ) == false )
+		return ( port );
+	ret = 0;
+	return ( port );
 }
 
 bool	ServerParser::isValidPort( std::string port )
 {
-	return ( !( compareNumbersAsStrings( args[ 0 ], std::numeric_limits< short >::max() ) > 0 \
-			|| compareNumbersAsStrings( args[ 0 ], "0" ) == 0 ) );
+	return ( !( SUtils::compareNumbersAsStrings( port, \
+			SUtils::longToString( std::numeric_limits< short >::max() ) ) > 0 \
+			|| SUtils::compareNumbersAsStrings( port, "0" ) == 0 ) );
 }
 
 //server_name {list of server names}
