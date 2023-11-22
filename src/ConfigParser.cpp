@@ -6,86 +6,68 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:48:38 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/13 12:52:10 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/16 19:39:42 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ConfigParser.hpp"
-#include "Utils.hpp"
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <TreeSplit.hpp>
-
-std::vector<std::string>& ConfigParser::split( std::vector<std::string>& v,
-	std::string strArr,
-	std::string delimiter )
-{
-	std::string	temp;
-    int starting = 0;
-    int ending = strArr.find( delimiter );
-    while ( ending != -1 )
-	{
-		temp = strArr.substr( starting, ending-starting );
-		if ( temp.length() > 0 )
-        	v.push_back( temp );
-        starting = ending + delimiter.size();
-        ending = strArr.find( delimiter, starting );
-    }
-	temp = strArr.substr( starting, ending-starting );
-	if ( temp.length() > 0 )
-		v.push_back( temp );
-	return ( v );
-}
+#include <ConfigParser.hpp>
 
 ConfigParser::ConfigParser( int argc, char **argv )
 {
-	std::ifstream	myfile;
-	std::string		line;
-	std::string		content;
-	std::string		head;
-	std::string		body;
+	checkUsage( argc, argv, argv[ 0 ] );
+	readConfig();
+	parseConfigFile();
+}
 
-	if ( argc != 2 )
-	{
-		Log::Error( "Usage: " + std::string( argv[0] ) + " <config_file>" );
-		return ;
-	}
-	myfile.open( argv[1], std::ios_base::in );
+ConfigParser::~ConfigParser( void ) {}
+
+void	ConfigParser::checkUsage( int argc, char **argv, std::string binName )
+{
+	if ( argc > 2 )
+		throw std::logic_error( "Usage: " + binName + " {<config_file>,<nothing>}" );
+	this->_fileName = ( argc == 2 ) ? argv[ 1 ] : "default.conf";
+}
+
+void	ConfigParser::readConfig( void )
+{
+	std::ifstream	myfile;
+	std::string		content;
+	std::string		line;
+
+	myfile.open( this->_fileName, std::ios_base::in );
 	if ( !myfile.is_open() )
-	{
-		Log::Error( "Invalid file: " + std::string( argv[1] ) );
-		return ;
-	}
+		throw std::logic_error( "Invalid file: " + this->_fileName );
 	while ( std::getline ( myfile, line ) )
 		content += line + "\n";
 	myfile.close();
-	while ( content.length() > 0 )
+	this->_content = SUtils::trim( content );
+}
+
+void	ConfigParser::parseConfigFile( void )
+{
+	std::string	head;
+	std::string	body;
+
+	while ( this->_content.length() > 0 )
 	{
-		if ( TreeSplit::get_pair( head, body, content ) )
+		if ( TreeSplit::get_pair( head, body, this->_content ) )
 		{
-			try
-			{
-				ServerConfig	sc( head, body );
-				serversConfig.push_back( sc );
-			}
-			catch ( const std::exception& e )
-			{
-				Log::Error( e.what() );
-				//TODO LogError and clean
-				;
-			}
+			//std::cout << "ConfigParser -> this->_content [" << this->_content << "] <-" << std::endl;
+			//std::cout << "ConfigParser -> head [" << head << "] <-" << std::endl;
+			//std::cout << "ConfigParser -> body [" << body << "] <-" << std::endl;
+			if ( head != "server" )
+				throw std::logic_error( UNKNOWN_DIRECTIVE( head ) );
+			ServerParser	sp( body );
+			this->_servers.push_back( Server( sp ) );
 		}
+		else if ( this->_content.length() > 0 )
+			throw std::logic_error( "Unexpected end of file, expecting \";\" or \"}\"" );
 		head.clear();
 		body.clear();
 	}
 }
 
-ConfigParser::~ConfigParser( void )
+std::vector<Server>	ConfigParser::getServers( void ) const
 {
-}
-
-std::vector<ServerConfig>& ConfigParser::getServersConfig( void )
-{
-	return ( serversConfig );
+	return ( this->_servers );
 }

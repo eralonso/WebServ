@@ -6,16 +6,22 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 17:01:31 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/06 17:41:15 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/21 13:32:23 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef _TREESPLIT_HPP
-#include <string>
+#ifndef _TREESPLIT_HPP_
+# define _TREESPLIT_HPP_
+
+# include <string>
+
+# include <Utils.hpp>
+# include <Defines.hpp>
 
 namespace TreeSplit
 {
-	bool get_pair(std::string& head, std::string& body, std::string& src);
+	void	splitOnceBySpace( std::string str, std::string& head, std::string& body );
+	bool	get_pair(std::string& head, std::string& body, std::string& src);
 } // namespace TreeSplit
 
 #endif

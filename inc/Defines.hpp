@@ -6,12 +6,12 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:10:16 by eralonso          #+#    #+#             */
-/*   Updated: 2023/10/31 19:24:13 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/14 17:21:46 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef __DEFINES_HPP__
-# define __DEFINES_HPP__
+#ifndef _DEFINES_HPP_
+# define _DEFINES_HPP_
 
 # define BUFFER_SIZE 3000
 # define MAX_CLIENTS 10
@@ -27,6 +27,8 @@
 # define PURPLE "\033[1;95m"
 # define CYAN "\033[1;96m"
 
-typedef int				socket_t;
+# define ISSPACE "\t\n\v\f\r "
+
+typedef int	socket_t;
 
 #endif

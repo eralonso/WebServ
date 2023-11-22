@@ -3,54 +3,54 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfig.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/06 16:40:55 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/13 13:12:58 by eralonso         ###   ########.fr       */
+/*   Created: 2023/11/15 12:25:25 by eralonso          #+#    #+#             */
+/*   Updated: 2023/11/21 12:14:35 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef _SERVERCONFIG_HPP
-# define _SERVERCONFIG_HPP
+#ifndef _SERVERCONFIG_HPP_
+# define _SERVERCONFIG_HPP_
 
 # include <vector>
-# include <array>
 # include <map>
 # include <string>
 
-# include <TreeSplit.hpp>
 # include <Location.hpp>
 # include <RootDir.hpp>
-# include <Utils.hpp>
+# include <StringErrors.hpp>
 
-#define SIZE_SERVER_OPTIONS 6
+# define MIN_ERROR_CODE 300 
+# define MAX_ERROR_CODE 599 
 
+typedef std::map< unsigned int, std::string >	ErrorPagesMap;
+typedef std::vector< Location >					LocationsVector;
+typedef std::vector< std::string >				StringVector;
 
 class ServerConfig
 {
-private:
-	typedef void ( ServerConfig::*t_parse )( std::string );
-private:
-	std::vector< unsigned int >				ports;
-	std::string								address;
-	std::vector< Location >					locations;
-	RootDir									rootDir;
-	std::string								serverName;
-	unsigned int							clientMaxBodySize;
-	std::map< unsigned int, std::string >	errorPages;
-private:
-	void	parseRoot( std::string body );
-	void	parseLocation( std::string body );
-	void	parseListen( std::string body );
-	void	parseServerName( std::string body );
-	void	parseErrorPage( std::string body );
-	void	parseClientMaxBodySize( std::string body );
+protected:
+	int				_port;
+	std::string		_host;
+	LocationsVector	_locations;
+	std::string		_rootDir;
+	StringVector	_serverNames;
+	long			_clientMaxBodySize;
+	ErrorPagesMap	_errorPages;
 public:
 	ServerConfig( void );
-	ServerConfig( std::string head, std::string body );
-	~ServerConfig( void );
-	ServerConfig( const ServerConfig& b );
-	ServerConfig& operator=( const ServerConfig& b );
+	ServerConfig( const ServerConfig& s );
+	virtual ~ServerConfig( void );
+	ServerConfig&	operator=( const ServerConfig& s );
+public:
+	int				getPort( void ) const;
+	std::string		getHost( void ) const;
+	LocationsVector	getLocations( void ) const;
+	std::string		getRoot( void ) const;
+	StringVector	getServerNames( void ) const;
+	unsigned int	getClientMaxBodySize( void ) const;
+	ErrorPagesMap	getErrorPages( void ) const;
 };
 
 #endif

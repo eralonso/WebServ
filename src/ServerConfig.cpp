@@ -3,121 +3,73 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfig.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/06 16:41:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/13 19:35:06 by eralonso         ###   ########.fr       */
+/*   Created: 2023/11/15 12:36:45 by eralonso          #+#    #+#             */
+/*   Updated: 2023/11/22 12:34:09 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ServerConfig.hpp>
 
-ServerConfig::ServerConfig( void )
-{
-	clientMaxBodySize = 0;
-}
+ServerConfig::ServerConfig( void ): _port( 8000 ), _host( "0.0.0.0" ), _clientMaxBodySize( 1 << 20 ) {}
 
-ServerConfig::ServerConfig( std::string server, std::string options )
-{
-	//TODO get attributes from get and
-	//process the body to obtain more attributes
-	std::string content;
-	std::string head;
-	std::string body;
-	std::array< std::string, SIZE_SERVER_OPTIONS >::iterator	it;
-	std::array< std::string, SIZE_SERVER_OPTIONS >	availablesOptions = { \
-										"root", "location", \
-										"listen", "server_name", \
-										"error_page", "client_max_body_size" };
-	std::array< t_parse, SIZE_SERVER_OPTIONS >	parseOption = { \
-					&ServerConfig::parseRoot, &ServerConfig::parseLocation, \
-					&ServerConfig::parseListen, &ServerConfig::parseServerName, \
-					&ServerConfig::parseErrorPage, &ServerConfig::parseClientMaxBodySize };
+ServerConfig::ServerConfig( const ServerConfig& s ): _port( s._port ), \
+								_host( s._host ), \
+								_locations( s._locations ), \
+								_rootDir( s._rootDir ), \
+								_serverNames( s._serverNames ), \
+								_clientMaxBodySize( s._clientMaxBodySize ), \
+								_errorPages( s._errorPages ) {}
 
-	content = options;
-	if ( server != "server" )
-		throw std::logic_error( "Invalid option" );
-	while ( content.length() > 0 )
+ServerConfig::~ServerConfig( void ) {}
+
+ServerConfig&	ServerConfig::operator=( const ServerConfig& s )
+{
+	if ( this != &s )
 	{
-		if ( TreeSplit::get_pair( head, body, content ) )
-		{
-			it = std::find( availablesOptions.begin(), availablesOptions.end(), head );
-			if ( it == availablesOptions.end() )
-				throw std::logic_error( "Unavailable server option" );
-			try
-			{
-				( this->*parseOption[ it - availablesOptions.begin() ] )( body );
-			}
-			catch ( std::exception& e )
-			{
-				Log::Error( e.what() );
-			}
-			//TODO Analyze Head n Body to look for attributes and
-			//set them or add them to the containers
-			// ports;
-			// locations;
-			// rootDir;
-			try
-			{
-				Location lc;
-				locations.push_back( lc );
-			}
-			catch ( const std::exception& e )
-			{
-				;
-				//TODO LogError and thow exception to inform parent to clean
-			}
-		}
-		head.clear();
-		body.clear();
+		this->_port = s._port;
+		this->_host = s._host;
+		this->_locations = s._locations;
+		this->_rootDir = s._rootDir;
+		this->_serverNames = s._serverNames;
+		this->_clientMaxBodySize = s._clientMaxBodySize;
+		this->_errorPages = s._errorPages;
 	}
-}
-
-ServerConfig::~ServerConfig( void )
-{
-}
-
-ServerConfig::ServerConfig( const ServerConfig& b )
-{
-	ports = b.ports;
-	locations = b.locations;
-	rootDir = b.rootDir;
-}
-
-ServerConfig&	ServerConfig::operator=( const ServerConfig& b )
-{
-	ports = b.ports;
-	locations = b.locations;
-	rootDir = b.rootDir;
 	return ( *this );
 }
 
-void	ServerConfig::parseRoot( std::string body )
+int	ServerConfig::getPort( void ) const
 {
-	( void )body;
+	return ( this->_port );
 }
 
-void	ServerConfig::parseLocation( std::string body )
+std::string	ServerConfig::getHost( void ) const
 {
-	( void )body;
+	return ( this->_host );
 }
 
-void	ServerConfig::parseListen( std::string body )
+LocationsVector	ServerConfig::getLocations( void ) const
 {
-	( void )body;
+	return ( this->_locations );
 }
 
-void	ServerConfig::parseServerName( std::string body )
+std::string	ServerConfig::getRoot( void ) const
 {
-	( void )body;
+	return ( this->_rootDir );
 }
 
-void	ServerConfig::parseErrorPage( std::string body )
+StringVector	ServerConfig::getServerNames( void ) const
 {
-	( void )body;
+	return ( this->_serverNames );
 }
 
-void	ServerConfig::parseClientMaxBodySize( std::string body )
+unsigned int	ServerConfig::getClientMaxBodySize( void ) const
 {
-	( void )body;
+	return ( this->_clientMaxBodySize );
+}
+
+ErrorPagesMap	ServerConfig::getErrorPages( void ) const
+{
+	return ( this->_errorPages );
 }
