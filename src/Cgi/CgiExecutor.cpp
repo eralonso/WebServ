@@ -6,11 +6,11 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/22 13:12:45 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/22 14:36:27 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/CgiExecutor.hpp"
+#include "../../inc/CgiExecutor.hpp"
 #define FDIN 0
 #define FDOUT 1
 

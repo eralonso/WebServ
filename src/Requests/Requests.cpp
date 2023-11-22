@@ -6,12 +6,11 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:58:31 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/17 12:49:46 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/22 15:00:12 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/Requests.hpp"
-
+#include "../../inc/Requests.hpp"
 
 Requests::Requests()
 {

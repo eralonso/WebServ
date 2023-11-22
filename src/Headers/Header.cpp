@@ -6,12 +6,11 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 09:55:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/15 13:07:09 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/22 14:58:31 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <Header.hpp>
-
+#include "../../inc/Header.hpp"
 
 Header::Header(std::string key, std::string value) :
 	key(key), value(value){}

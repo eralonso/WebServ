@@ -6,11 +6,11 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 19:06:01 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/22 13:22:02 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/22 15:04:59 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/StatusCodes.hpp"
+#include "../../inc/StatusCodes.hpp"
 
 const StatusCodes::t_dict StatusCodes::dict[CODES_NB] = 
 {
