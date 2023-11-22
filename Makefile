@@ -6,7 +6,7 @@
 #    By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/22 10:08:41 by eralonso          #+#    #+#              #
-#    Updated: 2023/11/22 15:59:09 by omoreno-         ###   ########.fr        #
+#    Updated: 2023/11/22 18:15:47 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,22 +50,31 @@ LIB_SEARCH	:=
 HEADERS		:=	$(INC_ROOT)
 
 #<---------------------------------->DIRS<----------------------------------->#
-SRC_DIRS	:=	./
+SRC_DIRS	:=	./:Tools/:ConfigParse/:Headers/:Requests/:Response/:Cgi
 SRC_DIRS	:=	$(subst :,$(SPACE),$(SRC_DIRS))
 SRC_DIRS	:=	$(addprefix $(SRC_ROOT),$(SRC_DIRS))
 SRC_DIRS	:=	$(subst $(SPACE),:,$(SRC_DIRS))
 
 #<--------------------------------->FILES<---------------------------------->#
+
 FILES		:=	main Sockets WSPoll WSSignals Receptionist \
-				Tools/TreeSplit Tools/Utils Tools/SplitString Tools/FolderLs \
-				ConfigParse/ConfigParser ConfigParse/RootDir \
-				ConfigParse/ActionMask ConfigParse/CGIService \
-				ConfigParse/Location ConfigParse/ServerConfig \
-				ConfigParse/Server ConfigParse/ServerParser\
-				Headers/Header Headers/Headers \
-				Requests/Request Requests/Requests \
-				Response/Response Response/StatusCodes \
-				Cgi/PendingCgiTask Cgi/PendingCgiTasks Cgi/CgiExecutor
+				TreeSplit Utils SplitString FolderLs ConfigParser \
+				RootDir ActionMask CGIService Location ServerConfig \
+				Server ServerParser Header Headers Request Requests \
+				Response StatusCodes PendingCgiTask PendingCgiTasks \
+				CgiExecutor
+
+
+#FILES		:=	main Sockets WSPoll WSSignals Receptionist \
+#				Tools/TreeSplit Tools/Utils Tools/SplitString Tools/FolderLs \
+#				ConfigParse/ConfigParser ConfigParse/RootDir \
+#				ConfigParse/ActionMask ConfigParse/CGIService \
+#				ConfigParse/Location ConfigParse/ServerConfig \
+#				ConfigParse/Server ConfigParse/ServerParser\
+#				Headers/Header Headers/Headers \
+#				Requests/Request Requests/Requests \
+#				Response/Response Response/StatusCodes \
+#				Cgi/PendingCgiTask Cgi/PendingCgiTasks Cgi/CgiExecutor
 
 #<---------------------------------->LANG<---------------------------------->#
 LANG		:=	CPP
@@ -120,7 +129,7 @@ all : $(NAME)
 
 .SECONDEXPANSION:
 
-$(DEP_ROOT)%.d : %.$(SUFFIX) $(MK) | $$(call create_dir,$$(dir $$@))
+$(DEP_ROOT)%.d : %.$(SUFFIX) $(MK) | $$(call create_dir,$$(dir $$(DEP_ROOT)))
 	$(call msg_creating,Dependence,$*,$(BLUE))
 	$(CC) $(CFLAGS) -MMD -MF $@ $(INCLUDE) -c $< \
 		&& rm -rf $(addsuffix .o,$(notdir $*))
