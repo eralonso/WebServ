@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:10:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/22 12:39:54 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/23 18:37:25 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,9 @@
 # include <limits>
 # include <array>
 # include <algorithm>
+# include <sys/types.h>
+# include <sys/socket.h>
+# include <netdb.h>
 
 # include <ServerConfig.hpp>
 # include <TreeSplit.hpp>
@@ -44,10 +47,14 @@ private:
 	int		isSimpleDirective( std::string head );
 	int		isComplexDirective( std::string head );
 private:
+	//error_page
+	void			fillErrorPages( StringVector args );
 	int				parseErrorCode( std::string code );
+	//client_max_body_size
 	long			getMeasureLimit( int unit );
 	int				parseMeasure( std::string number );
 	long			parseSize( std::string number );
+	//listen
 	std::string		parseListenStrError( int ret, std::string aux );
 	std::string		parseHost( std::string arg, int& ret );
 	std::string		decompressIp( std::string ip );
@@ -58,6 +65,7 @@ private:
 	bool			checkSyntaxIp( std::string ip );
 	std::string		parsePort( std::string arg, int& ret );
 	bool			isValidPort( std::string port );
+	int				checkAvailableHostPort( std::string host, std::string port );
 private:
 	void	parseRoot( std::string body );
 	void	parseLocation( std::string head, std::string body );
