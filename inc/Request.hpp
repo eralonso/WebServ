@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/23 16:04:51 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/23 18:03:13 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,15 +30,12 @@ public:
 		RECVD_CHUNK,
 		RECVD_LAST_CHUNK,
 		RECVD_ALL,
-		DECODED,
 		RESP_RENDERED
 	}	t_status;
 private:
 	t_status					status;
 	struct pollfd				*clientPoll;
 	size_t						pending;
-	size_t 						headerSize;
-	size_t 						bodySize;
 	size_t 						chunkSize;
 	std::string					received;
 	std::string					protocol;
@@ -47,12 +44,10 @@ private:
 	std::string					query;
 	Headers						headers;
 	std::string					body;
+	bool						badRequest;
 	void 								parseRoute(void);
 	void 								parseFirstLine(const std::string &line);
 	void 								parseHeader(const std::string &line);
-	void 								parseHead(const std::string &head);
-	bool								checkHeaderCompleteRecv();
-	bool								checkCompleteRecv();
 	bool								getLine(std::string& line);
 	bool								processLineOnFdBond(const std::string &line);
 	bool								processLineOnRecvdStart(const std::string &line);
@@ -69,8 +64,7 @@ public:
 	Request(const Request& b);
 	Request&	operator=(const Request& b);
 	int bindClient(struct pollfd *clientPoll);
-	int appendRecv(const std::string &recv);
-	int									parse();
+	bool appendRecv(const std::string &recv);
 	t_status							getStatus() const;
 	struct pollfd*						getClientPoll() const;
 	std::string							getProtocol() const;
@@ -78,14 +72,15 @@ public:
 	std::string							getRoute() const;
 	std::string							getQuery() const;
 	const Headers&						getHeaders() const;
-	size_t								getContentLenght() const;
+	size_t								getBodyLength() const;
 	std::string							getBody() const;
+	bool								isCompleteRecv() const;
 	bool								isReadyToSend() const;
-	bool								isDecoded() const;
 	std::string							toString();
 	void								setBody(const std::string& content);
+	void								setReadyToSend();
 	int									setDummyRecv();
-	
+	void								logStatus();
 };
 
 #endif

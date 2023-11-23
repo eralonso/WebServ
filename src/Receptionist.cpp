@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/17 16:20:12 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/23 17:34:20 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,10 +177,17 @@ void	Receptionist::manageClient( socket_t clientFd, WSPoll& polls )
 				+ readed);
 		if (req)
 		{
-			req->appendRecv(readed);
-			if (req->parse())
+			if (req->appendRecv(readed))
+			{
 				clientPoll->events |= POLLOUT;
+				req->setReadyToSend();
+			}
 		}
+		else
+			Log::Info( "Request [ " \
+				+ SUtils::longToString( (long)clientPoll )\
+				+ " ]: " \
+				+ "not found");
 	}
 	else if ( clientPoll->revents & POLLOUT )
 	{
