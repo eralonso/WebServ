@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/22 15:02:43 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/23 16:24:58 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,18 @@ Request::Request(void)
 {
 	headerSize = std::string::npos;
 	bodySize = std::string::npos;
+	pending = 0;
 	clientPoll = nullptr;
 	status = IDLE;
-	parse();
 }
 
 Request::Request(struct pollfd *clientPoll)
 {
 	headerSize = std::string::npos;
 	bodySize = std::string::npos;
+	pending = 0;
 	this->clientPoll = clientPoll;
-	status = WAITING_RECV;
+	status = FD_BOND;
 }
 
 Request::~Request()
@@ -66,14 +67,16 @@ Request&	Request::operator=(const Request& b)
 int Request::bindClient(struct pollfd *clientPoll)
 {
 	this->clientPoll = clientPoll;
-	status = WAITING_RECV;
+	status = FD_BOND;
 	return (status);
 }
 
 int Request::appendRecv(const std::string &recv)
 {
-	if (status == WAITING_RECV)
-		received += recv;
+	std::string line;
+	received += recv;
+	while (getLine(line))
+		processLine(line);
 	return (status);
 }
 
@@ -137,7 +140,7 @@ void Request::parseHead(const std::string &head)
 			parseHeader(*it);
 		it++;
 	}
-	status = RECV_HEADER;
+	status = RECVD_HEADER;
 }
 
 int	Request::parse()
@@ -148,12 +151,12 @@ int	Request::parse()
 		parseHead(head);
 		headerSize += std::string(HEADER_SEP).size() * 2;
 	}
-	if (status == RECV_HEADER && checkCompleteRecv())
+	if (status == RECVD_HEADER && checkCompleteRecv())
 	{
 		setBody(received.substr(headerSize ,received.length() - headerSize));
-		status = RECV_DECODED;
+		status = DECODED;
 	}
-	return (status == RECV_DECODED);
+	return (status == DECODED);
 }
 
 Request::t_status Request::getStatus() const
@@ -206,18 +209,18 @@ bool Request::checkHeaderCompleteRecv()
 	std::string sep(HEADER_SEP);
 	sep += sep;
 	std::string head;
-	if (status == WAITING_RECV)
+	if (status == FD_BOND)
 	{
 		headerSize = received.find(sep);
 		if (headerSize != std::string::npos)
-			status = RECV_HEADER;
+			status = RECVD_HEADER;
 	}
-	return (status == RECV_HEADER);
+	return (status == RECVD_HEADER);
 }
 
 bool Request::checkCompleteRecv()
 {
-	if (status == RECV_HEADER)
+	if (status == RECVD_HEADER)
 	{
 		Header *head = headers.firstWithKey("Content-Lenght");
 		if (!head)
@@ -225,9 +228,139 @@ bool Request::checkCompleteRecv()
 		//TODO: atol could be used?
 		size_t contentSize = atol(head->getValue().c_str());
 		if (received.length() - headerSize >= contentSize)
-			status = RECV_ALL;
+			status = RECVD_ALL;
 	}
-	return (status == RECV_ALL);
+	return (status == RECVD_ALL);
+}
+
+bool Request::getLine(std::string& line)
+{
+	size_t found = received.find('\n', pending);
+	if (found == std::string::npos)
+		return false;
+	line = received.substr(pending, found - pending);
+	pending = found + 1;
+	return true;
+}
+
+bool Request::processLineOnFdBond(const std::string &line)
+{
+	size_t len = line.length();
+	if (len == 0 || (len == 1 && line[0] <= ' '))
+	{
+		status = RECVD_START;
+		return true;
+	}
+	parseFirstLine(line);
+	status = RECVD_REQ_LINE;
+	return true;
+}
+
+bool Request::processLineOnRecvdStart(const std::string &line)
+{
+	parseFirstLine(line);
+	status = RECVD_REQ_LINE;
+	return true;
+}
+
+bool Request::processLineOnRecvdReqLine(const std::string &line)
+{
+	size_t len = line.length();
+	if (len == 0 || (len == 1 && line[0] <= ' '))
+	{
+		status = RECVD_HEADER;
+		return true;
+	}
+	parseHeader(line);
+	return true;
+}
+
+bool Request::processLineOnRecvdHeader(const std::string &line)
+{
+	Header* clHead = headers.firstWithKey("Content-Length");
+	Header* teHead = headers.firstWithKey("Transfer-Encode");
+	if (teHead && teHead->getValue() == "chuncked")
+	{
+		status = RECVD_CHUNK;
+		return true;
+	}
+	else if (clHead)
+	{
+		size_t size = atoi(clHead->getValue().c_str());
+		if (received.size() - pending >= size)
+		{
+			status = RECVD_ALL;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Request::processLineOnRecvdChunkSize(const std::string &line)
+{
+	size_t len = line.length();
+	if (len == chunkSize)
+	{
+		body += line;
+		return true;
+	}
+	if ((len == chunkSize + 1) && (line[len - 1] <= ' '))
+	{
+		body += line.substr(0, len - 1);
+		return true;
+	}
+	return false;
+}
+
+bool Request::processLineOnRecvdChunk(const std::string &line)
+{
+	size_t len = line.length();
+	if (((len == 1 || (len == 2 && line[1] <= ' ')) && line[0] == '0' ))
+	{
+		chunkSize = 0;
+		status = RECVD_LAST_CHUNK;
+		return true;
+	}
+	chunkSize = atoi(line.c_str());
+	if (chunkSize > 0)
+	{
+		status = RECVD_CHUNK;
+		return true;
+	}
+	return false;
+}
+
+bool Request::processLineOnRecvdLastChunk(const std::string &line)
+{
+	size_t len = line.length();
+	if (len == 0 || (len == 1 && line[0] <= ' '))
+	{
+		status = RECVD_ALL;
+		return true;
+	}
+	return false;
+}
+
+bool Request::processLine(const std::string &line)
+{
+	switch (status)
+	{
+	case FD_BOND:
+		return (processLineOnFdBond(line));		
+	case RECVD_START:
+		return (processLineOnRecvdStart(line));		
+	case RECVD_REQ_LINE:
+		return (processLineOnRecvdReqLine(line));		
+	case RECVD_HEADER:
+		return (processLineOnRecvdHeader(line));		
+	case RECVD_CHUNK_SIZE:
+		return (processLineOnRecvdChunkSize(line));		
+	case RECVD_CHUNK:
+		return (processLineOnRecvdChunk(line));		
+	case RECVD_LAST_CHUNK:
+		return (processLineOnRecvdLastChunk(line));		
+	}
+	return false;
 }
 
 bool								Request::isReadyToSend() const
@@ -237,7 +370,7 @@ bool								Request::isReadyToSend() const
 
 bool								Request::isDecoded() const
 {
-	return (status == RECV_DECODED);
+	return (status == DECODED);
 }
 
 std::string							Request::toString()
@@ -257,7 +390,7 @@ void								Request::setBody(const std::string& content)
 
 int Request::setDummyRecv()
 {
-	if (status == WAITING_RECV)
+	if (status == FD_BOND)
 	{
 		std::string init("GET / Http/1.1\r\n");
 		init += std::string("Host: localhost\r\n");
