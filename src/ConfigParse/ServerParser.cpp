@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:41:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/23 18:41:01 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/23 19:13:19 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,9 +144,8 @@ void	ServerParser::parseListen( std::string body )
 	host = parseHost( args[ 0 ].substr( 0, sep ), ret );
 	if ( ret < 0 )
 		throw std::logic_error( parseListenStrError( ret, args[ 0 ] ) );
-	ret = checkAvailableHostPort( host, port );
-	if ( ret )
-		throw std::logic_error( gai_strerror( ret ) );
+	if ( checkAvailableHostPort( host, port ) )
+		throw std::logic_error( "host not found \"" + host + "\"" );
 	this->_host = host;
 	this->_port = std::atoi( port.c_str() );
 }

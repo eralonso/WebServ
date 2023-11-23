@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 17:25:58 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/23 19:00:01 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/23 19:12:51 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,6 @@ int	ServerParser::checkAvailableHostPort( std::string host, std::string port )
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
 	ret = getaddrinfo( host.c_str(), port.c_str(), &hints, &res );
-	if ( !ret )
-		Log::Error( "There's nothing" );
 	freeaddrinfo( res );
 	return ( ret );
 }
