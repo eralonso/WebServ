@@ -6,92 +6,74 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:58:05 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 15:45:56 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/24 13:58:12 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Location.hpp>
 #include <TreeSplit.hpp>
 
-Location::Location()
-{
-}
+Location::Location( void ) {}
 
-Location::Location(std::string head, std::string body)
+Location::Location( std::string path, std::string rest )
 {
-	//TODO get attributes from get and
-	//process the body to obtain more attributes
-	std::string content = body;
-	while (content.length() > 0)
+	std::string head;
+	std::string body;
+	std::string content( rest );
+
+	this->_path = path;
+	while ( content.length() > 0 )
 	{
-		if (head == "location")
+		if ( TreeSplit::get_pair( head, body, content ) )
 		{
-			std::string head;
-			std::string body;
-			if (TreeSplit::get_pair(head, body, content))
-			{
-				//TODO Analyze Head n Body to look for attributes and
-				//set them or add them to the containers
-				// path;
-				// rootDir;
-				// actionMask;
-				// servicesCGI;
-				try
-				{
-					CGIService svc;
-					servicesCGI.push_back(svc);
-				}
-				catch(const std::exception& e)
-				{
-					;
-					//TODO LogError and thow exception to inform parent to clean
-				}
-			}
 		}
-		else
-		{
-			;
-			//TODO LogError and thow exception to inform parent to clean
-		}
-	}}
-
-Location::~Location()
-{
+		else if ( content.length() > 0 )
+			throw std::logic_error( "Unxpected \"}\"" );
+		head.clear();
+		body.clear();
+	}
 }
 
-Location::Location(const Location& b)
+Location::~Location( void ) {}
+
+Location::Location( const Location& lc )
 {
-	path = b.path;
-	rootDir = b.rootDir;
-	actionMask = b.actionMask;
-	servicesCGI = b.servicesCGI;
+	_path = lc._path;
+	_rootDir = lc._rootDir;
+	_actionMask = lc._actionMask;
+	_servicesCGI = lc._servicesCGI;
 }
 
-Location& 	Location::operator=(const Location& b)
+Location& 	Location::operator=( const Location& lc )
 {
-	path = b.path;
-	rootDir = b.rootDir;
-	actionMask = b.actionMask;
-	servicesCGI = b.servicesCGI;
-	return (*this);
+	_path = lc._path;
+	_rootDir = lc._rootDir;
+	_actionMask = lc._actionMask;
+	_servicesCGI = lc._servicesCGI;
+	return ( *this );
 }
 
-std::string					Location::getPath(void)
+std::string	Location::getPath( void ) const
 {
-	return path;
+	return ( this->_path );
 }
 
-RootDir						Location::getRootDir(void)
+StringVector	Location::getSplitedPath( void ) const
 {
-	return rootDir;
+	return ( this->_splitedPath );
 }
 
-ActionMask					Location::getActionMask(void)
+RootDir	Location::getRootDir( void ) const
 {
-	return actionMask;
+	return ( this->_rootDir );
 }
 
-std::vector<CGIService>		Location::getServicesCGI(void)
+ActionMask	 Location::getActionMask( void ) const
 {
-	return servicesCGI;
+	return ( this->_actionMask );
+}
+
+std::vector< CGIService>	Location::getServicesCGI( void ) const
+{
+	return ( this->_servicesCGI );
 }

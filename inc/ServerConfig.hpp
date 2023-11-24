@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 12:25:25 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/21 12:14:35 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/24 13:51:05 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,13 @@
 # include <Location.hpp>
 # include <RootDir.hpp>
 # include <StringErrors.hpp>
+# include <Defines.hpp>
 
 # define MIN_ERROR_CODE 300 
 # define MAX_ERROR_CODE 599 
 
 typedef std::map< unsigned int, std::string >	ErrorPagesMap;
 typedef std::vector< Location >					LocationsVector;
-typedef std::vector< std::string >				StringVector;
 
 class ServerConfig
 {

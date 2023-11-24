@@ -6,12 +6,14 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:10:16 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/14 17:21:46 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/24 13:56:12 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _DEFINES_HPP_
 # define _DEFINES_HPP_
+
+# include <vector>
 
 # define BUFFER_SIZE 3000
 # define MAX_CLIENTS 10
@@ -29,6 +31,7 @@
 
 # define ISSPACE "\t\n\v\f\r "
 
-typedef int	socket_t;
+typedef int							socket_t;
+typedef std::vector< std::string >	StringVector;
 
 #endif
