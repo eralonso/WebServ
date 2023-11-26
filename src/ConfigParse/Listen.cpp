@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 17:25:58 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/23 19:12:51 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/26 19:28:18 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ std::string	ServerParser::parseHost( std::string arg, int& ret )
 std::string	ServerParser::parseListenStrError( int ret, std::string aux )
 {
 	int														error;
-	std::array< std::string, PARSE_LISTEN_ERRORS_SIZE + 1 >	errors = { \
+	std::string	errors[ PARSE_LISTEN_ERRORS_SIZE + 1 ] = { \
 		"Success", \
 		"invalid port in \"" + aux + "\" of the \"listen\"", \
 		"no host in \"" + aux + "\" of the \"listen\" directive", \

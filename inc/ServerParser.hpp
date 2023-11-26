@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:10:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/23 18:37:25 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/26 19:30:29 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 # include <string>
 # include <limits>
-# include <array>
 # include <algorithm>
 # include <sys/types.h>
 # include <sys/socket.h>
@@ -32,16 +31,16 @@
 
 # define IP_VALID_CHARS "0123456789."
 
-typedef std::array< std::string, SIZE_SIMPLE_OPTIONS >	simpleDirectiveArray;
-typedef std::array< std::string, SIZE_COMPLEX_OPTIONS >	complexDirectiveArray;
+typedef std::string	simpleDirectiveArray[ SIZE_SIMPLE_OPTIONS ];
+typedef std::string	complexDirectiveArray[ SIZE_COMPLEX_OPTIONS ];
 
 class ServerParser: public ServerConfig
 {
 private:
 	typedef void ( ServerParser::*t_parseSimpleDirective )( std::string );
 	typedef void ( ServerParser::*t_parseComplexDirective )( std::string, std::string );
-	typedef std::array< t_parseSimpleDirective, SIZE_SIMPLE_OPTIONS >	t_parseSimpleDirectiveArray;
-	typedef std::array< t_parseComplexDirective, SIZE_COMPLEX_OPTIONS >	t_parseComplexDirectiveArray;
+	typedef t_parseSimpleDirective	t_parseSimpleDirectiveArray[ SIZE_SIMPLE_OPTIONS ];
+	typedef t_parseComplexDirective	t_parseComplexDirectiveArray[ SIZE_COMPLEX_OPTIONS ];
 private:
 	void	parseDirective( std::string head, std::string body );
 	int		isSimpleDirective( std::string head );

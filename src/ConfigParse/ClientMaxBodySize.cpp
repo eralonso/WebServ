@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 17:59:08 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/23 17:59:49 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/26 19:27:03 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@ long	ServerParser::getMeasureLimit( int unit )
 
 int	ServerParser::parseMeasure( std::string number )
 {
-	std::array< char, 4 >			units = { 'b', 'k', 'm', 'g' };
-	std::array< char, 4 >::iterator	it;
-	size_t							i;
-	char							unit;
-	int								res;
+	std::string				units = "bkmg";
+	std::string::iterator	it;
+	size_t					i;
+	char					unit;
+	int						res;
 
 	res = 0;
 	i = number.find_first_not_of( "0123456789" );
