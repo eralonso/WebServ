@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/23 19:16:09 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/27 13:43:13 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,19 @@
 #include "../../inc/Utils.hpp"
 #include "../../inc/SplitString.hpp"
 #include <Request.hpp>
+#include <Client.hpp>
 
 Request::Request(void)
 {
 	pending = 0;
-	clientPoll = nullptr;
+	client = nullptr;
 	status = IDLE;
 }
 
-Request::Request(struct pollfd *clientPoll)
+Request::Request(Client *cli)
 {
 	pending = 0;
-	this->clientPoll = clientPoll;
+	client = cli;
 	status = FD_BOND;
 }
 
@@ -37,7 +38,7 @@ Request::Request(const Request& b)
 {
 	badRequest = false;
 	chunkSize = b.chunkSize;
-	clientPoll = b.clientPoll;
+	client = b.client;
 	status = b.status;
 	method = b.method;
 	route = b.route;
@@ -50,7 +51,7 @@ Request&	Request::operator=(const Request& b)
 {
 	badRequest = false;
 	chunkSize = b.chunkSize;
-	clientPoll = b.clientPoll;
+	client = b.client;
 	status = b.status;
 	method = b.method;
 	route = b.route;
@@ -60,9 +61,9 @@ Request&	Request::operator=(const Request& b)
 	return (*this);
 }
 
-int Request::bindClient(struct pollfd *clientPoll)
+int Request::bindClient(Client* cli)
 {
-	this->clientPoll = clientPoll;
+	this->client = cli;
 	status = FD_BOND;
 	return (status);
 }
@@ -147,9 +148,9 @@ Request::t_status Request::getStatus() const
 	return (status);
 }
 
-struct pollfd* Request::getClientPoll() const
+Client* Request::getClient() const
 {
-	return (clientPoll);
+	return (client);
 }
 
 std::string Request::getProtocol() const
@@ -341,6 +342,12 @@ bool Request::processLine(const std::string &line)
 bool								Request::isReadyToSend() const
 {
 	return (status == RESP_RENDERED);
+}
+
+
+bool								Request::isReceiving() const
+{
+	return (status < RECVD_ALL);
 }
 
 std::string							Request::toString()

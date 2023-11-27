@@ -6,14 +6,14 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/23 18:03:13 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/27 13:41:57 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _REQUEST_HPP_
 # define _REQUEST_HPP_
 # include <string>
-# include <poll.h>
+# include <Client.hpp>
 # include "Headers.hpp"
 
 class Request
@@ -34,7 +34,7 @@ public:
 	}	t_status;
 private:
 	t_status					status;
-	struct pollfd				*clientPoll;
+	Client						*client;
 	size_t						pending;
 	size_t 						chunkSize;
 	std::string					received;
@@ -59,14 +59,14 @@ private:
 	bool								processLine(const std::string& line);
 public:
 	Request(void);
-	Request(struct pollfd *clientPoll);
+	Request(Client *client);
 	~Request();
 	Request(const Request& b);
 	Request&	operator=(const Request& b);
-	int bindClient(struct pollfd *clientPoll);
+	int bindClient(Client* cli);
 	bool appendRecv(const std::string &recv);
 	t_status							getStatus() const;
-	struct pollfd*						getClientPoll() const;
+	Client*								getClient() const;
 	std::string							getProtocol() const;
 	std::string							getMethod() const;
 	std::string							getRoute() const;
@@ -76,6 +76,7 @@ public:
 	std::string							getBody() const;
 	bool								isCompleteRecv() const;
 	bool								isReadyToSend() const;
+	bool								isReceiving() const;
 	std::string							toString();
 	void								setBody(const std::string& content);
 	void								setReadyToSend();

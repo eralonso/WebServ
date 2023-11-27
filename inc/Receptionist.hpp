@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:43:42 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/17 13:29:16 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/27 13:24:02 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,12 @@
 #include "Sockets.hpp"
 #include "WSPoll.hpp"
 #include "Utils.hpp"
-#include "Requests.hpp"
+#include "Clients.hpp"
 
-class Receptionist
+class Receptionist : public Clients
 {
 private:
 	WSPoll			polls;
-	Requests		requests;
 	int				port;
 	int				backlog;
 	int				timeout;
@@ -35,7 +34,6 @@ public:
 	~Receptionist();
 	Receptionist(const Receptionist& b);
 	Receptionist& 	operator=(const Receptionist& b);
-	int				addNewClient( socket_t serverFd, WSPoll& polls );
 	int				mainLoop(void);
 	std::string		getHtml( void );
 	std::string		getHeader( void );
@@ -43,6 +41,7 @@ public:
 	std::string		getResponse( Request *req );
 	void			sendResponse( socket_t connected, std::string response );
 	int				readRequest( socket_t clientFd, std::string& readed );
+	int				addNewClient( socket_t serverFd, WSPoll& polls );
 	void			manageClient( socket_t clientFd, WSPoll& polls );
 };
 

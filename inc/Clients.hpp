@@ -1,32 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Requests.hpp                                       :+:      :+:    :+:   */
+/*   Clients.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/17 11:53:27 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/27 13:18:18 by omoreno-         ###   ########.fr       */
+/*   Created: 2023/11/27 10:42:36 by omoreno-          #+#    #+#             */
+/*   Updated: 2023/11/27 12:07:14 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef _REQUESTS_HPP_
-# define _REQUESTS_HPP_
-# include <poll.h>
-# include <vector>
-# include <Client.hpp>
-# include "Request.hpp"
+#ifndef _CLIENTS_HPP_
+# define _CLIENTS_HPP_
 
-class Requests : public std::vector<Request*>
+# include <Client.hpp>
+# include <map>
+
+class Clients : public std::map<struct pollfd*, Client*>
 {
 private:
 public:
-	Requests();
-	~Requests();
-	Requests(const Requests& b);
-	Requests& operator=(const Requests& b);
-	Request* appendRequest(Client*);
-	int	eraseRequest();
+	Clients(/* args */);
+	~Clients();
+	Client*	newClient(struct pollfd* poll);
+	int		eraseClient(Client* cli);
+	int		eraseClient(struct pollfd* poll);
 };
+
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:58:31 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/22 15:00:12 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/27 13:19:11 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,54 +19,39 @@ Requests::Requests()
 Requests::~Requests()
 {
 	while (this->size() > 0)
-	{
-		Request* req = this->begin()->second;
-		if (req)
-			eraseRequest(req);
-	}
+		eraseRequest();
 }
 
-Requests::Requests(const Requests& b) : std::map<struct pollfd*, Request*>(b)
+Requests::Requests(const Requests& b) : std::vector<Request*>(b)
 {
 }
 
 Requests& Requests::operator=(const Requests& b)
 {
-	std::map<struct pollfd*, Request*>::operator=(b);
+	std::vector<Request*>::operator=(b);
 	return (*this);
 }
 
-Request* Requests::appendRequest(struct pollfd* client)
+Request* Requests::appendRequest(Client *cli)
 {
-	if (!client)
-		return (nullptr);
-	Request *req = new Request(client);
+	Request *req = new Request(cli);
 	if (!req)
 		return (nullptr);
-	insert(std::pair<struct pollfd*, Request*>(client, req));
+	push_back(req);
 	return (req);
 }
 
-int	Requests::eraseRequest(Request* req)
+int	Requests::eraseRequest()
 {
-	if (req)
+	if (size() > 0)
 	{
-		delete req;
-		struct pollfd* client = req->getClientPoll();
-		if (client)
-			return (erase(client));
-	}
-	return (0);
-}
-
-int	Requests::eraseRequest(struct pollfd*  clientPoll)
-{
-	if (clientPoll)
-	{
-		Request* req = operator[](clientPoll);
+		Request* req = *begin();
 		if (req)
+		{
+			erase(begin());
 			delete req;
-		return (erase(clientPoll));
+			return (1);
+		}
 	}
 	return (0);
 }

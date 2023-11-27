@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/23 17:34:20 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/27 13:24:34 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,37 +42,6 @@ Receptionist& 	Receptionist::operator=(const Receptionist& b)
 	backlog = b.backlog;
 	timeout = b.timeout;
 	return *this;
-}
-
-int	Receptionist::addNewClient( socket_t serverFd, WSPoll& polls )
-{
-	socket_t	clientFd;
-	struct pollfd	*clientPoll;
-	
-	clientFd = Sockets::acceptConnection( serverFd );
-	if ( clientFd < 0 )
-		return ( -1 );
-	if ( polls.addPollfd( clientFd, POLLIN, 0, CPOLLFD ) == false )
-	{
-		Log::Error( "Too many clients trying to connect to server" );
-		close( clientFd );
-	}
-	try
-	{
-		clientPoll = &polls[ clientFd ];
-	}
-	catch ( std::out_of_range& e ) { 
-		Log::Error( "Failed to insert clientPoll" );
-		close( clientFd );
-		return ( -1 );
-	}
-	if (!requests.appendRequest(&polls[ clientFd ]))
-	{
-		Log::Error( "Failed to append Request" );
-		close( clientFd );
-		return ( -1 );
-	}
-	return ( 1 );
 }
 
 std::string	Receptionist::getHtml( void )
@@ -152,6 +121,37 @@ int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
 	return ( 1 );
 }
 
+int	Receptionist::addNewClient( socket_t serverFd, WSPoll& polls )
+{
+	socket_t	clientFd;
+	struct pollfd	*clientPoll;
+	
+	clientFd = Sockets::acceptConnection( serverFd );
+	if ( clientFd < 0 )
+		return ( -1 );
+	if ( polls.addPollfd( clientFd, POLLIN, 0, CPOLLFD ) == false )
+	{
+		Log::Error( "Too many clients trying to connect to server" );
+		close( clientFd );
+	}
+	try
+	{
+		clientPoll = &polls[ clientFd ];
+	}
+	catch ( std::out_of_range& e ) { 
+		Log::Error( "Failed to insert clientPoll" );
+		close( clientFd );
+		return ( -1 );
+	}
+	if (!newClient(&polls[ clientFd ]))
+	{
+		Log::Error( "Failed to append Request" );
+		close( clientFd );
+		return ( -1 );
+	}
+	return ( 1 );
+}
+
 void	Receptionist::manageClient( socket_t clientFd, WSPoll& polls )
 {
 	struct pollfd	*clientPoll;
@@ -162,41 +162,32 @@ void	Receptionist::manageClient( socket_t clientFd, WSPoll& polls )
 		clientPoll = &polls[ clientFd ];
 	}
 	catch ( std::out_of_range& e ) { return ; }
-	if ( clientPoll->revents & POLLIN )
+	Client * cli = operator[](clientPoll);
+	if (cli)
 	{
-		//Locate Request
-		Request * req = requests[clientPoll];
-		if ( readRequest( clientFd, readed ) < 0 )
+		if ( clientPoll->revents & POLLIN )
 		{
-			polls.closePoll( clientFd );
-			return ;
-		}
-		Log::Info( "Readed [ " \
-				+ SUtils::longToString( clientFd )\
-				+ " ]: " \
-				+ readed);
-		if (req)
-		{
-			if (req->appendRecv(readed))
+			if ( readRequest( clientFd, readed ) < 0 )
 			{
-				clientPoll->events |= POLLOUT;
-				req->setReadyToSend();
+				polls.closePoll( clientFd );
+				return ;
 			}
+			Log::Info( "Readed [ " \
+					+ SUtils::longToString( clientFd )\
+					+ " ]: " \
+					+ readed);
+			if (cli->manageRecv(readed))
+				clientPoll->events |= POLLOUT;
 		}
-		else
-			Log::Info( "Request [ " \
-				+ SUtils::longToString( (long)clientPoll )\
-				+ " ]: " \
-				+ "not found");
+		else if ( clientPoll->revents & POLLOUT )
+			cli->managePollout();
 	}
-	else if ( clientPoll->revents & POLLOUT )
+	else
 	{
-		Request * req = requests[clientPoll];
-		if (req && req->isReadyToSend())
-		{
-			sendResponse( clientFd, getResponse() );
-			clientPoll->events &= ~POLLOUT;
-		}
+		Log::Info( "Client for [ " \
+			+ SUtils::longToString( (long)clientPoll )\
+			+ " ]: " \
+			+ "not found");
 	}
 }
 
