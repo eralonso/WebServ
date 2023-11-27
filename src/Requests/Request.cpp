@@ -6,26 +6,24 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/27 13:43:13 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/27 17:26:48 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <string>
-#include "../../inc/Utils.hpp"
-#include "../../inc/SplitString.hpp"
+#include <Utils.hpp>
+#include <SplitString.hpp>
 #include <Request.hpp>
 #include <Client.hpp>
 
 Request::Request(void)
 {
-	pending = 0;
 	client = nullptr;
 	status = IDLE;
 }
 
 Request::Request(Client *cli)
 {
-	pending = 0;
 	client = cli;
 	status = FD_BOND;
 }
@@ -66,26 +64,6 @@ int Request::bindClient(Client* cli)
 	this->client = cli;
 	status = FD_BOND;
 	return (status);
-}
-
-bool Request::appendRecv(const std::string &recv)
-{
-	std::string line;
-	received += recv;
-	Log::Info("Called appendRecv with:\n" + recv);
-	Log::Info("before while in appendRecv");
-	logStatus();
-	while (!badRequest && getLine(line))
-	{
-		Log::Info("prev status ");
-		logStatus();
-		Log::Info("getLine returned:\n" + line);
-		bool res = processLine(line);
-		Log::Info("resulting in : " + std::string(res ? "true" : "false"));
-		logStatus();
-	}
-	Log::Info("after while in appendRecv isCompleteRecv = " + std::string(isCompleteRecv() ? "true" : "false"));
-	return (isCompleteRecv());
 }
 
 void Request::parseRoute(void)
@@ -193,16 +171,6 @@ bool Request::isCompleteRecv() const
 	return (status == RECVD_ALL);
 }
 
-bool Request::getLine(std::string& line)
-{
-	size_t found = received.find('\n', pending);
-	if (found == std::string::npos)
-		return false;
-	line = received.substr(pending, found - pending);
-	pending = found + 1;
-	return true;
-}
-
 bool Request::processLineOnFdBond(const std::string &line)
 {
 	size_t len = line.length();
@@ -230,11 +198,6 @@ bool Request::processLineOnRecvdReqLine(const std::string &line)
 	{
 		Log::Info("processLineOnRecvdReqLine detect Header End");
 		status = RECVD_HEADER;
-		if (received.size() == pending) 
-		{
-			Log::Info("processLineOnRecvdReqLine set RECVD_ALL");
-			status = RECVD_ALL;
-		}
 		return true;
 	}
 	parseHeader(line);
@@ -253,7 +216,7 @@ bool Request::processLineOnRecvdHeader(const std::string &line)
 	if (clHead)
 	{
 		size_t size = atoi(clHead->getValue().c_str());
-		if (received.size() - pending >= size)
+		if (client->getPendingSize() >= size)
 		{
 			status = RECVD_ALL;
 			return true;
@@ -367,23 +330,6 @@ void Request::setReadyToSend()
 {
 	if (status == RECVD_ALL)
 		status = RESP_RENDERED;
-}
-
-int Request::setDummyRecv()
-{
-	if (status == FD_BOND)
-	{
-		std::string init("GET / Http/1.1\r\n");
-		init += std::string("Host: localhost\r\n");
-		init += std::string("Content-Type: text/xml; charset=utf-8\r\n");
-		init += std::string("Content-Lenght: 6\r\n");
-		init += std::string("Accept-Language: en-us\r\n");
-		init += std::string("Accept-Encoding: gzip, deflate\r\n");
-		init += std::string("\r\n");
-		init += std::string("NoBody\r\n");
-		return (appendRecv(init));
-	}
-	return (0);
 }
 
 void Request::logStatus()

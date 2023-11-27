@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:53:27 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/27 13:18:18 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/27 15:43:44 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,7 @@
 # define _REQUESTS_HPP_
 # include <poll.h>
 # include <vector>
-# include <Client.hpp>
-# include "Request.hpp"
+# include <Request.hpp>
 
 class Requests : public std::vector<Request*>
 {

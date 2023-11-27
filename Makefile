@@ -6,7 +6,7 @@
 #    By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/22 10:08:41 by eralonso          #+#    #+#              #
-#    Updated: 2023/11/22 18:15:47 by eralonso         ###   ########.fr        #
+#    Updated: 2023/11/27 15:36:50 by omoreno-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,7 +50,7 @@ LIB_SEARCH	:=
 HEADERS		:=	$(INC_ROOT)
 
 #<---------------------------------->DIRS<----------------------------------->#
-SRC_DIRS	:=	./:Tools/:ConfigParse/:Headers/:Requests/:Response/:Cgi
+SRC_DIRS	:=	./:Tools/:ConfigParse/:Clients/:Headers/:Requests/:Response/:Cgi
 SRC_DIRS	:=	$(subst :,$(SPACE),$(SRC_DIRS))
 SRC_DIRS	:=	$(addprefix $(SRC_ROOT),$(SRC_DIRS))
 SRC_DIRS	:=	$(subst $(SPACE),:,$(SRC_DIRS))
@@ -60,8 +60,8 @@ SRC_DIRS	:=	$(subst $(SPACE),:,$(SRC_DIRS))
 FILES		:=	main Sockets WSPoll WSSignals Receptionist \
 				TreeSplit Utils SplitString FolderLs ConfigParser \
 				RootDir ActionMask CGIService Location ServerConfig \
-				Server ServerParser Header Headers Request Requests \
-				Response StatusCodes PendingCgiTask PendingCgiTasks \
+				Server ServerParser Client Clients Header Headers Request \
+				Requests Response StatusCodes PendingCgiTask PendingCgiTasks \
 				CgiExecutor
 
 

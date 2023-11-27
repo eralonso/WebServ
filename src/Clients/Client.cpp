@@ -6,22 +6,23 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/27 14:20:11 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/27 18:15:11 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/Client.hpp"
-#include "Client.hpp"
-#include "Response.hpp"
+#include "../../inc/Response.hpp"
 
 Client::Client(void)
 {
 	this->clientPoll = nullptr;
+	pending = 0;
 }
 
 Client::Client(struct pollfd *clientPoll)
 {
 	this->clientPoll = clientPoll;
+	pending = 0;
 }
 
 
@@ -56,10 +57,10 @@ Request* Client::findCompleteRecvRequest()
 	Requests::iterator	ite = end();
 	while (it != ite)
 	{
-		req = *it;
+		ite--;
+		req = *ite;
 		if(req && req->isCompleteRecv())
 			return (req);
-		it++;
 	}
 	return nullptr;
 }
@@ -67,35 +68,65 @@ Request* Client::findCompleteRecvRequest()
 Request* Client::findReadyToSendRequest()
 {
 	Request* req;
-	Requests::iterator	it = begin();
 	Requests::iterator	ite = end();
-	while (it != ite)
+	if (size() > 0)
 	{
-		req = *it;
+		ite--;
+		req = *ite;
 		if(req && req->isReadyToSend())
 			return (req);
-		it++;
 	}
 	return nullptr;
 }
 
 int Client::manageRecv(std::string recv)
 {
-	Request* req = findRecvRequest();
-	if (req)
+	received += recv;
+	std::string line;
+	bool		fail = false;
+	while (!fail && getLine(line))
 	{
-		req->appendRecv(recv);
-		return (1);
+		Request* req = findRecvRequest();
+		if (req)
+			req->processLine(line);
+		else
+		{
+			req = appendRequest(this);
+			if (req)
+				req->processLine(line);
+			else
+				fail = true;
+		}
+	}
+	purgeUsedRecv();
+	if (fail)
+	{
+		Log::Error("Coudn't create new Request");
+		return 1;
 	}
 	return 0;
 }
 
+int	Client::manageCompleteRecv()
+{
+	Request* req;
+	int count = 0;
+	while ((req = findCompleteRecvRequest()))
+	{
+		req->setReadyToSend();
+		count++;
+	}
+	return (count);
+}
+
 int	Client::managePollout()
 {
-	Request* req = findReadyToSendRequest();
-	if (req)
-		return (sendResponse(getResponse(req)));
-	return 0;
+	Request* req;
+	int count = 0;
+	while ((req = findReadyToSendRequest()))
+		if (sendResponse(getResponse(req)))
+			count++;
+	return count;
 }
 
 std::string	Client::getHtml( void )
@@ -149,3 +180,41 @@ int	Client::sendResponse(std::string resp)
 	}
 	return (0);
 }
+
+bool Client::getLine(std::string& line)
+{
+	size_t found = received.find('\n', pending);
+	if (found == std::string::npos)
+		return false;
+	line = received.substr(pending, found - pending);
+	pending = found + 1;
+	return true;
+}
+
+size_t	Client::getPendingSize() const
+{
+	return (received.size() - pending);
+}
+
+int Client::setDummyRecv()
+{
+	std::string init("GET / Http/1.1\r\n");
+	init += std::string("Host: localhost\r\n");
+	init += std::string("Content-Type: text/xml; charset=utf-8\r\n");
+	init += std::string("Content-Lenght: 6\r\n");
+	init += std::string("Accept-Language: en-us\r\n");
+	init += std::string("Accept-Encoding: gzip, deflate\r\n");
+	init += std::string("\r\n");
+	init += std::string("NoBody\r\n");
+	received += init;
+	return (1);
+}
+
+size_t	Client::purgeUsedRecv()
+{
+	size_t pendSize = getPendingSize();
+	received = received.substr(pending, pendSize);
+	pending = 0;
+	return (pendSize);
+}
+

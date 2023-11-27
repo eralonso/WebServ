@@ -3,23 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   Sockets.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 13:56:30 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/14 16:29:03 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/27 17:25:58 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _SOCKETS_HPP_
 # define _SOCKETS_HPP_
 
+# include <Defines.hpp>
+# include <Utils.hpp>
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <fcntl.h>
 # include <iostream>
-
-# include "Defines.hpp"
-# include "Utils.hpp"
 
 class Sockets
 {

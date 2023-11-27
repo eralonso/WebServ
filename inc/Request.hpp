@@ -6,15 +6,16 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/27 13:41:57 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/27 16:56:53 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _REQUEST_HPP_
 # define _REQUEST_HPP_
 # include <string>
-# include <Client.hpp>
-# include "Headers.hpp"
+# include <Headers.hpp>
+
+class Client;
 
 class Request
 {
@@ -34,10 +35,8 @@ public:
 	}	t_status;
 private:
 	t_status					status;
-	Client						*client;
-	size_t						pending;
 	size_t 						chunkSize;
-	std::string					received;
+	Client*						client;
 	std::string					protocol;
 	std::string					method;
 	std::string					route;
@@ -48,7 +47,6 @@ private:
 	void 								parseRoute(void);
 	void 								parseFirstLine(const std::string &line);
 	void 								parseHeader(const std::string &line);
-	bool								getLine(std::string& line);
 	bool								processLineOnFdBond(const std::string &line);
 	bool								processLineOnRecvdStart(const std::string &line);
 	bool								processLineOnRecvdReqLine(const std::string &line);
@@ -56,7 +54,6 @@ private:
 	bool								processLineOnRecvdChunkSize(const std::string &line);
 	bool								processLineOnRecvdChunk(const std::string &line);
 	bool								processLineOnRecvdLastChunk(const std::string &line);
-	bool								processLine(const std::string& line);
 public:
 	Request(void);
 	Request(Client *client);
@@ -64,7 +61,6 @@ public:
 	Request(const Request& b);
 	Request&	operator=(const Request& b);
 	int bindClient(Client* cli);
-	bool appendRecv(const std::string &recv);
 	t_status							getStatus() const;
 	Client*								getClient() const;
 	std::string							getProtocol() const;
@@ -80,8 +76,8 @@ public:
 	std::string							toString();
 	void								setBody(const std::string& content);
 	void								setReadyToSend();
-	int									setDummyRecv();
 	void								logStatus();
+	bool								processLine(const std::string& line);
 };
 
 #endif
