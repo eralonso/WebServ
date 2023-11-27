@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:10:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/26 19:30:29 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/27 16:15:48 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <string>
 # include <limits>
 # include <algorithm>
+# include <map>
 # include <sys/types.h>
 # include <sys/socket.h>
 # include <netdb.h>
@@ -24,28 +25,34 @@
 # include <TreeSplit.hpp>
 # include <Utils.hpp>
 
-# define SIZE_SIMPLE_OPTIONS 5
-# define SIZE_COMPLEX_OPTIONS 1
+# define SIZE_SIMPLE_DIRECTIVES 5
+# define SIZE_COMPLEX_DIRECTIVES 1
+# define SIZE_DIRECTIVES ( SIZE_SIMPLE_DIRECTIVES + SIZE_COMPLEX_DIRECTIVES )
 
 # define PARSE_LISTEN_ERRORS_SIZE 3
 
 # define IP_VALID_CHARS "0123456789."
 
-typedef std::string	simpleDirectiveArray[ SIZE_SIMPLE_OPTIONS ];
-typedef std::string	complexDirectiveArray[ SIZE_COMPLEX_OPTIONS ];
+typedef std::string	simpleDirectiveArray[ SIZE_SIMPLE_DIRECTIVES + 1 ];
+typedef std::string	complexDirectiveArray[ SIZE_COMPLEX_DIRECTIVES + 1 ];
 
 class ServerParser: public ServerConfig
 {
 private:
 	typedef void ( ServerParser::*t_parseSimpleDirective )( std::string );
 	typedef void ( ServerParser::*t_parseComplexDirective )( std::string, std::string );
-	typedef t_parseSimpleDirective	t_parseSimpleDirectiveArray[ SIZE_SIMPLE_OPTIONS ];
-	typedef t_parseComplexDirective	t_parseComplexDirectiveArray[ SIZE_COMPLEX_OPTIONS ];
+	typedef t_parseSimpleDirective	t_parseSimpleDirectiveArray[ SIZE_SIMPLE_DIRECTIVES ];
+	typedef t_parseComplexDirective	t_parseComplexDirectiveArray[ SIZE_COMPLEX_DIRECTIVES ];
 private:
+	static const std::string 				_directives[ SIZE_DIRECTIVES ];
+	static std::pair< std::string, bool >	_canRepeatDirectivePair[ SIZE_DIRECTIVES + 1 ];
+	static std::map< std::string, bool >	_canRepeatDirective;
+	std::map< const std::string, bool >		_isSet;
+private:
+	//parse
 	void	parseDirective( std::string head, std::string body );
 	int		isSimpleDirective( std::string head );
 	int		isComplexDirective( std::string head );
-private:
 	//error_page
 	void			fillErrorPages( StringVector args );
 	int				parseErrorCode( std::string code );

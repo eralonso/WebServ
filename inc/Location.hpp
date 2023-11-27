@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/24 13:55:50 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/27 17:05:41 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,17 +24,18 @@
 class Location
 {
 private:
-	std::string				_path;
-	StringVector			_splitedPath;
-	RootDir					_rootDir;
-	ActionMask				_actionMask;
-	std::vector<CGIService>	_servicesCGI;
+	std::string					_path;
+	StringVector				_splitedPath;
+	std::string					_rootDir;
+	ActionMask					_actionMask;
+	std::vector< CGIService >	_servicesCGI;
 public:
 	Location( void );
 	Location( std::string head, std::string body );
 	~Location( void );
-	Location( const Location& b );
-	Location& 					operator=( const Location& b );
+	Location( const Location& lc );
+private:
+	Location& 					operator=( const Location& lc );
 	std::string					getPath( void ) const;
 	StringVector				getSplitedPath( void ) const;
 	RootDir						getRootDir( void ) const;

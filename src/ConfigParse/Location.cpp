@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:58:05 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/24 13:58:12 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/27 18:15:42 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,9 @@ Location::Location( std::string path, std::string rest )
 	std::string content( rest );
 
 	this->_path = path;
+	SUtils::split( this->_splitedPath, path, "/" );
+	if ( path.back() == '/' )
+
 	while ( content.length() > 0 )
 	{
 		if ( TreeSplit::get_pair( head, body, content ) )
