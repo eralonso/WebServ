@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/28 14:56:49 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/28 15:23:20 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ private:
 	struct pollfd*			clientPoll;
 	size_t					pending;
 	std::string				received;
+	bool					keepAlive;
 public:
 	Client(void);
 	Client(struct pollfd* cliPoll);
@@ -45,10 +46,12 @@ public:
 	int						managePollout();
 	std::string				getHtml( void );
 	std::string				getResponse(Request *req);
+	bool					getKeepAlive() const;
 	int						sendResponse(std::string resp);
 	bool					getLine(std::string& line);
 	size_t					getPendingSize() const;
 	int 					setDummyRecv();
+	bool					setKeepAlive(bool value);
 	size_t					purgeUsedRecv();
 };
 

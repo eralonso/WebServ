@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/28 12:29:31 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/28 15:22:04 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,6 +200,11 @@ bool Request::processLineOnRecvdReqLine(const std::string &line)
 
 bool Request::processLineOnRecvdHeader(const std::string &line)
 {
+	Header* con = headers.firstWithKey("Connection");
+	if (con)
+		client->setKeepAlive(con->getValue() == "keep-alive");
+	else
+		client->setKeepAlive(false);
 	Header* clHead = headers.firstWithKey("Content-Length");
 	Header* teHead = headers.firstWithKey("Transfer-Encode");
 	if (teHead && teHead->getValue() == "chuncked")

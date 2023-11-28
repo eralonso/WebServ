@@ -6,23 +6,26 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/28 14:57:37 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/28 15:23:12 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/Client.hpp"
 #include "../../inc/Response.hpp"
 #include "../../inc/Receptionist.hpp"
+#include "Client.hpp"
 
 Client::Client(void)
 {
 	this->clientPoll = nullptr;
+	keepAlive = false;
 	pending = 0;
 }
 
 Client::Client(struct pollfd *cliPoll)
 {
 	this->clientPoll = cliPoll;
+	keepAlive = false;
 	pending = 0;
 }
 
@@ -193,6 +196,11 @@ std::string Client::getResponse(Request *req)
 	return res.toString();
 }
 
+bool Client::getKeepAlive() const
+{
+	return keepAlive;
+}
+
 int	Client::sendResponse(std::string resp)
 {
 	if (clientPoll)
@@ -229,7 +237,13 @@ int Client::setDummyRecv()
 	return (1);
 }
 
-size_t	Client::purgeUsedRecv()
+bool Client::setKeepAlive(bool value)
+{
+	keepAlive = value;
+	return keepAlive;
+}
+
+size_t Client::purgeUsedRecv()
 {
 	size_t pendSize = getPendingSize();
 	received = received.substr(pending, pendSize);
