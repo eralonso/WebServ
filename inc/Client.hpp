@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/28 10:24:57 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/28 14:56:49 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ private:
 	std::string				received;
 public:
 	Client(void);
-	Client(struct pollfd*	cliPoll);
+	Client(struct pollfd* cliPoll);
 	~Client();
 	Client(const Client& b);
 	Client&	operator=(const Client& b);

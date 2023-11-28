@@ -6,13 +6,13 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/28 12:28:45 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/28 14:57:37 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/Client.hpp"
 #include "../../inc/Response.hpp"
-#include "Client.hpp"
+#include "../../inc/Receptionist.hpp"
 
 Client::Client(void)
 {
@@ -196,15 +196,7 @@ std::string Client::getResponse(Request *req)
 int	Client::sendResponse(std::string resp)
 {
 	if (clientPoll)
-	{
-		if ( send( clientPoll->fd, resp.c_str(), resp.size(), 0 ) < 0 )
-		{
-			Log::Error( "Failed to send response" );
-			exit( 1 );
-		}
-		Log::Success( "sendResponse [ " + SUtils::longToString( clientPoll->fd ) + " ]" );
-		return (1);
-	}
+		return (Receptionist::sendResponse(clientPoll->fd, resp));
 	return (0);
 }
 

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:43:42 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/28 12:04:10 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/28 14:37:27 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ public:
 	Receptionist(const Receptionist& b);
 	Receptionist& 	operator=(const Receptionist& b);
 	int				mainLoop(void);
-	void			sendResponse( socket_t connected, std::string response );
-	int				readRequest( socket_t clientFd, std::string& readed );
+	static int		sendResponse( socket_t connected, std::string response );
+	static int		readRequest( socket_t clientFd, std::string& readed );
 	int				addNewClient( socket_t serverFd, WSPoll& polls );
 	void			manageClient( socket_t clientFd, WSPoll& polls );
 };

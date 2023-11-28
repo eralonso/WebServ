@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/28 12:13:52 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/28 14:58:36 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ Receptionist& 	Receptionist::operator=(const Receptionist& b)
 	return *this;
 }
 
-void	Receptionist::sendResponse( socket_t connected, std::string response )
+int	Receptionist::sendResponse( socket_t connected, std::string response )
 {
 	if ( send( connected, response.c_str(), response.size(), 0 ) < 0 )
 	{
@@ -52,6 +52,7 @@ void	Receptionist::sendResponse( socket_t connected, std::string response )
 		exit( 1 );
 	}
 	Log::Success( "Response sended [ " + SUtils::longToString( connected ) + " ]" );
+	return (1);
 }
 
 int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
