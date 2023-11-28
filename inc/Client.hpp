@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/27 18:06:12 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/28 10:24:57 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,11 @@ private:
 	std::string				received;
 public:
 	Client(void);
-	Client(struct pollfd*	cientPoll);
+	Client(struct pollfd*	cliPoll);
 	~Client();
+	Client(const Client& b);
+	Client&	operator=(const Client& b);
+	int bindClientPoll(struct pollfd* cliPoll);
 	struct pollfd*			getClientPoll();
 	Request* 				findRecvRequest();
 	Request* 				findCompleteRecvRequest();

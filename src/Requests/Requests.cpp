@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:58:31 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/27 13:19:11 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/28 11:19:35 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,11 @@ int	Requests::eraseRequest()
 {
 	if (size() > 0)
 	{
-		Request* req = *begin();
+		Requests::iterator ite = end() - 1;
+		Request* req = *ite;
 		if (req)
 		{
-			erase(begin());
+			erase(ite);
 			delete req;
 			return (1);
 		}

@@ -6,12 +6,13 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/27 18:15:11 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/28 12:28:45 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/Client.hpp"
 #include "../../inc/Response.hpp"
+#include "Client.hpp"
 
 Client::Client(void)
 {
@@ -19,9 +20,9 @@ Client::Client(void)
 	pending = 0;
 }
 
-Client::Client(struct pollfd *clientPoll)
+Client::Client(struct pollfd *cliPoll)
 {
-	this->clientPoll = clientPoll;
+	this->clientPoll = cliPoll;
 	pending = 0;
 }
 
@@ -30,7 +31,28 @@ Client::~Client()
 {
 }
 
-struct pollfd	*Client::getClientPoll()
+int Client::bindClientPoll(pollfd *cliPoll)
+{
+	this->clientPoll = cliPoll;
+	return 0;
+}
+
+Client::Client(const Client& b)
+{
+	clientPoll = b.clientPoll;
+	pending = b.pending;
+	received = b.received;
+}
+
+Client&	Client::operator=(const Client& b)
+{
+	clientPoll = b.clientPoll;
+	pending = b.pending;
+	received = b.received;
+	return (*this);
+}
+
+struct pollfd *Client::getClientPoll()
 {
 	return (this->clientPoll);
 }
@@ -125,7 +147,10 @@ int	Client::managePollout()
 	int count = 0;
 	while ((req = findReadyToSendRequest()))
 		if (sendResponse(getResponse(req)))
+		{
 			count++;
+			eraseRequest();
+		}
 	return count;
 }
 
@@ -154,11 +179,13 @@ std::string Client::getResponse(Request *req)
 	res.appendHeader(Header("Content-Type", std::string("text/html")));
 	if (!req)
 	{
+		res.setProtocol("HTTP/1.1");
 		res.setStatus(500);
 		res.setBody("Error: 500");
 	}
 	else
 	{
+		res.setProtocol(req->getProtocol());
 		res.setStatus(200);
 		res.setMethod(req->getMethod());
 		res.setBody(getHtml());
@@ -175,7 +202,7 @@ int	Client::sendResponse(std::string resp)
 			Log::Error( "Failed to send response" );
 			exit( 1 );
 		}
-		Log::Success( "Response sended [ " + SUtils::longToString( clientPoll->fd ) + " ]" );	
+		Log::Success( "sendResponse [ " + SUtils::longToString( clientPoll->fd ) + " ]" );
 		return (1);
 	}
 	return (0);

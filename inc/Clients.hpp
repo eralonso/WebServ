@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:36 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/27 12:07:14 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/28 10:29:44 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ private:
 public:
 	Clients(/* args */);
 	~Clients();
+	Clients(const Clients& b);
+	Clients& operator=(const Clients& b);
 	Client*	newClient(struct pollfd* poll);
 	int		eraseClient(Client* cli);
 	int		eraseClient(struct pollfd* poll);

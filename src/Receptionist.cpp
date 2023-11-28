@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/27 18:02:54 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/28 12:13:52 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,62 +42,6 @@ Receptionist& 	Receptionist::operator=(const Receptionist& b)
 	backlog = b.backlog;
 	timeout = b.timeout;
 	return *this;
-}
-
-std::string	Receptionist::getHtml( void )
-{
-	std::string	html;
-
-	html = "<!DOCTYPE html>\n";
-	html += "<html lang=\"en\">\n";
-	html += "<head>\n";
-	html += "\t<meta charset=\"UTF-8\">\n";
-	html += "\t<title>ª</title>\n";
-	html += "</head>\n";
-	html += "<body>\n";
-	html += "\t<h1 style=\"color: #00FFFF;\">Message from server</h1>\n";
-	html += "\n";
-	html += "</body>\n";
-	html += "</html>";
-	return ( html );
-}
-
-std::string	Receptionist::getHeader( void )
-{
-	std::string	header;
-
-	header += "HTTP/1.1 200 OK\r\n";
-	header += "Server: OREginx\r\n";
-	header += "Content-Length: ";
-	header += SUtils::longToString( getHtml().length() );
-	header += "\r\n";
-	header += "Content-Type: text/html\r\n";
-	header += "\r\n";
-	return ( header );
-}
-
-std::string	Receptionist::getResponse( void )
-{
-	return ( getHeader() + getHtml() );
-}
-
-std::string Receptionist::getResponse(Request *req)
-{
-	Response res;
-	res.setServer("OREginx");
-	res.appendHeader(Header("Content-Type", std::string("text/html")));
-	if (!req)
-	{
-		res.setStatus(500);
-		res.setBody("Error: 500");
-	}
-	else
-	{
-		res.setStatus(200);
-		res.setMethod(req->getMethod());
-		res.setBody(getHtml());
-	}
-	return res.toString();
 }
 
 void	Receptionist::sendResponse( socket_t connected, std::string response )
@@ -184,7 +128,11 @@ void	Receptionist::manageClient( socket_t clientFd, WSPoll& polls )
 			}
 		}
 		else if ( clientPoll->revents & POLLOUT )
+		{
 			cli->managePollout();
+			if (cli->size() < 1)
+				polls.closePoll( clientFd );
+		}
 	}
 	else
 	{

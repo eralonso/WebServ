@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:50 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/27 13:47:53 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/28 10:31:20 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,16 @@ Clients::Clients()
 
 Clients::~Clients()
 {
+}
+
+Clients::Clients(const Clients&)
+{
+	;
+}
+
+Clients& Clients::operator=(const Clients&)
+{
+	return (*this);
 }
 
 Client* Clients::newClient(struct pollfd* poll)
