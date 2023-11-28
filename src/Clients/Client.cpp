@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/28 15:23:12 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/28 18:01:57 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,16 +109,17 @@ int Client::manageRecv(std::string recv)
 	received += recv;
 	std::string line;
 	bool		fail = false;
-	while (!fail && getLine(line))
+	bool		cont = true;
+	while (cont && !fail && getLine(line))
 	{
 		Request* req = findRecvRequest();
 		if (req)
-			req->processLine(line);
+			cont = req->processLine(line);
 		else
 		{
 			req = appendRequest(this);
 			if (req)
-				req->processLine(line);
+				cont = req->processLine(line);
 			else
 				fail = true;
 		}

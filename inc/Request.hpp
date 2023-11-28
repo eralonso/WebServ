@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/27 16:56:53 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/28 17:50:01 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,9 @@ private:
 	bool								processLineOnRecvdChunkSize(const std::string &line);
 	bool								processLineOnRecvdChunk(const std::string &line);
 	bool								processLineOnRecvdLastChunk(const std::string &line);
+	bool								checkChunked();
+	bool								checkKeepAlive();
+	bool								checkEmptyContent();
 public:
 	Request(void);
 	Request(Client *client);

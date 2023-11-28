@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/28 16:47:25 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/28 18:06:47 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,7 +192,10 @@ bool Request::processLineOnRecvdReqLine(const std::string &line)
 	if (len == 0 || (len == 1 && line[0] <= ' '))
 	{
 		status = RECVD_HEADER;
-		return processLineOnRecvdHeader(line);
+		checkKeepAlive();
+		if (checkChunked())
+			return true;
+		return (!checkEmptyContent());
 	}
 	parseHeader(line);
 	return true;
@@ -200,19 +203,10 @@ bool Request::processLineOnRecvdReqLine(const std::string &line)
 
 bool Request::processLineOnRecvdHeader(const std::string &line)
 {
-	Header* con = headers.firstWithKey("Connection");
-	if (con)
-		client->setKeepAlive(con->getValue() == "keep-alive");
-	else
-		client->setKeepAlive(false);
+	(void)line;
+	Log::Info("processLineOnRecvdHeader");
+	body += line;
 	Header* clHead = headers.firstWithKey("Content-Length");
-	Header* teHead = headers.firstWithKey("Transfer-Encode");
-	if (teHead && teHead->getValue() == "chunked")
-	{
-		status = RECVD_CHUNK;
-		Log::Info("processLineOnRecvdHeader line=" + line);
-		return processLineOnRecvdChunk(line);
-	}
 	if (clHead)
 	{
 		size_t size = atoi(clHead->getValue().c_str());
@@ -269,6 +263,35 @@ bool Request::processLineOnRecvdLastChunk(const std::string &line)
 		return true;
 	}
 	return false;
+}
+
+bool Request::checkChunked()
+{
+	Header* teHead = headers.firstWithKey("Transfer-Encode");
+	bool isChunked = false;
+	if (teHead && (isChunked = (teHead->getValue() == "chunked")))
+		status = RECVD_CHUNK;
+	return isChunked;
+}
+
+bool Request::checkKeepAlive()
+{
+	Header* con = headers.firstWithKey("Connection");
+	if (!client)
+		return false;
+	if (con)
+		client->setKeepAlive(con->getValue() == "keep-alive");
+	else
+		client->setKeepAlive(false);
+	return (!!con);
+}
+
+bool Request::checkEmptyContent()
+{
+	Header* clHead = headers.firstWithKey("Content-Length");
+	if (!clHead)
+		status = RECVD_ALL;
+	return (status == RECVD_ALL);
 }
 
 bool Request::processLine(const std::string &line)
