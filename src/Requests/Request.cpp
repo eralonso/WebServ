@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/28 15:22:04 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/28 16:47:25 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,9 +207,10 @@ bool Request::processLineOnRecvdHeader(const std::string &line)
 		client->setKeepAlive(false);
 	Header* clHead = headers.firstWithKey("Content-Length");
 	Header* teHead = headers.firstWithKey("Transfer-Encode");
-	if (teHead && teHead->getValue() == "chuncked")
+	if (teHead && teHead->getValue() == "chunked")
 	{
 		status = RECVD_CHUNK;
+		Log::Info("processLineOnRecvdHeader line=" + line);
 		return processLineOnRecvdChunk(line);
 	}
 	if (clHead)
