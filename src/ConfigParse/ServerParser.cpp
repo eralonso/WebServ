@@ -6,13 +6,13 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:41:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/27 17:32:18 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/28 17:13:55 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ServerParser.hpp>
 
-const std::string	ServerParser::_directives[ SIZE_DIRECTIVES ] = 
+const std::string	ServerParser::_directives[ SERVER_SIZE_DIRECTIVES ] = 
 {
 	"root",
 	"listen",
@@ -22,7 +22,7 @@ const std::string	ServerParser::_directives[ SIZE_DIRECTIVES ] =
 	"location"
 };
 
-std::pair< std::string, bool >	ServerParser::_canRepeatDirectivePair[ SIZE_DIRECTIVES + 1 ] =
+std::pair< std::string, bool >	ServerParser::_canRepeatDirectivePair[ SERVER_SIZE_DIRECTIVES + 1 ] =
 {
 	std::make_pair< std::string, bool > ( "root", false ),
 	std::make_pair< std::string, bool > ( "listen", false ),
@@ -32,7 +32,7 @@ std::pair< std::string, bool >	ServerParser::_canRepeatDirectivePair[ SIZE_DIREC
 	std::make_pair< std::string, bool > ( "location", true )
 };
 
-std::map< std::string, bool >	ServerParser::_canRepeatDirective( _canRepeatDirectivePair, _canRepeatDirectivePair + SIZE_DIRECTIVES );
+std::map< std::string, bool >	ServerParser::_canRepeatDirective( _canRepeatDirectivePair, _canRepeatDirectivePair + SERVER_SIZE_DIRECTIVES );
 
 ServerParser::ServerParser( std::string options ): ServerConfig()
 {
@@ -40,8 +40,8 @@ ServerParser::ServerParser( std::string options ): ServerConfig()
 	std::string						head;
 	std::string						body;
 
-	Log::Info( "Starting server configuration");
-	for ( int i = 0; i < SIZE_DIRECTIVES; i++ )
+	Log::Info( "Starting server configuration" );
+	for ( int i = 0; i < SERVER_SIZE_DIRECTIVES; i++ )
 		_isSet[ _directives[ i ] ] = false;
 	content = options;
 	while ( content.length() > 0 )

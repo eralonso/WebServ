@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/27 17:05:41 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/28 19:40:41 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 # include <ActionMask.hpp>
 # include <CGIService.hpp>
 # include <Defines.hpp>
+
+# define SERVER_SIZE_DIRECTIVES 9
 
 class Location
 {

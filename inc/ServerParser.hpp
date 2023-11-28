@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:10:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/27 16:15:48 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/28 19:39:48 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,27 +25,27 @@
 # include <TreeSplit.hpp>
 # include <Utils.hpp>
 
-# define SIZE_SIMPLE_DIRECTIVES 5
-# define SIZE_COMPLEX_DIRECTIVES 1
-# define SIZE_DIRECTIVES ( SIZE_SIMPLE_DIRECTIVES + SIZE_COMPLEX_DIRECTIVES )
+# define SERVER_SIZE_SIMPLE_DIRECTIVES 5
+# define SERVER_SIZE_COMPLEX_DIRECTIVES 1
+# define SERVER_SIZE_DIRECTIVES ( SERVER_SIZE_SIMPLE_DIRECTIVES + SERVER_SIZE_COMPLEX_DIRECTIVES )
 
 # define PARSE_LISTEN_ERRORS_SIZE 3
 
 # define IP_VALID_CHARS "0123456789."
 
-typedef std::string	simpleDirectiveArray[ SIZE_SIMPLE_DIRECTIVES + 1 ];
-typedef std::string	complexDirectiveArray[ SIZE_COMPLEX_DIRECTIVES + 1 ];
+typedef std::string	simpleDirectiveArray[ SERVER_SIZE_SIMPLE_DIRECTIVES + 1 ];
+typedef std::string	complexDirectiveArray[ SERVER_SIZE_COMPLEX_DIRECTIVES + 1 ];
 
 class ServerParser: public ServerConfig
 {
 private:
 	typedef void ( ServerParser::*t_parseSimpleDirective )( std::string );
 	typedef void ( ServerParser::*t_parseComplexDirective )( std::string, std::string );
-	typedef t_parseSimpleDirective	t_parseSimpleDirectiveArray[ SIZE_SIMPLE_DIRECTIVES ];
-	typedef t_parseComplexDirective	t_parseComplexDirectiveArray[ SIZE_COMPLEX_DIRECTIVES ];
+	typedef t_parseSimpleDirective	t_parseSimpleDirectiveArray[ SERVER_SIZE_SIMPLE_DIRECTIVES ];
+	typedef t_parseComplexDirective	t_parseComplexDirectiveArray[ SERVER_SIZE_COMPLEX_DIRECTIVES ];
 private:
-	static const std::string 				_directives[ SIZE_DIRECTIVES ];
-	static std::pair< std::string, bool >	_canRepeatDirectivePair[ SIZE_DIRECTIVES + 1 ];
+	static const std::string 				_directives[ SERVER_SIZE_DIRECTIVES ];
+	static std::pair< std::string, bool >	_canRepeatDirectivePair[ SERVER_SIZE_DIRECTIVES + 1 ];
 	static std::map< std::string, bool >	_canRepeatDirective;
 	std::map< const std::string, bool >		_isSet;
 private:
