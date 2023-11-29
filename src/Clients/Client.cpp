@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/28 18:01:57 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/29 12:10:08 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,7 @@ int	Client::managePollout()
 	return count;
 }
 
-std::string	Client::getHtml( void )
+std::string	Client::getHtml(Request* req)
 {
 	std::string	html;
 
@@ -170,7 +170,14 @@ std::string	Client::getHtml( void )
 	html += "</head>\n";
 	html += "<body>\n";
 	html += "\t<h1 style=\"color: #00FFFF;\">Message from server</h1>\n";
-	html += "\n";
+	if (req)
+	{
+		html += "\t<h3 style=\"color: #888888;\">Request received in server</h2>\n";
+		html += "<p>";
+		html += req->toString();
+		html += "</p>";
+	}
+	html += "\n";	
 	html += "</body>\n";
 	html += "</html>";
 	return ( html );
@@ -192,7 +199,7 @@ std::string Client::getResponse(Request *req)
 		res.setProtocol(req->getProtocol());
 		res.setStatus(200);
 		res.setMethod(req->getMethod());
-		res.setBody(getHtml());
+		res.setBody(getHtml(req));
 	}
 	return res.toString();
 }
@@ -217,6 +224,16 @@ bool Client::getLine(std::string& line)
 	line = received.substr(pending, found - pending);
 	pending = found + 1;
 	return true;
+}
+
+size_t Client::getNChars(std::string &data, size_t n)
+{
+	size_t remain = received.size() - pending;
+	if (n > remain)
+		n = remain;
+	data = received.substr(pending, n);
+	pending += n;
+	return n;
 }
 
 size_t	Client::getPendingSize() const

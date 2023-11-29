@@ -6,12 +6,13 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 10:20:03 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/22 15:00:15 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/29 12:12:58 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/Headers.hpp"
 #include <algorithm>
+#include "Headers.hpp"
 
 Headers::Headers(){}
 
@@ -32,7 +33,7 @@ Headers		Headers::filterKey(const std::string& key)
 	Headers::iterator ite = end();
 	while (it != ite)
 	{
-		if (it->getKey() == key)
+		if (toLower(it->getKey()) == toLower(key))
 			fil.push_back(*it);
 		it++;
 	}
@@ -45,7 +46,7 @@ Header			*Headers::firstWithKey(const std::string& key)
 	Headers::iterator ite = end();
 	while (it != ite)
 	{
-		if (it->getKey() == key)
+		if (toLower(it->getKey()) == toLower(key))
 			return (&(*it));
 		it++;
 	}
@@ -66,7 +67,6 @@ void			Headers::append(const std::string& key, const std::string& value)
 void			Headers::replace(Header& b)
 {
 	replace (b.getKey(), b.getValue());
-	push_back(b);
 }
 
 void			Headers::replace(const std::string& key, const std::string& value)
@@ -108,4 +108,9 @@ std::string		Headers::toString(void)
 		it++;
 	}
 	return std::string(ret);
+}
+std::string Headers::toLower(std::string src)
+{
+	std::transform(src.begin(), src.end(), src.begin(), std::tolower);
+	return (src);
 }

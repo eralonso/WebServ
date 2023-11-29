@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 10:19:37 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 18:09:00 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/29 11:54:36 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ public:
 	void			erase(const std::string& key);
 	void			erase(Header& h);
 	std::string		toString(void);
+	static std::string toLower(std::string src);
 };
 
 #endif

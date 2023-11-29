@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/28 18:06:47 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/29 12:23:21 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,13 +189,25 @@ bool Request::processLineOnRecvdStart(const std::string &line)
 bool Request::processLineOnRecvdReqLine(const std::string &line)
 {
 	size_t len = line.length();
+	size_t contentSize = 0;
+	std::string data;
 	if (len == 0 || (len == 1 && line[0] <= ' '))
 	{
 		status = RECVD_HEADER;
 		checkKeepAlive();
 		if (checkChunked())
 			return true;
-		return (!checkEmptyContent());
+		if 	(!checkEmptyContent(contentSize))
+		{
+			size_t got = client->getNChars(data, contentSize);
+			body += data;
+			if (got == contentSize)
+			{
+				status = RECVD_ALL;
+				Log::Success(body);
+			}
+		}
+		return true;
 	}
 	parseHeader(line);
 	return true;
@@ -205,16 +217,18 @@ bool Request::processLineOnRecvdHeader(const std::string &line)
 {
 	(void)line;
 	Log::Info("processLineOnRecvdHeader");
+	Log::Info(line);
 	body += line;
 	Header* clHead = headers.firstWithKey("Content-Length");
 	if (clHead)
 	{
-		size_t size = atoi(clHead->getValue().c_str());
-		if (client->getPendingSize() >= size)
+		size_t contentSize = atol(clHead->getValue().c_str());
+		if (body.size() >= contentSize)
 		{
+			Log::Success(body);
 			status = RECVD_ALL;
-			return true;
 		}
+		return (client->getPendingSize() > 0);
 	}
 	status = RECVD_ALL;
 	return true;
@@ -286,11 +300,13 @@ bool Request::checkKeepAlive()
 	return (!!con);
 }
 
-bool Request::checkEmptyContent()
+bool Request::checkEmptyContent(size_t& size)
 {
 	Header* clHead = headers.firstWithKey("Content-Length");
 	if (!clHead)
 		status = RECVD_ALL;
+	else
+		size = atol(clHead->getValue().c_str());
 	return (status == RECVD_ALL);
 }
 
