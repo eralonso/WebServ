@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/29 15:26:14 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/29 17:24:54 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,18 @@ void Request::parseRoute(void)
 		route = SUtils::trim(tokens[0]);
 		query = SUtils::trim(tokens[1]);                                                                                 
 	}
+	routeChain = SplitString::split(route, std::string("/"));
+	if (routeChain.size() > 0 && (route.size() > 0 && route[route.size() - 1] != '/'))
+	{
+		std::vector<std::string>::iterator doc = routeChain.end();
+		doc--;
+		document = *doc;
+		routeChain.erase(doc);
+	}
+	if (routeChain.size() == 0 && (route.size() < 1 || route[0] != '/'))
+		Log::Error("routeChain is empty");
+	Log::Info("Route Chaine: " + getRouteChaineString());
+	Log::Info("Document: " + getDocument());
 	//TODO
 	//check if route is valid
 	//check if route is available
@@ -144,6 +156,29 @@ std::string Request::getProtocol() const
  std::string						Request::getRoute() const
 {
 	return (route);
+}
+
+std::vector<std::string> Request::getRouteChaine() const
+{
+	return routeChain;
+}
+
+std::string Request::getRouteChaineString() const
+{
+	size_t it = 0;
+	size_t size = routeChain.size();
+	std::string chain = std::string("/");
+	while (it < size)
+	{
+		chain += routeChain[it] + "/";
+		it++;
+	}
+	return chain;
+}
+
+std::string Request::getDocument() const
+{
+	return document;
 }
 
 std::string							Request::getQuery() const

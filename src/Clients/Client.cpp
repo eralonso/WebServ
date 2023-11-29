@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/29 15:21:27 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/29 18:08:29 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,7 +161,6 @@ int	Client::managePollout()
 std::string	Client::getHtml(Request* req)
 {
 	std::string	html;
-
 	html = "<!DOCTYPE html>\n";
 	html += "<html lang=\"en\">\n";
 	html += "<head>\n";
@@ -198,15 +197,31 @@ std::string Client::getResponse(Request *req)
 {
 	Response res;
 	res.setServer("OREginx");
-	res.appendHeader(Header("Content-Type", std::string("text/html")));
 	if (!req)
 	{
+		res.appendHeader(Header("Content-Type", std::string("text/html")));
 		res.setProtocol("HTTP/1.1");
 		res.setStatus(500);
 		res.setBody("Error: 500");
 	}
+	else if (req->getDocument()==std::string("favicon.ico"))
+	{
+		res.setProtocol(req->getProtocol());
+		res.setStatus(200);
+		res.setMethod(req->getMethod());
+		std::string html;
+		res.appendHeader(Header("Content-Type", "image/svg+xml"));
+		html += "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"150\" height=\"100\" viewBox=\"0 0 3 2\">\n";
+  		html += "<rect width=\"1\" height=\"2\" x=\"0\" fill=\"#008d46\" />\n";
+  		html += "<rect width=\"1\" height=\"2\" x=\"1\" fill=\"#ffffff\" />\n";
+  		html += "<rect width=\"1\" height=\"2\" x=\"2\" fill=\"#d2232c\" />\n";
+		html += "<circle cx=\"1\" cy=\"1\" r=\".5\" fill=\"#0000ff\" />\n";
+		html += "</svg>\n";
+		res.setBody(html);
+	}
 	else
 	{
+		res.appendHeader(Header("Content-Type", std::string("text/html")));
 		res.setProtocol(req->getProtocol());
 		res.setStatus(200);
 		res.setMethod(req->getMethod());

@@ -6,13 +6,14 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/29 11:08:20 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/29 17:21:32 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _REQUEST_HPP_
 # define _REQUEST_HPP_
 # include <string>
+# include <vector>
 # include <Headers.hpp>
 
 class Client;
@@ -44,6 +45,8 @@ private:
 	Headers						headers;
 	std::string					body;
 	bool						badRequest;
+	std::vector<std::string>	routeChain;
+	std::string					document;
 	void 								parseRoute(void);
 	void 								parseFirstLine(const std::string &line);
 	void 								parseHeader(const std::string &line);
@@ -69,6 +72,9 @@ public:
 	std::string							getProtocol() const;
 	std::string							getMethod() const;
 	std::string							getRoute() const;
+	std::vector<std::string>			getRouteChaine() const;
+	std::string							getRouteChaineString() const;
+	std::string							getDocument() const;
 	std::string							getQuery() const;
 	const Headers&						getHeaders() const;
 	size_t								getBodyLength() const;
