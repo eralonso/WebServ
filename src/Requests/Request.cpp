@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/29 12:23:21 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/29 12:41:16 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,7 @@ bool Request::processLineOnRecvdHeader(const std::string &line)
 	(void)line;
 	Log::Info("processLineOnRecvdHeader");
 	Log::Info(line);
-	body += line;
+	body += line + '\n';
 	Header* clHead = headers.firstWithKey("Content-Length");
 	if (clHead)
 	{
