@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:58:05 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/28 19:42:36 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/29 13:57:40 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@ const std::string	Location::_directives[ LOCATION_SIZE_DIRECTIVES ] =
 	"cgi"
 };
 
-Location::Location( void ) {}
+Location::Location( void ): _isDir( false ) {}
 
-Location::Location( std::string path, std::string rest )
+Location::Location( std::string path, std::string rest ): _isDir( false )
 {
 	std::string head;
 	std::string body;
@@ -37,11 +37,11 @@ Location::Location( std::string path, std::string rest )
 	this->_path = path;
 	SUtils::split( this->_splitedPath, path, "/" );
 	if ( path.back() == '/' )
-		this->_splitedPath.back() += '/';
+		this->_isDir = true;
 	while ( content.length() > 0 )
 	{
 		if ( TreeSplit::get_pair( head, body, content ) )
-			parseDirective(  );
+			parseDirective( head, body );
 		else if ( content.length() > 0 )
 			throw std::logic_error( "Unxpected \"}\"" );
 		head.clear();
@@ -51,17 +51,14 @@ Location::Location( std::string path, std::string rest )
 
 Location::~Location( void ) {}
 
-Location::Location( const Location& lc )
-{
-	_path = lc._path;
-	_rootDir = lc._rootDir;
-	_actionMask = lc._actionMask;
-	_servicesCGI = lc._servicesCGI;
-}
+Location::Location( const Location& lc ): _path( lc._path ), _isDir(lc._isDir ), \
+					_rootDir( lc._rootDir ), _actionMask( lc._actionMask ), \
+					_servicesCGI( lc._servicesCGI ) {}
 
 Location& 	Location::operator=( const Location& lc )
 {
 	_path = lc._path;
+	_isDir = lc._isDir;
 	_rootDir = lc._rootDir;
 	_actionMask = lc._actionMask;
 	_servicesCGI = lc._servicesCGI;
@@ -71,14 +68,12 @@ Location& 	Location::operator=( const Location& lc )
 void	Location::parseDirective( std::string head, std::string body )
 {
 	int								idx;
-	void ( Location::*parse )( std::string )[ LOCATION_SIZE_DIRECTIVES ] = { \
+	void ( Location::*parse[ LOCATION_SIZE_DIRECTIVES ] )( std::string ) = { \
 					&Location::parseRoot, &Location::parseErrorPage, \
 					&Location::parseClientMaxBodySize };
 
 	if ( ( idx = isSimpleDirective( head ) ) >= 0 )
 		( this->*parseSimple[ idx ] )( body );
-	else if ( ( idx = isComplexDirective( head ) ) >= 0 )
-		( this->*parseComplex[ idx ] )( head, body );
 	else
 		throw std::logic_error( UNKNOWN_DIRECTIVE( head ) );
 }
@@ -96,6 +91,11 @@ StringVector	Location::getSplitedPath( void ) const
 RootDir	Location::getRootDir( void ) const
 {
 	return ( this->_rootDir );
+}
+
+bool	Location::isDir( void ) const
+{
+	return ( this->_isDir );
 }
 
 ActionMask	 Location::getActionMask( void ) const
