@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/29 13:57:53 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/29 17:09:22 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ public:
 	Location( std::string head, std::string body );
 	~Location( void );
 	Location( const Location& lc );
-public:
-	void	parseDirective( std::string head, std::string body );
+//public:
+//	void	parseDirective( std::string head, std::string body );
 public:
 	Location& 					operator=( const Location& lc );
 	std::string					getPath( void ) const;

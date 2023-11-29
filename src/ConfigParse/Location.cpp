@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:58:05 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/29 13:57:40 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/29 17:09:41 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,10 @@ Location::Location( std::string path, std::string rest ): _isDir( false )
 		this->_isDir = true;
 	while ( content.length() > 0 )
 	{
-		if ( TreeSplit::get_pair( head, body, content ) )
-			parseDirective( head, body );
-		else if ( content.length() > 0 )
-			throw std::logic_error( "Unxpected \"}\"" );
+	//	if ( TreeSplit::get_pair( head, body, content ) )
+	//		parseDirective( head, body );
+	//	else if ( content.length() > 0 )
+	//		throw std::logic_error( "Unxpected \"}\"" );
 		head.clear();
 		body.clear();
 	}
@@ -57,26 +57,29 @@ Location::Location( const Location& lc ): _path( lc._path ), _isDir(lc._isDir ),
 
 Location& 	Location::operator=( const Location& lc )
 {
-	_path = lc._path;
-	_isDir = lc._isDir;
-	_rootDir = lc._rootDir;
-	_actionMask = lc._actionMask;
-	_servicesCGI = lc._servicesCGI;
+	if ( this != &lc )
+	{
+		_path = lc._path;
+		_isDir = lc._isDir;
+		_rootDir = lc._rootDir;
+		_actionMask = lc._actionMask;
+		_servicesCGI = lc._servicesCGI;
+	}
 	return ( *this );
 }
 
-void	Location::parseDirective( std::string head, std::string body )
-{
-	int								idx;
-	void ( Location::*parse[ LOCATION_SIZE_DIRECTIVES ] )( std::string ) = { \
-					&Location::parseRoot, &Location::parseErrorPage, \
-					&Location::parseClientMaxBodySize };
-
-	if ( ( idx = isSimpleDirective( head ) ) >= 0 )
-		( this->*parseSimple[ idx ] )( body );
-	else
-		throw std::logic_error( UNKNOWN_DIRECTIVE( head ) );
-}
+//void	Location::parseDirective( std::string head, std::string body )
+//{
+//	int								idx;
+//	void ( Location::*parse[ LOCATION_SIZE_DIRECTIVES ] )( std::string ) = { \
+//					&Location::parseRoot, &Location::parseErrorPage, \
+//					&Location::parseClientMaxBodySize };
+//
+//	if ( ( idx = isSimpleDirective( head ) ) >= 0 )
+//		( this->*parseSimple[ idx ] )( body );
+//	else
+//		throw std::logic_error( UNKNOWN_DIRECTIVE( head ) );
+//}
 
 std::string	Location::getPath( void ) const
 {

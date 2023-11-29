@@ -6,16 +6,17 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 18:02:40 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/23 18:07:25 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/29 17:16:55 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include <ServerParser.hpp>
+# include <Directives.hpp>
 
-void	ServerParser::fillErrorPages( StringVector args )
+ErrorPagesMap	Directives::fillErrorPages( StringVector args )
 {
 	std::string		uri;
 	int				code;
+	ErrorPagesMap	errorPages;
 
 	uri = args.back();
 	args.pop_back();
@@ -29,11 +30,12 @@ void	ServerParser::fillErrorPages( StringVector args )
 			throw std::logic_error( INVALID_RANGE_DIRECTIVE( *it, \
 					SUtils::longToString( MIN_ERROR_CODE ), \
 					SUtils::longToString( MAX_ERROR_CODE ) ) );
-		this->_errorPages[ code ] = uri;
+		errorPages[ code ] = uri;
 	}
+	return ( errorPages );
 }
 
-int	ServerParser::parseErrorCode( std::string code )
+int	Directives::parseErrorCode( std::string code )
 {
 	if ( SUtils::isNum( code ) == false )
 		return ( -1 );

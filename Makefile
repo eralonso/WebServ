@@ -6,7 +6,7 @@
 #    By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/22 10:08:41 by eralonso          #+#    #+#              #
-#    Updated: 2023/11/23 18:07:10 by eralonso         ###   ########.fr        #
+#    Updated: 2023/11/29 17:12:45 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -59,10 +59,10 @@ SRC_DIRS	:=	$(subst $(SPACE),:,$(SRC_DIRS))
 
 FILES		:=	main Sockets WSPoll WSSignals Receptionist \
 				TreeSplit Utils SplitString FolderLs ConfigParser \
-				RootDir ActionMask CGIService Location ServerConfig \
-				Server ServerParser Listen ClientMaxBodySize ErrorPage \
-				Header Headers Request Requests Response StatusCodes \
-				PendingCgiTask PendingCgiTasks CgiExecutor
+				Directives RootDir ActionMask CGIService Location \
+				ServerConfig Server ServerParser Listen ClientMaxBodySize \
+				ErrorPage Header Headers Request Requests Response \
+				StatusCodes PendingCgiTask PendingCgiTasks CgiExecutor
 
 
 #FILES		:=	main Sockets WSPoll WSSignals Receptionist \
