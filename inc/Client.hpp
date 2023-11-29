@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/29 12:02:50 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/29 15:14:59 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ public:
 	int						manageCompleteRecv();
 	int						managePollout();
 	std::string				getHtml(Request* req);
+	std::string				getForm(void);
 	std::string				getResponse(Request *req);
 	bool					getKeepAlive() const;
 	int						sendResponse(std::string resp);

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/29 12:10:08 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/29 15:21:27 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,10 +177,21 @@ std::string	Client::getHtml(Request* req)
 		html += req->toString();
 		html += "</p>";
 	}
-	html += "\n";	
+	html += "\n";
+	html += getForm();
 	html += "</body>\n";
 	html += "</html>";
 	return ( html );
+}
+
+std::string Client::getForm(void)
+{
+	std::string	form = std::string("<form method=\"POST\">\n");
+	form += "<input id=\"firstname\" name=\"firstname\"/>\n";
+	form += "<input id=\"surname\" name=\"surname\"/>\n";
+	form += "<input type=\"submit\"/>\n";
+	form += "</form>\n";
+	return form;
 }
 
 std::string Client::getResponse(Request *req)

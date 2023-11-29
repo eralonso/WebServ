@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/29 13:29:27 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/29 15:26:14 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void Request::parseRoute(void)
 	if (len > 1)
 	{
 		route = SUtils::trim(tokens[0]);
-		query = SUtils::trim(tokens[1]);
+		query = SUtils::trim(tokens[1]);                                                                                 
 	}
 	//TODO
 	//check if route is valid
@@ -204,7 +204,7 @@ bool Request::processLineOnRecvdReqLine(const std::string &line)
 			if (got == contentSize)
 			{
 				status = RECVD_ALL;
-				Log::Success(body);
+				// Log::Success(body);
 			}
 		}
 		return true;
@@ -222,7 +222,7 @@ bool Request::processLineOnRecvdHeader(const std::string &line)
 		size_t contentSize = atol(clHead->getValue().c_str());
 		if (body.size() >= contentSize)
 		{
-			Log::Success(body);
+			// Log::Success(body);
 			status = RECVD_ALL;
 		}
 		return (client->getPendingSize() > 0);
@@ -234,10 +234,10 @@ bool Request::processLineOnRecvdHeader(const std::string &line)
 bool Request::processLineOnRecvdChunkSize(const std::string &line)
 {
 	size_t len = line.length();
-	Log::Info("processLineOnRecvdChunkSize with line:");
-	Log::Info(line);
-	Log::Info("chunck size = " + SUtils::longToString(chunkSize));
-	Log::Info("line length = " + SUtils::longToString(len));
+	// Log::Info("processLineOnRecvdChunkSize with line:");
+	// Log::Info(line);
+	// Log::Info("chunck size = " + SUtils::longToString(chunkSize));
+	// Log::Info("line length = " + SUtils::longToString(len));
 	if (chunkSize == 0)
 	{
 		status = RECVD_LAST_CHUNK;
@@ -260,12 +260,12 @@ bool Request::processLineOnRecvdChunkSize(const std::string &line)
 
 bool Request::processLineOnRecvdChunk(const std::string &line)
 {
-	Log::Info("processLineOnRecvdChunk with line:");
-	Log::Info(line);
+	// Log::Info("processLineOnRecvdChunk with line:");
+	// Log::Info(line);
 	size_t len = line.length();
 	if (((len == 1 || (len == 2 && line[1] <= ' ')) && line[0] == '0' ))
 	{
-		Log::Info("Received 0 to indicate last chunk");
+		// Log::Info("Received 0 to indicate last chunk");
 		chunkSize = 0;
 		status = RECVD_LAST_CHUNK;
 		return true;
@@ -273,7 +273,7 @@ bool Request::processLineOnRecvdChunk(const std::string &line)
 	chunkSize = atol(line.c_str());
 	if (chunkSize > 0)
 	{
-		Log::Info("Received" + SUtils::longToString(chunkSize) + "to indicate next chunk size");
+		// Log::Info("Received" + SUtils::longToString(chunkSize) + "to indicate next chunk size");
 		status = RECVD_CHUNK_SIZE;
 		return true;
 	}
@@ -284,13 +284,13 @@ bool Request::processLineOnRecvdChunk(const std::string &line)
 
 bool Request::processLineOnRecvdLastChunk(const std::string &line)
 {
-	Log::Info("processLineOnRecvdLastChunk with line:");
-	Log::Info(line);
+	// Log::Info("processLineOnRecvdLastChunk with line:");
+	// Log::Info(line);
 	size_t len = line.length();
 	if (len == 0 || (len == 1 && line[0] <= ' '))
 	{
 		status = RECVD_ALL;
-		Log::Success(body);
+		// Log::Success(body);
 		return true;
 	}
 	status = RECVD_ALL;
@@ -375,7 +375,8 @@ bool								Request::isReceiving() const
 
 std::string							Request::toString()
 {
-	std::string ret = headers.toString();
+	std::string ret = getMethod() + " " + route + " " + protocol + "\n";
+	ret += headers.toString();
 	ret += HEADER_SEP;
 	ret += body;
 	return (ret);
