@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:50:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/30 12:51:44 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/30 19:24:17 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,19 +24,23 @@
 
 # include <Defines.hpp>
 # include <Utils.hpp>
-# include <ServerConfig.hpp>
 # include <TreeSplit.hpp>
-
+# include <CGIService.hpp>
+# include <Location.hpp>
+# include <Server.hpp>
+# include <ActionMask.hpp>
 # include <DirectivesParser.hpp>
 
-# define PARSE_LISTEN_ERRORS_SIZE 3
-
-# define IP_VALID_CHARS "0123456789."
+class DirectivesParser;
+class Server;
+class Location;
 
 typedef std::map< unsigned int, std::string >	ErrorPagesMap;
 typedef std::vector< Location >					LocationsVector;
 typedef std::vector< Server >					ServersVector;
 typedef std::pair< std::string, int >			ListenPair;
+typedef std::pair< int, std::string >			ReturnPair;
+typedef std::vector< CGIService >				CgiVector;
 
 class Directives
 {
@@ -45,70 +49,40 @@ class Directives
 	friend class Location;
 	friend class DirectivesParser;
 private:
-	ServersVector	_servers;
+	std::string		_root;
 	int				_port;
 	std::string		_host;
-	LocationsVector	_locations;
-	std::string		_rootDir;
 	StringVector	_serverNames;
-	long			_clientMaxBodySize;
 	ErrorPagesMap	_errorPages;
+	long			_clientMaxBodySize;
+	StringVector	_index;
+	bool			_autoindex;
+	std::string		_alias;
+	ReturnPair		_return;
+	ActionMask		_allowMethods;
+	CgiVector		_cgi;
+	ServersVector	_servers;
+	LocationsVector	_locations;
 public:
 	Directives( void );
 	Directives( const Directives& s );
 	~Directives( void );
 	Directives&	operator=( const Directives& d );
 public:
+	std::string		getRoot( void ) const;
 	int				getPort( void ) const;
 	std::string		getHost( void ) const;
-	LocationsVector	getLocations( void ) const;
-	ServersVector	getServers( void ) const;
-	std::string		getRoot( void ) const;
 	StringVector	getServerNames( void ) const;
-	unsigned int	getClientMaxBodySize( void ) const;
 	ErrorPagesMap	getErrorPages( void ) const;
-};
-
-class Directives
-{
-private:
-	Directives( void );
-	~Directives( void );
-	Directives( const Directives& d );
-	Directives&	operator=( const Directives& d );
-private:
-	//error_page
-	static ErrorPagesMap	fillErrorPages( StringVector args );
-	static int				parseErrorCode( std::string code );
-	
-	//client_max_body_size
-	static long				getMeasureLimit( int unit );
-	static int				parseMeasure( std::string number );
-	static long				parseSize( std::string number );
-
-	//listen
-	static std::string		parseListenStrError( int ret, std::string aux );
-	static std::string		parseHost( std::string arg, int& ret );
-	static std::string		decompressIp( std::string ip );
-	static std::string		decompressBytes( std::string compressed, size_t pos, size_t size );
-	static unsigned int		getMaskLimit( size_t octetPos );
-	static bool				checkValidIp( std::string ip );
-	static bool				checkValidRangeIpMask( std::string num, size_t pos, size_t size );
-	static bool				checkSyntaxIp( std::string ip );
-	static std::string		parsePort( std::string arg, int& ret );
-	static bool				isValidPort( std::string port );
-	static int				checkAvailableHostPort( std::string host, std::string port );
-public:
-	static int								isSimpleDirective( const std::string head, \
-												const std::string *begin, const std::string *end );
-	static int								isComplexDirective( const std::string head, \
-												const std::string *begin, const std::string *end );
-	static std::string						parseRoot( std::string body );
-	static Location							parseLocation( std::string head, std::string body );
-	static std::pair< std::string, int >	parseListen( std::string body );
-	static StringVector						parseServerNames( std::string body );
-	static ErrorPagesMap					parseErrorPage( std::string body );
-	static long								parseClientMaxBodySize( std::string body );
+	unsigned int	getClientMaxBodySize( void ) const;
+	StringVector	getIndex( void ) const;
+	bool			getAutoindex( void ) const;
+	std::string		getAlias( void ) const;
+	ReturnPair		getReturn( void ) const;
+	ActionMask		getAllowMethods( void ) const;
+	CgiVector		getCgi( void ) const;
+	ServersVector	getServers( void ) const;
+	LocationsVector	getLocations( void ) const;
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/29 17:09:22 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/30 19:24:36 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,7 @@
 # include <vector>
 # include <string>
 
-# include <RootDir.hpp>
-# include <ActionMask.hpp>
-# include <CGIService.hpp>
+# include <Directives.hpp>
 # include <Defines.hpp>
 # include <StringErrors.hpp>
 
@@ -27,28 +25,24 @@
 class Location
 {
 private:
-	std::string					_path;
-	StringVector				_splitedPath;
-	bool						_isDir;
-	std::string					_rootDir;
-	ActionMask					_actionMask;
-	std::vector< CGIService >	_servicesCGI;
-	static const std::string	_directives[ LOCATION_SIZE_DIRECTIVES ];
+	std::string		_path;
+	StringVector	_splitedPath;
+	bool			_isDir;
+	Directives		_directives;
 public:
 	Location( void );
-	Location( std::string head, std::string body );
 	~Location( void );
 	Location( const Location& lc );
+	Location&	operator=( const Location& lc );
 //public:
 //	void	parseDirective( std::string head, std::string body );
 public:
-	Location& 					operator=( const Location& lc );
-	std::string					getPath( void ) const;
-	bool						isDir( void ) const;
-	StringVector				getSplitedPath( void ) const;
-	RootDir						getRootDir( void ) const;
-	ActionMask					getActionMask( void ) const;
-	std::vector< CGIService >	getServicesCGI( void ) const;
+	std::string		getPath( void ) const;
+	bool			isDir( void ) const;
+	StringVector	getSplitedPath( void ) const;
+	std::string		getRoot( void ) const;
+	ActionMask		getAllowedMethods( void ) const;
+	CgiVector		getServicesCGI( void ) const;
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:48:38 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 15:14:10 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/30 19:30:02 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,26 +49,26 @@ void	ConfigParser::readConfig( void )
 	this->_content = SUtils::trim( content );
 }
 
-void	ConfigParser::parseConfigFile( void )
-{
-	std::string	head;
-	std::string	body;
-
-	while ( this->_content.length() > 0 )
-	{
-		if ( TreeSplit::get_pair( head, body, this->_content ) )
-		{
-			if ( head != "server" )
-				throw std::logic_error( UNKNOWN_DIRECTIVE( head ) );
-			ServerParser	sp( body );
-			this->_servers.push_back( Server( sp ) );
-		}
-		else if ( this->_content.length() > 0 )
-			throw std::logic_error( "Unexpected end of file, expecting \";\" or \"}\"" );
-		head.clear();
-		body.clear();
-	}
-}
+//void	ConfigParser::parseConfigFile( void )
+//{
+//	std::string	head;
+//	std::string	body;
+//
+//	while ( this->_content.length() > 0 )
+//	{
+//		if ( TreeSplit::get_pair( head, body, this->_content ) )
+//		{
+//			if ( head != "server" )
+//				throw std::logic_error( UNKNOWN_DIRECTIVE( head ) );
+//			ServerParser	sp( body );
+//			this->_servers.push_back( Server( sp ) );
+//		}
+//		else if ( this->_content.length() > 0 )
+//			throw std::logic_error( "Unexpected end of file, expecting \";\" or \"}\"" );
+//		head.clear();
+//		body.clear();
+//	}
+//}
 
 std::vector<Server>	ConfigParser::getServers( void ) const
 {

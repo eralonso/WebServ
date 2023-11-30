@@ -6,18 +6,18 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 17:59:08 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/29 17:00:55 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/30 17:41:57 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include <Directives.hpp>
+# include <DirectivesParser.hpp>
 
-long	Directives::getMeasureLimit( int unit )
+long	DirectivesParser::getMeasureLimit( int unit )
 {
 	return ( std::numeric_limits< long >::max() >> ( 10 * unit ) );
 }
 
-int	Directives::parseMeasure( std::string number )
+int	DirectivesParser::parseMeasure( std::string number )
 {
 	std::string				units = "bkmg";
 	std::string::iterator	it;
@@ -38,7 +38,7 @@ int	Directives::parseMeasure( std::string number )
 	return ( res );
 }
 
-long	Directives::parseSize( std::string number )
+long	DirectivesParser::parseSize( std::string number )
 {
 	int		measure;
 

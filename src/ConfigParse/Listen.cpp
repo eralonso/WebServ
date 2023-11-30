@@ -6,13 +6,13 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 17:25:58 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/29 17:00:36 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/30 17:42:48 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <Directives.hpp>
+#include <DirectivesParser.hpp>
 
-std::string	Directives::parsePort( std::string arg, int& ret )
+std::string	DirectivesParser::parsePort( std::string arg, int& ret )
 {
 	std::string	port;
 
@@ -25,7 +25,7 @@ std::string	Directives::parsePort( std::string arg, int& ret )
 	return ( port );
 }
 
-std::string	Directives::parseHost( std::string arg, int& ret )
+std::string	DirectivesParser::parseHost( std::string arg, int& ret )
 {
 	std::string	host;
 
@@ -40,7 +40,7 @@ std::string	Directives::parseHost( std::string arg, int& ret )
 	return ( host );
 }
 
-std::string	Directives::parseListenStrError( int ret, std::string aux )
+std::string	DirectivesParser::parseListenStrError( int ret, std::string aux )
 {
 	int														error;
 	std::string	errors[ PARSE_LISTEN_ERRORS_SIZE + 1 ] = { \
@@ -55,7 +55,7 @@ std::string	Directives::parseListenStrError( int ret, std::string aux )
 	return ( "Invalid error value" );
 }
 
-int	Directives::checkAvailableHostPort( std::string host, std::string port )
+int	DirectivesParser::checkAvailableHostPort( std::string host, std::string port )
 {
 	struct addrinfo	hints;
 	struct addrinfo	*res;
@@ -71,14 +71,14 @@ int	Directives::checkAvailableHostPort( std::string host, std::string port )
 	return ( ret );
 }
 
-bool	Directives::isValidPort( std::string port )
+bool	DirectivesParser::isValidPort( std::string port )
 {
 	return ( !( SUtils::compareNumbersAsStrings( port, \
 			SUtils::longToString( std::numeric_limits< short >::max() ) ) > 0 \
 			|| SUtils::compareNumbersAsStrings( port, "0" ) == 0 ) );
 }
 
-std::string	Directives::decompressIp( std::string ip )
+std::string	DirectivesParser::decompressIp( std::string ip )
 {
 	std::vector< std::string >	args;
 	std::string					decompress;
@@ -93,7 +93,7 @@ std::string	Directives::decompressIp( std::string ip )
 	return ( decompress );
 }
 
-std::string	Directives::decompressBytes( std::string compressed, \
+std::string	DirectivesParser::decompressBytes( std::string compressed, \
 											size_t pos, size_t size )
 {
 	std::string		decompress;
@@ -114,12 +114,12 @@ std::string	Directives::decompressBytes( std::string compressed, \
 	return ( decompress );
 }
 
-unsigned int	Directives::getMaskLimit( size_t octetPos )
+unsigned int	DirectivesParser::getMaskLimit( size_t octetPos )
 {
 	return ( std::numeric_limits< unsigned int >::max() >> ( octetPos * 8 ) );
 }
 
-bool	Directives::checkValidIp( std::string ip )
+bool	DirectivesParser::checkValidIp( std::string ip )
 {
 	std::vector< std::string >	masks;
 
@@ -136,7 +136,7 @@ bool	Directives::checkValidIp( std::string ip )
 	return ( true );
 }
 
-bool	Directives::checkValidRangeIpMask( std::string num, size_t pos, size_t size )
+bool	DirectivesParser::checkValidRangeIpMask( std::string num, size_t pos, size_t size )
 {
 	std::string	limit;
 
@@ -146,7 +146,7 @@ bool	Directives::checkValidRangeIpMask( std::string num, size_t pos, size_t size
 	return ( true );
 }
 
-bool	Directives::checkSyntaxIp( std::string ip )
+bool	DirectivesParser::checkSyntaxIp( std::string ip )
 {
 	bool	dot;
 	size_t	pos;

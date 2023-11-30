@@ -6,29 +6,22 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/15 17:47:50 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/30 18:33:54 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Server.hpp>
 
-Server::Server( void ): ServerConfig() {}
+Server::Server( void ) {}
 
-Server::Server( const Server& s ): ServerConfig( s ) {}
-
-Server::Server( const ServerParser& sp ): ServerConfig( sp ) {}
+Server::Server( const Server& s ): _directives( s._directives ) {}
 
 Server::~Server( void ) {}
 
 Server&	Server::operator=( const Server& s )
 {
-	ServerConfig::operator=( s );
-	return ( *this );
-}
-
-Server&	Server::operator=( const ServerParser& sp )
-{
-	ServerConfig::operator=( sp );
+	if ( this != &s )
+		this->_directives = s._directives;
 	return ( *this );
 }
 
