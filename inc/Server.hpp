@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:40:55 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/15 17:47:19 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/30 12:29:30 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,20 @@
 
 # include <ServerConfig.hpp>
 # include <ServerParser.hpp>
+
+class Server
+{
+private:
+	Directives	_d;
+public:
+	Server( void );
+	Server( const Server& s );
+	~Server( void );
+	Server&	operator=( const Server& s );
+public:
+	Location	getLocationAtPath( std::string path ) const;
+	std::string	getErrorPageWithCode( unsigned int code ) const;
+};
 
 class Server: public ServerConfig
 {

@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:50:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/29 19:43:55 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/30 12:51:44 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,47 @@
 # include <ServerConfig.hpp>
 # include <TreeSplit.hpp>
 
+# include <DirectivesParser.hpp>
+
 # define PARSE_LISTEN_ERRORS_SIZE 3
 
 # define IP_VALID_CHARS "0123456789."
+
+typedef std::map< unsigned int, std::string >	ErrorPagesMap;
+typedef std::vector< Location >					LocationsVector;
+typedef std::vector< Server >					ServersVector;
+typedef std::pair< std::string, int >			ListenPair;
+
+class Directives
+{
+	//Friend classes
+	friend class Server;
+	friend class Location;
+	friend class DirectivesParser;
+private:
+	ServersVector	_servers;
+	int				_port;
+	std::string		_host;
+	LocationsVector	_locations;
+	std::string		_rootDir;
+	StringVector	_serverNames;
+	long			_clientMaxBodySize;
+	ErrorPagesMap	_errorPages;
+public:
+	Directives( void );
+	Directives( const Directives& s );
+	~Directives( void );
+	Directives&	operator=( const Directives& d );
+public:
+	int				getPort( void ) const;
+	std::string		getHost( void ) const;
+	LocationsVector	getLocations( void ) const;
+	ServersVector	getServers( void ) const;
+	std::string		getRoot( void ) const;
+	StringVector	getServerNames( void ) const;
+	unsigned int	getClientMaxBodySize( void ) const;
+	ErrorPagesMap	getErrorPages( void ) const;
+};
 
 class Directives
 {

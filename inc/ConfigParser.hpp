@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:49:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/15 17:57:40 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/30 11:43:03 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 class ConfigParser
 {
 private:
+	Directives	_directives;
 	std::vector< Server >	_servers;
 	std::string				_fileName;
 	std::string				_content;

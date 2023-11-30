@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:10:16 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/24 13:56:12 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/30 14:37:57 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,10 @@
 # define CYAN "\033[1;96m"
 
 # define ISSPACE "\t\n\v\f\r "
+
+# define INVALID_SEPARATOR 0
+# define SEMICOLON_SEPARATOR 1
+# define BRACET_SEPARATOR 2
 
 typedef int							socket_t;
 typedef std::vector< std::string >	StringVector;

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:48:38 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/27 16:12:51 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/30 15:14:10 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,15 @@
 
 ConfigParser::ConfigParser( int argc, char **argv )
 {
+	StringVector	allowedComplexDirectives;
+	StringVector	allowedSimpleDirectives;
+
+	allowedComplexDirectives.push_back( "server" );
 	checkUsage( argc, argv, argv[ 0 ] );
 	readConfig();
-	parseConfigFile();
+	//parseConfigFile();
+	this->_directives = DirectivesParser::parseDirectives( this->_content, \
+							allowedSimpleDirectives, allowedComplexDirectives );
 }
 
 ConfigParser::~ConfigParser( void ) {}
@@ -52,9 +58,6 @@ void	ConfigParser::parseConfigFile( void )
 	{
 		if ( TreeSplit::get_pair( head, body, this->_content ) )
 		{
-			//std::cout << "ConfigParser -> this->_content [" << this->_content << "] <-" << std::endl;
-			//std::cout << "ConfigParser -> head [" << head << "] <-" << std::endl;
-			//std::cout << "ConfigParser -> body [" << body << "] <-" << std::endl;
 			if ( head != "server" )
 				throw std::logic_error( UNKNOWN_DIRECTIVE( head ) );
 			ServerParser	sp( body );
@@ -69,5 +72,5 @@ void	ConfigParser::parseConfigFile( void )
 
 std::vector<Server>	ConfigParser::getServers( void ) const
 {
-	return ( this->_servers );
+	return ( this->_directives._servers );
 }
