@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/29 17:24:54 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/30 14:11:13 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,6 +189,15 @@ std::string							Request::getQuery() const
 const Headers&						Request::getHeaders() const
 {
 	return (headers);
+}
+
+std::string Request::getHost()
+{
+	Header* h = headers.firstWithKey("Host");
+	if (h)
+		return h->getValue();
+	else
+		return std::string("Unknown");
 }
 
 size_t								Request::getBodyLength() const

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/29 17:21:32 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/30 14:08:58 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ public:
 	std::string							getDocument() const;
 	std::string							getQuery() const;
 	const Headers&						getHeaders() const;
+	std::string							getHost();
 	size_t								getBodyLength() const;
 	std::string							getBody() const;
 	bool								isCompleteRecv() const;

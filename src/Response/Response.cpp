@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/22 15:03:44 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/30 14:02:28 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ Response&	Response::operator=(const Response& b)
 void	 					Response::setServer(std::string server)
 {
 	this->server = server;
+	headers.replace("Server", server);
 }
 
 void	 					Response::setProtocol(std::string protocol)

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/29 15:14:59 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/30 12:56:30 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,15 +44,12 @@ public:
 	int						manageRecv(std::string recv);
 	int						manageCompleteRecv();
 	int						managePollout();
-	std::string				getHtml(Request* req);
-	std::string				getForm(void);
-	std::string				getResponse(Request *req);
 	bool					getKeepAlive() const;
 	int						sendResponse(std::string resp);
 	bool					getLine(std::string& line);
 	size_t					getNChars(std::string& data, size_t n);
 	size_t					getPendingSize() const;
-	int 					setDummyRecv();
+	// int 					setDummyRecv();
 	bool					setKeepAlive(bool value);
 	size_t					purgeUsedRecv();
 };
