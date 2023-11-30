@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 14:13:51 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/30 14:38:52 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,22 @@ Response *Router::formatErrorResponse(Response &res)
 	res.setStatus(500);
 	res.setBody("Error: 500");	
 	return &res;
+}
+
+bool Router::isRequestForCgi(Request &req)
+{
+	(void)req;
+	return false;
+}
+
+bool Router::processRequestReceived(Request &req)
+{
+	if (!isRequestForCgi(req))
+		return true;
+	// TODO
+	// Delegate result formation to Ggi.
+	// Once it is finished send event to change request state to ready to send
+	return true;
 }
 
 Response *Router::formatGenericResponse(Response& res, Request& req)

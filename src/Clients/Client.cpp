@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 13:06:38 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/30 14:34:24 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,8 +140,11 @@ int	Client::manageCompleteRecv()
 	int count = 0;
 	while ((req = findCompleteRecvRequest()))
 	{
-		req->setReadyToSend();
-		count++;
+		if (Router::processRequestReceived(*req))
+		{
+			req->setReadyToSend();
+			count++;
+		}
 	}
 	return (count);
 }
