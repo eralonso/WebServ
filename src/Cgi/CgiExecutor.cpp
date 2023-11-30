@@ -6,13 +6,16 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/22 14:36:27 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/30 19:41:22 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/CgiExecutor.hpp"
+#include "Router.hpp"
+#include "Client.hpp"
 #define FDIN 0
 #define FDOUT 1
+#define CGI_TO 2000
 
 PendingCgiTasks	CgiExecutor::pendingTasks;
 
@@ -161,6 +164,53 @@ size_t	CgiExecutor::purgeTimeoutedTasks(clock_t to, size_t max)
 		i++;
 	}
 	return (i);
+}
+
+void	CgiExecutor::attendPendingCgiTasks(void)
+{
+	PendingCgiTask* pTask; 
+	Request* req;
+	Client* cli;
+	while ((pTask = CgiExecutor::getCompletedTask()))
+	{
+		Log::Info( "Cgi Task completed");
+		req = pTask->getRequest();
+		pTask->applyTaskOutputToReq();
+		if (req)
+			cli = req->getClient();
+		// req->setCgiOutput(pTask->getTaskOutput());
+		if (pTask)
+		{
+			CgiExecutor::pendingTasks.eraseTask(pTask);
+			delete pTask;
+		}
+		if (req)
+			req->setReadyToSend();
+		if (cli)
+			cli->allowPollWrite(true);
+		req = nullptr;
+		cli = nullptr;
+	}
+	while ((pTask = CgiExecutor::getTimeoutedTask(CGI_TO)))
+	{
+		req = pTask->getRequest();
+		if (req)
+		{
+			req->setError(500);
+			req->setReadyToSend();
+			cli = req->getClient();		
+		}
+		if (pTask)
+		{
+			CgiExecutor::pendingTasks.eraseTask(pTask);
+			delete pTask;
+		}
+		if (cli)
+			cli->allowPollWrite(true);
+		req = nullptr;
+		cli = nullptr;
+	}
+	
 }
 
 

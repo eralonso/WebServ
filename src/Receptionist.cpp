@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 11:35:40 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/30 17:47:04 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@ Receptionist::Receptionist(int port, int backlog, int timeout):
 	polls(MAX_CLIENTS), port(port), backlog(backlog), timeout(timeout)
 {
 	socket_t		serverFd;
-
-	( void )this->timeout;
 	serverFd = Sockets::createPassiveSocket( this->port, this->backlog );
 	polls.addPollfd( serverFd, POLLIN, 0, SPOLLFD );
 }
@@ -147,14 +145,23 @@ int	Receptionist::mainLoop(void)
 {
 	socket_t		serverFd;
 	socket_t		clientFd;
+	int				waitRes = 1;
 
 	while ( true )
 	{
 		if ( WSSignals::isSig == true )
 			return ( 1 );
-		Log::Info( "Waiting for any fd ready to I/O" );
-		if ( polls.wait( timeout ) < 0 )
+		if (waitRes != 0)
+			Log::Info( "Waiting for any fd ready to I/O" );
+		waitRes = polls.wait( timeout );
+		if ( waitRes < 0 )
 			return ( 1 );
+		CgiExecutor::attendPendingCgiTasks();
+		if ( waitRes == 0 )
+		{
+			// Log::Info( "Timeout Waiting for any fd ready to I/O" );
+			continue;
+		}
 		serverFd = polls.isNewClient();
 		if ( serverFd > 0 )
 		{

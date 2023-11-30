@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:30:14 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 18:12:58 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/30 18:09:15 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ public:
 	bool									isTimeout(clock_t toDuration) const;
 	int										getFd() const;
 	std::string								getTaskOutput();
+	void									applyTaskOutputToReq();
 };
 
 #endif

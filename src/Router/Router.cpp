@@ -6,11 +6,12 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 14:38:52 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/30 19:47:05 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Router.hpp>
+#include <CgiExecutor.hpp>
 
 Router::Router(/* args */)
 {
@@ -63,10 +64,13 @@ std::string Router::getForm(void)
 Response* Router::getResponse(Request* req)
 {
 	Response* res = new Response;
+	int error;
 	if (!res)
 		return res;
 	if (!req)
-		formatErrorResponse(*res);
+		formatErrorResponse(*res, 500);
+	else if ((error = req->getError()))
+		formatErrorResponse(*res, error);
 	else
 		updateResponse(*res, *req);
 	return res;
@@ -99,29 +103,46 @@ std::string Router::getRequestEmbed(Request &req)
 	return html;
 }
 
-Response *Router::formatErrorResponse(Response &res)
+Response *Router::formatErrorResponse(Response &res, int error)
 {
 	res.appendHeader(Header("Content-Type", std::string("text/html")));
 	res.setProtocol("HTTP/1.1");
-	res.setStatus(500);
-	res.setBody("Error: 500");	
+	res.setStatus(error);
+	res.setBody("Error: " + SUtils::longToString(error));	
 	return &res;
 }
 
 bool Router::isRequestForCgi(Request &req)
 {
-	(void)req;
-	return false;
+	return req.getUseCgi();
 }
 
 bool Router::processRequestReceived(Request &req)
 {
 	if (!isRequestForCgi(req))
+	{
+		req.setReadyToSend();
 		return true;
-	// TODO
-	// Delegate result formation to Ggi.
-	// Once it is finished send event to change request state to ready to send
-	return true;
+	}
+	try
+	{
+
+		std::string script = "";
+		CgiExecutor cgiExe(std::string("/usr/bin/python"), script, req, nullptr);
+		cgiExe.execute();
+		req.setCgiLaunched();
+		return true;
+	}
+	catch(const std::exception& e)
+	{
+		Log::Error ("When trying to execute CGI");
+		Log::Error (e.what());
+		// TODO Set Error to Send in request so the proper response is formed to send
+		req.setReadyToSend();
+		return true;
+	}
+	// Once finished CgiTaskPending will send event to change request state to ready to send
+	return false;
 }
 
 Response *Router::formatGenericResponse(Response& res, Request& req)

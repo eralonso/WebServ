@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 14:34:24 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/30 19:21:46 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,10 +141,7 @@ int	Client::manageCompleteRecv()
 	while ((req = findCompleteRecvRequest()))
 	{
 		if (Router::processRequestReceived(*req))
-		{
-			req->setReadyToSend();
 			count++;
-		}
 	}
 	return (count);
 }
@@ -233,3 +230,10 @@ size_t Client::purgeUsedRecv()
 	return (pendSize);
 }
 
+void Client::allowPollWrite(bool value)
+{
+	if (value)
+		clientPoll->events |= POLLOUT;
+	else
+		clientPoll->events &= ~POLLOUT;
+}

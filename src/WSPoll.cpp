@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WSPoll.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:05:51 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/02 11:29:12 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/30 16:39:15 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,8 +169,8 @@ int	WSPoll::checkPollReturn( int ret ) const
 {
 	if ( ret < 0 )
 		Log::Error( "Poll" );
-	else if ( ret == 0 )
-		Log::Error( "Poll timeout" );
+	// else if ( ret == 0 )
+	// 	Log::Info( "Poll timeout" );
 	return ( ret );
 }
 
@@ -260,9 +260,10 @@ void	WSPoll::compressPolls( unsigned int start )
 //Wait a fd to become ready to perform I/O
 int	WSPoll::wait( int timeout )
 {
-	if ( checkPollReturn( poll( this->_polls, this->_size, timeout ) ) <= 0 )
-		return ( -1 );
-	return ( 0 );
+	return (checkPollReturn( poll( this->_polls, this->_size, timeout ) ));
+	// if ( checkPollReturn( poll( this->_polls, this->_size, timeout ) ) < 0 )
+	// 	return ( -1 );
+	// return ( 0 );
 }
 
 //Return if fd ready to perform I/O is from server or client

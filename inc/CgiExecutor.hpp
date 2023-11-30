@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:34 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/22 13:10:54 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/30 17:45:53 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ public:
 	static PendingCgiTask*	getTimeoutedTask(clock_t to);
 	static std::string		getCompletedTaskOutput(void);
 	static size_t			purgeTimeoutedTasks(clock_t to, size_t max);
+	static void				attendPendingCgiTasks(void);
 };
 
 #endif

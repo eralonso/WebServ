@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 14:11:13 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/30 19:39:50 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,16 @@ Request::Request(void)
 {
 	client = nullptr;
 	status = IDLE;
+	useCgi = false;
+	error = 0;
 }
 
 Request::Request(Client *cli)
 {
 	client = cli;
 	status = FD_BOND;
+	useCgi = false;
+	error = 0;
 }
 
 Request::~Request()
@@ -43,6 +47,9 @@ Request::Request(const Request& b)
 	query = b.query;
 	headers = b.headers;
 	body = b.body;
+	cgiOutput = b.cgiOutput;
+	useCgi = b.useCgi;
+	error = b.error;
 }
 
 Request&	Request::operator=(const Request& b)
@@ -56,6 +63,9 @@ Request&	Request::operator=(const Request& b)
 	query = b.query;
 	headers = b.headers;
 	body = b.body;
+	cgiOutput = b.cgiOutput;
+	useCgi = b.useCgi;
+	error = b.error;
 	return (*this);
 }
 
@@ -138,7 +148,22 @@ Request::t_status Request::getStatus() const
 	return (status);
 }
 
-Client* Request::getClient() const
+int Request::getError() const
+{
+	return error;
+}
+
+std::string		Request::getCgiOutput() const
+{
+	return (cgiOutput);
+}
+
+bool Request::getUseCgi() const
+{
+	return useCgi;
+}
+
+Client* Request::getClient()
 {
 	return (client);
 }
@@ -395,6 +420,9 @@ bool Request::processLine(const std::string &line)
 	case RECVD_ALL:
 		Log::Info("processLine with RECVD_ALL");
 		return false;
+	case CGI_LAUNCHED:
+		Log::Info("processLine with CGI_LAUNCHED");
+		return false;
 	case RESP_RENDERED:
 		Log::Info("processLine with RESP_RENDERED");
 		return false;
@@ -410,6 +438,11 @@ bool								Request::isReadyToSend() const
 bool Request::isCompleteRecv() const
 {
 	return (status == RECVD_ALL);
+}
+
+bool Request::isCgiLaunched() const
+{
+	return (status == CGI_LAUNCHED);
 }
 
 bool								Request::isReceiving() const
@@ -433,8 +466,25 @@ void								Request::setBody(const std::string& content)
 
 void Request::setReadyToSend()
 {
-	if (status == RECVD_ALL)
+	if (status == RECVD_ALL || status == CGI_LAUNCHED)
 		status = RESP_RENDERED;
+}
+
+void Request::setCgiLaunched()
+{
+	if (status == RECVD_ALL)
+		status = CGI_LAUNCHED;
+}
+
+void								Request::setCgiOutput(std::string str)
+{
+	cgiOutput = str;
+	useCgi = true;
+}
+
+void Request::setError(int value)
+{
+	error = value;
 }
 
 void Request::logStatus()
@@ -467,6 +517,9 @@ void Request::logStatus()
 		break;
 	case RECVD_ALL:
 		Log::Success("status = RECVD_ALL");
+		break;
+	case CGI_LAUNCHED:
+		Log::Success("status = CGI_LAUNCHED");
 		break;
 	case RESP_RENDERED:
 		Log::Success("status = RESP_RENDERED");

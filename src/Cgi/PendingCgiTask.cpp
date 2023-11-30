@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/22 14:34:26 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/30 18:09:29 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,4 +84,23 @@ std::string PendingCgiTask::getTaskOutput()
 	resBody += std::string(buf);
 	close(fd);
 	return resBody;
+}
+
+void PendingCgiTask::applyTaskOutputToReq()
+{
+	char buf[BUFFER_SIZE + 1];
+	std::string	resBody;
+	size_t bytes_read = read(fd, buf, BUFFER_SIZE);
+	while (bytes_read == BUFFER_SIZE)
+	{
+		buf[BUFFER_SIZE] = 0;
+		resBody += std::string(buf);
+		bytes_read = read(fd, buf, BUFFER_SIZE);
+	}
+	if (bytes_read < 0)
+		Log::Error(std::string("Read from child failed"));
+	buf[bytes_read] = 0;
+	resBody += std::string(buf);
+	close(fd);
+	request->setCgiOutput(resBody);
 }

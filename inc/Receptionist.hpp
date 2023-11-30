@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:43:42 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/28 14:37:27 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/30 17:45:40 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,16 +21,17 @@
 #include "WSPoll.hpp"
 #include "Utils.hpp"
 #include "Clients.hpp"
+#include "CgiExecutor.hpp"
 
 class Receptionist : public Clients
 {
 private:
-	WSPoll			polls;
-	int				port;
-	int				backlog;
-	int				timeout;
+	WSPoll							polls;
+	int								port;
+	int								backlog;
+	int								timeout;
 public:
-	Receptionist(int port = 9375, int backlog = 20, int timeout = -1);
+	Receptionist(int port = 9375, int backlog = 20, int timeout = 1000);
 	~Receptionist();
 	Receptionist(const Receptionist& b);
 	Receptionist& 	operator=(const Receptionist& b);

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 14:08:58 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/11/30 19:38:34 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,14 @@ public:
 		RECVD_CHUNK,
 		RECVD_LAST_CHUNK,
 		RECVD_ALL,
+		CGI_LAUNCHED,
 		RESP_RENDERED
 	}	t_status;
 private:
 	t_status					status;
+	int							error;
+	std::string					cgiOutput;
+	bool						useCgi;
 	size_t 						chunkSize;
 	Client*						client;
 	std::string					protocol;
@@ -68,7 +72,10 @@ public:
 	Request&	operator=(const Request& b);
 	int bindClient(Client* cli);
 	t_status							getStatus() const;
-	Client*								getClient() const;
+	int									getError() const;
+	std::string							getCgiOutput() const;
+	bool								getUseCgi() const;
+	Client*								getClient() ;
 	std::string							getProtocol() const;
 	std::string							getMethod() const;
 	std::string							getRoute() const;
@@ -82,10 +89,14 @@ public:
 	std::string							getBody() const;
 	bool								isCompleteRecv() const;
 	bool								isReadyToSend() const;
+	bool								isCgiLaunched() const;
 	bool								isReceiving() const;
 	std::string							toString();
 	void								setBody(const std::string& content);
 	void								setReadyToSend();
+	void								setCgiLaunched();
+	void								setCgiOutput(std::string str);
+	void								setError(int);
 	void								logStatus();
 	bool								processLine(const std::string& line);
 };
