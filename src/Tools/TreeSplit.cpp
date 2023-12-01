@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 17:11:41 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 14:38:44 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/01 19:10:48 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ namespace TreeSplit
 
 		pos = src.find_first_of( "{;" );
 		if ( pos == std::string::npos )
-			return ( INVALID_SEPARATOR );
+			return ( NOT_A_SEPARATOR );
 		if ( src[ pos ] == ';' )
 		{
 			splitOnceBySpace( src.substr( 0, pos ), head, body );

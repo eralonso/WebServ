@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:41:41 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/01 13:28:37 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/01 19:48:56 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,42 +31,52 @@ Directives	*DirectivesParser::parseDirectives( std::string content, \
 					StringVector allowedSimpleDirectives, \
 					StringVector allowedComplexDirectives )
 {
-	std::string							head;
-	std::string							body;
-	int									type;
-	std::string							name;
-	Directives							*d = new Directives;
-	std::map< const std::string, bool >	isSet;
+	ConstStringBoolMap	isSet;
+	Directives			*d = new Directives;
 
 	for ( int i = 0; i < SIZE_DIRECTIVES; i++ )
-		isSet[ DirectivesVector[ i ] ] = false;
+		isSet[ _directivesList[ i ] ] = false;
 	while ( content.length() > 0 )
 	{
 		try
 		{
-			if ( ( type = TreeSplit::get_pair( head, body, content ) ) )
-			{
-				name = head.substr( 0, head.find( ISSPACE ) );
-				checkValidDirective( name );
-				checkValidSeparator( type, name );
-				checkDuplicateDirective( name, isSet );
-				isSet[ name ] = true;
-				parseDirective( head, body, type, d, allowedSimpleDirectives, \
-						allowedComplexDirectives );
-			}
-			else if ( content.length() > 0 )
-				throw std::logic_error( "Unxpected \"}\" or end of file" );
+			parseLine( isSet, d, content, allowedSimpleDirectives, \
+							allowedComplexDirectives );
 		}
 		catch ( const std::exception& e )
 		{
 			delete d;
 			throw std::logic_error( e.what() );
 		}
-		head.clear();
-		body.clear();
 	}
 	return ( d );
 }
+
+//check if line is correct
+void	DirectivesParser::parseLine( ConstStringBoolMap& isSet, \
+					Directives *d, std::string& content, \
+					StringVector allowedSimpleDirectives, \
+					StringVector allowedComplexDirectives )
+{
+	std::string			head;
+	std::string			body;
+	int					type;
+	std::string			name;
+
+	if ( ( type = TreeSplit::get_pair( head, body, content ) ) != NOT_A_SEPARATOR )
+	{
+		name = head.substr( 0, head.find( ISSPACE ) );
+		checkValidDirective( name );
+		checkValidSeparator( type, name );
+		checkDuplicateDirective( name, isSet );
+		isSet[ name ] = true;
+		parseDirective( head, body, d, allowedSimpleDirectives, \
+				allowedComplexDirectives );
+	}
+	else if ( content.length() > 0 )
+		throw std::logic_error( "Unxpected \"}\" or end of file" );
+}
+
 
 //select parse function
 void	DirectivesParser::parseDirective( std::string head, std::string body, \
@@ -76,33 +86,39 @@ void	DirectivesParser::parseDirective( std::string head, std::string body, \
 	int	idx;
 
 	if ( ( idx = isSimpleDirective( head, allowedSimpleDirectives ) ) >= 0 )
-		_ParseSimple[ idx ]( body, d );
+		_parseSimple[ idx ]( body, d );
 	else if ( ( idx = isComplexDirective( head, allowedComplexDirectives ) ) >= 0 )
-		_ParseComplex[ idx ]( head, body, d );
+		_parseComplex[ idx ]( head, body, d );
 }
 
 //check directive
 void	DirectivesParser::checkValidDirective( std::string directive )
 {
-	if ( std::find( DirectivesVector.begin(), DirectivesVector.end(), directive ) \
-			== DirectivesVector.end() )
+	if ( std::find( _directivesList.begin(), _directivesList.end(), directive ) \
+			== _directivesList.end() )
 		throw std::logic_error( UNKNOWN_DIRECTIVE( directive ) );
 }
 
 void	DirectivesParser::checkValidSeparator( int type, std::string directive )
 {
 	static std::string	separators[ 2 ] = { ";", "{" };
+	int					expectedSeparator;
 
-	if ( type == separators[ type - 1 ] )
+	if ( std::find( _simpleDirectivesList.begin(), _simpleDirectivesList.end(), \
+				directive ) != _simpleDirectivesList.end() )
+		expectedSeparator = SEMICOLON_SEPARATOR - 1;
+	else
+		expectedSeparator = BRACET_SEPARATOR - 1;
+	if ( type != expectedSeparator )
 		throw std::logic_error( "\"" + directive \
 				+ "\" invalid separator for this directive, expected \"" \
-				+ separators[ type - 1 ] + "\"" );
+				+ separators[ expectedSeparator ] + "\"" );
 }
 
-void	DirectivesParser::checkDuplicateDirective( std::string directive, \
+void	DirectivesParser::checkDuplicateDirective( const std::string directive, \
 	 					std::map< const std::string, bool > isSet )
 {
-	if ( isSet[ directive ] == true && _canRepeatDirective[ directive ] == false )
+	if ( isSet[ directive ] == true && _canRepeatDirectiveList.at( directive ) == false )
 		throw std::logic_error( "\"" + directive + "\" directive is duplicate" );
 }
 
@@ -150,7 +166,7 @@ void	DirectivesParser::parseListen( std::string body, Directives *d )
 	if ( checkAvailableHostPort( host, port ) )
 		throw std::logic_error( "host not found \"" + host + "\"" );
 	d->_host = host;
-	d->_port = port;
+	d->_port = std::atoi( port.c_str() );
 }
 
 //server_name {list of server names}
@@ -183,7 +199,6 @@ void	DirectivesParser::parseErrorPage( std::string body, Directives *d )
 void	DirectivesParser::parseClientMaxBodySize( std::string body, Directives *d )
 {
 	StringVector	args;
-	long			size;
 
 	SUtils::split( args, body, ISSPACE );
 	if ( args.size() != 1 )
@@ -209,7 +224,7 @@ void	DirectivesParser::parseIndex( std::string body, Directives *d )
 	if ( args.size() == 0 )
 		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
 					std::string( "index" ) ) );
-	d->_index.insert( d.index.begin(), args.begin(), args.end() );
+	d->_index.insert( d->_index.begin(), args.begin(), args.end() );
 }
 
 //autoindex
@@ -234,24 +249,28 @@ void	DirectivesParser::parseAutoindex( std::string body, Directives *d )
 void	DirectivesParser::parseAlias( std::string body, Directives *d )
 {
 	( void )body;
+	( void )d;
 }
 
 //rewrite
 void	DirectivesParser::parseReturn( std::string body, Directives *d )
 {
 	( void )body;
+	( void )d;
 }
 
 //allow_methods
 void	DirectivesParser::parseAllowMethods( std::string body, Directives *d )
 {
 	( void )body;
+	( void )d;
 }
 
 //cgi
 void	DirectivesParser::parseCgi( std::string body, Directives *d )
 {
 	( void )body;
+	( void )d;
 }
 
 //server
