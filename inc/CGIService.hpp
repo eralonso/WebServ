@@ -6,13 +6,16 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:14:43 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 15:32:02 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/01 12:26:59 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _CGISERVICE_HPP_
 # define _CGISERVICE_HPP_
+
 # include <string>
+
+# include <TypesDefines.hpp>
 
 class CGIService
 {

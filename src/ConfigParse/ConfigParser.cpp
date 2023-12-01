@@ -6,13 +6,13 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:48:38 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 19:30:02 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/01 13:53:16 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ConfigParser.hpp>
 
-ConfigParser::ConfigParser( int argc, char **argv )
+ConfigParser::ConfigParser( int argc, char **argv ): _directives( NULL )
 {
 	StringVector	allowedComplexDirectives;
 	StringVector	allowedSimpleDirectives;
@@ -20,12 +20,15 @@ ConfigParser::ConfigParser( int argc, char **argv )
 	allowedComplexDirectives.push_back( "server" );
 	checkUsage( argc, argv, argv[ 0 ] );
 	readConfig();
-	//parseConfigFile();
 	this->_directives = DirectivesParser::parseDirectives( this->_content, \
 							allowedSimpleDirectives, allowedComplexDirectives );
 }
 
-ConfigParser::~ConfigParser( void ) {}
+ConfigParser::~ConfigParser( void )
+{
+	if ( this->_directives != NULL )
+		delete this->_directives;
+}
 
 void	ConfigParser::checkUsage( int argc, char **argv, std::string binName )
 {
@@ -70,7 +73,7 @@ void	ConfigParser::readConfig( void )
 //	}
 //}
 
-std::vector<Server>	ConfigParser::getServers( void ) const
+ServersVector	ConfigParser::getServers( void ) const
 {
-	return ( this->_directives._servers );
+	return ( this->_directives->_servers );
 }

@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+ ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:58:05 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/29 17:09:41 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/01 13:45:46 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,44 +26,56 @@ const std::string	Location::_directives[ LOCATION_SIZE_DIRECTIVES ] =
 	"cgi"
 };
 
-Location::Location( void ): _isDir( false ) {}
+Location::Location( void ): _isDir( false ), _directives( NULL ) {}
 
-Location::Location( std::string path, std::string rest ): _isDir( false )
+//Location::Location( std::string path, std::string rest ): _isDir( false ), \
+//													_directives( NULL ) 
+//{
+//	std::string head;
+//	std::string body;
+//	std::string content( rest );
+//
+//	this->_path = path;
+//	SUtils::split( this->_splitedPath, path, "/" );
+//	if ( path.back() == '/' )
+//		this->_isDir = true;
+//	while ( content.length() > 0 )
+//	{
+//	//	if ( TreeSplit::get_pair( head, body, content ) )
+//	//		parseDirective( head, body );
+//	//	else if ( content.length() > 0 )
+//	//		throw std::logic_error( "Unxpected \"}\"" );
+//		head.clear();
+//		body.clear();
+//	}
+//}
+
+Location::~Location( void )
 {
-	std::string head;
-	std::string body;
-	std::string content( rest );
-
-	this->_path = path;
-	SUtils::split( this->_splitedPath, path, "/" );
-	if ( path.back() == '/' )
-		this->_isDir = true;
-	while ( content.length() > 0 )
-	{
-	//	if ( TreeSplit::get_pair( head, body, content ) )
-	//		parseDirective( head, body );
-	//	else if ( content.length() > 0 )
-	//		throw std::logic_error( "Unxpected \"}\"" );
-		head.clear();
-		body.clear();
-	}
+	if ( this->_directives != NULL )
+		delete this->_directives;
 }
 
-Location::~Location( void ) {}
-
 Location::Location( const Location& lc ): _path( lc._path ), _isDir(lc._isDir ), \
-					_rootDir( lc._rootDir ), _actionMask( lc._actionMask ), \
-					_servicesCGI( lc._servicesCGI ) {}
+											 _splitedPath( _splitedPath )
+{
+	this->_directives = NULL;
+	if ( lc._directives != NULL )
+		this->_directives = new Directives( *lc._directives );
+}
 
 Location& 	Location::operator=( const Location& lc )
 {
 	if ( this != &lc )
 	{
-		_path = lc._path;
-		_isDir = lc._isDir;
-		_rootDir = lc._rootDir;
-		_actionMask = lc._actionMask;
-		_servicesCGI = lc._servicesCGI;
+		this->_path = lc._path;
+		this->_splitedPath = lc._splitedPath;
+		this->_isDir = lc._isDir;
+		if ( this->_directives != NULL )
+			delete this->_directives;
+		this->_directives = NULL;
+		if ( lc._directives != NULL )
+			this->_directives = new Directives( *lc._directives );
 	}
 	return ( *this );
 }
@@ -91,22 +103,12 @@ StringVector	Location::getSplitedPath( void ) const
 	return ( this->_splitedPath );
 }
 
-RootDir	Location::getRootDir( void ) const
-{
-	return ( this->_rootDir );
-}
-
 bool	Location::isDir( void ) const
 {
 	return ( this->_isDir );
 }
 
-ActionMask	 Location::getActionMask( void ) const
+Directives	*Locaiton::getDirectives( void ) const
 {
-	return ( this->_actionMask );
-}
-
-std::vector< CGIService>	Location::getServicesCGI( void ) const
-{
-	return ( this->_servicesCGI );
+	return ( this->_directives );
 }

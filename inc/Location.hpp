@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 19:24:36 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/01 13:44:31 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <vector>
 # include <string>
 
+# include <TypesDefines.hpp>
 # include <Directives.hpp>
 # include <Defines.hpp>
 # include <StringErrors.hpp>
@@ -28,21 +29,17 @@ private:
 	std::string		_path;
 	StringVector	_splitedPath;
 	bool			_isDir;
-	Directives		_directives;
+	Directives		*_directives;
 public:
 	Location( void );
 	~Location( void );
 	Location( const Location& lc );
 	Location&	operator=( const Location& lc );
-//public:
-//	void	parseDirective( std::string head, std::string body );
 public:
 	std::string		getPath( void ) const;
 	bool			isDir( void ) const;
 	StringVector	getSplitedPath( void ) const;
-	std::string		getRoot( void ) const;
-	ActionMask		getAllowedMethods( void ) const;
-	CgiVector		getServicesCGI( void ) const;
+	Directives		*getDirectives( void ) const;
 };
 
 #endif

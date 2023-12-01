@@ -6,13 +6,14 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 11:03:56 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/30 19:29:35 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/01 13:29:30 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _DIRECTIVESPARSER_HPP_
 # define _DIRECTIVESPARSER_HPP_
 
+# include <TypesDefines.hpp>
 # include <TreeSplit.hpp>
 # include <Location.hpp>
 # include <Defines.hpp>
@@ -28,9 +29,9 @@ class DirectivesParser
 {
 private:
 	typedef void ( DirectivesParser::*t_parseSimpleDirective )( std::string, \
-					Directives& );
+					Directives *);
 	typedef void ( DirectivesParser::*t_parseComplexDirective )( std::string, \
-					std::string, Directives& );
+					std::string, Directives *);
 	typedef t_parseSimpleDirective	t_parseSimpleDirectiveArray[ \
 					SIZE_SIMPLE_DIRECTIVES ];
 	typedef t_parseComplexDirective	t_parseComplexDirectiveArray[ \
@@ -57,7 +58,7 @@ private:
 private:
 	//parse
 	void	parseDirective( std::string head, std::string body, \
-					Directives& d, StringVector allowedSimpleDirectives, \
+					Directives *d, StringVector allowedSimpleDirectives, \
 					StringVector allowedComplexDirectives );
 	int		isSimpleDirective( std::string head, \
 					StringVector allowedDirectives );
@@ -71,10 +72,10 @@ private:
 	 				std::map< const std::string, bool > isSet );
 
 	//root
-	void	parseRoot( std::string body, Directives& d );
+	void	parseRoot( std::string body, Directives *d );
 
 	//listen
-	void			parseListen( std::string body, Directives& d );
+	void			parseListen( std::string body, Directives *d );
 
 	std::string		parseListenStrError( int ret, std::string aux );
 	std::string		parseHost( std::string arg, int& ret );
@@ -91,47 +92,47 @@ private:
 	int				checkAvailableHostPort( std::string host, \
 								std::string port );
 	//server_name
-	void	parseServerNames( std::string body, Directives& d );
+	void	parseServerNames( std::string body, Directives *d );
 
 	//error_page
-	void	parseErrorPage( std::string body, Directives& d );
+	void	parseErrorPage( std::string body, Directives *d );
 
-	void	fillErrorPages( StringVector args, Directives& d );
+	void	fillErrorPages( StringVector args, Directives *d );
 	int		parseErrorCode( std::string code );
 	
 	//client_max_body_size
-	void	parseClientMaxBodySize( std::string body, Directives& d );
+	void	parseClientMaxBodySize( std::string body, Directives *d );
 
 	long	getMeasureLimit( int unit );
 	int		parseMeasure( std::string number );
 	long	parseSize( std::string number );
 
 	//index
-	void	parseIndex( std::string body, Directives& d );
+	void	parseIndex( std::string body, Directives *d );
 
 	//autoindex
-	void	parseAutoindex( std::string body, Directives& d );
+	void	parseAutoindex( std::string body, Directives *d );
 
 	//alias
-	void	parseAlias( std::string body, Directives& d );
+	void	parseAlias( std::string body, Directives *d );
 
 	//return
-	void	parseReturn( std::string body, Directives& d );
+	void	parseReturn( std::string body, Directives *d );
 
 	//allow_methods
-	void	parseAllowMethods( std::string body, Directives& d );
+	void	parseAllowMethods( std::string body, Directives *d );
 
 	//cgi
-	void	parseCgi( std::string body, Directives& d );
+	void	parseCgi( std::string body, Directives *d );
 
 	//location
-	void	parseLocation( std::string head, std::string body, Directives& d );
+	void	parseLocation( std::string head, std::string body, Directives *d );
 
 	//server
-	void	parseServer( std::string head, std::string body, Directives& d );
+	void	parseServer( std::string head, std::string body, Directives *d );
 
 public:
-	static Directives	parseDirectives( std::string content, \
+	static Directives	*parseDirectives( std::string content, \
 					StringVector allowedSimpleDirectives, \
 					StringVector allowedComplexDirectives );
 };

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:40:55 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 19:27:26 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/01 13:52:55 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define _SERVER_HPP_
 
 # include <string>
+
+# include <TypesDefines.hpp>
 # include <Directives.hpp>
 
 class Directives;
@@ -21,7 +23,7 @@ class Directives;
 class Server
 {
 private:
-	Directives	_directives;
+	Directives	*_directives;
 public:
 	Server( void );
 	Server( const Server& s );

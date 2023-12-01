@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Directives.cpp                                     :+:      :+:    :+:   */
+/*   Directived.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:55:51 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/30 19:10:28 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/01 13:55:52 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,20 +38,20 @@ Directives&	Directives::operator=( const Directives& d )
 {
 	if ( this != &d )
 	{
-		this->_root = s._root;
-		this->_port = s._port;
-		this->_host = s._host;
-		this->_serverNames = s._serverNames;
-		this->_errorPages = s._errorPages;
-		this->_clientMaxBodySize = s._clientMaxBodySize;
-		this->_index = s._index;
-		this->_autoindex = s._autoindex;
-		this->_alias = s._alias;
-		this->_return = s._return;
-		this->_allowMethods = s._allowMethods;
-		this->_cgi = s._cgi;
-		this->_servers = s._servers;
-		this->_locations = s._locations;
+		this->_root = d._root;
+		this->_port = d._port;
+		this->_host = d._host;
+		this->_serverNames = d._serverNames;
+		this->_errorPages = d._errorPages;
+		this->_clientMaxBodySize = d._clientMaxBodySize;
+		this->_index = d._index;
+		this->_autoindex = d._autoindex;
+		this->_alias = d._alias;
+		this->_return = d._return;
+		this->_allowMethods = d._allowMethods;
+		this->_cgi = d._cgi;
+		this->_servers = d._servers;
+		this->_locations = d._locations;
 	}
 	return ( *this );
 }

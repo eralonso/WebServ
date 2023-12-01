@@ -6,39 +6,35 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:49:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 11:43:03 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/01 13:21:09 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _CONFIGPARSER_HPP_
 # define _CONFIGPARSER_HPP_
 
-# include <vector>
 # include <string>
 # include <iostream>
 # include <fstream>
 
-# include <Server.hpp>
-# include <ServerParser.hpp>
-# include <TreeSplit.hpp>
+# include <TypesDefines.hpp>
+# include <Directives.hpp>
 # include <Utils.hpp>
-# include <StringErrors.hpp>
+//# include <ServerDefines.hpp>
 
 class ConfigParser
 {
 private:
-	Directives	_directives;
-	std::vector< Server >	_servers;
-	std::string				_fileName;
-	std::string				_content;
+	Directives	*_directives;
+	std::string	_fileName;
+	std::string	_content;
 private:
 	void	checkUsage( int argc, char **argv, std::string binName );
 	void	readConfig( void );
-	void	parseConfigFile( void );
 public:
 	ConfigParser( int argc, char **argv );
 	~ConfigParser( void );
-	std::vector< Server > getServers( void ) const;
+	ServersVector getServers( void ) const;
 };
 
 #endif

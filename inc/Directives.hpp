@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:50:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/30 19:24:17 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/01 13:53:41 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <sys/socket.h>
 # include <netdb.h>
 
+# include <TypesDefines.hpp>
 # include <Defines.hpp>
 # include <Utils.hpp>
 # include <TreeSplit.hpp>
@@ -31,16 +32,16 @@
 # include <ActionMask.hpp>
 # include <DirectivesParser.hpp>
 
-class DirectivesParser;
-class Server;
-class Location;
+//class DirectivesParser;
+//class Server;
+//class Location;
 
-typedef std::map< unsigned int, std::string >	ErrorPagesMap;
-typedef std::vector< Location >					LocationsVector;
-typedef std::vector< Server >					ServersVector;
-typedef std::pair< std::string, int >			ListenPair;
-typedef std::pair< int, std::string >			ReturnPair;
-typedef std::vector< CGIService >				CgiVector;
+//typedef std::map< unsigned int, std::string >	ErrorPagesMap;
+//typedef std::vector< Location >					LocationsVector;
+//typedef std::vector< Server >					ServersVector;
+//typedef std::pair< std::string, int >			ListenPair;
+//typedef std::pair< int, std::string >			ReturnPair;
+//typedef std::vector< CGIService >				CgiVector;
 
 class Directives
 {
@@ -48,6 +49,7 @@ class Directives
 	friend class Server;
 	friend class Location;
 	friend class DirectivesParser;
+	friend class ConfigParser;
 private:
 	std::string		_root;
 	int				_port;

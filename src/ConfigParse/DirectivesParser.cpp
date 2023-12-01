@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:41:41 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/30 19:29:12 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/01 13:28:37 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ DirectivesParser&	DirectivesParser::operator=( const DirectivesParser& dp )
 	return ( *this );
 }
 
-Directives	DirectivesParser::parseDirectives( std::string content, \
+Directives	*DirectivesParser::parseDirectives( std::string content, \
 					StringVector allowedSimpleDirectives, \
 					StringVector allowedComplexDirectives )
 {
@@ -35,25 +35,33 @@ Directives	DirectivesParser::parseDirectives( std::string content, \
 	std::string							body;
 	int									type;
 	std::string							name;
-	Directives							d;
+	Directives							*d = new Directives;
 	std::map< const std::string, bool >	isSet;
 
 	for ( int i = 0; i < SIZE_DIRECTIVES; i++ )
 		isSet[ DirectivesVector[ i ] ] = false;
 	while ( content.length() > 0 )
 	{
-		if ( ( type = TreeSplit::get_pair( head, body, content ) ) )
+		try
 		{
-			name = head.substr( 0, head.find( ISSPACE ) );
-			checkValidDirective( name );
-			checkValidSeparator( type, name );
-			checkDuplicateDirective( name, isSet );
-			isSet[ name ] = true;
-			parseDirective( head, body, type, d, allowedSimpleDirectives, \
-					allowedComplexDirectives );
+			if ( ( type = TreeSplit::get_pair( head, body, content ) ) )
+			{
+				name = head.substr( 0, head.find( ISSPACE ) );
+				checkValidDirective( name );
+				checkValidSeparator( type, name );
+				checkDuplicateDirective( name, isSet );
+				isSet[ name ] = true;
+				parseDirective( head, body, type, d, allowedSimpleDirectives, \
+						allowedComplexDirectives );
+			}
+			else if ( content.length() > 0 )
+				throw std::logic_error( "Unxpected \"}\" or end of file" );
 		}
-		else if ( content.length() > 0 )
-			throw std::logic_error( "Unxpected \"}\" or end of file" );
+		catch ( const std::exception& e )
+		{
+			delete d;
+			throw std::logic_error( e.what() );
+		}
 		head.clear();
 		body.clear();
 	}
@@ -62,7 +70,7 @@ Directives	DirectivesParser::parseDirectives( std::string content, \
 
 //select parse function
 void	DirectivesParser::parseDirective( std::string head, std::string body, \
-					Directives& d, StringVector allowedSimpleDirectives, \
+					Directives *d, StringVector allowedSimpleDirectives, \
 					StringVector allowedComplexDirectives )
 {
 	int	idx;
@@ -99,7 +107,7 @@ void	DirectivesParser::checkDuplicateDirective( std::string directive, \
 }
 
 //root <path>
-void	DirectivesParser::parseRoot( std::string body, Directives& d )
+void	DirectivesParser::parseRoot( std::string body, Directives *d )
 {
 	StringVector	args;
 
@@ -107,11 +115,11 @@ void	DirectivesParser::parseRoot( std::string body, Directives& d )
 	if ( args.size() != 1 )
 		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
 					std::string( "root" ) ) );
-	d._root = args[ 0 ];
+	d->_root = args[ 0 ];
 }
 
 //listen
-void	DirectivesParser::parseListen( std::string body, Directives& d )
+void	DirectivesParser::parseListen( std::string body, Directives *d )
 {
 	StringVector	args;
 	size_t			sep;
@@ -141,12 +149,12 @@ void	DirectivesParser::parseListen( std::string body, Directives& d )
 		throw std::logic_error( parseListenStrError( ret, args[ 0 ] ) );
 	if ( checkAvailableHostPort( host, port ) )
 		throw std::logic_error( "host not found \"" + host + "\"" );
-	d._host = host;
-	d._port = port;
+	d->_host = host;
+	d->_port = port;
 }
 
 //server_name {list of server names}
-void	DirectivesParser::parseServerNames( std::string body, Directives& d )
+void	DirectivesParser::parseServerNames( std::string body, Directives *d )
 {
 	StringVector	args;
 
@@ -154,13 +162,13 @@ void	DirectivesParser::parseServerNames( std::string body, Directives& d )
 	if ( args.size() == 0 )
 		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
 					std::string( "server_name" ) ) );
-	d._serverNames.insert( d._serverNames.end(), args.begin(), args.end() );
+	d->_serverNames.insert( d->_serverNames.end(), args.begin(), args.end() );
 }
 
 //error_page [ code - uri ]
 //code: value in range 300 - 599
 //uri: internal redirect to 'uri' with client request method changed to 'GET'
-void	DirectivesParser::parseErrorPage( std::string body, Directives& d )
+void	DirectivesParser::parseErrorPage( std::string body, Directives *d )
 {
 	StringVector	args;
 
@@ -172,7 +180,7 @@ void	DirectivesParser::parseErrorPage( std::string body, Directives& d )
 }
 
 //client_max_body_size <size>
-void	DirectivesParser::parseClientMaxBodySize( std::string body, Directives& d )
+void	DirectivesParser::parseClientMaxBodySize( std::string body, Directives *d )
 {
 	StringVector	args;
 	long			size;
@@ -183,7 +191,7 @@ void	DirectivesParser::parseClientMaxBodySize( std::string body, Directives& d )
 					std::string( "client_max_body_size" ) ) );
 	try
 	{
-		d._clientMaxBodySize = parseSize( args[ 0 ] );
+		d->_clientMaxBodySize = parseSize( args[ 0 ] );
 	}
 	catch ( const std::logic_error& e )
 	{
@@ -193,7 +201,7 @@ void	DirectivesParser::parseClientMaxBodySize( std::string body, Directives& d )
 }
 
 //index
-void	DirectivesParser::parseIndex( std::string body, Directives& d )
+void	DirectivesParser::parseIndex( std::string body, Directives *d )
 {
 	StringVector	args;
 
@@ -201,11 +209,11 @@ void	DirectivesParser::parseIndex( std::string body, Directives& d )
 	if ( args.size() == 0 )
 		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
 					std::string( "index" ) ) );
-	d._index.insert( d.index.begin(), args.begin(), args.end() );
+	d->_index.insert( d.index.begin(), args.begin(), args.end() );
 }
 
 //autoindex
-void	DirectivesParser::parseAutoindex( std::string body, Directives& d )
+void	DirectivesParser::parseAutoindex( std::string body, Directives *d )
 {
 	StringVector	args;
 
@@ -214,41 +222,41 @@ void	DirectivesParser::parseAutoindex( std::string body, Directives& d )
 		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
 					std::string( "index" ) ) );
 	if ( args[ 0 ] == "on" )
-		d._autoindex = true;
+		d->_autoindex = true;
 	else if ( args[ 0 ] == "off" )
-		d._autoindex = false;
+		d->_autoindex = false;
 	else
 		throw std::logic_error( INVALID_VALUE_DIRECTIVE( \
 					std::string( "autoindex" ), args[ 0 ] ) );
 }
 
 //alias
-void	DirectivesParser::parseAlias( std::string body, Directives& d )
+void	DirectivesParser::parseAlias( std::string body, Directives *d )
 {
 	( void )body;
 }
 
 //rewrite
-void	DirectivesParser::parseReturn( std::string body, Directives& d )
+void	DirectivesParser::parseReturn( std::string body, Directives *d )
 {
 	( void )body;
 }
 
 //allow_methods
-void	DirectivesParser::parseAllowMethods( std::string body, Directives& d )
+void	DirectivesParser::parseAllowMethods( std::string body, Directives *d )
 {
 	( void )body;
 }
 
 //cgi
-void	DirectivesParser::parseCgi( std::string body, Directives& d )
+void	DirectivesParser::parseCgi( std::string body, Directives *d )
 {
 	( void )body;
 }
 
 //server
 void	DirectivesParser::parseServer( std::string head, std::string body, \
-						Directives& d )
+						Directives *d )
 {
 	StringVector	args;
 	Server			s;
@@ -260,12 +268,12 @@ void	DirectivesParser::parseServer( std::string head, std::string body, \
 	s._directives = DirectivesParser::parseDirectives( body, \
 						Server::AllowedSimpleDirectives, \
 						Server::AllowedComplexDirectives );
-	d._servers.push_back( s );
+	d->_servers.push_back( s );
 }
 
 //location <path>
 void	DirectivesParser::parseLocation( std::string head, std::string body, \
-						Directives& d )
+						Directives *d )
 {
 	std::string		path;
 	StringVector	args;
@@ -280,5 +288,5 @@ void	DirectivesParser::parseLocation( std::string head, std::string body, \
 	lc._directives = DirectivesParser::parseDirectives( body, \
 						Location::AllowedSimpleDirectives, \
 						Location::AllowedComplexDirectives );
-	d._locations.push_back( lc );
+	d->_locations.push_back( lc );
 }
