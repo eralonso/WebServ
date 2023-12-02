@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/01 13:51:56 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/02 19:21:21 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ Server&	Server::operator=( const Server& s )
 Location	Server::getLocationAtPath( std::string path ) const
 {
 	( void ) path;
-	return ( this->_directives->_locations[ 0 ] );
+	return ( *this->_directives->_locations.begin() );
 }
 
 std::string	Server::getErrorPageWithCode( unsigned int code ) const

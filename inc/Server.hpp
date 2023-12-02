@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:40:55 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/02 12:50:43 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/02 16:07:32 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,7 @@
 # include <TypesDefines.hpp>
 # include <Directives.hpp>
 
-# define SERVER_SIZE_SIMPLE_DIRECTIVES 5
-# define SERVER_SIZE_COMPLEX_DIRECTIVES 1
-# define SERVER_SIZE_DIRECTIVES ( SERVER_SIZE_SIMPLE_DIRECTIVES \
-								+ SERVER_SIZE_COMPLEX_DIRECTIVES )
+# define SERVER_SIZE_DIRECTIVES 6
 
 class Directives;
 
@@ -38,14 +35,8 @@ public:
 	Server&	operator=( const Server& s );
 private:
 	static std::string 		_allowedDirectivesAux[ SERVER_SIZE_DIRECTIVES + 1 ];
-	static std::string 		_allowedSimpleDirectivesAux[ \
-		  							SERVER_SIZE_SIMPLE_DIRECTIVES + 1 ];
-	static std::string 		_allowedComplexDirectivesAux[ \
-											SERVER_SIZE_COMPLEX_DIRECTIVES + 1 ];
 public:
 	static ConstStringVector	allowedDirectives;
-	static ConstStringVector	allowedSimpleDirectives;
-	static ConstStringVector	allowedComplexDirectives;
 public:
 	Location	getLocationAtPath( std::string path ) const;
 	std::string	getErrorPageWithCode( unsigned int code ) const;

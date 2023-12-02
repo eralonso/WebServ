@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:48:38 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/02 12:48:48 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/02 16:47:31 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,13 @@
 
 ConfigParser::ConfigParser( int argc, char **argv ): _directives( NULL )
 {
-	ConstStringVector	allowedComplexDirectives;
-	ConstStringVector	allowedSimpleDirectives;
+	ConstStringVector	allowedDirectives;
 
-	allowedComplexDirectives.push_back( "server" );
+	allowedDirectives.push_back( "server" );
 	checkUsage( argc, argv, argv[ 0 ] );
 	readConfig();
 	this->_directives = DirectivesParser::parseDirectives( this->_content, \
-							allowedSimpleDirectives, allowedComplexDirectives );
+							allowedDirectives );
 }
 
 ConfigParser::~ConfigParser( void )

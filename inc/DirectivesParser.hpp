@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 11:03:56 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/02 13:01:23 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/02 16:58:55 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,8 @@
 # include <Location.hpp>
 # include <Defines.hpp>
 # include <Directives.hpp>
-
-# define SIZE_SIMPLE_DIRECTIVES 13
-# define SIZE_COMPLEX_DIRECTIVES 2
-# define SIZE_DIRECTIVES ( SIZE_SIMPLE_DIRECTIVES + SIZE_COMPLEX_DIRECTIVES )
-
-# define PARSE_LISTEN_ERRORS_SIZE 3
-# define IP_VALID_CHARS "0123456789."
-# define MIN_ERROR_CODE 300 
-# define MAX_ERROR_CODE 599 
+# include <Utils.hpp>
+# include <DirectivesDefines.hpp>
 
 class Directives;
 
@@ -41,13 +34,11 @@ private:
 					SIZE_SIMPLE_DIRECTIVES ];
 	typedef t_parseComplexDirective	t_parseComplexDirectiveArray[ \
 					SIZE_COMPLEX_DIRECTIVES ];
-
 private:
 	DirectivesParser( void );
 	~DirectivesParser( void );
 	DirectivesParser( const DirectivesParser& dp );
 	DirectivesParser&	operator=( const DirectivesParser& dp );
-
 private:
 	//Auxiliar directives arrays
 	static std::string 					_directivesListAux[ SIZE_DIRECTIVES + 1 ];
@@ -67,25 +58,19 @@ private:
 	//Parse array functions
 	static t_parseSimpleDirectiveArray	_parseSimple;
 	static t_parseComplexDirectiveArray	_parseComplex;
-
 private:
 	//parse
 	static void	parseLine( ConstStringBoolMap& isSet, Directives *d, \
-					std::string& content, ConstStringVector allowedSimpleDirectives, \
-					ConstStringVector allowedComplexDirectives );
+					std::string& content, ConstStringVector allowedDirectives );
 	static void	parseDirective( std::string head, std::string body, \
-					Directives *d, ConstStringVector allowedSimpleDirectives, \
-					ConstStringVector allowedComplexDirectives );
-	static int	isSimpleDirective( std::string head, \
-					ConstStringVector allowedDirectives );
-	static int	isComplexDirective( std::string head, \
-					ConstStringVector allowedDirectives );
+					Directives *d );
 
 	//check
-	static void	checkValidDirective( std::string directive );
+	static void	checkValidDirective( std::string directive, \
+					ConstStringVector allowedDirectives );
 	static void	checkValidSeparator( int type, std::string directive );
 	static void	checkDuplicateDirective( const std::string directive, \
-	 				std::map< const std::string, bool > isSet );
+	 				ConstStringBoolMap isSet );
 
 	//root
 	static void	parseRoot( std::string body, Directives *d );
@@ -146,11 +131,9 @@ private:
 
 	//server
 	static void	parseServer( std::string head, std::string body, Directives *d );
-
 public:
 	static Directives	*parseDirectives( std::string content, \
-					ConstStringVector allowedSimpleDirectives, \
-					ConstStringVector allowedComplexDirectives );
+					ConstStringVector allowedDirectives );
 };
 
 #endif

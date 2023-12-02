@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 12:23:45 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/01 13:16:08 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/02 17:01:39 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <string>
 # include <map>
 # include <vector>
+# include <set>
 
 class Location;
 class Directives;
@@ -24,7 +25,7 @@ class CGIService;
 class Server;
 
 typedef std::map< unsigned int, std::string >	ErrorPagesMap;
-typedef std::vector< Location >					LocationsVector;
+typedef std::set< Location >					LocationsSet;
 typedef std::vector< Server >					ServersVector;
 typedef std::pair< std::string, int >			ListenPair;
 typedef std::pair< int, std::string >			ReturnPair;

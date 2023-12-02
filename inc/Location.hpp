@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/02 12:54:17 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/02 17:55:03 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,7 @@
 # include <Defines.hpp>
 # include <StringErrors.hpp>
 
-# define LOCATION_SIZE_SIMPLE_DIRECTIVES 9
-# define LOCATION_SIZE_COMPLEX_DIRECTIVES 0
-# define LOCATION_SIZE_DIRECTIVES ( LOCATION_SIZE_SIMPLE_DIRECTIVES \
-								+ LOCATION_SIZE_COMPLEX_DIRECTIVES )
+# define LOCATION_SIZE_DIRECTIVES 9
 
 class Location
 {
@@ -37,18 +34,15 @@ private:
 	Directives		*_directives;
 private:
 	static std::string 		_allowedDirectivesAux[ LOCATION_SIZE_DIRECTIVES + 1 ];
-	static std::string 		_allowedSimpleDirectivesAux[ \
-											LOCATION_SIZE_SIMPLE_DIRECTIVES + 1 ];
 public:
 	static ConstStringVector	allowedDirectives;
-	static ConstStringVector	allowedSimpleDirectives;
-	static ConstStringVector	allowedComplexDirectives;
 public:
 	Location( void );
 	~Location( void );
 	Location( const Location& lc );
 	Location&	operator=( const Location& lc );
 public:
+	bool			operator<( const Location& lc ) const;
 	std::string		getPath( void ) const;
 	bool			isDir( void ) const;
 	StringVector	getSplitedPath( void ) const;

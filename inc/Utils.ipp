@@ -45,6 +45,17 @@ namespace STLUtils
 		return ( str.str() );
 	}
 
+	template < typename T >
+	int	stringEasyFind( typename T::iterator begin, typename T::iterator end, \
+						std::string toFind )
+	{
+		typename T::iterator	it;
+
+		it = std::find( begin, end, toFind );
+		if ( it == end )
+			return ( -1 );
+		return ( it - begin );
+	}
 }
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:50:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/02 12:50:57 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/02 17:56:41 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,17 +32,6 @@
 # include <ActionMask.hpp>
 # include <DirectivesParser.hpp>
 
-//class DirectivesParser;
-//class Server;
-//class Location;
-
-//typedef std::map< unsigned int, std::string >	ErrorPagesMap;
-//typedef std::vector< Location >					LocationsVector;
-//typedef std::vector< Server >					ServersVector;
-//typedef std::pair< std::string, int >			ListenPair;
-//typedef std::pair< int, std::string >			ReturnPair;
-//typedef std::vector< CGIService >				CgiVector;
-
 class Directives
 {
 	//Friend classes
@@ -64,7 +53,7 @@ private:
 	ActionMask		_allowMethods;
 	CgiVector		_cgi;
 	ServersVector	_servers;
-	LocationsVector	_locations;
+	LocationsSet	_locations;
 public:
 	Directives( void );
 	Directives( const Directives& s );
@@ -84,7 +73,7 @@ public:
 	ActionMask		getAllowMethods( void ) const;
 	CgiVector		getCgi( void ) const;
 	ServersVector	getServers( void ) const;
-	LocationsVector	getLocations( void ) const;
+	LocationsSet	getLocations( void ) const;
 };
 
 #endif

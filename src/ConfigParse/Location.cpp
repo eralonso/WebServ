@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 12:56:54 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/02 12:58:14 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/02 17:54:55 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,11 @@ Location& 	Location::operator=( const Location& lc )
 			this->_directives = new Directives( *lc._directives );
 	}
 	return ( *this );
+}
+
+bool	Location::operator<( const Location& lc ) const
+{
+	return ( this->_splitedPath.size() < lc._splitedPath.size() );
 }
 
 std::string	Location::getPath( void ) const
