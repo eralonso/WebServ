@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/01 13:44:31 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/02 12:54:17 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,28 @@
 # include <Defines.hpp>
 # include <StringErrors.hpp>
 
-# define LOCATION_SIZE_DIRECTIVES 9
+# define LOCATION_SIZE_SIMPLE_DIRECTIVES 9
+# define LOCATION_SIZE_COMPLEX_DIRECTIVES 0
+# define LOCATION_SIZE_DIRECTIVES ( LOCATION_SIZE_SIMPLE_DIRECTIVES \
+								+ LOCATION_SIZE_COMPLEX_DIRECTIVES )
 
 class Location
 {
+	//Friends
+	friend class DirectivesParser;
 private:
 	std::string		_path;
 	StringVector	_splitedPath;
 	bool			_isDir;
 	Directives		*_directives;
+private:
+	static std::string 		_allowedDirectivesAux[ LOCATION_SIZE_DIRECTIVES + 1 ];
+	static std::string 		_allowedSimpleDirectivesAux[ \
+											LOCATION_SIZE_SIMPLE_DIRECTIVES + 1 ];
+public:
+	static ConstStringVector	allowedDirectives;
+	static ConstStringVector	allowedSimpleDirectives;
+	static ConstStringVector	allowedComplexDirectives;
 public:
 	Location( void );
 	~Location( void );

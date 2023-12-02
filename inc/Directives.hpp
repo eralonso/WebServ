@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:50:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/01 13:53:41 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/02 12:50:57 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@ class Directives
 	//Friend classes
 	friend class Server;
 	friend class Location;
-	friend class DirectivesParser;
 	friend class ConfigParser;
+	friend class DirectivesParser;
 private:
 	std::string		_root;
 	int				_port;

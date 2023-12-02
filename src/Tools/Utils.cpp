@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:34:13 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/21 13:38:40 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/02 11:57:16 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ namespace SUtils
 		return ( true );
 	}
 
-	std::string	leftTrim( std::string str )
+	std::string	leftTrim( const std::string str )
 	{
 		size_t	i;
 	
@@ -74,7 +74,7 @@ namespace SUtils
 		return ( str.substr( i, std::string::npos ) );
 	}
 
-	std::string	rightTrim( std::string str )
+	std::string	rightTrim( const std::string str )
 	{
 		int	i;
 
@@ -84,7 +84,7 @@ namespace SUtils
 		return ( str.substr( 0, i + 1 ) );
 	}
 
-	std::string	trim( std::string str )
+	std::string	trim( const std::string str )
 	{
 		return ( rightTrim( leftTrim( str ) ) );
 	}

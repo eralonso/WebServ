@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:31:42 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/21 13:38:15 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/02 11:57:38 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ namespace SUtils
 {
 	std::string					longToString( long int num );
 	bool						isNum( std::string num );
-	std::string					trim( std::string str );
-	std::string					leftTrim( std::string str );
-	std::string					rightTrim( std::string str );
+	std::string					trim( const std::string str );
+	std::string					leftTrim( const std::string str );
+	std::string					rightTrim( const std::string str );
 	std::vector< std::string >&	split( std::vector<std::string>& v, \
 									std::string strArr, \
 									std::string delimiter );

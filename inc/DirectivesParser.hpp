@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 11:03:56 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/01 19:45:02 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/02 13:01:23 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,11 @@
 # define SIZE_SIMPLE_DIRECTIVES 13
 # define SIZE_COMPLEX_DIRECTIVES 2
 # define SIZE_DIRECTIVES ( SIZE_SIMPLE_DIRECTIVES + SIZE_COMPLEX_DIRECTIVES )
+
+# define PARSE_LISTEN_ERRORS_SIZE 3
+# define IP_VALID_CHARS "0123456789."
+# define MIN_ERROR_CODE 300 
+# define MAX_ERROR_CODE 599 
 
 class Directives;
 
@@ -45,19 +50,19 @@ private:
 
 private:
 	//Auxiliar directives arrays
-	static const std::string 			_directivesListAux[ SIZE_DIRECTIVES + 1 ];
-	static const std::string 			_simpleDirectivesListAux[ \
+	static std::string 					_directivesListAux[ SIZE_DIRECTIVES + 1 ];
+	static std::string 					_simpleDirectivesListAux[ \
 												SIZE_SIMPLE_DIRECTIVES + 1 ];
-	static const std::string 			_complexDirectivesListAux[ \
+	static std::string 					_complexDirectivesListAux[ \
 												SIZE_COMPLEX_DIRECTIVES + 1 ];
-	static const ConstStringBoolPair	_canRepeatDirectiveListAux[ \
+	static ConstStringBoolPair			_canRepeatDirectiveListAux[ \
 												SIZE_DIRECTIVES + 1 ];
 
 	//Directives vectors/map
-	static const ConstStringVector		_directivesList;
-	static const ConstStringVector		_simpleDirectivesList;
-	static const ConstStringVector		_complexDirectivesList;
-	static const ConstStringBoolMap		_canRepeatDirectiveList;
+	static ConstStringVector			_directivesList;
+	static ConstStringVector			_simpleDirectivesList;
+	static ConstStringVector			_complexDirectivesList;
+	static ConstStringBoolMap			_canRepeatDirectiveList;
 
 	//Parse array functions
 	static t_parseSimpleDirectiveArray	_parseSimple;
@@ -66,15 +71,15 @@ private:
 private:
 	//parse
 	static void	parseLine( ConstStringBoolMap& isSet, Directives *d, \
-					std::string& content, StringVector allowedSimpleDirectives, \
-					StringVector allowedComplexDirectives );
+					std::string& content, ConstStringVector allowedSimpleDirectives, \
+					ConstStringVector allowedComplexDirectives );
 	static void	parseDirective( std::string head, std::string body, \
-					Directives *d, StringVector allowedSimpleDirectives, \
-					StringVector allowedComplexDirectives );
+					Directives *d, ConstStringVector allowedSimpleDirectives, \
+					ConstStringVector allowedComplexDirectives );
 	static int	isSimpleDirective( std::string head, \
-			 		 StringVector allowedDirectives );
+					ConstStringVector allowedDirectives );
 	static int	isComplexDirective( std::string head, \
-					StringVector allowedDirectives );
+					ConstStringVector allowedDirectives );
 
 	//check
 	static void	checkValidDirective( std::string directive );
@@ -144,8 +149,8 @@ private:
 
 public:
 	static Directives	*parseDirectives( std::string content, \
-					StringVector allowedSimpleDirectives, \
-					StringVector allowedComplexDirectives );
+					ConstStringVector allowedSimpleDirectives, \
+					ConstStringVector allowedComplexDirectives );
 };
 
 #endif
