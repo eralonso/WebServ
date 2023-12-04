@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 17:45:43 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/02 13:23:37 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/04 12:36:01 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,16 +50,16 @@ std::string	DirectivesParser::_complexDirectivesListAux[ SIZE_COMPLEX_DIRECTIVES
 	"location"
 };
 
-ConstStringVector	DirectivesParser::_directivesList( _directivesListAux, \
+ConstStringVector	DirectivesParser::directivesList( _directivesListAux, \
 											_directivesListAux \
 											+ SIZE_DIRECTIVES );
 
-ConstStringVector	DirectivesParser::_simpleDirectivesList( \
+ConstStringVector	DirectivesParser::simpleDirectivesList( \
 											_simpleDirectivesListAux, \
 	   										_simpleDirectivesListAux \
 											+ SIZE_SIMPLE_DIRECTIVES );
 
-ConstStringVector	DirectivesParser::_complexDirectivesList( \
+ConstStringVector	DirectivesParser::complexDirectivesList( \
 											_complexDirectivesListAux, \
 											_complexDirectivesListAux \
 											+ SIZE_COMPLEX_DIRECTIVES );
@@ -82,7 +82,7 @@ ConstStringBoolPair	DirectivesParser::_canRepeatDirectiveListAux[ \
 	std::make_pair<	const std::string, bool > ( "location", true )
 };
 
-ConstStringBoolMap	DirectivesParser::_canRepeatDirectiveList( \
+ConstStringBoolMap	DirectivesParser::canRepeatDirectiveList( \
 											_canRepeatDirectiveListAux, \
 											_canRepeatDirectiveListAux \
 											+ SIZE_DIRECTIVES );

@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:50:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/02 17:56:41 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/04 12:26:59 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,20 +40,21 @@ class Directives
 	friend class ConfigParser;
 	friend class DirectivesParser;
 private:
-	std::string		_root;
-	int				_port;
-	std::string		_host;
-	StringVector	_serverNames;
-	ErrorPagesMap	_errorPages;
-	long			_clientMaxBodySize;
-	StringVector	_index;
-	bool			_autoindex;
-	std::string		_alias;
-	ReturnPair		_return;
-	ActionMask		_allowMethods;
-	CgiVector		_cgi;
-	ServersVector	_servers;
-	LocationsSet	_locations;
+	std::string			_root;
+	int					_port;
+	std::string			_host;
+	StringVector		_serverNames;
+	ErrorPagesMap		_errorPages;
+	long				_clientMaxBodySize;
+	StringVector		_index;
+	bool				_autoindex;
+	std::string			_alias;
+	ReturnPair			_return;
+	ActionMask			_allowMethods;
+	CgiVector			_cgi;
+	ServersVector		_servers;
+	LocationsSet		_locations;
+	ConstStringBoolMap	_isSet;
 public:
 	Directives( void );
 	Directives( const Directives& s );

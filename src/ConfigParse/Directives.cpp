@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:55:51 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/01 13:55:52 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/04 12:35:07 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,11 @@
 
 Directives::Directives( void ): _port( 8000 ), \
 								_host( "0.0.0.0" ), \
-								_clientMaxBodySize( 1 << 20 ) {}
+								_clientMaxBodySize( 1 << 20 )
+{
+	for ( int i = 0; i < SIZE_DIRECTIVES; i++ )
+		this->_isSet[ DirectivesParser::directivesList[ i ] ] = false;
+}
 
 Directives::~Directives( void ) {}
 
@@ -32,7 +36,8 @@ Directives::Directives( const Directives& d ):
 								_allowMethods( d._allowMethods ), \
 								_cgi( d._cgi ), \
 								_servers( d._servers ), \
-								_locations( d._locations ) {}
+								_locations( d._locations ), \
+								_isSet( d._isSet ) {}
 
 Directives&	Directives::operator=( const Directives& d )
 {
@@ -52,6 +57,7 @@ Directives&	Directives::operator=( const Directives& d )
 		this->_cgi = d._cgi;
 		this->_servers = d._servers;
 		this->_locations = d._locations;
+		this->_isSet = d._isSet;
 	}
 	return ( *this );
 }

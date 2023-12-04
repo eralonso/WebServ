@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 11:03:56 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/02 16:58:55 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/04 14:19:49 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,19 +49,19 @@ private:
 	static ConstStringBoolPair			_canRepeatDirectiveListAux[ \
 												SIZE_DIRECTIVES + 1 ];
 
-	//Directives vectors/map
-	static ConstStringVector			_directivesList;
-	static ConstStringVector			_simpleDirectivesList;
-	static ConstStringVector			_complexDirectivesList;
-	static ConstStringBoolMap			_canRepeatDirectiveList;
-
 	//Parse array functions
 	static t_parseSimpleDirectiveArray	_parseSimple;
 	static t_parseComplexDirectiveArray	_parseComplex;
+public:
+	//Directives vectors/map
+	static ConstStringVector	directivesList;
+	static ConstStringVector	simpleDirectivesList;
+	static ConstStringVector	complexDirectivesList;
+	static ConstStringBoolMap	canRepeatDirectiveList;
 private:
 	//parse
-	static void	parseLine( ConstStringBoolMap& isSet, Directives *d, \
-					std::string& content, ConstStringVector allowedDirectives );
+	static void	parseLine( Directives *d, std::string& content, \
+					ConstStringVector allowedDirectives );
 	static void	parseDirective( std::string head, std::string body, \
 					Directives *d );
 
@@ -119,6 +119,8 @@ private:
 
 	//return
 	static void	parseReturn( std::string body, Directives *d );
+
+	static bool	isHttpPrefix( std::string uri );
 
 	//allow_methods
 	static void	parseAllowMethods( std::string body, Directives *d );
