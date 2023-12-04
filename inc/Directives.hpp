@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:50:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/04 12:26:59 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/04 18:20:39 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ private:
 	std::string			_alias;
 	ReturnPair			_return;
 	ActionMask			_allowMethods;
-	CgiVector			_cgi;
+	CgiMap				_cgi;
 	ServersVector		_servers;
 	LocationsSet		_locations;
 	ConstStringBoolMap	_isSet;
@@ -61,6 +61,7 @@ public:
 	~Directives( void );
 	Directives&	operator=( const Directives& d );
 public:
+	void			print( void ) const;
 	std::string		getRoot( void ) const;
 	int				getPort( void ) const;
 	std::string		getHost( void ) const;
@@ -72,7 +73,7 @@ public:
 	std::string		getAlias( void ) const;
 	ReturnPair		getReturn( void ) const;
 	ActionMask		getAllowMethods( void ) const;
-	CgiVector		getCgi( void ) const;
+	CgiMap			getCgi( void ) const;
 	ServersVector	getServers( void ) const;
 	LocationsSet	getLocations( void ) const;
 };

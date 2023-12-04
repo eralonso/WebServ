@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:55:51 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/04 12:35:07 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/04 19:02:06 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ Directives::Directives( void ): _port( 8000 ), \
 								_host( "0.0.0.0" ), \
 								_clientMaxBodySize( 1 << 20 )
 {
+	this->_return.first = -1;
 	for ( int i = 0; i < SIZE_DIRECTIVES; i++ )
 		this->_isSet[ DirectivesParser::directivesList[ i ] ] = false;
 }
@@ -60,4 +61,42 @@ Directives&	Directives::operator=( const Directives& d )
 		this->_isSet = d._isSet;
 	}
 	return ( *this );
+}
+
+void	Directives::print( void ) const
+{
+	Log::Info( "[ Config ] root: " + this->_root );
+	Log::Info( "[ Config ] host: " + this->_host );
+	Log::Info( "[ Config ] port: " + SUtils::longToString( this->_port ) );
+	Log::Info( "[ Config ] server_name: " \
+				+ STLUtils::vectorToString< StringVector >( \
+				this->_serverNames.begin(), this->_serverNames.end() ) );
+	Log::Info( "[ Config ] error_page: " \
+				+ STLUtils::mapToString< ErrorPagesMap >( \
+				this->_errorPages.begin(), this->_errorPages.end() ) );
+	Log::Info( "[ Config ] client_max_body_size: " \
+				+ SUtils::longToString( this->_clientMaxBodySize ) );
+	Log::Info( "[ Config ] index: " \
+				+ STLUtils::vectorToString< StringVector >( \
+				this->_index.begin(), this->_index.end() ) );
+	Log::Info( "[ Config ] autoindex: " + std::string( \
+				this->_autoindex == true ? "on" : "off" ) );
+	Log::Info( "[ Config ] alias: " + this->_alias );
+	Log::Info( "[ Config ] return: " \
+				+ SUtils::longToString( this->_return.first ) \
+				+ " -> " \
+				+ this->_return.second );
+	Log::Info( "[ Config ] allow_methods: " \
+				+ std::string( this->_allowMethods.getAction( \
+						ActionMask::GET ) == true ? "GET " : "" ) \
+				+ std::string( this->_allowMethods.getAction( \
+						ActionMask::POST ) == true ? "POST " : "" ) \
+				+ std::string( this->_allowMethods.getAction( \
+						ActionMask::DELETE ) == true ? "DELETE" : "" ) );
+	Log::Info( "[ Config ] cgi: " \
+				+ STLUtils::mapToString< CgiMap >( \
+				this->_cgi.begin(), this->_cgi.end() ) );
+	Log::Info( "[ Config ] servers: " );
+	Log::Info( "[ Config ] location: " );
+	std::cout << std::endl;
 }

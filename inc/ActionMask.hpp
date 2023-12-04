@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:06:08 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/27 17:12:57 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/04 16:56:34 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,19 @@ public:
 	~ActionMask( void );
 	ActionMask( const ActionMask& b );
 	ActionMask&	operator=( const ActionMask& b );
+	bool		isAction( int method ) const;
 	void		setAllowed( t_action allowed );
-	t_action	getAllowed( void );
-	void		setGetAction( bool value );
-	bool		getGetAction( void );
-	void		setPostAction( bool value );
-	bool		getPostAction( void );
-	void		setDeleteAction( bool value );
-	bool		getDeleteAction( void );
+	t_action	getAllowed( void ) const;
+	void		setAction( int method );
+	void		unsetAction( int method );
+	void		unsetAllActions( void );
+	bool		getAction( int method ) const;
+	//void		setGetAction( bool value );
+	//bool		getGetAction( void );
+	//void		setPostAction( bool value );
+	//bool		getPostAction( void );
+	//void		setDeleteAction( bool value );
+	//bool		getDeleteAction( void );
 };
 
 

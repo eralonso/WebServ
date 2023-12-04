@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:41:41 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/04 14:22:15 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/04 18:57:41 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ DirectivesParser&	DirectivesParser::operator=( const DirectivesParser& dp )
 Directives	*DirectivesParser::parseDirectives( std::string content, \
 					ConstStringVector allowedDirectives )
 {
-	Directives			*d = new Directives;
+	Directives	*d = new Directives;
 
 	while ( content.length() > 0 )
 	{
@@ -44,6 +44,7 @@ Directives	*DirectivesParser::parseDirectives( std::string content, \
 			throw std::logic_error( e.what() );
 		}
 	}
+	d->print();
 	return ( d );
 }
 
@@ -286,13 +287,16 @@ void	DirectivesParser::parseReturn( std::string body, Directives *d )
 		if ( isHttpPrefix( args[ 0 ] ) == true )
 			uri = args[ 0 ];
 		else
-			code = parseErrorCode( args[ 0 ] );
+			code = parseErrorCode( args[ 0 ], 0, 999 );
 	}
 	else
 	{
-		code = parseErrorCode( args[ 0 ] );
-		uri = args[ 0 ];
+		code = parseErrorCode( args[ 0 ], 0, 999 );
+		uri = args[ 1 ];
 	}
+	if ( code < 0 )
+		throw std::logic_error( "Invalid return code \"" \
+				+ args[ 0 ] + "\" in \"return\" directive" );
 	d->_return = ReturnPair( code, uri );
 }
 
@@ -311,15 +315,51 @@ bool	DirectivesParser::isHttpPrefix( std::string uri )
 //allow_methods
 void	DirectivesParser::parseAllowMethods( std::string body, Directives *d )
 {
-	( void )body;
-	( void )d;
+	StringVector	args;
+	int				method;
+
+	SUtils::split( args, body, ISSPACE );
+	if ( args.size() == 0 )
+		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
+					std::string( "allow_methods" ) ) );
+	for ( StringVector::iterator it = args.begin(); it != args.end(); it++ )
+	{
+		if ( ( method = isHttpMethod( *it ) ) == 0 )
+			throw std::logic_error( INVALID_VALUE_DIRECTIVE( \
+						std::string( "allow_methods" ), *it ) );
+		else
+			d->_allowMethods.setAction( method );
+	}
+}
+
+int	DirectivesParser::isHttpMethod( std::string method )
+{
+	std::string	methods[ 3 ] = { "GET", "POST", "DELETE" };
+	int			code;
+
+	for ( code = 0; code < 3; code++ )
+		if ( method == methods[ code ] )
+			break ;
+	if ( code == 3 )
+		return ( 0 );
+	return ( 1 << code );
 }
 
 //cgi
 void	DirectivesParser::parseCgi( std::string body, Directives *d )
 {
-	( void )body;
-	( void )d;
+	StringVector	args;
+	CGIService		cgi;
+
+	SUtils::split( args, body, ISSPACE );
+	if ( args.size() != 2 )
+		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
+					std::string( "cgi" ) ) );
+	if ( args[ 0 ].find( "." ) == std::string::npos )
+		throw std::logic_error( "\"cgi\" directive, invalid cgi extension" );
+	cgi.setExtension( args[ 0 ] );
+	cgi.setInterpreter( args[ 1 ] );
+	d->_cgi[ cgi.getExtension() ] = cgi;
 }
 
 //server
@@ -335,6 +375,7 @@ void	DirectivesParser::parseServer( std::string head, std::string body, \
 		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
 					std::string( "server" ) ) );
 	}
+	Log::Info( "[ Config ] SERVER\n" );
 	s._directives = DirectivesParser::parseDirectives( body, \
 						Server::allowedDirectives );
 	d->_servers.push_back( s );
@@ -356,6 +397,7 @@ void	DirectivesParser::parseLocation( std::string head, std::string body, \
 	if ( lc._path.back() == '/' )
 		lc._isDir = true;
 	SUtils::split( lc._splitedPath, lc._path, "/" );
+	Log::Info( "[ Config ] LOCATION " + lc._path + "\n" );
 	lc._directives = DirectivesParser::parseDirectives( body, \
 						Location::allowedDirectives );
 	d->_locations.insert( lc );

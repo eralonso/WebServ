@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 11:03:56 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/04 14:19:49 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/04 17:44:20 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ private:
 	static void	parseErrorPage( std::string body, Directives *d );
 
 	static void	fillErrorPages( StringVector args, Directives *d );
-	static int	parseErrorCode( std::string code );
+	static int	parseErrorCode( std::string code, int min, int max );
 	
 	//client_max_body_size
 	static void	parseClientMaxBodySize( std::string body, Directives *d );
@@ -124,6 +124,8 @@ private:
 
 	//allow_methods
 	static void	parseAllowMethods( std::string body, Directives *d );
+
+	static int	isHttpMethod( std::string method );
 
 	//cgi
 	static void	parseCgi( std::string body, Directives *d );

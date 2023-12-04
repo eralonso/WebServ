@@ -18,11 +18,12 @@
 namespace STLUtils
 {
 	template < typename T >
-	std::string	vectorToString( typename T::iterator begin, typename T::iterator end )
+	std::string	vectorToString( typename T::const_iterator begin, \
+							typename T::const_iterator end )
 	{
 		std::stringstream	str;
 
-		for ( typename T::iterator it = begin; it != end; it++ )
+		for ( typename T::const_iterator it = begin; it != end; it++ )
 		{
 			str << *it;
 			if ( it + 1 != end )
@@ -32,11 +33,12 @@ namespace STLUtils
 	}
 
 	template < typename T >
-	std::string	mapToString( typename T::iterator begin, typename T::iterator end )
+	std::string	mapToString( typename T::const_iterator begin, \
+							typename T::const_iterator end )
 	{
 		std::stringstream	str;
 
-		for ( typename T::iterator it = begin; it != end; ++it )
+		for ( typename T::const_iterator it = begin; it != end; ++it )
 		{
 			if ( it != begin )
 				str << ", ";

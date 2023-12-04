@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:31:42 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/02 16:27:21 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/04 18:30:40 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,11 @@ namespace SUtils
 namespace STLUtils
 {
 	template < typename T >
-	std::string	vectorToString( typename T::iterator begin, typename T::iterator end );
+	std::string	vectorToString( typename T::const_iterator begin, \
+							typename T::const_iterator end );
 	template < typename T >
-	std::string	mapToString( typename T::iterator begin, typename T::iterator end );
+	std::string	mapToString( typename T::const_iterator begin, \
+							typename T::const_iterator end );
 	template < typename T >
 	int			stringEasyFind( typename T::iterator begin, typename T::iterator end, \
 						std::string toFind );
