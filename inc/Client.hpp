@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 19:20:41 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/04 11:53:58 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,16 +21,18 @@
 # include <WSSignals.hpp>
 # include <Requests.hpp>
 # include <Request.hpp>
+#include <CgisMap.hpp>
 
 class Client : public Requests
 {
 public:
 private:
-	struct pollfd*			clientPoll;
-	size_t					pending;
-	std::string				received;
-	bool					keepAlive;
+	struct pollfd*						clientPoll;
+	size_t								pending;
+	std::string							received;
+	bool								keepAlive;
 public:
+	CgisMap								cgis;
 	Client(void);
 	Client(struct pollfd* cliPoll);
 	~Client();

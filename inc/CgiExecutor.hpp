@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:34 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 17:45:53 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/04 12:11:19 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ class CgiExecutor
 {
 private:
 	static PendingCgiTasks	pendingTasks;
-	const std::string&		binary;
-	const std::string&		argument;
+	std::string				binary;
+	std::string				argument;
 	Request					request;
 	//char					*envPath;
 	int						fdToChild[2];
@@ -40,8 +40,7 @@ private:
 	void					onChildProcess(void);
 	void					onParentProcess(pid_t childPid);
 public:
-	CgiExecutor(const std::string& binary, const std::string& argument,
-		Request& request, char **env);
+	CgiExecutor(Request& request, char **env);
 	~CgiExecutor();
 	int execute(void);
 	static PendingCgiTask*	getCompletedTask();

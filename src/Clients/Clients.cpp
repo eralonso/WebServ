@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:50 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/28 14:58:11 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/04 11:59:15 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ Client* Clients::newClient(struct pollfd* poll)
 	if (!cli)
 		return (nullptr);
 	insert(std::pair<struct pollfd*, Client*>(poll, cli));
+	cli->cgis.appendCgi("py", "/usr/bin/python");
 	return (cli);
 }
 

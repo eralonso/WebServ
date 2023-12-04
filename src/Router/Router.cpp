@@ -6,14 +6,14 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 19:47:05 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/04 12:18:08 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Router.hpp>
 #include <CgiExecutor.hpp>
 
-Router::Router(/* args */)
+Router::Router()
 {
 }
 
@@ -26,6 +26,8 @@ int Router::updateResponse(Response &res, Request &req)
 	res.setServer(req.getHost());
 	if (req.getDocument()==std::string("favicon.ico"))
 		createFaviconRes(res, req);
+	else if (req.getDocExt() == std::string("py"))
+		;
 	else
 		formatGenericResponse(res, req);	
 	return 0;
@@ -112,14 +114,9 @@ Response *Router::formatErrorResponse(Response &res, int error)
 	return &res;
 }
 
-bool Router::isRequestForCgi(Request &req)
-{
-	return req.getUseCgi();
-}
-
 bool Router::processRequestReceived(Request &req)
 {
-	if (!isRequestForCgi(req))
+	if (!req.getUseCgi())
 	{
 		req.setReadyToSend();
 		return true;
@@ -128,7 +125,7 @@ bool Router::processRequestReceived(Request &req)
 	{
 
 		std::string script = "";
-		CgiExecutor cgiExe(std::string("/usr/bin/python"), script, req, nullptr);
+		CgiExecutor cgiExe(req, nullptr);
 		cgiExe.execute();
 		req.setCgiLaunched();
 		return true;

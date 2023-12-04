@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 19:39:50 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/04 13:30:51 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,9 @@ Request::Request(const Request& b)
 	cgiOutput = b.cgiOutput;
 	useCgi = b.useCgi;
 	error = b.error;
+	routeChain = b.routeChain;
+	document = b.document;
+	docExt = b.docExt;
 }
 
 Request&	Request::operator=(const Request& b)
@@ -66,6 +69,9 @@ Request&	Request::operator=(const Request& b)
 	cgiOutput = b.cgiOutput;
 	useCgi = b.useCgi;
 	error = b.error;
+	routeChain = b.routeChain;
+	document = b.document;
+	docExt = b.docExt;
 	return (*this);
 }
 
@@ -100,11 +106,13 @@ void Request::parseRoute(void)
 		doc--;
 		document = *doc;
 		routeChain.erase(doc);
+		splitDocExt();
 	}
 	if (routeChain.size() == 0 && (route.size() < 1 || route[0] != '/'))
 		Log::Error("routeChain is empty");
 	Log::Info("Route Chaine: " + getRouteChaineString());
 	Log::Info("Document: " + getDocument());
+	Log::Info("Extension: " + getDocExt());
 	//TODO
 	//check if route is valid
 	//check if route is available
@@ -204,6 +212,11 @@ std::string Request::getRouteChaineString() const
 std::string Request::getDocument() const
 {
 	return document;
+}
+
+std::string Request::getDocExt() const
+{
+	return docExt;
 }
 
 std::string							Request::getQuery() const
@@ -387,6 +400,20 @@ bool Request::checkKeepAlive()
 	return (!!con);
 }
 
+int Request::splitDocExt()
+{
+	std::vector<std::string>	frags;
+	frags = SplitString::split(document, ".");
+	size_t	len = frags.size();
+	if (len > 1)
+	{
+		docExt = frags[len - 1];
+		useCgi = (docExt == std::string("py"));
+		return 1;
+	}
+	return 0;
+}
+
 bool Request::checkEmptyContent(size_t& size)
 {
 	Header* clHead = headers.firstWithKey("Content-Length");
@@ -479,7 +506,11 @@ void Request::setCgiLaunched()
 void								Request::setCgiOutput(std::string str)
 {
 	cgiOutput = str;
-	useCgi = true;
+}
+
+void Request::setUseCgi(bool value)
+{
+	useCgi = value;
 }
 
 void Request::setError(int value)

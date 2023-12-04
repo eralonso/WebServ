@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 19:41:22 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/04 14:13:09 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,13 @@
 
 PendingCgiTasks	CgiExecutor::pendingTasks;
 
-CgiExecutor::CgiExecutor(const std::string& binary, const std::string& argument,
-		Request& request, char **env) :
-		binary(binary), argument(argument), request(request)
+CgiExecutor::CgiExecutor(Request& request, char **env) : request(request)
 {
+	request.getClient()->cgis.findCgi(request.getDocExt(), binary);
+	argument = std::string(".") + request.getRouteChaineString() + request.getDocument();
 	const std::string	reqBody;
+	Log::Info("CgiExecutor binary: " + binary);
+	Log::Info("CgiExecutor argment: " + argument);
 	(void)env;
 	// char				*envPath;
 	argv[0] = (char *)this->binary.c_str();
@@ -67,10 +69,10 @@ void CgiExecutor::onChildProcess(void)
 		//On child
 		close(fdToChild[FDOUT]);
 		close(fdFromChild[FDIN]);
-		if (dup2(fdToChild[FDIN], FDIN))
-			Log::Error(std::string("dup2: fdToChild[0] to 0 failed"));
-		if (dup2(fdFromChild[FDOUT], FDOUT))
-			Log::Error(std::string("dup2: fdFromChild[1] to 1 failed"));
+		if (dup2(fdToChild[FDIN], FDIN) < 0)
+			Log::Error(std::string("dup2: fdToChild[0] to 0 failed: " + SUtils::longToString(errno)));
+		if (dup2(fdFromChild[FDOUT], FDOUT) < 0)
+			Log::Error(std::string("dup2: fdFromChild[1] to 1 failed: " + SUtils::longToString(errno)));
 		close(fdToChild[FDIN]);
 		close(fdFromChild[FDOUT]);
 		execve(binary.c_str(), argv, childEnv);
@@ -108,8 +110,10 @@ int CgiExecutor::execute(void)
 {
 	if (pipe(fdToChild))
 		onFailToChildPipeOpen();
+	Log::Success("Pipe To Child Created on fds: " + SUtils::longToString(fdToChild[0]) + "," + SUtils::longToString(fdToChild[1]));
 	if (pipe(fdFromChild))
 		onFailFromChildPipeOpen();
+	Log::Success("Pipe From Child Created on fds: " + SUtils::longToString(fdFromChild[0]) + "," + SUtils::longToString(fdFromChild[1]));
 	pid_t pid = fork();
 	if (pid < 0)
 		onFailFork();
@@ -203,7 +207,7 @@ void	CgiExecutor::attendPendingCgiTasks(void)
 		if (pTask)
 		{
 			CgiExecutor::pendingTasks.eraseTask(pTask);
-			delete pTask;
+			// delete pTask;
 		}
 		if (cli)
 			cli->allowPollWrite(true);

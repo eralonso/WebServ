@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 19:38:34 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/04 10:57:33 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ private:
 	bool						badRequest;
 	std::vector<std::string>	routeChain;
 	std::string					document;
+	std::string					docExt;
 	void 								parseRoute(void);
 	void 								parseFirstLine(const std::string &line);
 	void 								parseHeader(const std::string &line);
@@ -63,6 +64,7 @@ private:
 	bool								processLineOnRecvdLastChunk(const std::string &line);
 	bool								checkChunked();
 	bool								checkKeepAlive();
+	int									splitDocExt();
 	bool								checkEmptyContent(size_t& size);
 public:
 	Request(void);
@@ -82,6 +84,7 @@ public:
 	std::vector<std::string>			getRouteChaine() const;
 	std::string							getRouteChaineString() const;
 	std::string							getDocument() const;
+	std::string							getDocExt() const;
 	std::string							getQuery() const;
 	const Headers&						getHeaders() const;
 	std::string							getHost();
@@ -96,6 +99,7 @@ public:
 	void								setReadyToSend();
 	void								setCgiLaunched();
 	void								setCgiOutput(std::string str);
+	void								setUseCgi(bool value);	
 	void								setError(int);
 	void								logStatus();
 	bool								processLine(const std::string& line);

@@ -6,7 +6,7 @@
 #    By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/22 10:08:41 by eralonso          #+#    #+#              #
-#    Updated: 2023/11/30 12:49:36 by omoreno-         ###   ########.fr        #
+#    Updated: 2023/12/04 12:21:24 by omoreno-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -62,7 +62,7 @@ FILES		:=	main Sockets WSPoll WSSignals Receptionist \
 				RootDir ActionMask CGIService Location ServerConfig \
 				Server ServerParser Client Clients Header Headers Request \
 				Requests Response StatusCodes PendingCgiTask PendingCgiTasks \
-				CgiExecutor Router
+				CgiExecutor CgisMap Router
 
 
 #FILES		:=	main Sockets WSPoll WSSignals Receptionist \
