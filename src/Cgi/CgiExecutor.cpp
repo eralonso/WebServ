@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/04 14:13:09 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/04 17:07:02 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,18 +85,15 @@ void CgiExecutor::onChildProcess(void)
 void CgiExecutor::onParentProcess(pid_t childPid)
 {
 	std::string	body = request.getBody();
+	body = std::string("Dommy body");
 	char *reqBody = (char *)body.c_str();
 	size_t reqBodySize = body.length();
 	close(fdToChild[FDIN]);
 	close(fdFromChild[FDOUT]);
 	write(fdToChild[FDOUT], reqBody, reqBodySize);
 	close(fdToChild[FDOUT]);
-	PendingCgiTask* task =
-		new PendingCgiTask(childPid, &request, fdFromChild[FDIN]);
-	if (task)
-		pendingTasks.appendTask(*task);
-	else
-		Log::Error("CGI Task couldnt be created");
+	PendingCgiTask task(childPid, &request, fdFromChild[FDIN]);
+		pendingTasks.appendTask(task);
 }
 
 std::string CgiExecutor::getChildOutput(PendingCgiTask *task)
@@ -152,7 +149,7 @@ std::string CgiExecutor::getCompletedTaskOutput(void)
 	if (task)
 	{
 		std::string ret = task->getTaskOutput();
-		pendingTasks.eraseTask(task);
+		pendingTasks.eraseTask(task->getPid());
 		return (ret);
 	}
 	return std::string();
@@ -164,7 +161,7 @@ size_t	CgiExecutor::purgeTimeoutedTasks(clock_t to, size_t max)
 	PendingCgiTask *task = nullptr;
 	while (i < max && (task = getTimeoutedTask(to)))
 	{
-		pendingTasks.eraseTask(task);
+		pendingTasks.eraseTask(task->getPid());
 		i++;
 	}
 	return (i);
@@ -175,46 +172,50 @@ void	CgiExecutor::attendPendingCgiTasks(void)
 	PendingCgiTask* pTask; 
 	Request* req;
 	Client* cli;
+	req = nullptr;
+	cli = nullptr;
 	while ((pTask = CgiExecutor::getCompletedTask()))
 	{
 		Log::Info( "Cgi Task completed");
 		req = pTask->getRequest();
 		pTask->applyTaskOutputToReq();
 		if (req)
+		{
+			req->getDocExt();
 			cli = req->getClient();
+		}
 		// req->setCgiOutput(pTask->getTaskOutput());
 		if (pTask)
 		{
-			CgiExecutor::pendingTasks.eraseTask(pTask);
-			delete pTask;
+			CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
 		}
 		if (req)
 			req->setReadyToSend();
-		if (cli)
+		if (cli != nullptr)
 			cli->allowPollWrite(true);
 		req = nullptr;
 		cli = nullptr;
 	}
-	while ((pTask = CgiExecutor::getTimeoutedTask(CGI_TO)))
-	{
-		req = pTask->getRequest();
-		if (req)
-		{
-			req->setError(500);
-			req->setReadyToSend();
-			cli = req->getClient();		
-		}
-		if (pTask)
-		{
-			CgiExecutor::pendingTasks.eraseTask(pTask);
-			// delete pTask;
-		}
-		if (cli)
-			cli->allowPollWrite(true);
-		req = nullptr;
-		cli = nullptr;
-	}
-	
+	// req = nullptr;
+	// cli = nullptr;
+	// while ((pTask = CgiExecutor::getTimeoutedTask(CGI_TO)))
+	// {
+	// 	req = pTask->getRequest();
+	// 	if (req)
+	// 	{
+	// 		req->setError(500);
+	// 		req->setReadyToSend();
+	// 		cli = req->getClient();		
+	// 	}
+	// 	if (pTask)
+	// 	{
+	// 		CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
+	// 	}
+	// 	if (cli != nullptr)
+	// 		cli->allowPollWrite(true);
+	// 	req = nullptr;
+	// 	cli = nullptr;
+	// }
 }
 
 

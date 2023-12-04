@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:30:49 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 18:09:23 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/04 16:59:18 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ public:
 	PendingCgiTasks(const PendingCgiTasks& b);
 	PendingCgiTasks& operator=(const PendingCgiTasks& b);
 	~PendingCgiTasks();
-	int appendTask(const PendingCgiTask& task);
-	int eraseTask(const PendingCgiTask* task);
+	int appendTask(PendingCgiTask task);
+	int eraseTask(pid_t pid);
 };
 
 #endif

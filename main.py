@@ -1,7 +1,10 @@
 import sys
+sys.stderr.write("Executing python start->\n")
 value = sys.stdin.readline()
-sys.stderr.write("Read from server: ")
+sys.stderr.write("Read from webserv: ")
 sys.stderr.write(value)
 sys.stderr.write("\n")
-print ("<body><h1>This is the body given by python</h1></body>")
-sys.stderr.write('Py error message\n')
+sys.stdout.write ("<body><h1>This is the body given by python</h1></body>\n")
+sys.stderr.write("Written to webserv: ")
+sys.stderr.write("<body><h1>This is the body given by python</h1></body>\n")
+sys.stderr.write("Executing python finished-<\n")

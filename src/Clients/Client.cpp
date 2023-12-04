@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/04 11:52:42 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/04 16:21:46 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,8 +232,11 @@ size_t Client::purgeUsedRecv()
 
 void Client::allowPollWrite(bool value)
 {
-	if (value)
-		clientPoll->events |= POLLOUT;
-	else
-		clientPoll->events &= ~POLLOUT;
+	if (clientPoll)
+	{
+		if (value)
+			clientPoll->events |= POLLOUT;
+		else
+			clientPoll->events &= ~POLLOUT;
+	}
 }

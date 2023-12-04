@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:31 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/22 14:35:27 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/04 16:58:51 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,19 +31,14 @@ PendingCgiTasks::~PendingCgiTasks()
 {
 }
 
-int PendingCgiTasks::appendTask(const PendingCgiTask &task)
+int PendingCgiTasks::appendTask(PendingCgiTask task)
 {
 	insert(std::pair<pid_t, PendingCgiTask>(task.getPid(), task));
 	return 0;
 }
 
-int PendingCgiTasks::eraseTask(const PendingCgiTask* task)
+int PendingCgiTasks::eraseTask(pid_t pid)
 {
-	if (task)
-	{
-		pid_t pid = task->getPid();
-		size_t tot = erase(pid);
-		return (tot > 0);
-	}
-	return (0);
+	size_t tot = erase(pid);
+	return (tot > 0);
 }

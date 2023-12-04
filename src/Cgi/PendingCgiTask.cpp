@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/04 14:16:06 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/04 16:48:43 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,11 +101,11 @@ void PendingCgiTask::applyTaskOutputToReq()
 	if (bytes_read < 0)
 	{
 		Log::Error(std::string("Read from child failed"));
-		Log::Error(std::string("read" + resBody));
 		buf[0] = 0;
 		return ;
 	}
 	buf[bytes_read] = 0;
 	resBody += std::string(buf);
+	Log::Success(std::string("read" + resBody));
 	request->setCgiOutput(resBody);
 }
