@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/04 17:07:02 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 14:04:59 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,18 +181,24 @@ void	CgiExecutor::attendPendingCgiTasks(void)
 		pTask->applyTaskOutputToReq();
 		if (req)
 		{
-			req->getDocExt();
+			Log::Info("CgiExecutor::attendPendingCgiTasks got:");
+			Log::Info("Request addr: " + SUtils::longToString((long)req));
+			Log::Info("Request id: " + SUtils::longToString((long)req->getId()));
+			// req->getDocExt();
 			cli = req->getClient();
 		}
-		// req->setCgiOutput(pTask->getTaskOutput());
+		//req->setCgiOutput(pTask->getTaskOutput());
+		if (req)
+		{
+			Log::Info("Set Cgi Request " + SUtils::longToString(req->getId()) + " ReadyToSend");
+		 	req->setReadyToSend();
+		}
 		if (pTask)
 		{
 			CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
 		}
-		if (req)
-			req->setReadyToSend();
-		if (cli != nullptr)
-			cli->allowPollWrite(true);
+		// if (cli != nullptr)
+		// 	cli->allowPollWrite(true);
 		req = nullptr;
 		cli = nullptr;
 	}

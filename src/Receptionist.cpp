@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/04 11:56:53 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 12:37:19 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,14 +122,19 @@ void	Receptionist::manageClient( socket_t clientFd, WSPoll& polls )
 					+ readed);
 			cli->manageRecv(readed);
 			if (cli->manageCompleteRecv())
-				clientPoll->events |= POLLOUT;
+				cli->allowPollWrite(true);
+				//clientPoll->events |= POLLOUT;
 		}
 		else if ( clientPoll->revents & POLLOUT )
 		{
 			cli->managePollout();
-			clientPoll->events &= ~POLLOUT;
+			cli->allowPollWrite(false);
+			//clientPoll->events &= ~POLLOUT;
 			if ((cli->size() == 0 && cli->getPendingSize() ==0))
+			{
 			 	polls.closePoll( clientFd );
+				// eraseClient(clientPoll);
+			}
 		}
 	}
 	else
@@ -157,6 +162,10 @@ int	Receptionist::mainLoop(void)
 		if ( waitRes < 0 )
 			return ( 1 );
 		CgiExecutor::attendPendingCgiTasks();
+		if (checkPendingToSend())
+			Log::Info("Some Pending To Send");
+		else
+			Log::Info("None Pending To Send");
 		if ( waitRes == 0 )
 		{
 			// Log::Info( "Timeout Waiting for any fd ready to I/O" );

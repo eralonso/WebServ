@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:53:27 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/27 15:43:44 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 12:13:52 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@ public:
 	Requests(const Requests& b);
 	Requests& operator=(const Requests& b);
 	Request* appendRequest(Client*);
-	int	eraseRequest();
+	int		eraseRequest();
+	bool	checkPendingToSend();
 };
 
 #endif

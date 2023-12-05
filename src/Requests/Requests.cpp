@@ -6,11 +6,12 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:58:31 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/28 11:19:35 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 13:14:29 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/Requests.hpp"
+#include <Utils.hpp>
 
 Requests::Requests()
 {
@@ -55,4 +56,20 @@ int	Requests::eraseRequest()
 		}
 	}
 	return (0);
+}
+
+bool	Requests::checkPendingToSend()
+{
+	size_t pos = size();
+	if (pos > 0)
+	{
+		Request *r = operator[](pos - 1);
+		if (r->isReadyToSend())
+			return 1;
+		else
+			Log::Info("Last Request " + SUtils::longToString(r->getId()) + " in " + SUtils::longToString(pos) + " pos, is not ReadyToSend");
+	}
+	else
+		Log::Info("No Requests on checkPendingToSend");
+	return 0;
 }

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/04 10:57:33 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 13:07:33 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ public:
 		RESP_RENDERED
 	}	t_status;
 private:
+	static size_t				id_counter;
+	size_t						id;
 	t_status					status;
 	int							error;
 	std::string					cgiOutput;
@@ -90,6 +92,7 @@ public:
 	std::string							getHost();
 	size_t								getBodyLength() const;
 	std::string							getBody() const;
+	size_t								getId() const;
 	bool								isCompleteRecv() const;
 	bool								isReadyToSend() const;
 	bool								isCgiLaunched() const;

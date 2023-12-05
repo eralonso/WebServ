@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/04 13:30:51 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 13:56:51 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,28 @@
 #include <Request.hpp>
 #include <Client.hpp>
 
+size_t	Request::id_counter = 0;
+
 Request::Request(void)
 {
+	id = id_counter;
+	id_counter++;
 	client = nullptr;
 	status = IDLE;
 	useCgi = false;
 	error = 0;
+	Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
 Request::Request(Client *cli)
 {
+	id = id_counter;
+	id_counter++;
 	client = cli;
 	status = FD_BOND;
 	useCgi = false;
 	error = 0;
+	Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
 Request::~Request()
@@ -38,6 +46,8 @@ Request::~Request()
 
 Request::Request(const Request& b)
 {
+	id = id_counter;
+	id_counter++;
 	badRequest = false;
 	chunkSize = b.chunkSize;
 	client = b.client;
@@ -246,6 +256,11 @@ size_t								Request::getBodyLength() const
 std::string							Request::getBody() const
 {
 	return (body);
+}
+
+size_t Request::getId() const
+{
+	return id;
 }
 
 bool Request::processLineOnFdBond(const std::string &line)

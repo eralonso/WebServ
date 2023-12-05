@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:36 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/28 14:57:54 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 12:14:37 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ public:
 	Client*	newClient(struct pollfd* poll);
 	int		eraseClient(Client* cli);
 	int		eraseClient(struct pollfd* poll);
+	bool	checkPendingToSend();
 };
 
 

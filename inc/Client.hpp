@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/04 11:53:58 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 12:16:57 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ public:
 	bool					setKeepAlive(bool value);
 	size_t					purgeUsedRecv();
 	void					allowPollWrite(bool value);
+	bool					checkPendingToSend();
 };
 
 #endif

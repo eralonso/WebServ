@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:34 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/04 12:11:19 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 14:05:14 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ private:
 	static PendingCgiTasks	pendingTasks;
 	std::string				binary;
 	std::string				argument;
-	Request					request;
+	Request&				request;
 	//char					*envPath;
 	int						fdToChild[2];
 	int						fdFromChild[2];

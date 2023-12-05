@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/04 16:21:46 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 12:18:59 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,4 +239,14 @@ void Client::allowPollWrite(bool value)
 		else
 			clientPoll->events &= ~POLLOUT;
 	}
+}
+
+bool Client::checkPendingToSend()
+{
+	if (Requests::checkPendingToSend())
+	{
+		allowPollWrite(true);
+		return true;
+	}
+	return false;
 }
