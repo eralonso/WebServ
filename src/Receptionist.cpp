@@ -6,47 +6,44 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/23 18:56:16 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/05 19:26:00 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Receptionist.hpp>
 #include <Response.hpp>
 
-Receptionist::Receptionist(int port, int backlog, int timeout):
-	polls(MAX_CLIENTS), port(port), backlog(backlog), timeout(timeout)
+Receptionist::Receptionist( int port, int backlog, int timeout ):
+	polls( MAX_CLIENTS ), port( port ), backlog( backlog ), timeout( timeout )
 {
-	socket_t		serverFd;
+	socket_t	serverFd;
 
 	( void )this->timeout;
 	serverFd = Sockets::createPassiveSocket( this->port, this->backlog );
 	polls.addPollfd( serverFd, POLLIN, 0, SPOLLFD );
 }
 
-Receptionist::~Receptionist()
-{
-}
+Receptionist::~Receptionist( void ) {}
 
-Receptionist::Receptionist(const Receptionist& b) :
-	polls((const WSPoll &)b.polls)
+Receptionist::Receptionist( const Receptionist& b ): polls( b.polls )
 {
 	port = b.port;
 	backlog = b.backlog;
 	timeout = b.timeout;
 }
 
-Receptionist& 	Receptionist::operator=(const Receptionist& b)
+Receptionist& 	Receptionist::operator=( const Receptionist& b )
 {
-	polls = WSPoll((const WSPoll &)b.polls);
+	polls = WSPoll( b.polls );
 	port = b.port;
 	backlog = b.backlog;
 	timeout = b.timeout;
-	return *this;
+	return ( *this );
 }
 
 int	Receptionist::addNewClient( socket_t serverFd, WSPoll& polls )
 {
-	socket_t	clientFd;
+	socket_t		clientFd;
 	struct pollfd	*clientPoll;
 	
 	clientFd = Sockets::acceptConnection( serverFd );

@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 17:25:58 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/30 17:42:48 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/05 19:07:55 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,8 @@ int	DirectivesParser::checkAvailableHostPort( std::string host, std::string port
 bool	DirectivesParser::isValidPort( std::string port )
 {
 	return ( !( SUtils::compareNumbersAsStrings( port, \
-			SUtils::longToString( std::numeric_limits< short >::max() ) ) > 0 \
+			SUtils::longToString( std::numeric_limits< \
+				unsigned short >::max() ) ) > 0 \
 			|| SUtils::compareNumbersAsStrings( port, "0" ) == 0 ) );
 }
 
