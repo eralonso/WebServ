@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:05:51 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/05 17:00:41 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 18:33:51 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -295,7 +295,13 @@ socket_t	WSPoll::getPerformClient( void )
 void WSPoll::allowPollWrite(socket_t fd, bool value)
 {
 	if (value)
-		_polls[fd].events |= POLLOUT;
+	{
+		this->_polls[fd].events |= POLLOUT;
+		Log::Info("Set Poll for fd " + SUtils::longToString(fd) + " to write");
+	}
 	else
-		_polls[fd].events &= ~POLLOUT;	
+	{
+		this->_polls[fd].events &= ~POLLOUT;	
+		Log::Info("Set Poll for fd " + SUtils::longToString(fd) + " not to write");
+	}
 }

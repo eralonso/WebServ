@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 15:42:32 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 18:50:23 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,8 +192,8 @@ void	CgiExecutor::attendPendingCgiTasks(void)
 		{
 			CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
 		}
-		// if (cli != nullptr)
-		// 	cli->allowPollWrite(true);
+		if (cli != nullptr)
+		 	cli->allowPollWrite(true);
 		cli = nullptr;
 	}
 	// req = nullptr;

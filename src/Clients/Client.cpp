@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 17:20:44 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 18:42:23 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ Client::Client(void)
 	keepAlive = false;
 	pending = 0;
 	socket = -1;
+	this->polls = nullptr;
 	Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
@@ -252,7 +253,31 @@ size_t Client::purgeUsedRecv()
 
 void Client::allowPollWrite(bool value)
 {
-	polls->allowPollWrite(socket, value);
+	struct pollfd	*clientPoll;	
+	if (polls)
+	{
+		// polls->allowPollWrite(socket, value);
+		try
+		{
+			clientPoll = &(polls->operator[](socket));
+		}
+		catch ( std::out_of_range& e )
+		{ 
+			Log::Info( "ClientPoll for [ " \
+				+ SUtils::longToString( (long)socket )\
+				+ " ]: " \
+				+ "not found");
+			return ;
+		}
+		if (value)
+			clientPoll->events |= POLLOUT;
+		else 
+			clientPoll->events &= ~POLLOUT;
+	// if (polls)
+	// 	polls->allowPollWrite(socket, value);
+	}
+	else
+		Log::Error("Polls not found on Client " + SUtils::longToString(id));
 }
 
 bool Client::checkPendingToSend()

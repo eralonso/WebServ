@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 17:30:46 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 18:43:00 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,9 +102,16 @@ void	Receptionist::manageClient(socket_t clientFd)
 
 	try
 	{
-		clientPoll = &polls[ clientFd ];
+		clientPoll = &(polls[ clientFd ]);
 	}
-	catch ( std::out_of_range& e ) { return ; }
+	catch ( std::out_of_range& e )
+	{ 
+		Log::Info( "ClientPoll for [ " \
+			+ SUtils::longToString( (long)clientFd )\
+			+ " ]: " \
+			+ "not found");
+		return ;
+	}
 	Client * cli = operator[](clientFd);
 	if (cli)
 	{
@@ -123,13 +130,13 @@ void	Receptionist::manageClient(socket_t clientFd)
 			cli->manageRecv(readed);
 			if (cli->manageCompleteRecv())
 				cli->allowPollWrite(true);
-				//clientPoll->events |= POLLOUT;
+				// clientPoll->events |= POLLOUT;
 		}
 		else if ( clientPoll->revents & POLLOUT )
 		{
 			cli->managePollout();
 			cli->allowPollWrite(false);
-			//clientPoll->events &= ~POLLOUT;
+			// clientPoll->events &= ~POLLOUT;
 			if ((cli->size() == 0 && cli->getPendingSize() ==0))
 			{
 			 	polls.closePoll( clientFd );
