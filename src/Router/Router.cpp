@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/04 12:18:08 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 19:47:36 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int Router::updateResponse(Response &res, Request &req)
 	if (req.getDocument()==std::string("favicon.ico"))
 		createFaviconRes(res, req);
 	else if (req.getDocExt() == std::string("py"))
-		;
+		formatCgiResponse(res,req);
 	else
 		formatGenericResponse(res, req);	
 	return 0;
@@ -149,5 +149,18 @@ Response *Router::formatGenericResponse(Response& res, Request& req)
 	res.setStatus(200);
 	res.setMethod(req.getMethod());
 	res.setBody(getHtml(&req));	
+	return &res;
+}
+
+Response *Router::formatCgiResponse(Response& res, Request& req)
+{
+	res.appendHeader(Header("Content-Type", std::string("text/html")));
+	res.setProtocol(req.getProtocol());
+	res.setStatus(200);
+	res.setMethod(req.getMethod());
+	if (req.getUseCgi())
+		res.setBody(req.getCgiOutput());
+	else
+		res.setBody(getHtml(&req));	
 	return &res;
 }

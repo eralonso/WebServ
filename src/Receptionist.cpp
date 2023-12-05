@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 18:43:00 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 19:24:41 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ int	Receptionist::sendResponse( socket_t connected, std::string response )
 		exit( 1 );
 	}
 	Log::Success( "Response sended [ " + SUtils::longToString( connected ) + " ]" );
+	Log::Success( response );
 	return (1);
 }
 

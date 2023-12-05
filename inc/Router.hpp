@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/04 11:06:38 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 19:44:05 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ public:
 	static std::string getRequestEmbed(Request& req);
 	static Response* formatErrorResponse(Response& res, int error);
 	static Response* formatGenericResponse(Response& res, Request& req);
+	static Response* formatCgiResponse(Response& res, Request& req);
 	static bool processRequestReceived(Request& req);
 };
 
