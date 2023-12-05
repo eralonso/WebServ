@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:43:42 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 17:26:30 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 19:16:17 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ private:
 	int								backlog;
 	int								timeout;
 public:
-	Receptionist(int port = 9375, int backlog = 20, int timeout = 1000);
+	Receptionist(int port = 9375, int backlog = 20, int timeout = 100);
 	~Receptionist();
 	Receptionist(const Receptionist& b);
 	Receptionist& 	operator=(const Receptionist& b);

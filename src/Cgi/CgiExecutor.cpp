@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 18:50:23 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 19:13:48 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,9 @@ int CgiExecutor::execute(void)
 	if (pipe(fdFromChild))
 		onFailFromChildPipeOpen();
 	Log::Success("Pipe From Child Created on fds: " + SUtils::longToString(fdFromChild[0]) + "," + SUtils::longToString(fdFromChild[1]));
+	Log::Success("Request " + SUtils::longToString (request.getClient()->getId()));
+	Log::Success("with client " + SUtils::longToString (request.getClient()->getId()));
+	Log::Success("using socket " + SUtils::longToString (request.getClient()->getClientSocket()));
 	pid_t pid = fork();
 	if (pid < 0)
 		onFailFork();
