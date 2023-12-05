@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 14:04:59 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 15:42:32 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,8 @@ void CgiExecutor::onParentProcess(pid_t childPid)
 	close(fdFromChild[FDOUT]);
 	write(fdToChild[FDOUT], reqBody, reqBodySize);
 	close(fdToChild[FDOUT]);
-	PendingCgiTask task(childPid, &request, fdFromChild[FDIN]);
-		pendingTasks.appendTask(task);
+	PendingCgiTask task(childPid, request, fdFromChild[FDIN]);
+	pendingTasks.appendTask(task);
 }
 
 std::string CgiExecutor::getChildOutput(PendingCgiTask *task)
@@ -170,36 +170,30 @@ size_t	CgiExecutor::purgeTimeoutedTasks(clock_t to, size_t max)
 void	CgiExecutor::attendPendingCgiTasks(void)
 {
 	PendingCgiTask* pTask; 
-	Request* req;
 	Client* cli;
-	req = nullptr;
 	cli = nullptr;
 	while ((pTask = CgiExecutor::getCompletedTask()))
 	{
 		Log::Info( "Cgi Task completed");
-		req = pTask->getRequest();
+		Request& req = pTask->getRequest();
 		pTask->applyTaskOutputToReq();
-		if (req)
-		{
-			Log::Info("CgiExecutor::attendPendingCgiTasks got:");
-			Log::Info("Request addr: " + SUtils::longToString((long)req));
-			Log::Info("Request id: " + SUtils::longToString((long)req->getId()));
-			// req->getDocExt();
-			cli = req->getClient();
-		}
+		Log::Info("CgiExecutor::attendPendingCgiTasks got:");
+		Log::Info("Request addr: " + SUtils::longToString((long)&req));
+		Log::Info("Request id: " + SUtils::longToString((long)req.
+		getId()));
+		// req->getDocExt();
+		cli = req.getClient();
 		//req->setCgiOutput(pTask->getTaskOutput());
-		if (req)
-		{
-			Log::Info("Set Cgi Request " + SUtils::longToString(req->getId()) + " ReadyToSend");
-		 	req->setReadyToSend();
-		}
+		req.logStatus();
+		Log::Info("Set Cgi Request " + SUtils::longToString(req.getId()) + " ReadyToSend");
+		req.setReadyToSend();
+		req.logStatus();
 		if (pTask)
 		{
 			CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
 		}
 		// if (cli != nullptr)
 		// 	cli->allowPollWrite(true);
-		req = nullptr;
 		cli = nullptr;
 	}
 	// req = nullptr;

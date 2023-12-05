@@ -6,17 +6,19 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/04 16:48:43 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 15:40:31 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/PendingCgiTask.hpp"
 #include "../../inc/Utils.hpp"
 
-PendingCgiTask::PendingCgiTask()
+PendingCgiTask::PendingCgiTask() : request(*new Request())
 {
+	timestamp = std::clock();  
 }
-PendingCgiTask::PendingCgiTask(pid_t pid, Request *request, int fd) :
+
+PendingCgiTask::PendingCgiTask(pid_t pid, Request& request, int fd) :
 	pid(pid), request(request), fd(fd)
 {
 	timestamp = std::clock();  
@@ -45,7 +47,7 @@ pid_t PendingCgiTask::getPid() const
 	return pid;
 }
 
-Request* PendingCgiTask::getRequest() const
+Request& PendingCgiTask::getRequest() const
 {
 	return request;
 }
@@ -107,5 +109,5 @@ void PendingCgiTask::applyTaskOutputToReq()
 	buf[bytes_read] = 0;
 	resBody += std::string(buf);
 	Log::Success(std::string("read" + resBody));
-	request->setCgiOutput(resBody);
+	request.setCgiOutput(resBody);
 }

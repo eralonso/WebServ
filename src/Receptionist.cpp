@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 12:37:19 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 17:30:46 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
 	return ( 1 );
 }
 
-int	Receptionist::addNewClient( socket_t serverFd, WSPoll& polls )
+int	Receptionist::addNewClient(socket_t serverFd)
 {
 	socket_t	clientFd;
 	struct pollfd	*clientPoll;
@@ -86,7 +86,7 @@ int	Receptionist::addNewClient( socket_t serverFd, WSPoll& polls )
 		close( clientFd );
 		return ( -1 );
 	}
-	if (!newClient(&polls[ clientFd ]))
+	if (!newClient(clientFd, polls))
 	{
 		Log::Error( "Failed to append Request" );
 		close( clientFd );
@@ -95,7 +95,7 @@ int	Receptionist::addNewClient( socket_t serverFd, WSPoll& polls )
 	return ( 1 );
 }
 
-void	Receptionist::manageClient( socket_t clientFd, WSPoll& polls )
+void	Receptionist::manageClient(socket_t clientFd)
 {
 	struct pollfd	*clientPoll;
 	std::string		readed;
@@ -105,7 +105,7 @@ void	Receptionist::manageClient( socket_t clientFd, WSPoll& polls )
 		clientPoll = &polls[ clientFd ];
 	}
 	catch ( std::out_of_range& e ) { return ; }
-	Client * cli = operator[](clientPoll);
+	Client * cli = operator[](clientFd);
 	if (cli)
 	{
 		if ( clientPoll->revents & POLLIN )
@@ -133,7 +133,7 @@ void	Receptionist::manageClient( socket_t clientFd, WSPoll& polls )
 			if ((cli->size() == 0 && cli->getPendingSize() ==0))
 			{
 			 	polls.closePoll( clientFd );
-				// eraseClient(clientPoll);
+				eraseClient(clientFd);
 			}
 		}
 	}
@@ -174,14 +174,14 @@ int	Receptionist::mainLoop(void)
 		serverFd = polls.isNewClient();
 		if ( serverFd > 0 )
 		{
-			if ( addNewClient( serverFd, polls ) < 0 )
+			if ( addNewClient( serverFd ) < 0 )
 				return ( 1 );
 		}
 		else
 		{
 			clientFd = polls.getPerformClient();
 			if ( clientFd > 0 )
-				manageClient( clientFd, polls );
+				manageClient( clientFd );
 		}
 	}
 	return (0);

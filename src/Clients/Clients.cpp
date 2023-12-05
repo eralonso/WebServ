@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:50 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 12:56:13 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 17:12:13 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,35 +31,31 @@ Clients& Clients::operator=(const Clients&)
 	return (*this);
 }
 
-Client* Clients::newClient(struct pollfd* poll)
+Client* Clients::newClient(socket_t socket, WSPoll& polls)
 {
-	if (!poll)
-		return (nullptr);
-	Client* cli = new Client(poll);
+	Client* cli = new Client(socket, polls);
 	if (!cli)
 		return (nullptr);
-	insert(std::pair<struct pollfd*, Client*>(poll, cli));
+	insert(std::pair<socket_t, Client*>(socket, cli));
 	cli->cgis.appendCgi("py", "/usr/bin/python");
 	return (cli);
 }
 
-int Clients::eraseClient(Client* cli)
+size_t Clients::eraseClient(Client* cli)
 {
 	if (cli)
 	{
-		struct pollfd* poll = cli->getClientPoll();
-		if (poll)
-			return (erase(poll));
+		socket_t socket = cli->getClientSocket();
+		size_t s = erase(socket);
 		delete cli;
+		return (s);
 	}
 	return (0);
 }
 
-int Clients::eraseClient(struct pollfd* poll)
+size_t Clients::eraseClient(socket_t socket)
 {
-	if (poll)
-		return (erase(poll));
-	return (0);
+	return (erase(socket));
 }
 
 bool Clients::checkPendingToSend()

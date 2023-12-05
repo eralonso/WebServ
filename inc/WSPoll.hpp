@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WSPoll.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:07:12 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/14 15:10:56 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/05 17:01:07 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ class WSPoll
 		int			wait( int timeout );
 		socket_t	isNewClient( void );
 		socket_t	getPerformClient( void );
+		void		allowPollWrite(socket_t fd, bool value);
 };
 
 #endif

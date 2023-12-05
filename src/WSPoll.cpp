@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:05:51 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/30 16:39:15 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 17:00:41 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -290,4 +290,12 @@ socket_t	WSPoll::getPerformClient( void )
 			closePoll( i );
 	}
 	return ( 0 );
+}
+
+void WSPoll::allowPollWrite(socket_t fd, bool value)
+{
+	if (value)
+		_polls[fd].events |= POLLOUT;
+	else
+		_polls[fd].events &= ~POLLOUT;	
 }

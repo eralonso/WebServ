@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 12:16:57 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 16:54:34 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,20 +27,25 @@ class Client : public Requests
 {
 public:
 private:
-	struct pollfd*						clientPoll;
+	static size_t						id_counter;
+	size_t								id;
+	socket_t							socket;
 	size_t								pending;
 	std::string							received;
 	bool								keepAlive;
+	WSPoll*								polls;
 public:
 	CgisMap								cgis;
 	Client(void);
-	Client(struct pollfd* cliPoll);
+	Client(socket_t pollsocket, WSPoll& polls);
 	~Client();
 	Client(const Client& b);
 	Client&	operator=(const Client& b);
-	int bindClientPoll(struct pollfd* cliPoll);
-	struct pollfd*			getClientPoll();
-	Request* 				findRecvRequest();
+	int bindClientPoll(socket_t pollsocket);
+	socket_t				getClientSocket();
+	size_t 					getId();
+	void					LogId();
+	Request*				findRecvRequest();
 	Request* 				findCompleteRecvRequest();
 	Request*				findReadyToSendRequest();
 	int						manageRecv(std::string recv);

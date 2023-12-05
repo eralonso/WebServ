@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 12:18:59 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/05 17:20:44 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,52 +16,72 @@
 #include "Client.hpp"
 #include "Router.hpp"
 
+size_t	Client::id_counter = 0;
+
 Client::Client(void)
 {
-	this->clientPoll = nullptr;
+	id = id_counter;
+	id_counter++;
 	keepAlive = false;
 	pending = 0;
+	socket = -1;
+	Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
-Client::Client(struct pollfd *cliPoll)
+Client::Client(socket_t pollsocket, WSPoll& polls)
 {
-	this->clientPoll = cliPoll;
+	id = id_counter;
+	id_counter++;
 	keepAlive = false;
 	pending = 0;
+	socket = pollsocket;
+	this->polls = &polls;
+	Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
-
 
 Client::~Client()
 {
 }
 
-int Client::bindClientPoll(pollfd *cliPoll)
-{
-	this->clientPoll = cliPoll;
-	return 0;
-}
-
 Client::Client(const Client& b)
 {
-	clientPoll = b.clientPoll;
+	id = id_counter;
+	id_counter++;
+	socket = b.socket;
 	pending = b.pending;
 	received = b.received;
 }
 
 Client&	Client::operator=(const Client& b)
 {
-	clientPoll = b.clientPoll;
+	socket = b.socket;
 	pending = b.pending;
 	received = b.received;
 	return (*this);
 }
 
-struct pollfd *Client::getClientPoll()
+int Client::bindClientPoll(socket_t pollsocket)
 {
-	return (this->clientPoll);
+	socket = pollsocket;
+	return 0;
 }
 
-Request* Client::findRecvRequest()
+socket_t	Client::getClientSocket()
+{
+	return (socket);
+}
+
+size_t	Client::getId()
+{
+	return id;
+}
+
+void	Client::LogId()
+{
+	Log::Info("Client id: " + SUtils::longToString((long)id));
+}
+
+Request*	Client::findRecvRequest()
 {
 	Request* req;
 	Requests::iterator	it = begin();
@@ -172,8 +192,8 @@ bool Client::getKeepAlive() const
 
 int	Client::sendResponse(std::string resp)
 {
-	if (clientPoll)
-		return (Receptionist::sendResponse(clientPoll->fd, resp));
+	if (socket >= 0)
+		return (Receptionist::sendResponse(socket, resp));
 	return (0);
 }
 
@@ -232,17 +252,12 @@ size_t Client::purgeUsedRecv()
 
 void Client::allowPollWrite(bool value)
 {
-	if (clientPoll)
-	{
-		if (value)
-			clientPoll->events |= POLLOUT;
-		else
-			clientPoll->events &= ~POLLOUT;
-	}
+	polls->allowPollWrite(socket, value);
 }
 
 bool Client::checkPendingToSend()
 {
+	LogId();
 	if (Requests::checkPendingToSend())
 	{
 		allowPollWrite(true);
