@@ -6,36 +6,44 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/15 17:47:50 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/02 19:21:21 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Server.hpp>
 
-Server::Server( void ): ServerConfig() {}
+Server::Server( void ): _directives( NULL ) {}
 
-Server::Server( const Server& s ): ServerConfig( s ) {}
+Server::Server( const Server& s )
+{
+	this->_directives = NULL;
+	if ( s._directives != NULL )
+		this->_directives = new Directives( *s._directives );
+}
 
-Server::Server( const ServerParser& sp ): ServerConfig( sp ) {}
-
-Server::~Server( void ) {}
+Server::~Server( void )
+{
+	if ( this->_directives != NULL )
+		delete this->_directives;
+}
 
 Server&	Server::operator=( const Server& s )
 {
-	ServerConfig::operator=( s );
-	return ( *this );
-}
-
-Server&	Server::operator=( const ServerParser& sp )
-{
-	ServerConfig::operator=( sp );
+	if ( this != &s )
+	{
+		if ( this->_directives != NULL )
+			delete this->_directives;
+		this->_directives = NULL;
+		if ( s._directives != NULL )
+			this->_directives = new Directives( *s._directives );
+	}
 	return ( *this );
 }
 
 Location	Server::getLocationAtPath( std::string path ) const
 {
 	( void ) path;
-	return ( this->_locations[ 0 ] );
+	return ( *this->_directives->_locations.begin() );
 }
 
 std::string	Server::getErrorPageWithCode( unsigned int code ) const

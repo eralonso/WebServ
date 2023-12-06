@@ -6,20 +6,28 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:48:38 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/16 19:39:42 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/05 19:24:48 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ConfigParser.hpp>
 
-ConfigParser::ConfigParser( int argc, char **argv )
+ConfigParser::ConfigParser( int argc, char **argv ): _directives( NULL )
 {
+	ConstStringVector	allowedDirectives;
+
+	allowedDirectives.push_back( "server" );
 	checkUsage( argc, argv, argv[ 0 ] );
 	readConfig();
-	parseConfigFile();
+	this->_directives = DirectivesParser::parseDirectives( this->_content, \
+							allowedDirectives );
 }
 
-ConfigParser::~ConfigParser( void ) {}
+ConfigParser::~ConfigParser( void )
+{
+	if ( this->_directives != NULL )
+		delete this->_directives;
+}
 
 void	ConfigParser::checkUsage( int argc, char **argv, std::string binName )
 {
@@ -43,31 +51,28 @@ void	ConfigParser::readConfig( void )
 	this->_content = SUtils::trim( content );
 }
 
-void	ConfigParser::parseConfigFile( void )
-{
-	std::string	head;
-	std::string	body;
+//void	ConfigParser::parseConfigFile( void )
+//{
+//	std::string	head;
+//	std::string	body;
+//
+//	while ( this->_content.length() > 0 )
+//	{
+//		if ( TreeSplit::get_pair( head, body, this->_content ) )
+//		{
+//			if ( head != "server" )
+//				throw std::logic_error( UNKNOWN_DIRECTIVE( head ) );
+//			ServerParser	sp( body );
+//			this->_servers.push_back( Server( sp ) );
+//		}
+//		else if ( this->_content.length() > 0 )
+//			throw std::logic_error( "Unexpected end of file, expecting \";\" or \"}\"" );
+//		head.clear();
+//		body.clear();
+//	}
+//}
 
-	while ( this->_content.length() > 0 )
-	{
-		if ( TreeSplit::get_pair( head, body, this->_content ) )
-		{
-			//std::cout << "ConfigParser -> this->_content [" << this->_content << "] <-" << std::endl;
-			//std::cout << "ConfigParser -> head [" << head << "] <-" << std::endl;
-			//std::cout << "ConfigParser -> body [" << body << "] <-" << std::endl;
-			if ( head != "server" )
-				throw std::logic_error( UNKNOWN_DIRECTIVE( head ) );
-			ServerParser	sp( body );
-			this->_servers.push_back( Server( sp ) );
-		}
-		else if ( this->_content.length() > 0 )
-			throw std::logic_error( "Unexpected end of file, expecting \";\" or \"}\"" );
-		head.clear();
-		body.clear();
-	}
-}
-
-std::vector<Server>	ConfigParser::getServers( void ) const
+ServersVector	ConfigParser::getServers( void ) const
 {
-	return ( this->_servers );
+	return ( this->_directives->_servers );
 }

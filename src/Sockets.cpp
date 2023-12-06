@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 17:38:14 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/14 17:00:47 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/11/27 11:00:44 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,7 @@ socket_t	Sockets::acceptConnection( socket_t fd )
 		Log::Error( "Failed to accept incoming connection" );
 		return ( -1 );
 	}
-	fcntl( fd, F_SETFL, O_NONBLOCK );
+	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
 	Log::Success( "Connection accepted [ " \
 			+ SUtils::longToString( connected ) \
 			+ " ]" );
@@ -149,7 +149,7 @@ socket_t	Sockets::createPassiveSocket( int port, int backlog )
 
 	optVal = 1;
 	fd = socketCreate( AF_INET, SOCK_STREAM, 0 );
-	fcntl( fd, F_SETFL, O_NONBLOCK );
+	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
 	setsockopt( fd, SOL_SOCKET, SO_REUSEADDR, &optVal, sizeof( int ) );
 	//addr = fillSockAddr( AF_INET, port, INADDR_ANY );
 	addr = fillSockAddr( AF_INET, port, Binary::codeAddress( "127.0.0.1" ) );

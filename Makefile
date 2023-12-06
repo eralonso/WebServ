@@ -6,7 +6,7 @@
 #    By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/22 10:08:41 by eralonso          #+#    #+#              #
-#    Updated: 2023/12/04 12:21:24 by omoreno-         ###   ########.fr        #
+#    Updated: 2023/12/06 11:46:33 by omoreno-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -59,8 +59,9 @@ SRC_DIRS	:=	$(subst $(SPACE),:,$(SRC_DIRS))
 
 FILES		:=	main Sockets WSPoll WSSignals Receptionist \
 				TreeSplit Utils SplitString FolderLs ConfigParser \
-				RootDir ActionMask CGIService Location ServerConfig \
-				Server ServerParser Client Clients Header Headers Request \
+				Directives DirectivesParserInit DirectivesParser ActionMask \
+				CGIService ServerInit Server LocationInit Location Listen \
+				ClientMaxBodySize ErrorPage Client Clients Header Headers Request \
 				Requests Response StatusCodes PendingCgiTask PendingCgiTasks \
 				CgiExecutor CgisMap Router
 
@@ -129,7 +130,7 @@ all : $(NAME)
 
 .SECONDEXPANSION:
 
-$(DEP_ROOT)%.d : %.$(SUFFIX) $(MK) | $$(call create_dir,$$(dir $$(DEP_ROOT)))
+$(DEP_ROOT)%.d : %.$(SUFFIX) $(MK) | $$(call create_dir,$$(dir $$@))
 	$(call msg_creating,Dependence,$*,$(BLUE))
 	$(CC) $(CFLAGS) -MMD -MF $@ $(INCLUDE) -c $< \
 		&& rm -rf $(addsuffix .o,$(notdir $*))

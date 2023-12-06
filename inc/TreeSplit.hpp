@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 17:01:31 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/21 13:32:23 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/02 11:58:53 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@
 
 namespace TreeSplit
 {
-	void	splitOnceBySpace( std::string str, std::string& head, std::string& body );
-	bool	get_pair(std::string& head, std::string& body, std::string& src);
+	void	splitOnceBySpace( const std::string str, std::string& head, std::string& body );
+	int		get_pair(std::string& head, std::string& body, std::string& src);
 } // namespace TreeSplit
 
 #endif

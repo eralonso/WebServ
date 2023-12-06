@@ -6,12 +6,16 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:10:16 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/14 17:21:46 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/01 19:25:24 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _DEFINES_HPP_
 # define _DEFINES_HPP_
+
+# include <vector>
+# include <map>
+# include <string>
 
 # define BUFFER_SIZE 3000
 # define MAX_CLIENTS 10
@@ -29,6 +33,14 @@
 
 # define ISSPACE "\t\n\v\f\r "
 
-typedef int	socket_t;
+# define NOT_A_SEPARATOR 0
+# define SEMICOLON_SEPARATOR 1
+# define BRACET_SEPARATOR 2
+
+typedef int										socket_t;
+typedef std::vector< std::string >				StringVector;
+typedef std::vector< const std::string >		ConstStringVector;
+typedef std::map< const std::string, bool >		ConstStringBoolMap;
+typedef std::pair< const std::string, bool >	ConstStringBoolPair;
 
 #endif

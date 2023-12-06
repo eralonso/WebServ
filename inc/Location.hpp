@@ -6,35 +6,47 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 15:15:39 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/02 17:55:03 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _LOCATION_HPP_
 # define _LOCATION_HPP_
+
 # include <vector>
 # include <string>
-# include <RootDir.hpp>
-# include <ActionMask.hpp>
-# include <CGIService.hpp>
+
+# include <TypesDefines.hpp>
+# include <Directives.hpp>
+# include <Defines.hpp>
+# include <StringErrors.hpp>
+
+# define LOCATION_SIZE_DIRECTIVES 9
 
 class Location
 {
+	//Friends
+	friend class DirectivesParser;
 private:
-	std::string				path;
-	RootDir					rootDir;
-	ActionMask				actionMask;
-	std::vector<CGIService>	servicesCGI;
+	std::string		_path;
+	StringVector	_splitedPath;
+	bool			_isDir;
+	Directives		*_directives;
+private:
+	static std::string 		_allowedDirectivesAux[ LOCATION_SIZE_DIRECTIVES + 1 ];
 public:
-	Location();
-	Location(std::string head, std::string body);
-	~Location();
-	Location(const Location& b);
-	Location& 					operator=(const Location& b);
-	std::string					getPath(void);
-	RootDir						getRootDir(void);
-	ActionMask					getActionMask(void);
-	std::vector<CGIService>		getServicesCGI(void);
+	static ConstStringVector	allowedDirectives;
+public:
+	Location( void );
+	~Location( void );
+	Location( const Location& lc );
+	Location&	operator=( const Location& lc );
+public:
+	bool			operator<( const Location& lc ) const;
+	std::string		getPath( void ) const;
+	bool			isDir( void ) const;
+	StringVector	getSplitedPath( void ) const;
+	Directives		*getDirectives( void ) const;
 };
 
 #endif

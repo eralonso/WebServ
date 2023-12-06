@@ -3,95 +3,69 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/07 10:58:05 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 15:45:56 by omoreno-         ###   ########.fr       */
+/*   Created: 2023/12/02 12:56:54 by eralonso          #+#    #+#             */
+/*   Updated: 2023/12/02 17:54:55 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Location.hpp>
-#include <TreeSplit.hpp>
 
-Location::Location()
+Location::Location( void ): _isDir( false ), _directives( NULL ) {}
+
+Location::~Location( void )
 {
+	if ( this->_directives != NULL )
+		delete this->_directives;
 }
 
-Location::Location(std::string head, std::string body)
+Location::Location( const Location& lc ): _path( lc._path ), \
+											_splitedPath( lc._splitedPath ), \
+											_isDir(lc._isDir )
 {
-	//TODO get attributes from get and
-	//process the body to obtain more attributes
-	std::string content = body;
-	while (content.length() > 0)
+	this->_directives = NULL;
+	if ( lc._directives != NULL )
+		this->_directives = new Directives( *lc._directives );
+}
+
+Location& 	Location::operator=( const Location& lc )
+{
+	if ( this != &lc )
 	{
-		if (head == "location")
-		{
-			std::string head;
-			std::string body;
-			if (TreeSplit::get_pair(head, body, content))
-			{
-				//TODO Analyze Head n Body to look for attributes and
-				//set them or add them to the containers
-				// path;
-				// rootDir;
-				// actionMask;
-				// servicesCGI;
-				try
-				{
-					CGIService svc;
-					servicesCGI.push_back(svc);
-				}
-				catch(const std::exception& e)
-				{
-					;
-					//TODO LogError and thow exception to inform parent to clean
-				}
-			}
-		}
-		else
-		{
-			;
-			//TODO LogError and thow exception to inform parent to clean
-		}
-	}}
-
-Location::~Location()
-{
+		this->_path = lc._path;
+		this->_splitedPath = lc._splitedPath;
+		this->_isDir = lc._isDir;
+		if ( this->_directives != NULL )
+			delete this->_directives;
+		this->_directives = NULL;
+		if ( lc._directives != NULL )
+			this->_directives = new Directives( *lc._directives );
+	}
+	return ( *this );
 }
 
-Location::Location(const Location& b)
+bool	Location::operator<( const Location& lc ) const
 {
-	path = b.path;
-	rootDir = b.rootDir;
-	actionMask = b.actionMask;
-	servicesCGI = b.servicesCGI;
+	return ( this->_splitedPath.size() < lc._splitedPath.size() );
 }
 
-Location& 	Location::operator=(const Location& b)
+std::string	Location::getPath( void ) const
 {
-	path = b.path;
-	rootDir = b.rootDir;
-	actionMask = b.actionMask;
-	servicesCGI = b.servicesCGI;
-	return (*this);
+	return ( this->_path );
 }
 
-std::string					Location::getPath(void)
+StringVector	Location::getSplitedPath( void ) const
 {
-	return path;
+	return ( this->_splitedPath );
 }
 
-RootDir						Location::getRootDir(void)
+bool	Location::isDir( void ) const
 {
-	return rootDir;
+	return ( this->_isDir );
 }
 
-ActionMask					Location::getActionMask(void)
+Directives	*Location::getDirectives( void ) const
 {
-	return actionMask;
-}
-
-std::vector<CGIService>		Location::getServicesCGI(void)
-{
-	return servicesCGI;
+	return ( this->_directives );
 }

@@ -6,70 +6,86 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:15:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/07 15:35:10 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/04 18:59:29 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <CGIService.hpp>
 
-CGIService::CGIService()
-{
-}
+CGIService::CGIService( void ): _port( 8000 ) {}
 
-CGIService::CGIService(std::string head, std::string body)
+CGIService::CGIService( std::string name, unsigned int port, std::string url,
+	std::string extension, std::string interpreter ): _name( name ), \
+												_port( port ), \
+												_url( url ), \
+												_extension( extension ), \
+												_interpreter( interpreter ) {}
+
+CGIService::~CGIService( void ) {}
+
+CGIService::CGIService( const CGIService& b ): _name( b._name ), \
+												_port( b._port ), \
+												_url( b._url ), \
+												_extension( b._extension ), \
+												_interpreter( b._interpreter ) {}
+
+CGIService& CGIService::operator=( const CGIService& b )
 {
-	(void)head;
-	//TODO Analyze head to obtain attributes
-	//and assert body is empty
-	if (body.length() > 0)
+	if ( this != &b )
 	{
-		//TODO LogError and throw to inform parent to clean
-		;
+		this->_name = b._name;
+		this->_port = b._port;
+		this->_url = b._url;
+		this->_extension = b._extension;
+		this->_interpreter = b._interpreter;
 	}
+	return ( *this );
 }
 
-CGIService::CGIService(std::string name, unsigned int port, std::string url,
-	std::string extension)
+void	CGIService::setExtension( const std::string extension )
 {
-	this->name = name;
-	this->port = port;
-	this->url = url;
-	this->extension = extension;
+	this->_extension = extension;
 }
 
-CGIService::~CGIService()
+void	CGIService::setInterpreter( const std::string interpreter )
 {
+	this->_interpreter = interpreter;
 }
 
-CGIService::CGIService(const CGIService& b)
+unsigned int	CGIService::getPort( void ) const
 {
-	this->name = b.name;
-	this->port = b.port;
-	this->url = b.url;
-	this->extension = b.extension;
+	return ( this->_port );
 }
 
-CGIService& CGIService::operator=(const CGIService& b)
+std::string		CGIService::getName( void ) const
 {
-	this->name = b.name;
-	this->port = b.port;
-	this->url = b.url;
-	this->extension = b.extension;
-	return (*this);
+	return ( this->_name );
 }
-unsigned int	CGIService::getPort(void)
+
+std::string		CGIService::getUrl( void ) const
 {
-	return port;
+	return ( this->_url );
 }
-std::string		CGIService::getName(void)
+
+std::string		CGIService::getExtension( void ) const
 {
-	return name;
+	return ( this->_extension );
 }
-std::string		CGIService::getUrl(void)
+
+std::string		CGIService::getInterpreter( void ) const
 {
-	return url;
+	return ( this->_interpreter );
 }
-std::string		CGIService::getExtension(void)
+
+std::ostream&	operator<<( std::ostream& out, const CGIService& cgi )
 {
-	return extension;
+	out << cgi.getInterpreter();
+	return ( out );
+}
+
+std::ostream&	operator<<( std::ostream& out, const CGIService* cgi )
+{
+	if ( cgi )
+		out << cgi->getInterpreter();
+	return ( out );
 }
