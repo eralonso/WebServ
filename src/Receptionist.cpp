@@ -6,11 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2023/12/06 10:58:43 by omoreno-         ###   ########.fr       */
-=======
-/*   Updated: 2023/12/05 19:26:00 by eralonso         ###   ########.fr       */
->>>>>>> parser
+/*   Updated: 2023/12/06 11:59:51 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +16,9 @@
 Receptionist::Receptionist( int port, int backlog, int timeout ):
 	polls( MAX_CLIENTS ), port( port ), backlog( backlog ), timeout( timeout )
 {
-<<<<<<< HEAD
-	socket_t		serverFd;
-=======
 	socket_t	serverFd;
 
 	( void )this->timeout;
->>>>>>> parser
 	serverFd = Sockets::createPassiveSocket( this->port, this->backlog );
 	polls.addPollfd( serverFd, POLLIN, 0, SPOLLFD );
 }
