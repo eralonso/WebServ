@@ -1,6 +1,9 @@
 import sys
 sys.stderr.write("Executing python start->\n")
 value = sys.stdin.readline()
+#for i in range(5000000):
+for i in range(5):
+    cat = str(i)
 sys.stderr.write("Read from webserv: ")
 sys.stderr.write(value)
 sys.stderr.write("\n")

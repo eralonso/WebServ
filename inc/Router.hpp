@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 19:44:05 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/06 10:31:17 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ public:
 	~Router();
 	static int updateResponse(Response& res, Request& req);
 	static std::string getHtml(Request *req);
+	static std::string getHtmlErrorPage(Request *req);
 	static std::string getForm(void);
 	static Response* getResponse(Request *req);
 	static Response* createFaviconRes(Response& res, Request& req);
@@ -30,7 +31,8 @@ public:
 	static Response* formatErrorResponse(Response& res, int error);
 	static Response* formatGenericResponse(Response& res, Request& req);
 	static Response* formatCgiResponse(Response& res, Request& req);
-	static bool processRequestReceived(Request& req);
+	static Response *formatErrorResponse(Response &res, Request &req);
+	static bool processRequestReceived(Request &req);
 };
 
 #endif

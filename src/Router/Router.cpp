@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 19:47:36 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/06 10:46:41 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,11 @@ int Router::updateResponse(Response &res, Request &req)
 	res.setServer(req.getHost());
 	if (req.getDocument()==std::string("favicon.ico"))
 		createFaviconRes(res, req);
-	else if (req.getDocExt() == std::string("py"))
+	// else if (req.getDocExt() == std::string("py"))
+	else if (req.getUseCgi() && req.getError() == 0)
 		formatCgiResponse(res,req);
+	else if (req.getError() != 0)
+		formatErrorResponse(res, req);
 	else
 		formatGenericResponse(res, req);	
 	return 0;
@@ -48,6 +51,29 @@ std::string	Router::getHtml(Request* req)
 		html += getRequestEmbed(*req);
 	html += "\n";
 	html += getForm();
+	html += "</body>\n";
+	html += "</html>";
+	return ( html );
+}
+
+std::string	Router::getHtmlErrorPage(Request* req)
+{
+	std::string	html;
+	html = "<!DOCTYPE html>\n";
+	html += "<html lang=\"en\">\n";
+	html += "<head>\n";
+	html += "\t<meta charset=\"UTF-8\">\n";
+	html += "\t<title>ª</title>\n";
+	html += "</head>\n";
+	html += "<body>\n";
+	html += "\t<h1 style=\"color: #FF2222;\">Error Message from server</h1>\n";
+	if (req)
+	{
+
+		html += "<h3style=\"color: #FF0000;\">Error: ";
+		html += SUtils::longToString(req->getError())+ "</h3>\n\n";
+		html += getRequestEmbed(*req);
+	}
 	html += "</body>\n";
 	html += "</html>";
 	return ( html );
@@ -135,6 +161,7 @@ bool Router::processRequestReceived(Request &req)
 		Log::Error ("When trying to execute CGI");
 		Log::Error (e.what());
 		// TODO Set Error to Send in request so the proper response is formed to send
+		req.setError(500);
 		req.setReadyToSend();
 		return true;
 	}
@@ -146,7 +173,10 @@ Response *Router::formatGenericResponse(Response& res, Request& req)
 {
 	res.appendHeader(Header("Content-Type", std::string("text/html")));
 	res.setProtocol(req.getProtocol());
-	res.setStatus(200);
+	int errorStatus = req.getError();
+	if (errorStatus == 0)
+		errorStatus = 200;
+	res.setStatus(errorStatus);
 	res.setMethod(req.getMethod());
 	res.setBody(getHtml(&req));	
 	return &res;
@@ -158,9 +188,16 @@ Response *Router::formatCgiResponse(Response& res, Request& req)
 	res.setProtocol(req.getProtocol());
 	res.setStatus(200);
 	res.setMethod(req.getMethod());
-	if (req.getUseCgi())
-		res.setBody(req.getCgiOutput());
-	else
-		res.setBody(getHtml(&req));	
+	res.setBody(req.getCgiOutput());
+	return &res;
+}
+
+Response *Router::formatErrorResponse(Response& res, Request& req)
+{
+	res.appendHeader(Header("Content-Type", std::string("text/html")));
+	res.setProtocol(req.getProtocol());
+	res.setStatus(req.getError());
+	res.setMethod(req.getMethod());
+	res.setBody(getHtml(&req));	
 	return &res;
 }

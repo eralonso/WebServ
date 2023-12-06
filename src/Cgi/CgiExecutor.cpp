@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 19:13:48 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/06 11:21:11 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ void CgiExecutor::onParentProcess(pid_t childPid)
 	close(fdToChild[FDOUT]);
 	PendingCgiTask task(childPid, request, fdFromChild[FDIN]);
 	pendingTasks.appendTask(task);
+	CgiExecutor::attendPendingCgiTasks();
 }
 
 std::string CgiExecutor::getChildOutput(PendingCgiTask *task)
@@ -107,13 +108,13 @@ int CgiExecutor::execute(void)
 {
 	if (pipe(fdToChild))
 		onFailToChildPipeOpen();
-	Log::Success("Pipe To Child Created on fds: " + SUtils::longToString(fdToChild[0]) + "," + SUtils::longToString(fdToChild[1]));
+	// Log::Success("Pipe To Child Created on fds: " + SUtils::longToString(fdToChild[0]) + "," + SUtils::longToString(fdToChild[1]));
 	if (pipe(fdFromChild))
 		onFailFromChildPipeOpen();
-	Log::Success("Pipe From Child Created on fds: " + SUtils::longToString(fdFromChild[0]) + "," + SUtils::longToString(fdFromChild[1]));
-	Log::Success("Request " + SUtils::longToString (request.getClient()->getId()));
-	Log::Success("with client " + SUtils::longToString (request.getClient()->getId()));
-	Log::Success("using socket " + SUtils::longToString (request.getClient()->getClientSocket()));
+	// Log::Success("Pipe From Child Created on fds: " + SUtils::longToString(fdFromChild[0]) + "," + SUtils::longToString(fdFromChild[1]));
+	// Log::Success("Request " + SUtils::longToString (request.getClient()->getId()));
+	// Log::Success("with client " + SUtils::longToString (request.getClient()->getId()));
+	// Log::Success("using socket " + SUtils::longToString (request.getClient()->getClientSocket()));
 	pid_t pid = fork();
 	if (pid < 0)
 		onFailFork();
@@ -180,17 +181,17 @@ void	CgiExecutor::attendPendingCgiTasks(void)
 		Log::Info( "Cgi Task completed");
 		Request& req = pTask->getRequest();
 		pTask->applyTaskOutputToReq();
-		Log::Info("CgiExecutor::attendPendingCgiTasks got:");
-		Log::Info("Request addr: " + SUtils::longToString((long)&req));
-		Log::Info("Request id: " + SUtils::longToString((long)req.
-		getId()));
+		// Log::Info("CgiExecutor::attendPendingCgiTasks got:");
+		// Log::Info("Request addr: " + SUtils::longToString((long)&req));
+		// Log::Info("Request id: " + SUtils::longToString((long)req.
+		// getId()));
 		// req->getDocExt();
 		cli = req.getClient();
 		//req->setCgiOutput(pTask->getTaskOutput());
-		req.logStatus();
-		Log::Info("Set Cgi Request " + SUtils::longToString(req.getId()) + " ReadyToSend");
+		// req.logStatus();
+		// Log::Info("Set Cgi Request " + SUtils::longToString(req.getId()) + " ReadyToSend");
 		req.setReadyToSend();
-		req.logStatus();
+		// req.logStatus();
 		if (pTask)
 		{
 			CgiExecutor::pendingTasks.eraseTask(pTask->getPid());

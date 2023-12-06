@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 18:42:23 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/06 11:37:09 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ Client::Client(void)
 	pending = 0;
 	socket = -1;
 	this->polls = nullptr;
-	Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
+	// Log::Info("Created client id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
 Client::Client(socket_t pollsocket, WSPoll& polls)
@@ -37,7 +37,7 @@ Client::Client(socket_t pollsocket, WSPoll& polls)
 	pending = 0;
 	socket = pollsocket;
 	this->polls = &polls;
-	Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
+	// Log::Info("Created client id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
 Client::~Client()

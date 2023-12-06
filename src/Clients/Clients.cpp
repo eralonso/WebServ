@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:50 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 17:12:13 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/06 10:56:33 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,8 @@ bool Clients::checkPendingToSend()
 {
 	Clients::iterator it = begin();
 	Clients::iterator ite = end();
-	if (size()==0)
-		Log::Info("No Client to check");
+	// if (size()==0)
+	// 	Log::Info("No Client to check");
 	bool somePending = false;
 	while (it != ite)
 	{

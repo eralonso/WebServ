@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 13:56:51 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/06 11:36:16 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ Request::Request(void)
 	status = IDLE;
 	useCgi = false;
 	error = 0;
-	Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
+	// Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
 Request::Request(Client *cli)
@@ -37,7 +37,7 @@ Request::Request(Client *cli)
 	status = FD_BOND;
 	useCgi = false;
 	error = 0;
-	Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
+	// Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
 Request::~Request()
