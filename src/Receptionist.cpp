@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/06 11:59:51 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/07 16:07:03 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,23 @@ int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
 {
 	char			buffer[ BUFFER_SIZE + 1 ];
 
-	std::memset( buffer, 0, BUFFER_SIZE + 1 );
-	if (recv( clientFd, buffer, BUFFER_SIZE, 0 ) <= 0 )
-		return ( -1 );
-	readed = buffer;
-	return ( 1 );
+	ssize_t amount;
+	ssize_t totalAmount = 0;
+	while(true)
+	{
+		std::memset( buffer, 0, BUFFER_SIZE + 1 );
+		amount = recv( clientFd, buffer, BUFFER_SIZE, 0);
+		totalAmount += amount;
+		if ( amount < 0 )
+			return ( -1 );
+		readed += std::string(buffer);
+		if (amount < BUFFER_SIZE)
+		{
+			if (totalAmount == 0)
+				return ( -1 );
+			return ( 1 );
+		}
+	}
 }
 
 int	Receptionist::addNewClient(socket_t serverFd)
@@ -120,6 +132,7 @@ void	Receptionist::manageClient(socket_t clientFd)
 			if ( readRequest( clientFd, readed ) < 0 )
 			{
 				// Read Failed
+				Log::Error("Read Failed");
 				polls.closePoll( clientFd );
 				return ;
 			}
@@ -127,6 +140,9 @@ void	Receptionist::manageClient(socket_t clientFd)
 					+ SUtils::longToString( clientFd )\
 					+ " ]: " \
 					+ readed);
+			Log::Info( "With size [ " \
+					+ SUtils::longToString( readed.size() )\
+					+ " ]:");
 			cli->manageRecv(readed);
 			if (cli->manageCompleteRecv())
 				cli->allowPollWrite(true);

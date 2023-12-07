@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:30:14 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 15:36:59 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/07 12:27:58 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,12 @@ public:
 	pid_t									getPid() const;
 	Request&								getRequest() const;
 	clock_t									getTimestamp() const;
-	bool									isTimeout(clock_t toDuration) const;
+	bool									isTimeout(double toDuration) const;
 	int										getFd() const;
 	std::string								getTaskOutput();
 	void									applyTaskOutputToReq();
+	void 									closeReadFd();
+	void									killPendingTask();
 };
 
 #endif

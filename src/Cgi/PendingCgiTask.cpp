@@ -6,12 +6,15 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 15:40:31 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/07 12:28:49 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
+#include <signal.h>
 #include "../../inc/PendingCgiTask.hpp"
 #include "../../inc/Utils.hpp"
+#include "PendingCgiTask.hpp"
 
 PendingCgiTask::PendingCgiTask() : request(*new Request())
 {
@@ -21,7 +24,8 @@ PendingCgiTask::PendingCgiTask() : request(*new Request())
 PendingCgiTask::PendingCgiTask(pid_t pid, Request& request, int fd) :
 	pid(pid), request(request), fd(fd)
 {
-	timestamp = std::clock();  
+	timestamp = std::clock();
+	Log::Info("Task pid " + SUtils::longToString(pid) + " time: " + SUtils::longToString(timestamp));
 }
 
 PendingCgiTask::PendingCgiTask(const PendingCgiTask &b) :
@@ -57,11 +61,11 @@ std::clock_t	PendingCgiTask::getTimestamp() const
 	return timestamp;
 }
 
-bool	PendingCgiTask::isTimeout(std::clock_t toDuration) const
+bool PendingCgiTask::isTimeout(double toDuration) const
 {
 	std::clock_t now = std::clock();
-	std::clock_t duration = now - timestamp;
-	return (duration < toDuration);
+	double duration = (now - timestamp) / (double) CLOCKS_PER_SEC;
+	return (duration > toDuration);
 }
 
 int			PendingCgiTask::getFd() const
@@ -110,4 +114,21 @@ void PendingCgiTask::applyTaskOutputToReq()
 	resBody += std::string(buf);
 	Log::Success(std::string("read" + resBody));
 	request.setCgiOutput(resBody);
+}
+
+void	PendingCgiTask::closeReadFd()
+{
+	if (fd >= 0)
+		close(fd);
+	fd = -1;
+}
+
+void	PendingCgiTask::killPendingTask()
+{
+	if (pid > 0)
+		kill(pid, SIGKILL);
+	pid = 0;
+	if (fd >= 0)
+		close(fd);
+	fd = -1;
 }

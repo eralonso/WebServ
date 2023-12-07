@@ -6,16 +6,19 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/06 11:21:11 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/07 12:41:10 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
+#include <signal.h>
 #include "../../inc/CgiExecutor.hpp"
 #include "Router.hpp"
 #include "Client.hpp"
+#include "CgiExecutor.hpp"
 #define FDIN 0
 #define FDOUT 1
-#define CGI_TO 2000
+#define CGI_TO 2.0
 
 PendingCgiTasks	CgiExecutor::pendingTasks;
 
@@ -134,7 +137,7 @@ PendingCgiTask *CgiExecutor::getCompletedTask()
 	return &(pendingTasks[pid]);
 }
 
-PendingCgiTask *CgiExecutor::getTimeoutedTask(clock_t to)
+PendingCgiTask *CgiExecutor::getTimeoutedTask(double to)
 {
 	PendingCgiTasks::iterator it = pendingTasks.begin();
 	PendingCgiTasks::iterator ite= pendingTasks.end();
@@ -159,7 +162,7 @@ std::string CgiExecutor::getCompletedTaskOutput(void)
 	return std::string();
 }
 
-size_t	CgiExecutor::purgeTimeoutedTasks(clock_t to, size_t max)
+size_t	CgiExecutor::purgeTimeoutedTasks(double to, size_t max)
 {
 	size_t i = 0;
 	PendingCgiTask *task = nullptr;
@@ -174,8 +177,7 @@ size_t	CgiExecutor::purgeTimeoutedTasks(clock_t to, size_t max)
 void	CgiExecutor::attendPendingCgiTasks(void)
 {
 	PendingCgiTask* pTask; 
-	Client* cli;
-	cli = nullptr;
+	Client* cli = nullptr;
 	while ((pTask = CgiExecutor::getCompletedTask()))
 	{
 		Log::Info( "Cgi Task completed");
@@ -198,28 +200,26 @@ void	CgiExecutor::attendPendingCgiTasks(void)
 		}
 		if (cli != nullptr)
 		 	cli->allowPollWrite(true);
-		cli = nullptr;
+		// cli = nullptr;
 	}
-	// req = nullptr;
 	// cli = nullptr;
 	// while ((pTask = CgiExecutor::getTimeoutedTask(CGI_TO)))
 	// {
-	// 	req = pTask->getRequest();
-	// 	if (req)
-	// 	{
-	// 		req->setError(500);
-	// 		req->setReadyToSend();
-	// 		cli = req->getClient();		
-	// 	}
-	// 	if (pTask)
-	// 	{
-	// 		CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
-	// 	}
+	// 	Request& req = pTask->getRequest();
+	// 	Log::Error("Timeout of Req: " + SUtils::longToString(req.getId()) + "process id: " + SUtils::longToString(pTask->getPid()));
+	// 	pTask->killPendingTask();
+	// 	req.setUseCgi(false);
+	// 	req.setError(500);
+	// 	req.setReadyToSend();
+	// 	cli = req.getClient();		
+	// 	CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
 	// 	if (cli != nullptr)
 	// 		cli->allowPollWrite(true);
-	// 	req = nullptr;
 	// 	cli = nullptr;
 	// }
 }
 
-
+size_t CgiExecutor::getPendingTasksSize()
+{
+	return pendingTasks.size();
+}

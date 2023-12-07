@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/06 10:46:41 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/07 12:34:38 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,10 @@ std::string Router::getForm(void)
 	std::string	form = std::string("<form method=\"POST\">\n");
 	form += "<input id=\"firstname\" name=\"firstname\"/>\n";
 	form += "<input id=\"surname\" name=\"surname\"/>\n";
+	form += "<input type=\"submit\"/>\n";
+	form += "</form>\n";
+	form += "<form method=\"POST\">\n";
+	form += "<input type=\"file\" id=\"filename\" name=\"filename\"/>\n";
 	form += "<input type=\"submit\"/>\n";
 	form += "</form>\n";
 	return form;
