@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:55:51 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/04 19:02:06 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/07 15:17:14 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ Directives::Directives( const Directives& d ):
 								_serverNames( d._serverNames ), \
 								_errorPages( d._errorPages ), \
 								_clientMaxBodySize( d._clientMaxBodySize ), \
+								_uploadStore( d._uploadStore ), \
 								_index( d._index ), \
 								_autoindex( d._autoindex ), \
 								_alias( d._alias ), \
@@ -50,6 +51,7 @@ Directives&	Directives::operator=( const Directives& d )
 		this->_serverNames = d._serverNames;
 		this->_errorPages = d._errorPages;
 		this->_clientMaxBodySize = d._clientMaxBodySize;
+		this->_uploadStore = d._uploadStore;
 		this->_index = d._index;
 		this->_autoindex = d._autoindex;
 		this->_alias = d._alias;
@@ -76,6 +78,7 @@ void	Directives::print( void ) const
 				this->_errorPages.begin(), this->_errorPages.end() ) );
 	Log::Info( "[ Config ] client_max_body_size: " \
 				+ SUtils::longToString( this->_clientMaxBodySize ) );
+	Log::Info( "[ Config ] upload_store: " + this->_uploadStore );
 	Log::Info( "[ Config ] index: " \
 				+ STLUtils::vectorToString< StringVector >( \
 				this->_index.begin(), this->_index.end() ) );

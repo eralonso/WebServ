@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/02 17:55:03 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/07 15:14:54 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <Defines.hpp>
 # include <StringErrors.hpp>
 
-# define LOCATION_SIZE_DIRECTIVES 9
+# define LOCATION_SIZE_DIRECTIVES 10
 
 class Location
 {

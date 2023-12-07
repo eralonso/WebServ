@@ -6,14 +6,14 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 16:57:21 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/04 14:19:01 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/07 15:00:57 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _DIRECTIVESDEFINES_HPP_
 # define _DIRECTIVESDEFINES_HPP_
 
-# define SIZE_SIMPLE_DIRECTIVES 13
+# define SIZE_SIMPLE_DIRECTIVES 14
 # define SIZE_COMPLEX_DIRECTIVES 2
 # define SIZE_DIRECTIVES ( SIZE_SIMPLE_DIRECTIVES + SIZE_COMPLEX_DIRECTIVES )
 

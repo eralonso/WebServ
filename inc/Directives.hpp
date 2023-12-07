@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:50:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/04 18:20:39 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/07 15:03:00 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ private:
 	StringVector		_serverNames;
 	ErrorPagesMap		_errorPages;
 	long				_clientMaxBodySize;
+	std::string			_uploadStore;
 	StringVector		_index;
 	bool				_autoindex;
 	std::string			_alias;
@@ -61,21 +62,23 @@ public:
 	~Directives( void );
 	Directives&	operator=( const Directives& d );
 public:
-	void			print( void ) const;
-	std::string		getRoot( void ) const;
-	int				getPort( void ) const;
-	std::string		getHost( void ) const;
-	StringVector	getServerNames( void ) const;
-	ErrorPagesMap	getErrorPages( void ) const;
-	unsigned int	getClientMaxBodySize( void ) const;
-	StringVector	getIndex( void ) const;
-	bool			getAutoindex( void ) const;
-	std::string		getAlias( void ) const;
-	ReturnPair		getReturn( void ) const;
-	ActionMask		getAllowMethods( void ) const;
-	CgiMap			getCgi( void ) const;
-	ServersVector	getServers( void ) const;
-	LocationsSet	getLocations( void ) const;
+	void				print( void ) const;
+	std::string			getRoot( void ) const;
+	int					getPort( void ) const;
+	std::string			getHost( void ) const;
+	StringVector		getServerNames( void ) const;
+	ErrorPagesMap		getErrorPages( void ) const;
+	unsigned int		getClientMaxBodySize( void ) const;
+	std::string			getUploadStore( void ) const;
+	StringVector		getIndex( void ) const;
+	bool				getAutoindex( void ) const;
+	std::string			getAlias( void ) const;
+	ReturnPair			getReturn( void ) const;
+	ActionMask			getAllowMethods( void ) const;
+	CgiMap				getCgi( void ) const;
+	ServersVector		getServers( void ) const;
+	LocationsSet		getLocations( void ) const;
+	ConstStringBoolMap	getIsSet( void ) const;
 };
 
 #endif

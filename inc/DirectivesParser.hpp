@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 11:03:56 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/04 17:44:20 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/07 15:01:33 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,9 @@ private:
 	static long	getMeasureLimit( int unit );
 	static int	parseMeasure( std::string number );
 	static long	parseSize( std::string number );
+
+	//upload_store
+	static void	parseUploadStore( std::string body, Directives *d );
 
 	//index
 	static void	parseIndex( std::string body, Directives *d );

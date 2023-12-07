@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 17:45:43 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/04 17:29:45 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/07 15:16:51 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ std::string	DirectivesParser::_directivesListAux[ SIZE_DIRECTIVES + 1 ] =
 	"server_name",
 	"error_page",
 	"client_max_body_size",
+	"upload_store",
 	"index",
 	"autoindex",
 	"alias",
@@ -36,6 +37,7 @@ std::string	DirectivesParser::_simpleDirectivesListAux[ SIZE_SIMPLE_DIRECTIVES +
 	"server_name",
 	"error_page",
 	"client_max_body_size",
+	"upload_store",
 	"index",
 	"autoindex",
 	"alias",
@@ -67,19 +69,20 @@ ConstStringVector	DirectivesParser::complexDirectivesList( \
 ConstStringBoolPair	DirectivesParser::_canRepeatDirectiveListAux[ \
 		  									SIZE_DIRECTIVES + 1 ] =
 {
-	std::make_pair<	const std::string, bool > ( "root", false ),
-	std::make_pair<	const std::string, bool > ( "listen", false ),
-	std::make_pair<	const std::string, bool > ( "server_name", true ),
-	std::make_pair<	const std::string, bool > ( "error_page", true ),
-	std::make_pair<	const std::string, bool > ( "client_max_body_size", false ),
-	std::make_pair<	const std::string, bool > ( "index", true ),
-	std::make_pair<	const std::string, bool > ( "autoindex", false ),
-	std::make_pair<	const std::string, bool > ( "alias", false ),
-	std::make_pair<	const std::string, bool > ( "return", false ),
-	std::make_pair<	const std::string, bool > ( "allow_methods", false ),
-	std::make_pair<	const std::string, bool > ( "cgi", true ),
-	std::make_pair<	const std::string, bool > ( "server", true ),
-	std::make_pair<	const std::string, bool > ( "location", true )
+	std::make_pair<	const std::string, bool >( "root", false ),
+	std::make_pair<	const std::string, bool >( "listen", false ),
+	std::make_pair<	const std::string, bool >( "server_name", true ),
+	std::make_pair<	const std::string, bool >( "error_page", true ),
+	std::make_pair<	const std::string, bool >( "client_max_body_size", false ),
+	std::make_pair< const std::string, bool >( "upload_store", false ), 
+	std::make_pair<	const std::string, bool >( "index", true ),
+	std::make_pair<	const std::string, bool >( "autoindex", false ),
+	std::make_pair<	const std::string, bool >( "alias", false ),
+	std::make_pair<	const std::string, bool >( "return", false ),
+	std::make_pair<	const std::string, bool >( "allow_methods", false ),
+	std::make_pair<	const std::string, bool >( "cgi", true ),
+	std::make_pair<	const std::string, bool >( "server", true ),
+	std::make_pair<	const std::string, bool >( "location", true )
 };
 
 ConstStringBoolMap	DirectivesParser::canRepeatDirectiveList( \
@@ -94,6 +97,7 @@ DirectivesParser::t_parseSimpleDirectiveArray	DirectivesParser::_parseSimple = \
 	&DirectivesParser::parseServerNames,
 	&DirectivesParser::parseErrorPage,
 	&DirectivesParser::parseClientMaxBodySize,
+	&DirectivesParser::parseUploadStore,
 	&DirectivesParser::parseIndex,
 	&DirectivesParser::parseAutoindex,
 	&DirectivesParser::parseAlias,
