@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 12:56:54 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/08 13:21:17 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/08 14:09:13 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,12 @@ Location& 	Location::operator=( const Location& lc )
 bool	Location::operator<( const Location& lc ) const
 {
 	return ( this->_splitedPath.size() < lc._splitedPath.size() );
+}
+
+bool	Location::operator==( const Location& lc ) const
+{
+	return ( STLUtils::cmpVector( this->_splitedPath, lc._splitedPath ) \
+			&& this->_isDir == lc._isDir );
 }
 
 std::string	Location::getPath( void ) const { return ( this->_path ); }

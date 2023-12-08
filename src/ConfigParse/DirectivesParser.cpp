@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:41:41 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/07 15:21:22 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/08 14:15:41 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -383,10 +383,8 @@ void	DirectivesParser::parseServer( std::string head, std::string body, \
 
 	SUtils::split( args, head, ISSPACE );
 	if ( args.size() > 1 )
-	{
 		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
 					std::string( "server" ) ) );
-	}
 	Log::Info( "[ Config ] SERVER\n" );
 	s._directives = DirectivesParser::parseDirectives( body, \
 						Server::allowedDirectives );
@@ -409,8 +407,25 @@ void	DirectivesParser::parseLocation( std::string head, std::string body, \
 	if ( lc._path.back() == '/' )
 		lc._isDir = true;
 	SUtils::split( lc._splitedPath, lc._path, "/" );
+	if ( isPathDup( d->_locations, lc ) == true )
+		throw std::logic_error( "Duplicate path in \"location\" directive \"" \
+				+ lc._path + "\"" );
 	Log::Info( "[ Config ] LOCATION " + lc._path + "\n" );
 	lc._directives = DirectivesParser::parseDirectives( body, \
 						Location::allowedDirectives );
 	d->_locations.insert( lc );
+}
+
+bool	DirectivesParser::isPathDup( LocationsSet lcs, Location lc )
+{
+	Log::Success( "SIZE: " + SUtils::longToString( lcs.size() ) );
+	//Log::Success( "[ path dup chek ]: lc -> [" + STLUtils::vectorToString< StringVector >( lc._splitedPath.begin(), lc._splitedPath.end() ) +"] && isDir: " + std::string( lc._isDir == true ? "true" : "false" ) );
+	for ( LocationsSet::iterator it = lcs.begin(); it != lcs.end(); it++ )
+	{
+		Log::Error( "VUELTAAA" );
+		if ( *it == lc )
+			return ( true );
+		Log::Error( "FINAL VUELTAAA" );
+	}
+	return ( false );
 }

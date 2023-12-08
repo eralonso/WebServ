@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 11:03:56 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/07 15:01:33 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/08 13:59:49 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,7 @@ private:
 
 	//location
 	static void	parseLocation( std::string head, std::string body, Directives *d );
+	static bool	isPathDup( LocationsSet lcs, Location lc );
 
 	//server
 	static void	parseServer( std::string head, std::string body, Directives *d );

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/07 15:14:54 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/08 13:57:38 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ public:
 	Location&	operator=( const Location& lc );
 public:
 	bool			operator<( const Location& lc ) const;
+	bool			operator==( const Location& lc ) const;
 	std::string		getPath( void ) const;
 	bool			isDir( void ) const;
 	StringVector	getSplitedPath( void ) const;
