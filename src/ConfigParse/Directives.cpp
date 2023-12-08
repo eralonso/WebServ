@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:55:51 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/07 15:17:14 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/07 19:26:08 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,87 @@ Directives&	Directives::operator=( const Directives& d )
 	}
 	return ( *this );
 }
+
+std::string	Directives::getRoot( void ) const
+{
+	return ( this->_ );
+}
+
+int	Directives::getPort( void ) const
+{
+	return ( this->_ );
+}
+
+std::string	Directives::getHost( void ) const
+{
+	return ( this->_ );
+}
+
+StringVector	Directives::getServerNames( void ) const
+{
+	return ( this->_ );
+}
+
+ErrorPagesMap	Directives::getErrorPages( void ) const
+{
+	return ( this->_ );
+}
+
+unsigned int	Directives::getClientMaxBodySize( void ) const
+{
+	return ( this->_ );
+}
+
+std::string	Directives::getUploadStore( void ) const
+{
+	return ( this->_ );
+}
+
+StringVector	Directives::getIndex( void ) const
+{
+	return ( this->_ );
+}
+
+bool	Directives::getAutoindex( void ) const
+{
+	return ( this->_ );
+}
+
+std::string	Directives::getAlias( void ) const
+{
+	return ( this->_ );
+}
+
+ReturnPair	Directives::getReturn( void ) const
+{
+	return ( this->_ );
+}
+
+ActionMask	Directives::getAllowMethods( void ) const
+{
+	return ( this->_ );
+}
+
+CgiMap	Directives::getCgi( void ) const
+{
+	return ( this->_ );
+}
+
+ServersVector	Directives::getServers( void ) const
+{
+	return ( this->_ );
+}
+
+LocationsSet	Directives::getLocations( void ) const
+{
+	return ( this->_ );
+}
+
+ConstStringBoolMap	Directives::getIsSet( void ) const
+{
+	return ( this->_ );
+}
+
 
 void	Directives::print( void ) const
 {
