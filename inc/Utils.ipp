@@ -48,6 +48,7 @@ namespace STLUtils
 		return ( str.str() );
 	}
 
+	//container compare
 	template < typename T >
 	bool	cmpVector( std::vector< T > first, std::vector< T > second )
 	{

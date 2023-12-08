@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:41:41 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/08 14:15:41 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/08 19:40:31 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -413,19 +413,16 @@ void	DirectivesParser::parseLocation( std::string head, std::string body, \
 	Log::Info( "[ Config ] LOCATION " + lc._path + "\n" );
 	lc._directives = DirectivesParser::parseDirectives( body, \
 						Location::allowedDirectives );
-	d->_locations.insert( lc );
+	d->_locations.insert( new Location( lc ) );
 }
 
 bool	DirectivesParser::isPathDup( LocationsSet lcs, Location lc )
 {
 	Log::Success( "SIZE: " + SUtils::longToString( lcs.size() ) );
-	//Log::Success( "[ path dup chek ]: lc -> [" + STLUtils::vectorToString< StringVector >( lc._splitedPath.begin(), lc._splitedPath.end() ) +"] && isDir: " + std::string( lc._isDir == true ? "true" : "false" ) );
 	for ( LocationsSet::iterator it = lcs.begin(); it != lcs.end(); it++ )
 	{
-		Log::Error( "VUELTAAA" );
-		if ( *it == lc )
+		if ( **it == lc )
 			return ( true );
-		Log::Error( "FINAL VUELTAAA" );
 	}
 	return ( false );
 }
