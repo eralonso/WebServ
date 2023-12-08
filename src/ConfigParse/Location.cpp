@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 12:56:54 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/02 17:54:55 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/08 13:21:17 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,22 +50,10 @@ bool	Location::operator<( const Location& lc ) const
 	return ( this->_splitedPath.size() < lc._splitedPath.size() );
 }
 
-std::string	Location::getPath( void ) const
-{
-	return ( this->_path );
-}
+std::string	Location::getPath( void ) const { return ( this->_path ); }
 
-StringVector	Location::getSplitedPath( void ) const
-{
-	return ( this->_splitedPath );
-}
+StringVector	Location::getSplitedPath( void ) const { return ( this->_splitedPath ); }
 
-bool	Location::isDir( void ) const
-{
-	return ( this->_isDir );
-}
+bool	Location::isDir( void ) const { return ( this->_isDir ); }
 
-Directives	*Location::getDirectives( void ) const
-{
-	return ( this->_directives );
-}
+Directives	*Location::getDirectives( void ) const { return ( this->_directives ); }

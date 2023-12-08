@@ -1,3 +1,4 @@
 webserv
 .deps/
 .objs/
+*.sw*
