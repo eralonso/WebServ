@@ -17,6 +17,8 @@
 # include <iostream>
 # include <sstream>
 # include <vector>
+# include <string.h>
+# include <stdlib.h>
 
 # include <Defines.hpp>
 
@@ -65,8 +67,8 @@ namespace Log
 namespace Binary
 {
 	std::string	formatBits( std::string bits );
-	std::string	decodeAddress( uint32_t address );
-	uint32_t	codeAddress( std::string address );
+	std::string	decodeAddress( unsigned int address );
+	unsigned int	codeAddress( std::string address );
 }
 
 #include "Utils.ipp"

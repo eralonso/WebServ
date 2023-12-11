@@ -130,7 +130,7 @@ PendingCgiTask *CgiExecutor::getCompletedTask()
 	pid_t	pid;
 	pid = waitpid(-1, NULL, WNOHANG);
 	if (pid < 1)
-		return nullptr;
+		return NULL;
 	return &(pendingTasks[pid]);
 }
 
@@ -144,7 +144,7 @@ PendingCgiTask *CgiExecutor::getTimeoutedTask(clock_t to)
 			return (&(it->second));
 		it++;
 	}
-	return nullptr;
+	return NULL;
 }
 
 std::string CgiExecutor::getCompletedTaskOutput(void)
@@ -162,7 +162,7 @@ std::string CgiExecutor::getCompletedTaskOutput(void)
 size_t	CgiExecutor::purgeTimeoutedTasks(clock_t to, size_t max)
 {
 	size_t i = 0;
-	PendingCgiTask *task = nullptr;
+	PendingCgiTask *task = NULL;
 	while (i < max && (task = getTimeoutedTask(to)))
 	{
 		pendingTasks.eraseTask(task->getPid());
@@ -175,7 +175,7 @@ void	CgiExecutor::attendPendingCgiTasks(void)
 {
 	PendingCgiTask* pTask; 
 	Client* cli;
-	cli = nullptr;
+	cli = NULL;
 	while ((pTask = CgiExecutor::getCompletedTask()))
 	{
 		Log::Info( "Cgi Task completed");
@@ -196,12 +196,12 @@ void	CgiExecutor::attendPendingCgiTasks(void)
 		{
 			CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
 		}
-		if (cli != nullptr)
+		if (cli != NULL)
 		 	cli->allowPollWrite(true);
-		cli = nullptr;
+		cli = NULL;
 	}
-	// req = nullptr;
-	// cli = nullptr;
+	// req = NULL;
+	// cli = NULL;
 	// while ((pTask = CgiExecutor::getTimeoutedTask(CGI_TO)))
 	// {
 	// 	req = pTask->getRequest();
@@ -215,10 +215,10 @@ void	CgiExecutor::attendPendingCgiTasks(void)
 	// 	{
 	// 		CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
 	// 	}
-	// 	if (cli != nullptr)
+	// 	if (cli != NULL)
 	// 		cli->allowPollWrite(true);
-	// 	req = nullptr;
-	// 	cli = nullptr;
+	// 	req = NULL;
+	// 	cli = NULL;
 	// }
 }
 

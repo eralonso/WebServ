@@ -37,7 +37,7 @@ Request* Requests::appendRequest(Client *cli)
 {
 	Request *req = new Request(cli);
 	if (!req)
-		return (nullptr);
+		return (NULL);
 	push_back(req);
 	return (req);
 }

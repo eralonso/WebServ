@@ -13,6 +13,8 @@
 #ifndef _DIRECTIVESPARSER_HPP_
 # define _DIRECTIVESPARSER_HPP_
 
+# include <string.h>
+
 # include <TypesDefines.hpp>
 # include <TreeSplit.hpp>
 # include <Location.hpp>
@@ -46,7 +48,7 @@ private:
 												SIZE_SIMPLE_DIRECTIVES + 1 ];
 	static std::string 					_complexDirectivesListAux[ \
 												SIZE_COMPLEX_DIRECTIVES + 1 ];
-	static ConstStringBoolPair			_canRepeatDirectiveListAux[ \
+	static StringBoolPair			_canRepeatDirectiveListAux[ \
 												SIZE_DIRECTIVES + 1 ];
 
 	//Parse array functions
@@ -54,23 +56,23 @@ private:
 	static t_parseComplexDirectiveArray	_parseComplex;
 public:
 	//Directives vectors/map
-	static ConstStringVector	directivesList;
-	static ConstStringVector	simpleDirectivesList;
-	static ConstStringVector	complexDirectivesList;
-	static ConstStringBoolMap	canRepeatDirectiveList;
+	static StringVector	directivesList;
+	static StringVector	simpleDirectivesList;
+	static StringVector	complexDirectivesList;
+	static StringBoolMap	canRepeatDirectiveList;
 private:
 	//parse
 	static void	parseLine( Directives *d, std::string& content, \
-					ConstStringVector allowedDirectives );
+					StringVector allowedDirectives );
 	static void	parseDirective( std::string head, std::string body, \
 					Directives *d );
 
 	//check
 	static void	checkValidDirective( std::string directive, \
-					ConstStringVector allowedDirectives );
+					StringVector allowedDirectives );
 	static void	checkValidSeparator( int type, std::string directive );
 	static void	checkDuplicateDirective( const std::string directive, \
-	 				ConstStringBoolMap isSet );
+	 				StringBoolMap isSet );
 
 	//root
 	static void	parseRoot( std::string body, Directives *d );
@@ -140,7 +142,7 @@ private:
 	static void	parseServer( std::string head, std::string body, Directives *d );
 public:
 	static Directives	*parseDirectives( std::string content, \
-					ConstStringVector allowedDirectives );
+					StringVector allowedDirectives );
 };
 
 #endif

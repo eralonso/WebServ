@@ -22,7 +22,7 @@ Request::Request(void)
 {
 	id = id_counter;
 	id_counter++;
-	client = nullptr;
+	client = NULL;
 	status = IDLE;
 	useCgi = false;
 	error = 0;

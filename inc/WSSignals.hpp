@@ -13,6 +13,8 @@
 #ifndef _WSSIGNALS_HPP_
 # define _WSSIGNALS_HPP_
 
+# include <signal.h>
+
 # include <Utils.hpp>
 
 class WSSignals

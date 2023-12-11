@@ -53,7 +53,10 @@ namespace STLUtils
 	{
 		typename T::iterator	it;
 
-		it = std::find( begin, end, toFind );
+		it = begin; 
+		while ( it != end && ( *it ) != toFind )
+			it++;
+		//it = std::find( begin, end, toFind );
 		if ( it == end )
 			return ( -1 );
 		return ( it - begin );

@@ -151,7 +151,7 @@ bool Router::processRequestReceived(Request &req)
 	{
 
 		std::string script = "";
-		CgiExecutor cgiExe(req, nullptr);
+		CgiExecutor cgiExe(req, NULL);
 		cgiExe.execute();
 		req.setCgiLaunched();
 		return true;

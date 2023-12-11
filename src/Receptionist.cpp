@@ -13,7 +13,7 @@
 #include <Receptionist.hpp>
 #include <Response.hpp>
 
-Receptionist::Receptionist( int port, int backlog, int timeout ):
+Receptionist::Receptionist( int port, int backlog, int timeout ): Clients(), 
 	polls( MAX_CLIENTS ), port( port ), backlog( backlog ), timeout( timeout )
 {
 	socket_t	serverFd;
@@ -25,7 +25,7 @@ Receptionist::Receptionist( int port, int backlog, int timeout ):
 
 Receptionist::~Receptionist( void ) {}
 
-Receptionist::Receptionist( const Receptionist& b ): polls( b.polls )
+Receptionist::Receptionist( const Receptionist& b ): Clients(), polls( b.polls )
 {
 	port = b.port;
 	backlog = b.backlog;
@@ -57,7 +57,7 @@ int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
 {
 	char			buffer[ BUFFER_SIZE + 1 ];
 
-	std::memset( buffer, 0, BUFFER_SIZE + 1 );
+	memset( buffer, 0, BUFFER_SIZE + 1 );
 	if (recv( clientFd, buffer, BUFFER_SIZE, 0 ) <= 0 )
 		return ( -1 );
 	readed = buffer;
@@ -67,7 +67,6 @@ int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
 int	Receptionist::addNewClient(socket_t serverFd)
 {
 	socket_t		clientFd;
-	struct pollfd	*clientPoll;
 	
 	clientFd = Sockets::acceptConnection( serverFd );
 	if ( clientFd < 0 )
@@ -76,15 +75,6 @@ int	Receptionist::addNewClient(socket_t serverFd)
 	{
 		Log::Error( "Too many clients trying to connect to server" );
 		close( clientFd );
-	}
-	try
-	{
-		clientPoll = &polls[ clientFd ];
-	}
-	catch ( std::out_of_range& e ) { 
-		Log::Error( "Failed to insert clientPoll" );
-		close( clientFd );
-		return ( -1 );
 	}
 	if (!newClient(clientFd, polls))
 	{

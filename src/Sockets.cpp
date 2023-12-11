@@ -55,28 +55,10 @@ struct sockaddr_in	Sockets::fillSockAddr( int family, uint16_t port, uint32_t ip
 {
 	struct sockaddr_in	addr;
 
-	std::memset( &addr, 0, sizeof( addr ) );
+	memset( &addr, 0, sizeof( addr ) );
 	addr.sin_family = family;
 	addr.sin_port = htons( port );
 	addr.sin_addr.s_addr = htonl( ip_addr );
-	Log::Info( "Socket address filled: Port -> " \
-				+ SUtils::longToString( port ) \
-				+ " && Host -> " \
-				+ Binary::formatBits( std::bitset< 32 >( addr.sin_port ).to_string() ) \
-				+ " && Network [ ntohs ] -> " \
-				+ SUtils::longToString( ntohs( addr.sin_port ) ) \
-				+ " && addr.sin_port -> " \
-		   		+ SUtils::longToString( addr.sin_port ) \
-				+ " && addr.sin_port [ ntohl ] -> " \
-		   		+ SUtils::longToString( ntohl( addr.sin_port ) ) \
-				+ " && addr.sin_port [ htonl ] -> " \
-		   		+ SUtils::longToString( htonl( addr.sin_port ) ) \
-				+ " && addr.sin_port [ htons ] -> " \
-		   		+ SUtils::longToString( htons( addr.sin_port ) ) \
-				+ " && addr.sin_addr.s_addr -> " \
-		   		+ SUtils::longToString( addr.sin_addr.s_addr ) \
-				+ " && addr.sin_addr.s_addr [ decode ] -> " \
-		   		+ Binary::decodeAddress( ntohl( addr.sin_addr.s_addr ) ) );
 	return ( addr );
 }
 
@@ -90,14 +72,6 @@ void	Sockets::bindSocket( socket_t fd, struct sockaddr_in addr )
 	{
 		Log::Error( "Error: Bind socket [ " \
 					+ SUtils::longToString( ret ) \
-					+ " ] && errno [ " \
-					+ SUtils::longToString( errno ) \
-					+ " ] = [ " \
-					+ SUtils::longToString( EADDRINUSE ) \
-					+ " ] or [ " \
-					+ SUtils::longToString( EACCES ) \
-					+ " ] or [ " \
-					+ SUtils::longToString( EBADF ) \
 					+ " ]" );
 		exit ( 1 );
 	}

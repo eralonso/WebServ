@@ -55,7 +55,7 @@ private:
 	CgiMap				_cgi;
 	ServersVector		_servers;
 	LocationsSet		_locations;
-	ConstStringBoolMap	_isSet;
+	StringBoolMap	_isSet;
 public:
 	Directives( void );
 	Directives( const Directives& s );
@@ -78,7 +78,7 @@ public:
 	CgiMap				getCgi( void ) const;
 	ServersVector		getServers( void ) const;
 	LocationsSet		getLocations( void ) const;
-	ConstStringBoolMap	getIsSet( void ) const;
+	StringBoolMap	getIsSet( void ) const;
 };
 
 #endif

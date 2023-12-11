@@ -13,12 +13,15 @@
 #ifndef _SOCKETS_HPP_
 # define _SOCKETS_HPP_
 
-# include <Defines.hpp>
-# include <Utils.hpp>
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include <fcntl.h>
+# include <stdlib.h>
+# include <string.h>
 # include <iostream>
+
+# include <Defines.hpp>
+# include <Utils.hpp>
 
 class Sockets
 {

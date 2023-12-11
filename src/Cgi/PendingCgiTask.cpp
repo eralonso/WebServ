@@ -73,7 +73,8 @@ std::string PendingCgiTask::getTaskOutput()
 {
 	char buf[BUFFER_SIZE + 1];
 	std::string	resBody;
-	size_t bytes_read = read(fd, buf, BUFFER_SIZE);
+	int	bytes_read = read(fd, buf, BUFFER_SIZE);
+
 	while (bytes_read == BUFFER_SIZE)
 	{
 		buf[BUFFER_SIZE] = 0;
@@ -92,7 +93,8 @@ void PendingCgiTask::applyTaskOutputToReq()
 {
 	char buf[BUFFER_SIZE + 1];
 	std::string	resBody;
-	ssize_t bytes_read = read(fd, buf, BUFFER_SIZE);
+	int bytes_read = read(fd, buf, BUFFER_SIZE);
+
 	while (bytes_read == BUFFER_SIZE)
 	{
 		buf[bytes_read] = 0;

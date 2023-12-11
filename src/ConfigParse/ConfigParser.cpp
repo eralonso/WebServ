@@ -14,7 +14,7 @@
 
 ConfigParser::ConfigParser( int argc, char **argv ): _directives( NULL )
 {
-	ConstStringVector	allowedDirectives;
+	StringVector	allowedDirectives;
 
 	allowedDirectives.push_back( "server" );
 	checkUsage( argc, argv, argv[ 0 ] );
@@ -42,7 +42,7 @@ void	ConfigParser::readConfig( void )
 	std::string		content;
 	std::string		line;
 
-	myfile.open( this->_fileName, std::ios_base::in );
+	myfile.open( this->_fileName.c_str(), std::ios_base::in );
 	if ( !myfile.is_open() )
 		throw std::logic_error( "Invalid file: " + this->_fileName );
 	while ( std::getline ( myfile, line ) )
@@ -50,26 +50,5 @@ void	ConfigParser::readConfig( void )
 	myfile.close();
 	this->_content = SUtils::trim( content );
 }
-
-//void	ConfigParser::parseConfigFile( void )
-//{
-//	std::string	head;
-//	std::string	body;
-//
-//	while ( this->_content.length() > 0 )
-//	{
-//		if ( TreeSplit::get_pair( head, body, this->_content ) )
-//		{
-//			if ( head != "server" )
-//				throw std::logic_error( UNKNOWN_DIRECTIVE( head ) );
-//			ServerParser	sp( body );
-//			this->_servers.push_back( Server( sp ) );
-//		}
-//		else if ( this->_content.length() > 0 )
-//			throw std::logic_error( "Unexpected end of file, expecting \";\" or \"}\"" );
-//		head.clear();
-//		body.clear();
-//	}
-//}
 
 ServersVector	ConfigParser::getServers( void ) const { return ( this->_directives->_servers ); }

@@ -95,7 +95,7 @@ ServersVector	Directives::getServers( void ) const { return ( this->_servers ); 
 
 LocationsSet	Directives::getLocations( void ) const { return ( this->_locations ); }
 
-ConstStringBoolMap	Directives::getIsSet( void ) const { return ( this->_isSet ); }
+StringBoolMap	Directives::getIsSet( void ) const { return ( this->_isSet ); }
 
 void	Directives::print( void ) const
 {

@@ -27,8 +27,8 @@ public:
 		NONE,
 		CANTOPENDIR
 	}	t_error;
-	static std::string	entryType(uint8_t input);
-	static std::string	recLen(uint8_t input);
+	static std::string	entryType(unsigned char input);
+	static std::string	recLen(unsigned char input);
 	static std::string	epochsToDate(unsigned long int epochs);
 	static void entryInfo(std::string& cat, const std::string& path);
 	static t_error processLsEntry(std::string& cat, struct dirent *pDirent,

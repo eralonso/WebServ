@@ -52,21 +52,21 @@ std::string	DirectivesParser::_complexDirectivesListAux[ SIZE_COMPLEX_DIRECTIVES
 	"location"
 };
 
-ConstStringVector	DirectivesParser::directivesList( _directivesListAux, \
+StringVector	DirectivesParser::directivesList( _directivesListAux, \
 											_directivesListAux \
 											+ SIZE_DIRECTIVES );
 
-ConstStringVector	DirectivesParser::simpleDirectivesList( \
+StringVector	DirectivesParser::simpleDirectivesList( \
 											_simpleDirectivesListAux, \
 	   										_simpleDirectivesListAux \
 											+ SIZE_SIMPLE_DIRECTIVES );
 
-ConstStringVector	DirectivesParser::complexDirectivesList( \
+StringVector	DirectivesParser::complexDirectivesList( \
 											_complexDirectivesListAux, \
 											_complexDirectivesListAux \
 											+ SIZE_COMPLEX_DIRECTIVES );
 
-ConstStringBoolPair	DirectivesParser::_canRepeatDirectiveListAux[ \
+StringBoolPair	DirectivesParser::_canRepeatDirectiveListAux[ \
 		  									SIZE_DIRECTIVES + 1 ] =
 {
 	std::make_pair<	const std::string, bool >( "root", false ),
@@ -85,7 +85,7 @@ ConstStringBoolPair	DirectivesParser::_canRepeatDirectiveListAux[ \
 	std::make_pair<	const std::string, bool >( "location", true )
 };
 
-ConstStringBoolMap	DirectivesParser::canRepeatDirectiveList( \
+StringBoolMap	DirectivesParser::canRepeatDirectiveList( \
 											_canRepeatDirectiveListAux, \
 											_canRepeatDirectiveListAux \
 											+ SIZE_DIRECTIVES );
