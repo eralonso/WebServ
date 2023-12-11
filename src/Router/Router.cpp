@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/07 12:34:38 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/11 13:08:27 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,13 @@ int Router::updateResponse(Response &res, Request &req)
 	else if (req.getUseCgi() && req.getError() == 0)
 		formatCgiResponse(res,req);
 	else if (req.getError() != 0)
-		formatErrorResponse(res, req);
+	{
+		Log::Info("updateResponse detect error status: " + SUtils::longToString(req.getError()));
+		if (req.getError() == 100)
+			formatContinueResponse(res, req);
+		else
+			formatErrorResponse(res, req);
+	}
 	else
 		formatGenericResponse(res, req);	
 	return 0;
@@ -102,7 +108,12 @@ Response* Router::getResponse(Request* req)
 	if (!req)
 		formatErrorResponse(*res, 500);
 	else if ((error = req->getError()))
-		formatErrorResponse(*res, error);
+	{
+		if (error == 100)
+			formatContinueResponse(*res, *req);
+		else
+			formatErrorResponse(*res, error);
+	}
 	else
 		updateResponse(*res, *req);
 	return res;
@@ -193,6 +204,16 @@ Response *Router::formatCgiResponse(Response& res, Request& req)
 	res.setStatus(200);
 	res.setMethod(req.getMethod());
 	res.setBody(req.getCgiOutput());
+	return &res;
+}
+
+Response *Router::formatContinueResponse(Response& res, Request& req)
+{
+	Log::Info("formatContinueResponse");
+	res.appendHeader(Header("Accept", req.getHeaderWithKey("Content-Type")));
+	res.setProtocol(req.getProtocol());
+	res.setStatus(req.getError());
+	res.setMethod(req.getMethod());
 	return &res;
 }
 

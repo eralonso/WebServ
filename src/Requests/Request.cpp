@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/06 11:36:16 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/11 11:45:40 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,6 +242,15 @@ const Headers&						Request::getHeaders() const
 std::string Request::getHost()
 {
 	Header* h = headers.firstWithKey("Host");
+	if (h)
+		return h->getValue();
+	else
+		return std::string("Unknown");
+}
+
+std::string Request::getHeaderWithKey(const std::string& key)
+{
+	Header* h = headers.firstWithKey(key);
 	if (h)
 		return h->getValue();
 	else
@@ -510,6 +519,11 @@ void Request::setReadyToSend()
 {
 	if (status == RECVD_ALL || status == CGI_LAUNCHED)
 		status = RESP_RENDERED;
+}
+
+void Request::setReceivedAll()
+{
+	status = RECVD_ALL;
 }
 
 void Request::setCgiLaunched()

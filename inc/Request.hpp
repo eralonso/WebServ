@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 13:07:33 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/11 11:45:03 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,8 @@ public:
 	std::string							getQuery() const;
 	const Headers&						getHeaders() const;
 	std::string							getHost();
-	size_t								getBodyLength() const;
+	std::string 						getHeaderWithKey(const std::string& key);
+	size_t 								getBodyLength() const;
 	std::string							getBody() const;
 	size_t								getId() const;
 	bool								isCompleteRecv() const;
@@ -100,6 +101,7 @@ public:
 	std::string							toString();
 	void								setBody(const std::string& content);
 	void								setReadyToSend();
+	void								setReceivedAll();
 	void								setCgiLaunched();
 	void								setCgiOutput(std::string str);
 	void								setUseCgi(bool value);	
