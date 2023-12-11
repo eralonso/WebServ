@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/11 12:44:53 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/11 16:35:25 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,9 +165,9 @@ int Client::manageRecv(std::string recv)
 			cs != "unknown" && (long)req->getBodyLength() < atol(cs.c_str()))
 			{
 				Log::Info("Continue 100");
-				req->setError(100);
+				req->setError(202);
 				req->setReceivedAll();
-				req->getClient()->setKeepAlive(true);
+				// req->getClient()->setKeepAlive(true);
 			}
 	}
 	return 0;

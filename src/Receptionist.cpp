@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/11 12:30:54 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/11 16:37:42 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,11 @@ int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
 	{
 		std::memset( buffer, 0, BUFFER_SIZE + 1 );
 		amount = recv( clientFd, buffer, BUFFER_SIZE, 0);
+		Log::Info("Received " + SUtils::longToString(amount) + " bytes");
 		totalAmount += amount;
 		if ( amount < 0 )
 			return ( -1 );
-		readed += std::string(buffer);
+		readed += std::string(buffer, amount);
 		if (amount < BUFFER_SIZE)
 		{
 			if (totalAmount == 0)
