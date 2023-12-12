@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:41:41 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/05 19:13:54 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/08 19:40:31 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ void	DirectivesParser::parseRoot( std::string body, Directives *d )
 	d->_root = args[ 0 ];
 }
 
-//listen
+//listen <host>[:<port>] / <host> / <port>
 void	DirectivesParser::parseListen( std::string body, Directives *d )
 {
 	StringVector	args;
@@ -225,7 +225,19 @@ void	DirectivesParser::parseClientMaxBodySize( std::string body, Directives *d )
 	}
 }
 
-//index
+//upload_store <path>
+void	DirectivesParser::parseUploadStore( std::string body, Directives *d )
+{
+	StringVector	args;
+
+	SUtils::split( args, body, ISSPACE );
+	if ( args.size() != 1 )
+		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
+					std::string( "upload_store" ) ) );
+	d->_uploadStore = args[ 0 ];
+}
+
+//index {list of index files}
 void	DirectivesParser::parseIndex( std::string body, Directives *d )
 {
 	StringVector	args;
@@ -237,7 +249,7 @@ void	DirectivesParser::parseIndex( std::string body, Directives *d )
 	d->_index.insert( d->_index.begin(), args.begin(), args.end() );
 }
 
-//autoindex
+//autoindex on/off
 void	DirectivesParser::parseAutoindex( std::string body, Directives *d )
 {
 	StringVector	args;
@@ -255,7 +267,7 @@ void	DirectivesParser::parseAutoindex( std::string body, Directives *d )
 					std::string( "autoindex" ), args[ 0 ] ) );
 }
 
-//alias
+//alias <path>
 void	DirectivesParser::parseAlias( std::string body, Directives *d )
 {
 	StringVector	args;
@@ -270,7 +282,7 @@ void	DirectivesParser::parseAlias( std::string body, Directives *d )
 	d->_alias = args[ 0 ];
 }
 
-//return
+//return <code> [<http://uri>/<https://uri>] / <code> / <http://uri> / <https://uri>
 void	DirectivesParser::parseReturn( std::string body, Directives *d )
 {
 	StringVector	args;
@@ -312,7 +324,7 @@ bool	DirectivesParser::isHttpPrefix( std::string uri )
 	return ( false );
 }
 
-//allow_methods
+//allow_methods {list of allowed methods in this block}
 void	DirectivesParser::parseAllowMethods( std::string body, Directives *d )
 {
 	StringVector	args;
@@ -345,7 +357,7 @@ int	DirectivesParser::isHttpMethod( std::string method )
 	return ( 1 << code );
 }
 
-//cgi
+//cgi <cgi_extension> <cgi_interpreter>
 void	DirectivesParser::parseCgi( std::string body, Directives *d )
 {
 	StringVector	args;
@@ -371,10 +383,8 @@ void	DirectivesParser::parseServer( std::string head, std::string body, \
 
 	SUtils::split( args, head, ISSPACE );
 	if ( args.size() > 1 )
-	{
 		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
 					std::string( "server" ) ) );
-	}
 	Log::Info( "[ Config ] SERVER\n" );
 	s._directives = DirectivesParser::parseDirectives( body, \
 						Server::allowedDirectives );
@@ -397,8 +407,22 @@ void	DirectivesParser::parseLocation( std::string head, std::string body, \
 	if ( lc._path.back() == '/' )
 		lc._isDir = true;
 	SUtils::split( lc._splitedPath, lc._path, "/" );
+	if ( isPathDup( d->_locations, lc ) == true )
+		throw std::logic_error( "Duplicate path in \"location\" directive \"" \
+				+ lc._path + "\"" );
 	Log::Info( "[ Config ] LOCATION " + lc._path + "\n" );
 	lc._directives = DirectivesParser::parseDirectives( body, \
 						Location::allowedDirectives );
-	d->_locations.insert( lc );
+	d->_locations.insert( new Location( lc ) );
+}
+
+bool	DirectivesParser::isPathDup( LocationsSet lcs, Location lc )
+{
+	Log::Success( "SIZE: " + SUtils::longToString( lcs.size() ) );
+	for ( LocationsSet::iterator it = lcs.begin(); it != lcs.end(); it++ )
+	{
+		if ( **it == lc )
+			return ( true );
+	}
+	return ( false );
 }

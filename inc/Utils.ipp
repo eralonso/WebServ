@@ -17,6 +17,7 @@
 
 namespace STLUtils
 {
+	//container to string
 	template < typename T >
 	std::string	vectorToString( typename T::const_iterator begin, \
 							typename T::const_iterator end )
@@ -47,6 +48,21 @@ namespace STLUtils
 		return ( str.str() );
 	}
 
+	//container compare
+	template < typename T >
+	bool	cmpVector( std::vector< T > first, std::vector< T > second )
+	{
+		if ( first.size() != second.size() )
+			return ( false );
+		for ( size_t i = 0; i < first.size(); i++ )
+		{
+			if ( first[ i ] != second[ i ] )
+				return ( false );
+		}
+		return ( true );
+	}
+
+	//find element in range of iterators
 	template < typename T >
 	int	stringEasyFind( typename T::iterator begin, typename T::iterator end, \
 						std::string toFind )

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:40:55 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/02 16:07:32 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/07 15:14:46 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <TypesDefines.hpp>
 # include <Directives.hpp>
 
-# define SERVER_SIZE_DIRECTIVES 6
+# define SERVER_SIZE_DIRECTIVES 7
 
 class Directives;
 

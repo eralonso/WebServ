@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 11:03:56 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/04 17:44:20 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/08 13:59:49 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,9 @@ private:
 	static int	parseMeasure( std::string number );
 	static long	parseSize( std::string number );
 
+	//upload_store
+	static void	parseUploadStore( std::string body, Directives *d );
+
 	//index
 	static void	parseIndex( std::string body, Directives *d );
 
@@ -132,6 +135,7 @@ private:
 
 	//location
 	static void	parseLocation( std::string head, std::string body, Directives *d );
+	static bool	isPathDup( LocationsSet lcs, Location lc );
 
 	//server
 	static void	parseServer( std::string head, std::string body, Directives *d );

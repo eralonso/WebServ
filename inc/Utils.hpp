@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:31:42 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/04 18:30:40 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/08 14:01:05 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,10 @@ namespace STLUtils
 	template < typename T >
 	std::string	mapToString( typename T::const_iterator begin, \
 							typename T::const_iterator end );
+
+	template < typename T >
+	bool		cmpVector( std::vector< T > first, std::vector< T > second );
+
 	template < typename T >
 	int			stringEasyFind( typename T::iterator begin, typename T::iterator end, \
 						std::string toFind );

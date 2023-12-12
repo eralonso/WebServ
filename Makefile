@@ -6,7 +6,7 @@
 #    By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/22 10:08:41 by eralonso          #+#    #+#              #
-#    Updated: 2023/12/06 11:46:33 by omoreno-         ###   ########.fr        #
+#    Updated: 2023/12/07 19:34:52 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -64,18 +64,6 @@ FILES		:=	main Sockets WSPoll WSSignals Receptionist \
 				ClientMaxBodySize ErrorPage Client Clients Header Headers Request \
 				Requests Response StatusCodes PendingCgiTask PendingCgiTasks \
 				CgiExecutor CgisMap Router
-
-
-#FILES		:=	main Sockets WSPoll WSSignals Receptionist \
-#				Tools/TreeSplit Tools/Utils Tools/SplitString Tools/FolderLs \
-#				ConfigParse/ConfigParser ConfigParse/RootDir \
-#				ConfigParse/ActionMask ConfigParse/CGIService \
-#				ConfigParse/Location ConfigParse/ServerConfig \
-#				ConfigParse/Server ConfigParse/ServerParser\
-#				Headers/Header Headers/Headers \
-#				Requests/Request Requests/Requests \
-#				Response/Response Response/StatusCodes \
-#				Cgi/PendingCgiTask Cgi/PendingCgiTasks Cgi/CgiExecutor
 
 #<---------------------------------->LANG<---------------------------------->#
 LANG		:=	CPP

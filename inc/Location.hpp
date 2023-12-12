@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/02 17:55:03 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/08 19:39:33 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <Defines.hpp>
 # include <StringErrors.hpp>
 
-# define LOCATION_SIZE_DIRECTIVES 9
+# define LOCATION_SIZE_DIRECTIVES 10
 
 class Location
 {
@@ -43,6 +43,7 @@ public:
 	Location&	operator=( const Location& lc );
 public:
 	bool			operator<( const Location& lc ) const;
+	bool			operator==( const Location& lc ) const;
 	std::string		getPath( void ) const;
 	bool			isDir( void ) const;
 	StringVector	getSplitedPath( void ) const;
