@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/11 16:41:33 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/12 10:47:39 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int Router::updateResponse(Response &res, Request &req)
 		Log::Info("updateResponse detect error status: " + SUtils::longToString(req.getError()));
 		if (req.getError() == 100)
 			formatContinueResponse(res, req);
-		if (req.getError() == 202)
+		else if (req.getError() == 202)
 			formatAcceptResponse(res, req);
 		else
 			formatErrorResponse(res, req);

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/11 16:35:25 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/12 10:54:04 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,28 +148,28 @@ int Client::manageRecv(std::string recv)
 		}
 	}
 	purgeUsedRecv();
-	size_t pend = getPendingSize();
+	// size_t pend = getPendingSize();
 	if (fail)
 	{
 		Log::Error("Coudn't create new Request");
 		return 1;
 	}
-	if (req)
-	{
-		Log::Info("Must Continue 100?");
-		std::string cs = req->getHeaderWithKey(std::string("content-length"));
-		Log::Info("Content-Length: " + cs);
-		Log::Info("pend: " + SUtils::longToString(pend));
-		Log::Info("BodyLen: " + SUtils::longToString((long)req->getBodyLength()));
-		if (pend == 0 && req->isReceiving() && 
-			cs != "unknown" && (long)req->getBodyLength() < atol(cs.c_str()))
-			{
-				Log::Info("Continue 100");
-				req->setError(202);
-				req->setReceivedAll();
-				// req->getClient()->setKeepAlive(true);
-			}
-	}
+	// if (req)
+	// {
+	// 	Log::Info("Must Continue 100?");
+	// 	std::string cs = req->getHeaderWithKey(std::string("content-length"));
+	// 	Log::Info("Content-Length: " + cs);
+	// 	Log::Info("pend: " + SUtils::longToString(pend));
+	// 	Log::Info("BodyLen: " + SUtils::longToString((long)req->getBodyLength()));
+	// 	if (pend == 0 && req->isReceiving() && 
+	// 		cs != "unknown" && (long)req->getBodyLength() < atol(cs.c_str()))
+	// 		{
+	// 			Log::Info("Continue 100");
+	// 			req->setError(202);
+	// 			req->setReceivedAll();
+	// 			// req->getClient()->setKeepAlive(true);
+	// 		}
+	// }
 	return 0;
 }
 
@@ -179,7 +179,7 @@ int	Client::manageCompleteRecv()
 	int count = 0;
 	while ((req = findCompleteRecvRequest()))
 	{
-		Log::Info("Req. Completed Recv: " + SUtils::longToString(req->getId()));
+		// Log::Info("Req. Completed Recv: " + SUtils::longToString(req->getId()));
 		if (Router::processRequestReceived(*req))
 			count++;
 	}
@@ -191,12 +191,12 @@ int	Client::managePollout()
 	Request* req;
 	Response* res;
 	int count = 0;
-	Log::Info("managePollout: ");
+	// Log::Info("managePollout: ");
 	while ((req = findReadyToSendRequest()))
 	{
 		res = Router::getResponse(req);
-		Log::Info("managePollout for: " + SUtils::longToString(req->getId()));
-		Log::Info("Response: \n" + res->toString());
+		// Log::Info("managePollout for: " + SUtils::longToString(req->getId()));
+		// Log::Info("Response: \n" + res->toString());
 		if (res && sendResponse(res->toString()))
 		{
 			count++;
@@ -210,10 +210,10 @@ int	Client::managePollout()
 
 bool Client::getKeepAlive() const
 {
-	if (keepAlive)
-		Log::Info("getKeepAlive: true");
-	else
-		Log::Info("getKeepAlive: false");
+	// if (keepAlive)
+	// 	Log::Info("getKeepAlive: true");
+	// else
+	// 	Log::Info("getKeepAlive: false");
 	return keepAlive;
 }
 
@@ -267,10 +267,10 @@ bool Client::setKeepAlive(bool value)
 {
 	keepAlive = value;
 	
-	if (value)
-		Log::Info("setKeepAlive: true");
-	else
-		Log::Info("setKeepAlive: false");
+	// if (value)
+	// 	Log::Info("setKeepAlive: true");
+	// else
+	// 	Log::Info("setKeepAlive: false");
 	return keepAlive;
 }
 

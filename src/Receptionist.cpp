@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/11 16:37:42 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/12 10:37:33 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,8 @@ void	Receptionist::manageClient(socket_t clientFd)
 			cli->managePollout();
 			cli->allowPollWrite(false);
 			// clientPoll->events &= ~POLLOUT;
-			if ((cli->size() == 0 && cli->getPendingSize() ==0 && !cli->getKeepAlive()))
+			// if ((cli->size() == 0 && cli->getPendingSize() ==0 && !cli->getKeepAlive()))
+			if ((cli->size() == 0 && cli->getPendingSize() ==0))
 			{
 			 	polls.closePoll( clientFd );
 				eraseClient(clientFd);
