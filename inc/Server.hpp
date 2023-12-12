@@ -38,7 +38,7 @@ private:
 public:
 	static ConstStringVector	allowedDirectives;
 public:
-	Location	getLocationAtPath( std::string path ) const;
+	Location*	getLocationAtPath( std::string path ) const;
 	std::string	getErrorPageWithCode( unsigned int code ) const;
 };
 

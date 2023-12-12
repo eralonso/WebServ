@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/02 19:21:21 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/12 11:33:56 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,19 @@ Server&	Server::operator=( const Server& s )
 	return ( *this );
 }
 
-Location	Server::getLocationAtPath( std::string path ) const
+Location*	Server::getLocationAtPath( std::string path ) const
 {
-	( void ) path;
-	return ( *this->_directives->_locations.begin() );
+	Location *lcp;
+	LocationsSet::iterator it = this->_directives->_locations.begin();
+	LocationsSet::iterator ite = this->_directives->_locations.begin();
+	while (it != ite)
+	{
+		lcp = *it;
+		if (lcp->getPath() == path)
+			return lcp;
+		it++;
+	}
+	return (nullptr);
 }
 
 std::string	Server::getErrorPageWithCode( unsigned int code ) const
