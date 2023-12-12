@@ -40,6 +40,8 @@ Server&	Server::operator=( const Server& s )
 	return ( *this );
 }
 
+Directives	*Server::getDirectives( void ) const { return ( this->_directives ); }
+
 Location	Server::getLocationAtPath( std::string path ) const
 {
 	( void ) path;

@@ -38,6 +38,7 @@ private:
 public:
 	static StringVector	allowedDirectives;
 public:
+	Directives	*getDirectives( void ) const;
 	Location	getLocationAtPath( std::string path ) const;
 	std::string	getErrorPageWithCode( unsigned int code ) const;
 };

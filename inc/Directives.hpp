@@ -56,6 +56,7 @@ private:
 	ServersVector		_servers;
 	LocationsSet		_locations;
 	StringBoolMap	_isSet;
+	bool		_isEmpty;
 public:
 	Directives( void );
 	Directives( const Directives& s );
@@ -79,6 +80,7 @@ public:
 	ServersVector		getServers( void ) const;
 	LocationsSet		getLocations( void ) const;
 	StringBoolMap	getIsSet( void ) const;
+	bool		isEmpty( void ) const;
 };
 
 #endif

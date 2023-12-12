@@ -13,15 +13,37 @@
 #include <Receptionist.hpp>
 #include <Response.hpp>
 
-Receptionist::Receptionist( int port, int backlog, int timeout ): Clients(), 
-	polls( MAX_CLIENTS ), port( port ), backlog( backlog ), timeout( timeout )
+Receptionist::Receptionist( ServersVector servers ): Clients(), polls( MAX_CLIENTS ), _servers( servers )
 {
-	socket_t	serverFd;
+	socket_t		serverFd;
+	Directives		*d;
+	int			backlog = 10;
+	ServersVector::iterator	it;
 
-	( void )this->timeout;
-	serverFd = Sockets::createPassiveSocket( this->port, this->backlog );
-	polls.addPollfd( serverFd, POLLIN, 0, SPOLLFD );
+	it = this->_servers.begin();
+	while ( it != this->_servers.end() )
+	{
+		d = it->getDirectives();
+		if ( d != NULL && d->isEmpty() == false )
+		{
+			serverFd = Sockets::createPassiveSocket( d->getHost(), d->getPort(), backlog );
+			this->polls.addPollfd( serverFd, POLLIN, 0, SPOLLFD );
+			it++;
+		}
+		else
+			this->_servers.erase( it );
+	}
 }
+
+//Receptionist::Receptionist( int port, int backlog, int timeout ): Clients(), 
+//	polls( MAX_CLIENTS ), port( port ), backlog( backlog ), timeout( timeout )
+//{
+//	socket_t	serverFd;
+//
+//	( void )this->timeout;
+//	serverFd = Sockets::createPassiveSocket( this->port, this->backlog );
+//	polls.addPollfd( serverFd, POLLIN, 0, SPOLLFD );
+//}
 
 Receptionist::~Receptionist( void ) {}
 

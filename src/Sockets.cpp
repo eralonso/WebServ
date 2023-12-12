@@ -41,8 +41,13 @@ socket_t	Sockets::socketCreate( int domain, int type, int protocol )
 	fd = socket( domain, type, protocol );
 	if ( fd < 0 )
 	{
-		Log::Error( "Socket create" );
-		exit ( 1 );
+		throw std::logic_error( "Socket create-> domain: " \
+				+ SUtils::longToString( domain ) \
+				+ " && type: " \
+				+ SUtils::longToString( type ) \
+				+ " && protocol: " \
+				+ SUtils::longToString( protocol ) );
+				
 	}
 	Log::Success( "Socket create [ " \
 				+ SUtils::longToString( fd ) \
@@ -70,10 +75,9 @@ void	Sockets::bindSocket( socket_t fd, struct sockaddr_in addr )
 	ret = bind( fd, ( struct sockaddr * )&addr, sizeof( addr ) );
 	if ( ret < 0 )
 	{
-		Log::Error( "Error: Bind socket [ " \
+		throw std::logic_error( "Bind socket [ " \
 					+ SUtils::longToString( ret ) \
 					+ " ]" );
-		exit ( 1 );
 	}
 	Log::Success( "Socket binded [ " \
 			+ SUtils::longToString( fd ) \
@@ -84,7 +88,7 @@ void	Sockets::bindSocket( socket_t fd, struct sockaddr_in addr )
 void	Sockets::listenFromSocket( socket_t fd, int backlog )
 {
 	if ( listen( fd, backlog ) < 0 )
-		Log::Error( "Listen from socket[ " \
+		throw std::logic_error( "Listen from socket[ " \
 				+ SUtils::longToString( fd ) \
 				+ " ]" );
 	Log::Success( "Starting listen [ " \
@@ -115,7 +119,7 @@ socket_t	Sockets::acceptConnection( socket_t fd )
 }
 
 //Create a socket and perform it to be a passive socket ( listen )
-socket_t	Sockets::createPassiveSocket( int port, int backlog )
+socket_t	Sockets::createPassiveSocket( std::string host, int port, int backlog )
 {
 	int					fd;
 	int					optVal;
@@ -126,7 +130,8 @@ socket_t	Sockets::createPassiveSocket( int port, int backlog )
 	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
 	setsockopt( fd, SOL_SOCKET, SO_REUSEADDR, &optVal, sizeof( int ) );
 	//addr = fillSockAddr( AF_INET, port, INADDR_ANY );
-	addr = fillSockAddr( AF_INET, port, Binary::codeAddress( "127.0.0.1" ) );
+	//addr = fillSockAddr( AF_INET, port, Binary::codeAddress( "127.0.0.1" ) );
+	addr = fillSockAddr( AF_INET, port, Binary::codeAddress( host ) );
 	bindSocket( fd, addr );
 	listenFromSocket( fd, backlog );
 	return ( fd );

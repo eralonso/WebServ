@@ -36,7 +36,7 @@ class Sockets
 		static void					bindSocket( socket_t fd, struct sockaddr_in addr );
 		static void					listenFromSocket( socket_t fd, int backlog );
 		static socket_t				acceptConnection( socket_t fd );
-		static socket_t				createPassiveSocket( int port, int backlog );
+		static socket_t				createPassiveSocket( std::string host, int port, int backlog );
 };
 
 #endif

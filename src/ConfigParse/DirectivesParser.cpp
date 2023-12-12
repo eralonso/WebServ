@@ -64,6 +64,7 @@ void	DirectivesParser::parseLine( Directives *d, std::string& content, \
 		checkValidSeparator( type, name );
 		checkDuplicateDirective( name, d->_isSet );
 		d->_isSet[ name ] = true;
+		d->_isEmpty = false;
 		parseDirective( head, body, d );
 	}
 	else if ( content.length() > 0 )
