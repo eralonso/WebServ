@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/12 14:57:34 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/12 17:38:27 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,14 @@ CgiExecutor::CgiExecutor(Request& request, char **env) : request(request)
 	argv[0] = (char *)this->binary.c_str();
 	argv[1] = (char *)this->argument.c_str();
 	argv[2] = NULL;
-	childEnv[0] = NULL;
-	childEnv[9] = NULL;
+	childEnv = nullptr;
 }
 
 CgiExecutor::~CgiExecutor()
 {
-	;
+	envVars.clear();
+	if (childEnv)
+		delete childEnv;
 }
 
 void CgiExecutor::onFailFork(void)
@@ -67,22 +68,39 @@ void CgiExecutor::onFailFromChildPipeOpen(void)
 	throw;
 }
 
+char** CgiExecutor::getEnvVarList()
+{
+	std::vector<std::string>::iterator it = envVars.begin();
+	std::vector<std::string>::iterator ite = envVars.end();
+	size_t i = 0;
+	childEnv = new char*[envVars.size() + 1];
+	while (it != ite)
+	{
+		childEnv[i] = (char*)it->c_str();
+		it++;
+		i++;
+	}
+	childEnv[i] = 0;
+	return childEnv;
+}
+
 void CgiExecutor::onChildProcess(void)
 {
-		//On child
-		close(fdToChild[FDOUT]);
-		close(fdFromChild[FDIN]);
-		if (dup2(fdToChild[FDIN], FDIN) < 0)
-			Log::Error(std::string("dup2: fdToChild[0] to 0 failed: " + SUtils::longToString(errno)));
-		if (dup2(fdFromChild[FDOUT], FDOUT) < 0)
-			Log::Error(std::string("dup2: fdFromChild[1] to 1 failed: " + SUtils::longToString(errno)));
-		close(fdToChild[FDIN]);
-		close(fdFromChild[FDOUT]);
-		execve(binary.c_str(), argv, childEnv);
-		close(FDIN);
-		close(FDOUT);
-		Log::Error(std::string("execve: Not found binary ") + binary);
-		return; //exit(1) not alloed?
+	//On child
+	getEnvVarList();
+	close(fdToChild[FDOUT]);
+	close(fdFromChild[FDIN]);
+	if (dup2(fdToChild[FDIN], FDIN) < 0)
+		Log::Error(std::string("dup2: fdToChild[0] to 0 failed: " + SUtils::longToString(errno)));
+	if (dup2(fdFromChild[FDOUT], FDOUT) < 0)
+		Log::Error(std::string("dup2: fdFromChild[1] to 1 failed: " + SUtils::longToString(errno)));
+	close(fdToChild[FDIN]);
+	close(fdFromChild[FDOUT]);
+	execve(binary.c_str(), argv, childEnv);
+	close(FDIN);
+	close(FDOUT);
+	Log::Error(std::string("execve: Not found binary ") + binary);
+	return; //exit(1) not alloed?
 }
 
 void CgiExecutor::onParentProcess(pid_t childPid)
@@ -237,4 +255,9 @@ void	CgiExecutor::attendPendingCgiTasks(void)
 size_t CgiExecutor::getPendingTasksSize()
 {
 	return pendingTasks.size();
+}
+
+void CgiExecutor::pushEnvVar(const std::string& variable, const std::string& value)
+{
+	envVars.push_back(variable + "=" + value);
 }

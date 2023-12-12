@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/12 10:47:39 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/12 17:48:52 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,6 +173,11 @@ bool Router::processRequestReceived(Request &req)
 
 		std::string script = "";
 		CgiExecutor cgiExe(req, nullptr);
+		cgiExe.pushEnvVar(std::string("ROUTE"), req.getRouteChaineString());
+		cgiExe.pushEnvVar(std::string("PATH"), req.getRoute());
+		cgiExe.pushEnvVar(std::string("QUERY_STRING"), req.getQuery());
+		cgiExe.pushEnvVar(std::string("HOST"), req.getHost());
+		cgiExe.pushEnvVar(std::string("METHOD"), req.getMethod());
 		cgiExe.execute();
 		req.setCgiLaunched();
 		return true;
