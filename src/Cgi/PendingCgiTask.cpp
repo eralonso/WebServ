@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/07 12:28:49 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/12 15:00:36 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,11 @@
 
 PendingCgiTask::PendingCgiTask() : request(*new Request())
 {
-	timestamp = std::clock();  
+	timestamp = std::clock();
 }
 
 PendingCgiTask::PendingCgiTask(pid_t pid, Request& request, int fd) :
-	pid(pid), request(request), fd(fd)
+	pid(pid), request(request), fd(fd), markedToDelete(false)
 {
 	timestamp = std::clock();
 	Log::Info("Task pid " + SUtils::longToString(pid) + " time: " + SUtils::longToString(timestamp));
@@ -61,11 +61,24 @@ std::clock_t	PendingCgiTask::getTimestamp() const
 	return timestamp;
 }
 
-bool PendingCgiTask::isTimeout(double toDuration) const
+bool PendingCgiTask::isMarkedToDelete() const
+{
+	return markedToDelete;
+}
+
+bool PendingCgiTask::isTimeout(double toDuration, bool logInfo) const
 {
 	std::clock_t now = std::clock();
-	double duration = (now - timestamp) / (double) CLOCKS_PER_SEC;
-	return (duration > toDuration);
+	if (logInfo)
+	{
+		// Log::Info("isTimeout at time: " + SUtils::longToString(now));
+		// Log::Info("isTimeout over timestamp: " + SUtils::longToString(timestamp));
+		Log::Info("Cgi Timeout: " + SUtils::longToString(static_cast<long>(toDuration*1000)) + "ms");
+	}
+	long duration = (now - timestamp);
+	if (logInfo)
+		Log::Info("exceeded at duration: " + SUtils::longToString(duration) + "ms");
+	return (duration > toDuration * 1000);
 }
 
 int			PendingCgiTask::getFd() const
@@ -81,13 +94,14 @@ std::string PendingCgiTask::getTaskOutput()
 	while (bytes_read == BUFFER_SIZE)
 	{
 		buf[BUFFER_SIZE] = 0;
-		resBody += std::string(buf);
+		resBody += std::string(buf, bytes_read);
 		bytes_read = read(fd, buf, BUFFER_SIZE);
 	}
 	if (bytes_read < 0)
 		Log::Error(std::string("Read from child failed"));
 	buf[bytes_read] = 0;
-	resBody += std::string(buf);
+	if (bytes_read > 0)
+		resBody += std::string(buf, bytes_read);
 	close(fd);
 	return resBody;
 }
@@ -100,10 +114,11 @@ void PendingCgiTask::applyTaskOutputToReq()
 	while (bytes_read == BUFFER_SIZE)
 	{
 		buf[bytes_read] = 0;
-		resBody += std::string(buf);
+		resBody += std::string(buf, bytes_read);
 		bytes_read = read(fd, buf, BUFFER_SIZE);
 	}
 	close(fd);
+	setMarkedToDelete(true);
 	if (bytes_read < 0)
 	{
 		Log::Error(std::string("Read from child failed"));
@@ -111,7 +126,7 @@ void PendingCgiTask::applyTaskOutputToReq()
 		return ;
 	}
 	buf[bytes_read] = 0;
-	resBody += std::string(buf);
+	resBody += std::string(buf, bytes_read);
 	Log::Success(std::string("read" + resBody));
 	request.setCgiOutput(resBody);
 }
@@ -126,9 +141,17 @@ void	PendingCgiTask::closeReadFd()
 void	PendingCgiTask::killPendingTask()
 {
 	if (pid > 0)
+	{
+		markedToDelete = true;
 		kill(pid, SIGKILL);
+	}
 	pid = 0;
 	if (fd >= 0)
 		close(fd);
 	fd = -1;
+}
+
+void PendingCgiTask::setMarkedToDelete(bool value)
+{
+	markedToDelete = value;
 }

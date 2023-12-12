@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/07 12:41:10 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/12 14:57:34 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include "CgiExecutor.hpp"
 #define FDIN 0
 #define FDOUT 1
-#define CGI_TO 2.0
+#define CGI_TO 1
 
 PendingCgiTasks	CgiExecutor::pendingTasks;
 
@@ -134,38 +134,50 @@ PendingCgiTask *CgiExecutor::getCompletedTask()
 	pid = waitpid(-1, NULL, WNOHANG);
 	if (pid < 1)
 		return nullptr;
-	return &(pendingTasks[pid]);
+	if (pendingTasks.empty())
+		return nullptr;
+	PendingCgiTask& tk = pendingTasks[pid];
+	if (!tk.isMarkedToDelete())
+		return (&tk);
+	return nullptr;
 }
 
 PendingCgiTask *CgiExecutor::getTimeoutedTask(double to)
 {
 	PendingCgiTasks::iterator it = pendingTasks.begin();
 	PendingCgiTasks::iterator ite= pendingTasks.end();
+	if (pendingTasks.empty())
+		return nullptr;
 	while (it != ite)
 	{
-		if(it->second.isTimeout(to))
+		if(!it->second.isMarkedToDelete() && it->second.isTimeout(to, false))
 			return (&(it->second));
 		it++;
 	}
 	return nullptr;
 }
 
-std::string CgiExecutor::getCompletedTaskOutput(void)
+PendingCgiTask *CgiExecutor::getMarkedToDeleteTask()
 {
-	PendingCgiTask *task = getCompletedTask();
-	if (task)
+	PendingCgiTasks::iterator it = pendingTasks.begin();
+	PendingCgiTasks::iterator ite= pendingTasks.end();
+	if (pendingTasks.empty())
+		return nullptr;
+	while (it != ite)
 	{
-		std::string ret = task->getTaskOutput();
-		pendingTasks.eraseTask(task->getPid());
-		return (ret);
+		if(it->second.isMarkedToDelete())
+			return (&(it->second));
+		it++;
 	}
-	return std::string();
+	return nullptr;
 }
 
 size_t	CgiExecutor::purgeTimeoutedTasks(double to, size_t max)
 {
 	size_t i = 0;
 	PendingCgiTask *task = nullptr;
+	if (pendingTasks.empty())
+		return 0;
 	while (i < max && (task = getTimeoutedTask(to)))
 	{
 		pendingTasks.eraseTask(task->getPid());
@@ -183,6 +195,7 @@ void	CgiExecutor::attendPendingCgiTasks(void)
 		Log::Info( "Cgi Task completed");
 		Request& req = pTask->getRequest();
 		pTask->applyTaskOutputToReq();
+		CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
 		// Log::Info("CgiExecutor::attendPendingCgiTasks got:");
 		// Log::Info("Request addr: " + SUtils::longToString((long)&req));
 		// Log::Info("Request id: " + SUtils::longToString((long)req.
@@ -194,29 +207,31 @@ void	CgiExecutor::attendPendingCgiTasks(void)
 		// Log::Info("Set Cgi Request " + SUtils::longToString(req.getId()) + " ReadyToSend");
 		req.setReadyToSend();
 		// req.logStatus();
-		if (pTask)
-		{
-			CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
-		}
 		if (cli != nullptr)
 		 	cli->allowPollWrite(true);
 		// cli = nullptr;
 	}
-	// cli = nullptr;
-	// while ((pTask = CgiExecutor::getTimeoutedTask(CGI_TO)))
-	// {
-	// 	Request& req = pTask->getRequest();
-	// 	Log::Error("Timeout of Req: " + SUtils::longToString(req.getId()) + "process id: " + SUtils::longToString(pTask->getPid()));
-	// 	pTask->killPendingTask();
-	// 	req.setUseCgi(false);
-	// 	req.setError(500);
-	// 	req.setReadyToSend();
-	// 	cli = req.getClient();		
-	// 	CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
-	// 	if (cli != nullptr)
-	// 		cli->allowPollWrite(true);
-	// 	cli = nullptr;
-	// }
+	cli = nullptr;
+	if ((pTask = CgiExecutor::getTimeoutedTask(CGI_TO)))
+	{
+		Request& req = pTask->getRequest();
+		pTask->isTimeout(CGI_TO, true);
+		Log::Error("Timeout of Req: " + SUtils::longToString(req.getId()) + " process id: " + SUtils::longToString(pTask->getPid()));
+		pTask->killPendingTask();
+		CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
+		req.setUseCgi(false);
+		req.setError(500);
+		req.setReadyToSend();
+		cli = req.getClient();		
+		if (cli != nullptr)
+			cli->allowPollWrite(true);
+		cli = nullptr;
+	}
+	if ((pendingTasks.size() > 0) && (pTask = CgiExecutor::getMarkedToDeleteTask())) 
+	{
+		Log::Error("Delete Marked pending task for pid: " + SUtils::longToString(pTask->getPid()));
+		CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
+	}
 }
 
 size_t CgiExecutor::getPendingTasksSize()
