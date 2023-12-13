@@ -41,6 +41,8 @@ typedef int										socket_t;
 typedef std::vector< std::string >				StringVector;
 typedef std::vector< const std::string >		ConstStringVector;
 typedef std::map< const std::string, bool >		ConstStringBoolMap;
+typedef std::map< std::string, bool >		StringBoolMap;
 typedef std::pair< const std::string, bool >	ConstStringBoolPair;
+typedef std::pair< std::string, bool >		StringBoolPair;
 
 #endif

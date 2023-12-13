@@ -26,6 +26,4 @@ std::string	Location::_allowedDirectivesAux[ LOCATION_SIZE_DIRECTIVES + 1 ] =
 	"cgi"
 };
 
-ConstStringVector	Location::allowedDirectives( _allowedDirectivesAux, \
-											_allowedDirectivesAux \
-											+ LOCATION_SIZE_DIRECTIVES );
+StringVector	Location::allowedDirectives( _allowedDirectivesAux, _allowedDirectivesAux + LOCATION_SIZE_DIRECTIVES );

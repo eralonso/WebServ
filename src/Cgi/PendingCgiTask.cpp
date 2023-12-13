@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/12 15:00:36 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/13 11:23:19 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,8 @@ std::string PendingCgiTask::getTaskOutput()
 {
 	char buf[BUFFER_SIZE + 1];
 	std::string	resBody;
-	size_t bytes_read = read(fd, buf, BUFFER_SIZE);
+	int	bytes_read = read(fd, buf, BUFFER_SIZE);
+
 	while (bytes_read == BUFFER_SIZE)
 	{
 		buf[BUFFER_SIZE] = 0;
@@ -110,7 +111,8 @@ void PendingCgiTask::applyTaskOutputToReq()
 {
 	char buf[BUFFER_SIZE + 1];
 	std::string	resBody;
-	ssize_t bytes_read = read(fd, buf, BUFFER_SIZE);
+	int bytes_read = read(fd, buf, BUFFER_SIZE);
+
 	while (bytes_read == BUFFER_SIZE)
 	{
 		buf[bytes_read] = 0;

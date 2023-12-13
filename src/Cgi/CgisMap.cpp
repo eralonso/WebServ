@@ -20,7 +20,8 @@ CgisMap::~CgisMap()
 {
 }
 
-CgisMap::CgisMap(const CgisMap &)
+CgisMap::CgisMap(const CgisMap &): std::map<std::string, std::string>()
+
 {
 }
 

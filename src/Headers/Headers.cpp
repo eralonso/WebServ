@@ -50,7 +50,7 @@ Header			*Headers::firstWithKey(const std::string& key)
 			return (&(*it));
 		it++;
 	}
-	return (nullptr);
+	return (NULL);
 }
 
 void			Headers::append(Header& b)
@@ -111,6 +111,10 @@ std::string		Headers::toString(void)
 }
 std::string Headers::toLower(std::string src)
 {
-	std::transform(src.begin(), src.end(), src.begin(), std::tolower);
+	for ( size_t i = 0; src[ i ] != '\0'; i++ )
+	{
+		if ( src[ i ] >= 'A' && src[ i ] <= 'Z' )
+			src[ i ] += ( 'Z' - 'A' );
+	}
 	return (src);
 }

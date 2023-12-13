@@ -25,7 +25,7 @@ Client::Client(void)
 	keepAlive = false;
 	pending = 0;
 	socket = -1;
-	this->polls = nullptr;
+	this->polls = NULL;
 	// Log::Info("Created client id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
@@ -44,7 +44,7 @@ Client::~Client()
 {
 }
 
-Client::Client(const Client& b)
+Client::Client(const Client& b): Requests()
 {
 	id = id_counter;
 	id_counter++;
@@ -94,7 +94,7 @@ Request*	Client::findRecvRequest()
 			return (req);
 		it++;
 	}
-	return nullptr;
+	return NULL;
 }
 
 Request* Client::findCompleteRecvRequest()
@@ -109,7 +109,7 @@ Request* Client::findCompleteRecvRequest()
 		if(req && req->isCompleteRecv())
 			return (req);
 	}
-	return nullptr;
+	return NULL;
 }
 
 Request* Client::findReadyToSendRequest()
@@ -123,7 +123,7 @@ Request* Client::findReadyToSendRequest()
 		if(req && req->isReadyToSend())
 			return (req);
 	}
-	return nullptr;
+	return NULL;
 }
 
 int Client::manageRecv(std::string recv)
@@ -202,7 +202,7 @@ int	Client::managePollout()
 			count++;
 			eraseRequest();
 			delete res;
-			res = nullptr;
+			res = NULL;
 		}
 	}
 	return count;

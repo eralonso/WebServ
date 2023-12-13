@@ -25,21 +25,21 @@ FolderLs::~FolderLs()
 {
 }
 
-std::string	FolderLs::recLen(uint8_t input)
+std::string	FolderLs::recLen(unsigned char input)
 {
 	std::stringstream	st;
 	st << (unsigned int)input;
 	return (st.str());
 }
 
-std::string	FolderLs::entryType(uint8_t input)
+std::string	FolderLs::entryType(unsigned char input)
 {
-	uint8_t val[] = {DT_UNKNOWN, DT_FIFO, DT_CHR, DT_DIR, DT_BLK,
+	unsigned char val[] = {DT_UNKNOWN, DT_FIFO, DT_CHR, DT_DIR, DT_BLK,
 		DT_REG, DT_LNK, DT_SOCK, DT_WHT};
 	std::string strVal[] = {"UNKNOWN", "FIFO", "CHR", "DIR", "BLK",
 		"REG", "LNK", "SOCK", "WHT"};
-	u_int8_t i = 0;
-	u_int8_t n = sizeof(val) / sizeof(uint8_t);
+	unsigned char i = 0;
+	unsigned char n = sizeof(val) / sizeof(unsigned char);
 	while (i < n)
 	{
 		if (val[i] == input)
@@ -53,7 +53,6 @@ std::string	FolderLs::entryType(uint8_t input)
 
 std::string	FolderLs::epochsToDate(unsigned long int epochs)
 {
-	// struct stat statbuf;
 	std::stringstream	st;
 	time_t tt = static_cast<std::time_t>(epochs);
 	struct tm * timeinfo;
@@ -76,7 +75,7 @@ void	FolderLs::entryInfo(std::string& cat, const std::string& path)
 		st << (unsigned int)statbuf.st_size;
 		st << std::string("</td>");
 		st << std::string("<td>");
-		st << epochsToDate(statbuf.st_mtimespec.tv_sec);
+		st << epochsToDate(static_cast< unsigned long int >( statbuf.st_mtime ));
 		st << std::string("</td>");
 		cat += st.str();
 		return;
@@ -108,7 +107,7 @@ FolderLs::t_error FolderLs::getLs(std::string& res,
 	struct dirent		*pDirent;
 	DIR					*pDir;
 	t_error 			err = NONE;
-
+//
 	pDir = opendir (path.c_str());
 	if (pDir == NULL)
 		return (CANTOPENDIR);
@@ -124,6 +123,6 @@ FolderLs::t_error FolderLs::getLs(std::string& res,
 	closedir (pDir);
 	res += std::string("</tbody>");
 	res += std::string("<table>\n");
-	return (NONE);
+	return (err);
 }
 

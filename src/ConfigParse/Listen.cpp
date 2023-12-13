@@ -62,7 +62,7 @@ int	DirectivesParser::checkAvailableHostPort( std::string host, std::string port
 	int				ret;
 
 	ret = 0;
-	std::memset( &hints, 0, sizeof( hints ) );
+	memset( &hints, 0, sizeof( hints ) );
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
@@ -149,10 +149,8 @@ bool	DirectivesParser::checkValidRangeIpMask( std::string num, size_t pos, size_
 
 bool	DirectivesParser::checkSyntaxIp( std::string ip )
 {
-	bool	dot;
 	size_t	pos;
 
-	dot = false;
 	pos = ip.find_first_not_of( IP_VALID_CHARS );
 	if ( pos != std::string::npos || ip[ 0 ] == '.' )
 		return ( false );

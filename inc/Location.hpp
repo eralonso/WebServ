@@ -35,7 +35,7 @@ private:
 private:
 	static std::string 		_allowedDirectivesAux[ LOCATION_SIZE_DIRECTIVES + 1 ];
 public:
-	static ConstStringVector	allowedDirectives;
+	static StringVector	allowedDirectives;
 public:
 	Location( void );
 	~Location( void );

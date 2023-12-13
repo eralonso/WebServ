@@ -17,6 +17,7 @@
 # include <vector>
 # include <unistd.h>
 # include <sys/wait.h>
+# include <cerrno>
 # include <ctime>
 # include "Utils.hpp"
 # include "Request.hpp"

@@ -23,6 +23,6 @@ std::string	Server::_allowedDirectivesAux[ SERVER_SIZE_DIRECTIVES + 1 ] =
 	"location"
 };
 
-ConstStringVector	Server::allowedDirectives( _allowedDirectivesAux, \
+StringVector	Server::allowedDirectives( _allowedDirectivesAux, \
 											_allowedDirectivesAux \
 											+ SERVER_SIZE_DIRECTIVES );

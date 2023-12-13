@@ -13,29 +13,35 @@
 #ifndef _RECEPTIONIST_HPP_
 # define _RECEPTIONIST_HPP_
 
-#include <Defines.hpp>
-#include <iostream>
-#include <unistd.h>
-#include <WSSignals.hpp>
-#include "Sockets.hpp"
-#include "WSPoll.hpp"
-#include "Utils.hpp"
-#include "Clients.hpp"
-#include "CgiExecutor.hpp"
+# include <iostream>
+
+# include <unistd.h>
+
+# include <WSSignals.hpp>
+# include <Defines.hpp>
+# include <TypesDefines.hpp>
+# include "Sockets.hpp"
+# include "WSPoll.hpp"
+# include "Utils.hpp"
+# include "Clients.hpp"
+# include "CgiExecutor.hpp"
+# include <Directives.hpp>
 
 class Receptionist : public Clients
 {
 private:
 	WSPoll							polls;
+	ServersVector						_servers;
 	int								port;
 	int								backlog;
 	int								timeout;
 public:
-	Receptionist(int port = 9375, int backlog = 20, int timeout = 50);
-	~Receptionist();
-	Receptionist(const Receptionist& b);
-	Receptionist& 	operator=(const Receptionist& b);
-	int				mainLoop(void);
+	//Receptionist(int port = 9375, int backlog = 20, int timeout = 50);
+	Receptionist( ServersVector servers );
+	~Receptionist( void );
+	Receptionist( const Receptionist& b );
+	Receptionist& 	operator=( const Receptionist& b );
+	int				mainLoop( void );
 	static int		sendResponse( socket_t connected, std::string response );
 	static int		readRequest( socket_t clientFd, std::string& readed );
 	int				addNewClient( socket_t serverFd);

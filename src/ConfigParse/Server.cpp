@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/12 11:33:56 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/13 11:31:50 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ Server&	Server::operator=( const Server& s )
 	}
 	return ( *this );
 }
+
+Directives	*Server::getDirectives( void ) const { return ( this->_directives ); }
 
 Location*	Server::getLocationAtPath( std::string path ) const
 {

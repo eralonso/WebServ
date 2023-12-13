@@ -21,9 +21,8 @@ Clients::~Clients()
 {
 }
 
-Clients::Clients(const Clients&)
+Clients::Clients(const Clients&): std::map<socket_t, Client*>()
 {
-	;
 }
 
 Clients& Clients::operator=(const Clients&)
@@ -35,7 +34,7 @@ Client* Clients::newClient(socket_t socket, WSPoll& polls)
 {
 	Client* cli = new Client(socket, polls);
 	if (!cli)
-		return (nullptr);
+		return (NULL);
 	insert(std::pair<socket_t, Client*>(socket, cli));
 	cli->cgis.appendCgi("py", "/usr/bin/python");
 	return (cli);
