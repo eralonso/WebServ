@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 10:20:03 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/29 12:12:58 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/13 15:14:46 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ std::string Headers::toLower(std::string src)
 	for ( size_t i = 0; src[ i ] != '\0'; i++ )
 	{
 		if ( src[ i ] >= 'A' && src[ i ] <= 'Z' )
-			src[ i ] += ( 'Z' - 'A' );
+			src[ i ] += 32;
 	}
 	return (src);
 }
