@@ -15,11 +15,12 @@
 
 # include <sys/socket.h>
 # include <netinet/in.h>
+# include <sys/types.h>
+# include <netdb.h>
 # include <fcntl.h>
 # include <stdlib.h>
 # include <string.h>
 # include <iostream>
-
 # include <Defines.hpp>
 # include <Utils.hpp>
 
@@ -33,9 +34,10 @@ class Sockets
 	public:
 		static socket_t				socketCreate( int domain, int type, int protocol );
 		static struct sockaddr_in	fillSockAddr( int family, uint16_t port, uint32_t ip_addr );
-		static void					bindSocket( socket_t fd, struct sockaddr_in addr );
+		static void					bindSocket( socket_t fd, struct sockaddr *addr, socklen_t len );
 		static void					listenFromSocket( socket_t fd, int backlog );
 		static socket_t				acceptConnection( socket_t fd );
+		static void				codeHost( socket_t fd, int port, std::string host );
 		static socket_t				createPassiveSocket( std::string host, int port, int backlog );
 };
 

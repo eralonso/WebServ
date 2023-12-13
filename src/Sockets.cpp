@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+/* ************************************************************************* */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   Sockets.cpp                                        :+:      :+:    :+:   */
@@ -68,11 +68,11 @@ struct sockaddr_in	Sockets::fillSockAddr( int family, uint16_t port, uint32_t ip
 }
 
 //Bind struct sockaddr_in with a socket
-void	Sockets::bindSocket( socket_t fd, struct sockaddr_in addr )
+void	Sockets::bindSocket( socket_t fd, struct sockaddr *addr, socklen_t len )
 {
 	int	ret;
 
-	ret = bind( fd, ( struct sockaddr * )&addr, sizeof( addr ) );
+	ret = bind( fd, addr, len );
 	if ( ret < 0 )
 	{
 		throw std::logic_error( "Bind socket [ " \
@@ -118,21 +118,47 @@ socket_t	Sockets::acceptConnection( socket_t fd )
 	return ( connected );
 }
 
+void	Sockets::codeHost( socket_t fd, int port, std::string host )
+{
+	struct addrinfo	hints;
+	struct addrinfo	*res;
+	struct sockaddr_in	addr;
+
+	res = NULL;
+	memset( &hints, 0, sizeof( hints ) );
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags = AI_PASSIVE | AI_CANONNAME | AI_IDN | AI_CANONIDN;
+	getaddrinfo( host.c_str(), NULL, &hints, &res );
+	if ( res != NULL )
+	{
+		bindSocket( fd, res->ai_addr, res->ai_addrlen );
+		freeaddrinfo( res );
+	}
+	else
+	{
+		addr = fillSockAddr( AF_INET, port, Binary::codeAddress( host ) );
+		bindSocket( fd, ( struct sockaddr * )&addr, sizeof( addr ) );
+	}
+}
+
 //Create a socket and perform it to be a passive socket ( listen )
 socket_t	Sockets::createPassiveSocket( std::string host, int port, int backlog )
 {
 	int					fd;
 	int					optVal;
-	struct sockaddr_in	addr;
+	//struct sockaddr_in	addr;
 
+	Log::Error( "[ Passive Socket ] -> host: " + host + " && port: " + SUtils::longToString( port ) );
 	optVal = 1;
 	fd = socketCreate( AF_INET, SOCK_STREAM, 0 );
 	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
 	setsockopt( fd, SOL_SOCKET, SO_REUSEADDR, &optVal, sizeof( int ) );
+	codeHost( fd, port, host );
 	//addr = fillSockAddr( AF_INET, port, INADDR_ANY );
 	//addr = fillSockAddr( AF_INET, port, Binary::codeAddress( "127.0.0.1" ) );
-	addr = fillSockAddr( AF_INET, port, Binary::codeAddress( host ) );
-	bindSocket( fd, addr );
+	//addr = fillSockAddr( AF_INET, port, codeHost( host ) );
+	//bindSocket( fd, addr );
 	listenFromSocket( fd, backlog );
 	return ( fd );
 }

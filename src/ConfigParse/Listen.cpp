@@ -62,12 +62,14 @@ int	DirectivesParser::checkAvailableHostPort( std::string host, std::string port
 	int				ret;
 
 	ret = 0;
+	res = NULL;
 	memset( &hints, 0, sizeof( hints ) );
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
 	ret = getaddrinfo( host.c_str(), port.c_str(), &hints, &res );
-	freeaddrinfo( res );
+	if ( res != NULL )
+		freeaddrinfo( res );
 	return ( ret );
 }
 
