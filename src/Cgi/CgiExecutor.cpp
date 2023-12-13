@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/13 11:21:38 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/13 11:51:42 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,21 +176,6 @@ PendingCgiTask *CgiExecutor::getTimeoutedTask(double to)
 }
 
 PendingCgiTask *CgiExecutor::getMarkedToDeleteTask()
-{
-	PendingCgiTasks::iterator it = pendingTasks.begin();
-	PendingCgiTasks::iterator ite= pendingTasks.end();
-	if (pendingTasks.empty())
-		return nullptr;
-	while (it != ite)
-	{
-		if(it->second.isMarkedToDelete())
-			return (&(it->second));
-		it++;
-	}
-	return nullptr;
-}
-
-std::string CgiExecutor::getCompletedTaskOutput(void)
 {
 	PendingCgiTasks::iterator it = pendingTasks.begin();
 	PendingCgiTasks::iterator ite= pendingTasks.end();

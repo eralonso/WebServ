@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/11 16:35:55 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/13 12:16:45 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,12 @@ void Request::parseFirstLine(const std::string &line)
 	if ((tokens.end() - tokens.begin()) < 3)
 	{
 		Log::Error("Request first line incomplete");
+		Log::Error(line);
+		Log::Error("First line tokens nb: " + SUtils::longToString(tokens.size()));
+		for (size_t i = 0; i < tokens.size(); i++)
+		{
+			Log::Error("First line token: " + tokens[i]);
+		}
 		badRequest = true;
 		return ;
 	}
