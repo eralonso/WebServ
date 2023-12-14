@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/14 17:04:13 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/14 17:15:30 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,7 +239,7 @@ Response *Router::formatCgiResponse(Response& res, Request& req)
 		&& (doc[0] == 'n' || doc[0] == 'N')
 		&& (doc[1] == 'p' || doc[1] == 'P')
 		&& (doc[2] == 'h' || doc[2] == 'H'));
-	res.setIsCgi(!nph);
+	res.setIsCgi(nph);
 	return &res;
 }
 

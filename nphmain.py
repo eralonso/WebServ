@@ -24,11 +24,11 @@ body += env
 body += ("</div>\n")
 body += ("</body>\n")
 #acum += "HTTP/1.1 307 Temporary Redirect\r\n"
-#acum += "HTTP/1.1 200 OK\r\n"
-#acum += "Content-Type: text/html\r\n"
-#acum += "Content-Length: " + str(len(body)) + "\r\n"
-#acum += "Location: localhost:8000/\r\n"
-#acum += "\r\n"
+acum += "HTTP/1.1 200 OK\r\n"
+acum += "Content-Type: text/html\r\n"
+acum += "Content-Length: " + str(len(body)) + "\r\n"
+acum += "Location: localhost:8000/\r\n"
+acum += "\r\n"
 acum += body
 sys.stdout.write(acum)
 sys.stderr.write("Written to webserv: ")
