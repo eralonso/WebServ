@@ -128,7 +128,7 @@ void	Sockets::codeHost( socket_t fd, int port, std::string host )
 	memset( &hints, 0, sizeof( hints ) );
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE | AI_CANONNAME | AI_IDN | AI_CANONIDN;
+	hints.ai_flags = AI_PASSIVE | AI_CANONNAME /*| AI_IDN | AI_CANONIDN*/;
 	getaddrinfo( host.c_str(), NULL, &hints, &res );
 	if ( res != NULL )
 	{
@@ -147,18 +147,20 @@ socket_t	Sockets::createPassiveSocket( std::string host, int port, int backlog )
 {
 	int					fd;
 	int					optVal;
-	//struct sockaddr_in	addr;
+	struct sockaddr_in	addr;
 
 	Log::Error( "[ Passive Socket ] -> host: " + host + " && port: " + SUtils::longToString( port ) );
 	optVal = 1;
 	fd = socketCreate( AF_INET, SOCK_STREAM, 0 );
 	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
 	setsockopt( fd, SOL_SOCKET, SO_REUSEADDR, &optVal, sizeof( int ) );
-	codeHost( fd, port, host );
+	//codeHost( fd, port, host );
 	//addr = fillSockAddr( AF_INET, port, INADDR_ANY );
 	//addr = fillSockAddr( AF_INET, port, Binary::codeAddress( "127.0.0.1" ) );
 	//addr = fillSockAddr( AF_INET, port, codeHost( host ) );
 	//bindSocket( fd, addr );
+	addr = fillSockAddr( AF_INET, port, Binary::codeAddress( host ) );
+	bindSocket( fd, ( struct sockaddr * )&addr, sizeof(addr) );
 	listenFromSocket( fd, backlog );
 	return ( fd );
 }
