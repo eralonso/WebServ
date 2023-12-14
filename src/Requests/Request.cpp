@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/13 12:16:45 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/14 15:54:36 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ Request::Request(const Request& b)
 	client = b.client;
 	status = b.status;
 	method = b.method;
+	url = b.url;
 	route = b.route;
 	query = b.query;
 	headers = b.headers;
@@ -72,6 +73,7 @@ Request&	Request::operator=(const Request& b)
 	client = b.client;
 	status = b.status;
 	method = b.method;
+	url = b.url;
 	route = b.route;
 	query = b.query;
 	headers = b.headers;
@@ -97,7 +99,7 @@ void Request::parseRoute(void)
 	std::vector<std::string> tokens = SplitString::split(route,
 										std::string("?"));
 
-	size_t	len = tokens.end() - tokens.begin();
+	size_t	len = tokens.size();
 	if (len > 2)
 	{
 		Log::Error("Request query string invalid");
@@ -106,7 +108,8 @@ void Request::parseRoute(void)
 	}
 	if (len > 1)
 	{
-		route = SUtils::trim(tokens[0]);
+		url = SUtils::trim(tokens[0]);
+		route = url;
 		query = SUtils::trim(tokens[1]);                                                                                 
 	}
 	routeChain = SplitString::split(route, std::string("/"));
@@ -132,7 +135,7 @@ void Request::parseFirstLine(const std::string &line)
 {
 	std::vector<std::string> tokens = SplitString::split(line,
 										std::string(" "));
-	if ((tokens.end() - tokens.begin()) < 3)
+	if (tokens.size() < 3)
 	{
 		Log::Error("Request first line incomplete");
 		Log::Error(line);
@@ -158,13 +161,21 @@ void Request::parseFirstLine(const std::string &line)
 void Request::parseHeader(const std::string &line)
 {
 	std::vector<std::string> tokens = SplitString::split(line,
-										std::string(":"));	
-	if ((tokens.end() - tokens.begin()) < 2)
+										std::string(":"));
+	size_t len = tokens.size();
+	if (len < 2)
 	{
 		headers.append(tokens[0], std::string(""));
 		return ;
 	}
-	headers.append(tokens[0], SUtils::trim(tokens[1]));	
+	std::string	value;
+	for (size_t i = 1; i < len; i++)
+	{
+		value += SUtils::trim(tokens[i]); 
+		if (len - i > 1)
+			value += ":"; 
+	}
+	headers.append(tokens[0], value);	
 }
 
 Request::t_status Request::getStatus() const
@@ -249,9 +260,50 @@ std::string Request::getHost()
 {
 	Header* h = headers.firstWithKey("Host");
 	if (h)
-		return h->getValue();
+	{
+		std::string value = h->getValue();
+		std::vector<std::string> tokens = SplitString::split(value,
+										std::string(":"));
+		if (tokens.size() > 0)		
+			return (tokens[0]);
+	}
+	return std::string("127.0.0.1");
+}
+
+std::string Request::getPort()
+{
+	Header* h = headers.firstWithKey("Host");
+	if (h)
+	{
+		std::string value = h->getValue();
+		std::vector<std::string> tokens = SplitString::split(value,
+										std::string(":"));
+		if (tokens.size() > 1)		
+			return (tokens[1]);
+	}
+	return std::string("80");
+}
+
+bool Request::getHostPort(std::string& host, std::string& port)
+{
+	Header* h = headers.firstWithKey("Host");
+	if (h)
+	{
+		std::string value = h->getValue();
+		std::vector<std::string> tokens = SplitString::split(value,
+										std::string(":"));
+		if (tokens.size() > 0)
+			host = tokens[0];
+		else
+			host = std::string("127.0.0.1");
+		if (tokens.size() > 1)
+			port = tokens[1];
+		else
+			port = std::string("80");
+		return true;
+	}
 	else
-		return std::string("Unknown");
+		return false;
 }
 
 std::string Request::getHeaderWithKey(const std::string& key)

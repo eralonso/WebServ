@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/11 11:45:03 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/14 15:52:39 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ private:
 	Client*						client;
 	std::string					protocol;
 	std::string					method;
+	std::string					url;
 	std::string					route;
 	std::string					query;
 	Headers						headers;
@@ -90,7 +91,9 @@ public:
 	std::string							getQuery() const;
 	const Headers&						getHeaders() const;
 	std::string							getHost();
-	std::string 						getHeaderWithKey(const std::string& key);
+	std::string 						getPort();
+	bool 								getHostPort(std::string &host, std::string &port);
+	std::string getHeaderWithKey(const std::string &key);
 	size_t 								getBodyLength() const;
 	std::string							getBody() const;
 	size_t								getId() const;

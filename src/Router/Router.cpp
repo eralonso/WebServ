@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/14 13:05:28 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/14 15:42:46 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,16 +172,19 @@ bool Router::processRequestReceived(Request &req)
 	{
 
 		std::string script = "";
+		std::string host = "";
+		std::string port = "";
+		req.getHostPort(host, port);
 		CgiExecutor cgiExe(req, nullptr);
 		cgiExe.pushEnvVar(std::string("SERVER_SOFTWARE"), "webserv");
-		cgiExe.pushEnvVar(std::string("SERVER_NAME"), req.getHost());
+		cgiExe.pushEnvVar(std::string("SERVER_NAME"), host);
 		cgiExe.pushEnvVar(std::string("GATEWAY_INTERFACE"), "CGI/1.0");
 		cgiExe.pushEnvVar(std::string("SERVER_PROTOCOL"), req.getProtocol());
-		cgiExe.pushEnvVar(std::string("SERVER_PORT"), "8000");
+		cgiExe.pushEnvVar(std::string("SERVER_PORT"), port);
 		cgiExe.pushEnvVar(std::string("REQUEST_METHOD"), req.getMethod());
 		cgiExe.pushEnvVar(std::string("PATH_INFO"), req.getRouteChaineString());
 		cgiExe.pushEnvVar(std::string("PATH_TRANSLATED"), req.getRouteChaineString());
-		cgiExe.pushEnvVar(std::string("SCRIPT_NAME"), req.getRoute());
+		cgiExe.pushEnvVar(std::string("SCRIPT_NAME"), req.getDocument());
 		cgiExe.pushEnvVar(std::string("QUERY_STRING"), req.getQuery());
 		cgiExe.pushEnvVar(std::string("REMOTE_HOST"), "localhost");
 		cgiExe.pushEnvVar(std::string("REMOTE_ADDRESS"), "127.0.0.1");
