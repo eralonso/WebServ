@@ -6,11 +6,14 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 17:38:14 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/27 11:00:44 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/14 14:16:55 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Sockets.hpp"
+#include <fcntl.h>
+#include <unistd.h>
+
 
 //OCCF = Orthodox canonical class form
 
@@ -49,6 +52,8 @@ socket_t	Sockets::socketCreate( int domain, int type, int protocol )
 				+ SUtils::longToString( protocol ) );
 				
 	}
+	//if ( fd == 3 )
+	//	close( 4 );
 	Log::Success( "Socket create [ " \
 				+ SUtils::longToString( fd ) \
 				+ " ]" );
@@ -128,8 +133,9 @@ void	Sockets::codeHost( socket_t fd, int port, std::string host )
 	memset( &hints, 0, sizeof( hints ) );
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE | AI_CANONNAME | AI_IDN | AI_CANONIDN;
-	getaddrinfo( host.c_str(), NULL, &hints, &res );
+	hints.ai_protocol = IPPROTO_TCP;
+	hints.ai_flags = AI_PASSIVE | AI_CANONNAME;
+	getaddrinfo( host.c_str(), SUtils::longToString( port ).c_str(), &hints, &res );
 	if ( res != NULL )
 	{
 		bindSocket( fd, res->ai_addr, res->ai_addrlen );
@@ -145,20 +151,15 @@ void	Sockets::codeHost( socket_t fd, int port, std::string host )
 //Create a socket and perform it to be a passive socket ( listen )
 socket_t	Sockets::createPassiveSocket( std::string host, int port, int backlog )
 {
-	int					fd;
-	int					optVal;
-	//struct sockaddr_in	addr;
+	socket_t	fd;
+	int			optVal;
 
-	Log::Error( "[ Passive Socket ] -> host: " + host + " && port: " + SUtils::longToString( port ) );
-	optVal = 1;
+	Log::Info( "[ Passive Socket ] -> host: " + host + " && port: " + SUtils::longToString( port ) );
 	fd = socketCreate( AF_INET, SOCK_STREAM, 0 );
 	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
+	optVal = 1;
 	setsockopt( fd, SOL_SOCKET, SO_REUSEADDR, &optVal, sizeof( int ) );
 	codeHost( fd, port, host );
-	//addr = fillSockAddr( AF_INET, port, INADDR_ANY );
-	//addr = fillSockAddr( AF_INET, port, Binary::codeAddress( "127.0.0.1" ) );
-	//addr = fillSockAddr( AF_INET, port, codeHost( host ) );
-	//bindSocket( fd, addr );
 	listenFromSocket( fd, backlog );
 	return ( fd );
 }

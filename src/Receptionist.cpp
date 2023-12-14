@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/06 11:59:51 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/14 14:16:37 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 
 Receptionist::Receptionist( ServersVector servers ): Clients(), polls( MAX_CLIENTS ), _servers( servers )
 {
-	socket_t		serverFd;
-	Directives		*d;
-	int			backlog = 10;
+	socket_t				serverFd;
+	Directives				*d;
+	int						backlog = 10;
 	ServersVector::iterator	it;
 
 	it = this->_servers.begin();
@@ -34,16 +34,6 @@ Receptionist::Receptionist( ServersVector servers ): Clients(), polls( MAX_CLIEN
 			this->_servers.erase( it );
 	}
 }
-
-//Receptionist::Receptionist( int port, int backlog, int timeout ): Clients(), 
-//	polls( MAX_CLIENTS ), port( port ), backlog( backlog ), timeout( timeout )
-//{
-//	socket_t	serverFd;
-//
-//	( void )this->timeout;
-//	serverFd = Sockets::createPassiveSocket( this->port, this->backlog );
-//	polls.addPollfd( serverFd, POLLIN, 0, SPOLLFD );
-//}
 
 Receptionist::~Receptionist( void ) {}
 

@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 17:25:58 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/05 19:07:55 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/14 14:14:05 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ std::string	DirectivesParser::parseHost( std::string arg, int& ret )
 
 std::string	DirectivesParser::parseListenStrError( int ret, std::string aux )
 {
-	int														error;
+	int			error;
 	std::string	errors[ PARSE_LISTEN_ERRORS_SIZE + 1 ] = { \
 		"Success", \
 		"invalid port in \"" + aux + "\" of the \"listen\"", \
@@ -55,21 +55,48 @@ std::string	DirectivesParser::parseListenStrError( int ret, std::string aux )
 	return ( "Invalid error value" );
 }
 
+//#include <unistd.h>
+//#include <fcntl.h>
+
 int	DirectivesParser::checkAvailableHostPort( std::string host, std::string port )
 {
 	struct addrinfo	hints;
 	struct addrinfo	*res;
 	int				ret;
-
+	//int				a[ 3 ];
+		
+	//for ( int i = 0; i < 3; i++ )
+	//{
+	//	a[ i ] = open( ( "prueba.txt" + SUtils::longToString( i ) ) .c_str(), O_RDONLY | O_CREAT );
+	//	std::cout << "fd: " << a[ i ] << std::endl;
+	//}
+	//for ( int i = 0; i < 3; i++ )
+	//{
+	//	close( a[ i ] );
+	//	unlink( ( "prueba.txt" + SUtils::longToString( i ) ).c_str() );
+	//}
 	ret = 0;
 	res = NULL;
 	memset( &hints, 0, sizeof( hints ) );
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_protocol = IPPROTO_TCP;
 	hints.ai_flags = AI_PASSIVE;
 	ret = getaddrinfo( host.c_str(), port.c_str(), &hints, &res );
 	if ( res != NULL )
+	{
+		//for ( int i = 0; i < 3; i++ )
+		//{
+		//	a[ i ] = open( ( "prueba.txt" + SUtils::longToString( i ) ) .c_str(), O_RDONLY | O_CREAT );
+		//	std::cout << "fd: " << a[ i ] << std::endl;
+		//}
+		//for ( int i = 0; i < 3; i++ )
+		//{
+		//	close( a[ i ] );
+		//	unlink( ( "prueba.txt" + SUtils::longToString( i ) ).c_str() );
+		//}
 		freeaddrinfo( res );
+	}
 	return ( ret );
 }
 
