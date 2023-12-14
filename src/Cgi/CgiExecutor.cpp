@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/13 11:51:42 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/14 17:27:37 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ void CgiExecutor::onChildProcess(void)
 void CgiExecutor::onParentProcess(pid_t childPid)
 {
 	std::string	body = request.getBody();
-	body = std::string("Dommy body");
+	// body = std::string("Dommy body");
 	char *reqBody = (char *)body.c_str();
 	size_t reqBodySize = body.length();
 	close(fdToChild[FDIN]);
