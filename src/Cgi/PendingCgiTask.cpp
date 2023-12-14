@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/13 11:23:19 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/14 13:10:27 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ void PendingCgiTask::applyTaskOutputToReq()
 	}
 	buf[bytes_read] = 0;
 	resBody += std::string(buf, bytes_read);
-	Log::Success(std::string("read" + resBody));
+	// Log::Success(std::string("\nread" + resBody));
 	request.setCgiOutput(resBody);
 }
 

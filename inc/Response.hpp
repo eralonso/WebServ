@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:07 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/17 14:02:06 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/14 13:01:08 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ private:
 	std::string					query;
 	Headers						headers;
 	std::string					body;
+	bool						isCgi;
 public:
 	Response();
 	~Response();
@@ -40,6 +41,7 @@ public:
 	void	 					setQuery(std::string query);
 	void	 					setHeaders(Headers headers);
 	void	 					setBody(std::string content);
+	void						setIsCgi(bool value);
 	void	 					appendHeader(Header header);
 	std::string					getServer() const;
 	std::string					getProtocol() const;
@@ -52,6 +54,7 @@ public:
 	Header*						getHeader(std::string key);
 	size_t						getContentLength() const;
 	std::string					getBody() const;
+	bool						getIsCgi() const;
 	std::string					toString();
 };
 

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/13 11:24:05 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/14 13:05:28 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,11 +173,26 @@ bool Router::processRequestReceived(Request &req)
 
 		std::string script = "";
 		CgiExecutor cgiExe(req, nullptr);
-		cgiExe.pushEnvVar(std::string("ROUTE"), req.getRouteChaineString());
-		cgiExe.pushEnvVar(std::string("PATH"), req.getRoute());
+		cgiExe.pushEnvVar(std::string("SERVER_SOFTWARE"), "webserv");
+		cgiExe.pushEnvVar(std::string("SERVER_NAME"), req.getHost());
+		cgiExe.pushEnvVar(std::string("GATEWAY_INTERFACE"), "CGI/1.0");
+		cgiExe.pushEnvVar(std::string("SERVER_PROTOCOL"), req.getProtocol());
+		cgiExe.pushEnvVar(std::string("SERVER_PORT"), "8000");
+		cgiExe.pushEnvVar(std::string("REQUEST_METHOD"), req.getMethod());
+		cgiExe.pushEnvVar(std::string("PATH_INFO"), req.getRouteChaineString());
+		cgiExe.pushEnvVar(std::string("PATH_TRANSLATED"), req.getRouteChaineString());
+		cgiExe.pushEnvVar(std::string("SCRIPT_NAME"), req.getRoute());
 		cgiExe.pushEnvVar(std::string("QUERY_STRING"), req.getQuery());
-		cgiExe.pushEnvVar(std::string("HOST"), req.getHost());
-		cgiExe.pushEnvVar(std::string("METHOD"), req.getMethod());
+		cgiExe.pushEnvVar(std::string("REMOTE_HOST"), "localhost");
+		cgiExe.pushEnvVar(std::string("REMOTE_ADDRESS"), "127.0.0.1");
+		cgiExe.pushEnvVar(std::string("AUTH_TYPE"), "none");
+		cgiExe.pushEnvVar(std::string("REMOTE_USER"), "user");
+		cgiExe.pushEnvVar(std::string("REMOTE_IDENT"), "user");
+		if (req.getBody().size() > 0)
+			cgiExe.pushEnvVar(std::string("CONTENT_TYPE"), req.getHeaderWithKey("Content-Type"));
+		cgiExe.pushEnvVar(std::string("CONTENT_LENGTH"), SUtils::longToString(req.getBody().size()));
+		cgiExe.pushEnvVar(std::string("HTTP_ACCEPT"), req.getHeaderWithKey("Accept"));
+		cgiExe.pushEnvVar(std::string("USER_AGENT"), req.getHeaderWithKey("User-Agent"));
 		cgiExe.execute();
 		req.setCgiLaunched();
 		return true;
@@ -210,11 +225,12 @@ Response *Router::formatGenericResponse(Response& res, Request& req)
 
 Response *Router::formatCgiResponse(Response& res, Request& req)
 {
-	res.appendHeader(Header("Content-Type", std::string("text/html")));
-	res.setProtocol(req.getProtocol());
-	res.setStatus(200);
-	res.setMethod(req.getMethod());
+	// res.appendHeader(Header("Content-Type", std::string("text/html")));
+	// res.setProtocol(req.getProtocol());
+	// res.setStatus(200);
+	// res.setMethod(req.getMethod());
 	res.setBody(req.getCgiOutput());
+	res.setIsCgi(true);
 	return &res;
 }
 

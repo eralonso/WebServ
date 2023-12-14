@@ -6,14 +6,15 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/30 14:02:28 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/14 13:04:14 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/Utils.hpp"
 #include "../../inc/Response.hpp"
+#include "Response.hpp"
 
-Response::Response()
+Response::Response() : isCgi(false)
 {
 }
 
@@ -28,6 +29,7 @@ Response::Response(const Response& b)
 	query = b.query;
 	headers = b.headers;
 	body = b.body;	
+	isCgi = b.isCgi;
 }
 
 Response&	Response::operator=(const Response& b)
@@ -37,6 +39,7 @@ Response&	Response::operator=(const Response& b)
 	query = b.query;
 	headers = b.headers;
 	body = b.body;	
+	isCgi = b.isCgi;
 	return (*this);
 }
 
@@ -83,7 +86,12 @@ void	 					Response::setBody(std::string content)
 	headers.replace(h);
 }
 
-void	 					Response::appendHeader(Header header)
+void Response::setIsCgi(bool value)
+{
+	isCgi = value;
+}
+
+void Response::appendHeader(Header header)
 {
 	headers.append(header);
 }
@@ -154,13 +162,22 @@ std::string				Response::getBody() const
 	return (body);
 }
 
+bool					Response::getIsCgi() const
+{
+	return isCgi;
+}
+
 std::string				Response::toString()
 {
 	std::string ret;
-	ret = protocol + " " + SUtils::longToString(status);
-	ret += std::string(" ") + getResult() + HEADER_SEP;
-	ret += headers.toString();
-	ret += HEADER_SEP;
-	ret += body;
-	return (ret);
+	if (!isCgi)
+	{
+		ret = protocol + " " + SUtils::longToString(status);
+		ret += std::string(" ") + getResult() + HEADER_SEP;
+		ret += headers.toString();
+		ret += HEADER_SEP;
+		ret += body;
+		return (ret);
+	}
+	return (body);
 }
