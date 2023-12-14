@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/14 15:42:46 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/14 17:04:13 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,12 +228,18 @@ Response *Router::formatGenericResponse(Response& res, Request& req)
 
 Response *Router::formatCgiResponse(Response& res, Request& req)
 {
-	// res.appendHeader(Header("Content-Type", std::string("text/html")));
-	// res.setProtocol(req.getProtocol());
-	// res.setStatus(200);
-	// res.setMethod(req.getMethod());
+	res.appendHeader(Header("Content-Type", std::string("text/html")));
+	res.setProtocol(req.getProtocol());
+	res.setStatus(200);
+	res.setMethod(req.getMethod());
 	res.setBody(req.getCgiOutput());
-	res.setIsCgi(true);
+	std::string doc = req.getDocument();
+	res.setBody(req.getCgiOutput());
+	bool nph = (doc.size() > 2
+		&& (doc[0] == 'n' || doc[0] == 'N')
+		&& (doc[1] == 'p' || doc[1] == 'P')
+		&& (doc[2] == 'h' || doc[2] == 'H'));
+	res.setIsCgi(!nph);
 	return &res;
 }
 
