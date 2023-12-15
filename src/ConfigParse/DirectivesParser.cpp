@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:41:41 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/07 15:21:22 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/15 19:36:19 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ Directives	*DirectivesParser::parseDirectives( std::string content, \
 			throw std::logic_error( e.what() );
 		}
 	}
-	d->print();
+	//d->print();
 	return ( d );
 }
 
@@ -388,7 +388,7 @@ void	DirectivesParser::parseServer( std::string head, std::string body, \
 		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
 					std::string( "server" ) ) );
 	}
-	Log::Info( "[ Config ] SERVER\n" );
+	//Log::Info( "[ Config ] SERVER\n" );
 	s._directives = DirectivesParser::parseDirectives( body, \
 						Server::allowedDirectives );
 	d->_servers.push_back( s );
@@ -410,7 +410,7 @@ void	DirectivesParser::parseLocation( std::string head, std::string body, \
 	if ( lc._path[ lc._path.length() - 1 ] == '/' )
 		lc._isDir = true;
 	SUtils::split( lc._splitedPath, lc._path, "/" );
-	Log::Info( "[ Config ] LOCATION " + lc._path + "\n" );
+	//Log::Info( "[ Config ] LOCATION " + lc._path + "\n" );
 	lc._directives = DirectivesParser::parseDirectives( body, \
 						Location::allowedDirectives );
 	d->_locations.insert( lc );

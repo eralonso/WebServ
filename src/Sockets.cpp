@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 17:38:14 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/14 14:16:55 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/15 19:41:58 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,6 @@ socket_t	Sockets::socketCreate( int domain, int type, int protocol )
 				+ SUtils::longToString( protocol ) );
 				
 	}
-	//if ( fd == 3 )
-	//	close( 4 );
 	Log::Success( "Socket create [ " \
 				+ SUtils::longToString( fd ) \
 				+ " ]" );
@@ -123,43 +121,67 @@ socket_t	Sockets::acceptConnection( socket_t fd )
 	return ( connected );
 }
 
-void	Sockets::codeHost( socket_t fd, int port, std::string host )
+struct addrinfo Sockets::fillAddrinfo( int family, int socktype, \
+							int protocol, int flags )
 {
-	struct addrinfo	hints;
-	struct addrinfo	*res;
-	struct sockaddr_in	addr;
+	struct addrinfo	info;
+	
+	std::memset( &info, 0, sizeof( info ) );
+	info = ( struct addrinfo ){ .ai_family = family, \
+			.ai_socktype = socktype, .ai_protocol = protocol, \
+			.ai_flags = flags };
+	return ( info );
+}
 
-	res = NULL;
-	memset( &hints, 0, sizeof( hints ) );
-	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_protocol = IPPROTO_TCP;
-	hints.ai_flags = AI_PASSIVE | AI_CANONNAME;
-	getaddrinfo( host.c_str(), SUtils::longToString( port ).c_str(), &hints, &res );
+struct sockaddr	Sockets::codeHost( const char *host, int port )
+{
+	struct addrinfo		hints;
+	struct addrinfo		*res = NULL;
+	struct sockaddr_in	addr_in;
+	struct sockaddr		addr;
+
+	hints = fillAddrinfo( AF_INET, SOCK_STREAM, IPPROTO_TCP, AI_PASSIVE );
+	getaddrinfo( host, SUtils::longToString( port ).c_str(), &hints, &res );
 	if ( res != NULL )
 	{
-		bindSocket( fd, res->ai_addr, res->ai_addrlen );
+		addr = *res->ai_addr;
 		freeaddrinfo( res );
 	}
 	else
 	{
-		addr = fillSockAddr( AF_INET, port, Binary::codeAddress( host ) );
-		bindSocket( fd, ( struct sockaddr * )&addr, sizeof( addr ) );
+		addr_in = fillSockAddr( AF_INET, port, Binary::codeAddress( host ) );
+		addr = *( ( struct sockaddr * )&addr_in );
 	}
+	Log::Info( "Address -> " + Binary::decodeAddress( ntohl( ( ( \
+		( struct sockaddr_in * )&addr ) )->sin_addr.s_addr ) ) );
+	return ( addr );
 }
 
 //Create a socket and perform it to be a passive socket ( listen )
 socket_t	Sockets::createPassiveSocket( std::string host, int port, int backlog )
 {
-	socket_t	fd;
-	int			optVal;
+	socket_t		fd;
+	int				optVal;
+	struct sockaddr	info;
 
-	Log::Info( "[ Passive Socket ] -> host: " + host + " && port: " + SUtils::longToString( port ) );
+	Log::Info( "[ Passive Socket ] -> host: " + host + " && port: " \
+				+ SUtils::longToString( port ) );
+	optVal = 1;
 	fd = socketCreate( AF_INET, SOCK_STREAM, 0 );
 	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
-	optVal = 1;
 	setsockopt( fd, SOL_SOCKET, SO_REUSEADDR, &optVal, sizeof( int ) );
-	codeHost( fd, port, host );
-	listenFromSocket( fd, backlog );
+	info = codeHost( host.c_str(), port );
+	try
+	{
+		bindSocket( fd, &info, sizeof( info ) );
+		listenFromSocket( fd, backlog );
+	}
+	catch ( const std::logic_error& e )
+	{
+		Log::Info( "Connection closed in creation [ " \
+				+ SUtils::longToString( fd ) + " ]" );
+		close( fd );
+		throw e;
+	}
 	return ( fd );
 }

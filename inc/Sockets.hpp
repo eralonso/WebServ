@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 13:56:30 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/27 17:25:58 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/15 19:24:06 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,19 @@ class Sockets
 		~Sockets( void );
 		Sockets	operator=( const Sockets& socket );
 	public:
-		static socket_t				socketCreate( int domain, int type, int protocol );
-		static struct sockaddr_in	fillSockAddr( int family, uint16_t port, uint32_t ip_addr );
-		static void					bindSocket( socket_t fd, struct sockaddr *addr, socklen_t len );
+		static socket_t				socketCreate( int domain, int type, \
+										int protocol );
+		static struct sockaddr_in	fillSockAddr( int family, uint16_t port, \
+										uint32_t ip_addr );
+		static void					bindSocket( socket_t fd, \
+										struct sockaddr *addr, socklen_t len);
 		static void					listenFromSocket( socket_t fd, int backlog );
 		static socket_t				acceptConnection( socket_t fd );
-		static void				codeHost( socket_t fd, int port, std::string host );
-		static socket_t				createPassiveSocket( std::string host, int port, int backlog );
+		static struct addrinfo		fillAddrinfo( int family, int socktype, \
+										int protocol, int flags );
+		static struct sockaddr		codeHost( const char *host, int port );
+		static socket_t				createPassiveSocket( std::string host, \
+										int port, int backlog );
 };
 
 #endif
