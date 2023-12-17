@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/08 19:30:37 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/08 19:39:40 by eralonso         ###   ########.fr       */
+/*   Created: 2023/11/29 16:55:51 by eralonso          #+#    #+#             */
+/*   Updated: 2023/12/17 19:25:33 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 Directives::Directives( void ): _port( 8000 ), \
 								_host( "0.0.0.0" ), \
-								_clientMaxBodySize( 1 << 20 )
+								_clientMaxBodySize( 1 << 20 ), \
+								_isEmpty( true )
 {
 	this->_return.first = -1;
 	for ( int i = 0; i < SIZE_DIRECTIVES; i++ )
@@ -39,7 +40,8 @@ Directives::Directives( const Directives& d ):
 								_cgi( d._cgi ), \
 								_servers( d._servers ), \
 								_locations( d._locations ), \
-								_isSet( d._isSet ) {}
+								_isSet( d._isSet ),
+								_isEmpty( d._isEmpty ) {}
 
 Directives&	Directives::operator=( const Directives& d )
 {
@@ -61,6 +63,7 @@ Directives&	Directives::operator=( const Directives& d )
 		this->_servers = d._servers;
 		this->_locations = d._locations;
 		this->_isSet = d._isSet;
+		this->_isEmpty = d._isEmpty;
 	}
 	return ( *this );
 }
@@ -95,7 +98,11 @@ ServersVector	Directives::getServers( void ) const { return ( this->_servers ); 
 
 LocationsSet	Directives::getLocations( void ) const { return ( this->_locations ); }
 
-ConstStringBoolMap	Directives::getIsSet( void ) const { return ( this->_isSet ); }
+StringBoolMap	Directives::getIsSet( void ) const { return ( this->_isSet ); }
+
+bool	Directives::isEmpty( void ) const { return ( this->_isEmpty ); }
+
+bool	Directives::isSet( const std::string& key ) { return ( this->_isSet[ key ] ); };
 
 void	Directives::print( void ) const
 {

@@ -6,15 +6,18 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:30:14 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 15:36:59 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/17 19:04:54 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _PENDINGCGITASK_HPP_
 # define _PENDINGCGITASK_HPP_
+
 # include <unistd.h>
 # include <ctime>
+
 # include "Request.hpp"
+# include "Utils.hpp"
 
 class PendingCgiTask
 {
@@ -24,18 +27,18 @@ private:
 	std::clock_t	timestamp;
 	int				fd;
 public:
-	PendingCgiTask();
-	PendingCgiTask(pid_t pid, Request& request,	int fd);
-	PendingCgiTask(const PendingCgiTask& b);
-	PendingCgiTask& operator=(const PendingCgiTask& b);
-	~PendingCgiTask();
-	pid_t									getPid() const;
-	Request&								getRequest() const;
-	clock_t									getTimestamp() const;
-	bool									isTimeout(clock_t toDuration) const;
-	int										getFd() const;
-	std::string								getTaskOutput();
-	void									applyTaskOutputToReq();
+	PendingCgiTask( void );
+	PendingCgiTask( pid_t pid, Request& request, int fd );
+	PendingCgiTask( const PendingCgiTask& b );
+	~PendingCgiTask( void );
+	PendingCgiTask&	operator=( const PendingCgiTask& b );
+	pid_t			getPid( void ) const;
+	Request&		getRequest( void ) const;
+	clock_t			getTimestamp( void ) const;
+	bool			isTimeout( clock_t toDuration ) const;
+	int				getFd( void ) const;
+	std::string		getTaskOutput( void );
+	void			applyTaskOutputToReq( void );
 };
 
 #endif

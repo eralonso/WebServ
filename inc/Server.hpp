@@ -36,8 +36,9 @@ public:
 private:
 	static std::string 		_allowedDirectivesAux[ SERVER_SIZE_DIRECTIVES + 1 ];
 public:
-	static ConstStringVector	allowedDirectives;
+	static StringVector	allowedDirectives;
 public:
+	Directives	*getDirectives( void ) const;
 	Location	getLocationAtPath( std::string path ) const;
 	std::string	getErrorPageWithCode( unsigned int code ) const;
 };

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:05:51 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/05 18:33:51 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/17 13:40:31 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 //OCCF = Orthodox canonical class form
 
 //OCCF: Default constructor
-WSPoll::WSPoll( void ) {}
+WSPoll::WSPoll( void ): _polls( NULL ) {}
 
 //Constructor with max size as parameter
 WSPoll::WSPoll( unsigned int maxSize ): _maxSize( maxSize ), \
@@ -31,13 +31,13 @@ WSPoll::WSPoll( const WSPoll& wspoll ): _maxSize( wspoll._maxSize ), \
 										_size( wspoll._size ), \
 										_serverSizeFd( wspoll._serverSizeFd )
 {
+	this->_polls = NULL;
 	if ( wspoll._polls != NULL )
 	{
-		this->deletePolls();
 		this->_polls = new struct pollfd[ this->_maxSize ];
 		for ( unsigned int i = 0; i < this->_maxSize; i++ )
 			this->_polls[ i ] = wspoll._polls[ i ];
-	}
+	}		
 }
 
 //OCCF: Default destructor
@@ -46,22 +46,27 @@ WSPoll::~WSPoll( void )
 	if ( this->_polls != NULL )
 	{
 		closePoll( 0, this->_size );
-		delete this->_polls;
+		delete [] this->_polls;
+		this->_polls = NULL;
 	}
 }
 
 //OCCF: Assignment operator
 WSPoll	WSPoll::operator=( const WSPoll& wspoll )
 {
-	if ( wspoll._polls != NULL )
+	if (  this != &wspoll )
 	{
-		this->deletePolls();
+		if ( this->_polls != NULL )
+			this->deletePolls();
 		this->_maxSize = wspoll._maxSize;
 		this->_size = wspoll._size;
 		this->_serverSizeFd = wspoll._serverSizeFd;
-		this->_polls = new struct pollfd[ this->_maxSize ];
-		for ( unsigned int i = 0; i < this->_maxSize; i++ )
-			this->_polls[ i ] = wspoll._polls[ i ];
+		if ( wspoll._polls != NULL )
+		{
+			this->_polls = new struct pollfd[ this->_maxSize ];
+			for ( unsigned int i = 0; i < this->_maxSize; i++ )
+				this->_polls[ i ] = wspoll._polls[ i ];
+		}
 	}
 	return ( *this );
 }
@@ -145,7 +150,7 @@ void	WSPoll::deletePolls( void )
 {
 	if ( this->_polls != NULL )
 	{
-		delete this->_polls;
+		delete [] this->_polls;
 		this->_polls = NULL;
 	}
 }

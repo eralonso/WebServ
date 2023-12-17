@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:34:13 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/08 19:39:32 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/17 19:22:43 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ namespace PUtils
 {
 	void	printInAscii( const char *str )
 	{
-		for ( uint32_t i = 0; str[ i ] != '\0'; i++ )
+		for ( unsigned int i = 0; str[ i ] != '\0'; i++ )
 		{
 			std::cout << static_cast< int >( str[ i ] );
 			if ( str[ i ] != '\n' && str[ i + 1 ] != '\0' )
@@ -152,7 +152,7 @@ namespace SUtils
 			return ( 1 );
 		if ( num1.length() < num2.length() )
 			return ( -1 );
-		return ( std::strcmp( num1.c_str(), num2.c_str() ) );
+		return ( strcmp( num1.c_str(), num2.c_str() ) );
 	}
 }
 
@@ -171,10 +171,10 @@ namespace Binary
 		return ( formated );
 	}
 	
-	uint32_t	codeAddress( std::string address )
+	unsigned int	codeAddress( std::string address )
 	{
-		uint32_t	number;
-		uint32_t	code;
+		unsigned int	number;
+		unsigned int	code;
 		size_t		pos;
 
 		code = 0;
@@ -192,7 +192,7 @@ namespace Binary
 		return ( code );
 	}
 	
-	std::string	decodeAddress( uint32_t address )
+	std::string	decodeAddress( unsigned int address )
 	{
 		int			number;
 		std::string	decode;

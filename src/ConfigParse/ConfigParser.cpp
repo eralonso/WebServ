@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:48:38 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/08 19:39:41 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/17 19:25:49 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 ConfigParser::ConfigParser( int argc, char **argv ): _directives( NULL )
 {
-	ConstStringVector	allowedDirectives;
+	StringVector	allowedDirectives;
 
 	allowedDirectives.push_back( "server" );
 	checkUsage( argc, argv, argv[ 0 ] );
@@ -42,7 +42,7 @@ void	ConfigParser::readConfig( void )
 	std::string		content;
 	std::string		line;
 
-	myfile.open( this->_fileName, std::ios_base::in );
+	myfile.open( this->_fileName.c_str(), std::ios_base::in );
 	if ( !myfile.is_open() )
 		throw std::logic_error( "Invalid file: " + this->_fileName );
 	while ( std::getline ( myfile, line ) )

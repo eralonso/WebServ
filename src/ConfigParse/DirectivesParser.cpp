@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:41:41 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/08 19:40:31 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/17 19:25:17 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ DirectivesParser&	DirectivesParser::operator=( const DirectivesParser& dp )
 }
 
 Directives	*DirectivesParser::parseDirectives( std::string content, \
-					ConstStringVector allowedDirectives )
+					StringVector allowedDirectives )
 {
 	Directives	*d = new Directives;
 
@@ -44,13 +44,13 @@ Directives	*DirectivesParser::parseDirectives( std::string content, \
 			throw std::logic_error( e.what() );
 		}
 	}
-	d->print();
+	//d->print();
 	return ( d );
 }
 
 //check if line is correct
 void	DirectivesParser::parseLine( Directives *d, std::string& content, \
-					ConstStringVector allowedDirectives )
+					StringVector allowedDirectives )
 {
 	std::string			head;
 	std::string			body;
@@ -64,6 +64,7 @@ void	DirectivesParser::parseLine( Directives *d, std::string& content, \
 		checkValidSeparator( type, name );
 		checkDuplicateDirective( name, d->_isSet );
 		d->_isSet[ name ] = true;
+		d->_isEmpty = false;
 		parseDirective( head, body, d );
 	}
 	else if ( content.length() > 0 )
@@ -72,13 +73,13 @@ void	DirectivesParser::parseLine( Directives *d, std::string& content, \
 
 //check directive
 void	DirectivesParser::checkValidDirective( std::string directive, \
-						ConstStringVector allowedDirectives )
+						StringVector allowedDirectives )
 {
-	if ( STLUtils::stringEasyFind< ConstStringVector >( \
+	if ( STLUtils::stringEasyFind< StringVector >( \
 				directivesList.begin(), \
 				directivesList.end(), directive ) < 0 )
 		throw std::logic_error( UNKNOWN_DIRECTIVE( directive ) );
-	else if ( STLUtils::stringEasyFind< ConstStringVector >( \
+	else if ( STLUtils::stringEasyFind< StringVector >( \
 				allowedDirectives.begin(), \
 				allowedDirectives.end(), directive ) < 0 )
 		throw std::logic_error( "\"" + directive \
@@ -90,7 +91,7 @@ void	DirectivesParser::checkValidSeparator( int type, std::string directive )
 	static std::string	separators[ 2 ] = { ";", "{" };
 	int					expectedSeparator;
 
-	if ( STLUtils::stringEasyFind< ConstStringVector >( \
+	if ( STLUtils::stringEasyFind< StringVector >( \
 				simpleDirectivesList.begin(), \
 				simpleDirectivesList.end(), directive ) >= 0 )
 		expectedSeparator = SEMICOLON_SEPARATOR;
@@ -103,7 +104,7 @@ void	DirectivesParser::checkValidSeparator( int type, std::string directive )
 }
 
 void	DirectivesParser::checkDuplicateDirective( const std::string directive, \
-	 					ConstStringBoolMap isSet )
+	 					StringBoolMap isSet )
 {
 	if ( isSet[ directive ] == true \
 				&& canRepeatDirectiveList.at( directive ) == false )
@@ -119,11 +120,11 @@ void	DirectivesParser::parseDirective( std::string head, std::string body, \
 	std::string	name;
 
 	name = head.substr( 0, head.find_first_of( ISSPACE ) );
-	if ( ( idx = STLUtils::stringEasyFind< ConstStringVector >( \
+	if ( ( idx = STLUtils::stringEasyFind< StringVector >( \
 					simpleDirectivesList.begin(), \
 					simpleDirectivesList.end(), name ) ) >= 0 )
 		_parseSimple[ idx ]( body, d );
-	else if ( ( idx = STLUtils::stringEasyFind< ConstStringVector >( \
+	else if ( ( idx = STLUtils::stringEasyFind< StringVector >( \
 					complexDirectivesList.begin(), \
 					complexDirectivesList.end(), name ) ) >= 0 )
 		_parseComplex[ idx ]( head, body, d );
@@ -385,7 +386,7 @@ void	DirectivesParser::parseServer( std::string head, std::string body, \
 	if ( args.size() > 1 )
 		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
 					std::string( "server" ) ) );
-	Log::Info( "[ Config ] SERVER\n" );
+	//Log::Info( "[ Config ] SERVER\n" );
 	s._directives = DirectivesParser::parseDirectives( body, \
 						Server::allowedDirectives );
 	d->_servers.push_back( s );
@@ -404,13 +405,13 @@ void	DirectivesParser::parseLocation( std::string head, std::string body, \
 					std::string( "location" ) ) );
 	args.erase( args.begin() );
 	lc._path = args.front();
-	if ( lc._path.back() == '/' )
+	if ( lc._path[ lc._path.length() - 1 ] == '/' )
 		lc._isDir = true;
 	SUtils::split( lc._splitedPath, lc._path, "/" );
 	if ( isPathDup( d->_locations, lc ) == true )
 		throw std::logic_error( "Duplicate path in \"location\" directive \"" \
 				+ lc._path + "\"" );
-	Log::Info( "[ Config ] LOCATION " + lc._path + "\n" );
+	//Log::Info( "[ Config ] LOCATION " + lc._path + "\n" );
 	lc._directives = DirectivesParser::parseDirectives( body, \
 						Location::allowedDirectives );
 	d->_locations.insert( new Location( lc ) );

@@ -6,39 +6,36 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:31 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/04 16:58:51 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/17 19:10:09 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/PendingCgiTasks.hpp"
+#include "PendingCgiTasks.hpp"
 
-PendingCgiTasks::PendingCgiTasks()
+PendingCgiTasks::PendingCgiTasks( void ) {}
+
+PendingCgiTasks::PendingCgiTasks( const PendingCgiTasks &b ): \
+							std::map< pid_t,PendingCgiTask >( b ) {}
+
+PendingCgiTasks& PendingCgiTasks::operator=( const PendingCgiTasks& b )
 {
+	if ( this != &b )
+		std::map< pid_t,PendingCgiTask >::operator=( b );
+	return ( *this );
 }
 
-PendingCgiTasks::PendingCgiTasks(const PendingCgiTasks &b) :
-	map<pid_t,PendingCgiTask>(b)
+PendingCgiTasks::~PendingCgiTasks( void ) {}
+
+int	PendingCgiTasks::appendTask( PendingCgiTask task )
 {
+	this->insert( std::pair< pid_t, PendingCgiTask >( task.getPid(), task ) );
+	return ( 0 );
 }
 
-PendingCgiTasks& PendingCgiTasks::operator=(const PendingCgiTasks& b)
+int PendingCgiTasks::eraseTask( pid_t pid )
 {
-	map<pid_t,PendingCgiTask>::operator=(b);
-	return (*this);	
-}
-
-PendingCgiTasks::~PendingCgiTasks()
-{
-}
-
-int PendingCgiTasks::appendTask(PendingCgiTask task)
-{
-	insert(std::pair<pid_t, PendingCgiTask>(task.getPid(), task));
-	return 0;
-}
-
-int PendingCgiTasks::eraseTask(pid_t pid)
-{
-	size_t tot = erase(pid);
-	return (tot > 0);
+	size_t tot;
+	
+	tot = this->erase( pid );
+	return ( tot > 0 );
 }

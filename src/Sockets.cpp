@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+/* ************************************************************************* */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   Sockets.cpp                                        :+:      :+:    :+:   */
@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 17:38:14 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/27 11:00:44 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/17 13:35:44 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,13 @@ socket_t	Sockets::socketCreate( int domain, int type, int protocol )
 	fd = socket( domain, type, protocol );
 	if ( fd < 0 )
 	{
-		Log::Error( "Socket create" );
-		exit ( 1 );
+		throw std::logic_error( "Socket create-> domain: " \
+				+ SUtils::longToString( domain ) \
+				+ " && type: " \
+				+ SUtils::longToString( type ) \
+				+ " && protocol: " \
+				+ SUtils::longToString( protocol ) );
+				
 	}
 	Log::Success( "Socket create [ " \
 				+ SUtils::longToString( fd ) \
@@ -59,47 +64,20 @@ struct sockaddr_in	Sockets::fillSockAddr( int family, uint16_t port, uint32_t ip
 	addr.sin_family = family;
 	addr.sin_port = htons( port );
 	addr.sin_addr.s_addr = htonl( ip_addr );
-	Log::Info( "Socket address filled: Port -> " \
-				+ SUtils::longToString( port ) \
-				+ " && Host -> " \
-				+ Binary::formatBits( std::bitset< 32 >( addr.sin_port ).to_string() ) \
-				+ " && Network [ ntohs ] -> " \
-				+ SUtils::longToString( ntohs( addr.sin_port ) ) \
-				+ " && addr.sin_port -> " \
-		   		+ SUtils::longToString( addr.sin_port ) \
-				+ " && addr.sin_port [ ntohl ] -> " \
-		   		+ SUtils::longToString( ntohl( addr.sin_port ) ) \
-				+ " && addr.sin_port [ htonl ] -> " \
-		   		+ SUtils::longToString( htonl( addr.sin_port ) ) \
-				+ " && addr.sin_port [ htons ] -> " \
-		   		+ SUtils::longToString( htons( addr.sin_port ) ) \
-				+ " && addr.sin_addr.s_addr -> " \
-		   		+ SUtils::longToString( addr.sin_addr.s_addr ) \
-				+ " && addr.sin_addr.s_addr [ decode ] -> " \
-		   		+ Binary::decodeAddress( ntohl( addr.sin_addr.s_addr ) ) );
 	return ( addr );
 }
 
 //Bind struct sockaddr_in with a socket
-void	Sockets::bindSocket( socket_t fd, struct sockaddr_in addr )
+void	Sockets::bindSocket( socket_t fd, struct sockaddr *addr, socklen_t len )
 {
 	int	ret;
 
-	ret = bind( fd, ( struct sockaddr * )&addr, sizeof( addr ) );
+	ret = bind( fd, addr, len );
 	if ( ret < 0 )
 	{
-		Log::Error( "Error: Bind socket [ " \
+		throw std::logic_error( "Bind socket [ " \
 					+ SUtils::longToString( ret ) \
-					+ " ] && errno [ " \
-					+ SUtils::longToString( errno ) \
-					+ " ] = [ " \
-					+ SUtils::longToString( EADDRINUSE ) \
-					+ " ] or [ " \
-					+ SUtils::longToString( EACCES ) \
-					+ " ] or [ " \
-					+ SUtils::longToString( EBADF ) \
 					+ " ]" );
-		exit ( 1 );
 	}
 	Log::Success( "Socket binded [ " \
 			+ SUtils::longToString( fd ) \
@@ -110,7 +88,7 @@ void	Sockets::bindSocket( socket_t fd, struct sockaddr_in addr )
 void	Sockets::listenFromSocket( socket_t fd, int backlog )
 {
 	if ( listen( fd, backlog ) < 0 )
-		Log::Error( "Listen from socket[ " \
+		throw std::logic_error( "Listen from socket[ " \
 				+ SUtils::longToString( fd ) \
 				+ " ]" );
 	Log::Success( "Starting listen [ " \
@@ -125,6 +103,7 @@ socket_t	Sockets::acceptConnection( socket_t fd )
 	struct sockaddr_in	addr;
 	socklen_t			addr_size;
 
+	addr_size = sizeof( addr );
 	connected = accept( fd, ( struct sockaddr * )&addr, &addr_size );
 	if ( connected < 0 )
 	{
@@ -140,20 +119,67 @@ socket_t	Sockets::acceptConnection( socket_t fd )
 	return ( connected );
 }
 
-//Create a socket and perform it to be a passive socket ( listen )
-socket_t	Sockets::createPassiveSocket( int port, int backlog )
+struct addrinfo Sockets::fillAddrinfo( int family, int socktype, \
+							int protocol, int flags )
 {
-	int					fd;
-	int					optVal;
-	struct sockaddr_in	addr;
+	struct addrinfo	info;
+	
+	std::memset( &info, 0, sizeof( info ) );
+	info = ( struct addrinfo ){ .ai_family = family, \
+			.ai_socktype = socktype, .ai_protocol = protocol, \
+			.ai_flags = flags };
+	return ( info );
+}
 
+struct sockaddr	Sockets::codeHost( const char *host, int port )
+{
+	struct addrinfo		hints;
+	struct addrinfo		*res = NULL;
+	struct sockaddr_in	addr_in;
+	struct sockaddr		addr;
+
+	hints = fillAddrinfo( AF_INET, SOCK_STREAM, IPPROTO_TCP, AI_PASSIVE );
+	getaddrinfo( host, SUtils::longToString( port ).c_str(), &hints, &res );
+	if ( res != NULL )
+	{
+		addr = *res->ai_addr;
+		freeaddrinfo( res );
+	}
+	else
+	{
+		addr_in = fillSockAddr( AF_INET, port, Binary::codeAddress( host ) );
+		addr = *( ( struct sockaddr * )&addr_in );
+	}
+	Log::Info( "Address -> " + Binary::decodeAddress( ntohl( ( ( \
+		( struct sockaddr_in * )&addr ) )->sin_addr.s_addr ) ) );
+	return ( addr );
+}
+
+//Create a socket and perform it to be a passive socket ( listen )
+socket_t	Sockets::createPassiveSocket( std::string host, int port, int backlog )
+{
+	socket_t		fd;
+	int				optVal;
+	struct sockaddr	info;
+
+	Log::Info( "[ Passive Socket ] -> host: " + host + " && port: " \
+				+ SUtils::longToString( port ) );
 	optVal = 1;
 	fd = socketCreate( AF_INET, SOCK_STREAM, 0 );
 	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
 	setsockopt( fd, SOL_SOCKET, SO_REUSEADDR, &optVal, sizeof( int ) );
-	//addr = fillSockAddr( AF_INET, port, INADDR_ANY );
-	addr = fillSockAddr( AF_INET, port, Binary::codeAddress( "127.0.0.1" ) );
-	bindSocket( fd, addr );
-	listenFromSocket( fd, backlog );
+	info = codeHost( host.c_str(), port );
+	try
+	{
+		bindSocket( fd, &info, sizeof( info ) );
+		listenFromSocket( fd, backlog );
+	}
+	catch ( const std::logic_error& e )
+	{
+		Log::Info( "Connection closed in creation [ " \
+				+ SUtils::longToString( fd ) + " ]" );
+		close( fd );
+		throw e;
+	}
 	return ( fd );
 }

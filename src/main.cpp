@@ -20,7 +20,7 @@ int	main( int argc, char **argv )
 	try
 	{
 		ConfigParser	configParser( argc, argv );
-		Receptionist	receptionist;
+		Receptionist	receptionist( configParser.getServers() );
 		
 		return ( receptionist.mainLoop() );
 	}
