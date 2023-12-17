@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 10:20:03 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/17 17:04:00 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/17 17:34:32 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,11 +101,11 @@ void	Headers::erase( Header& h )
 	erase( h.getKey() );
 }
 
-std::string	Headers::toString( void )
+std::string	Headers::toString( void ) const
 {
-	std::string			ret;
-	Headers::iterator	it = this->begin();
-	Headers::iterator	ite = this->end();
+	std::string				ret;
+	Headers::const_iterator	it = this->begin();
+	Headers::const_iterator	ite = this->end();
 
 	while ( it != ite )
 	{
