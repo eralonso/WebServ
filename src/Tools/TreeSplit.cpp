@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 17:11:41 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/02 11:56:37 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/17 16:47:08 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 namespace TreeSplit
 {
-	void	splitOnceBySpace( const std::string str, std::string& head, std::string& body )
+	void	splitOnceBySpace( const std::string str, std::string& head, \
+								std::string& body )
 	{
 		size_t		pos;
 		std::string	aux;
@@ -45,7 +46,8 @@ namespace TreeSplit
 		do
 		{
 			bracet = src.find_first_of( "{}" );
-			if ( bracet == std::string::npos || ( src[ bracet ] == '}' && level == 0 ) )
+			if ( bracet == std::string::npos \
+					|| ( src[ bracet ] == '}' && level == 0 ) )
 				return ( std::string::npos );
 			level += src[ bracet ] == '{' ? 1 : -1;
 			src.erase( 0, bracet + 1 );
