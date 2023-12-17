@@ -6,110 +6,111 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/05 15:40:31 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/17 19:05:10 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/PendingCgiTask.hpp"
-#include "../../inc/Utils.hpp"
+#include "PendingCgiTask.hpp"
 
-PendingCgiTask::PendingCgiTask() : request(*new Request())
+PendingCgiTask::PendingCgiTask( void ): request( *new Request() )
 {
-	timestamp = std::clock();  
+	this->timestamp = std::clock();
 }
 
-PendingCgiTask::PendingCgiTask(pid_t pid, Request& request, int fd) :
-	pid(pid), request(request), fd(fd)
+PendingCgiTask::PendingCgiTask( pid_t pid, Request& request, int fd ): \
+									pid( pid ), request( request ), \
+									fd( fd )
 {
-	timestamp = std::clock();  
+	this->timestamp = std::clock();
 }
 
-PendingCgiTask::PendingCgiTask(const PendingCgiTask &b) :
-	pid(b.pid), request(b.request), timestamp(b.timestamp), fd(b.fd) 
-{
-}
+PendingCgiTask::PendingCgiTask( const PendingCgiTask &b ): \
+									pid( b.pid ), request( b.request ), \
+									timestamp( b.timestamp ), fd( b.fd ) {}
 
-PendingCgiTask &PendingCgiTask::operator=(const PendingCgiTask &b)
+PendingCgiTask&	PendingCgiTask::operator=( const PendingCgiTask &b )
 {
-	pid = b.pid;
-	request = b.request;
-	fd = b.fd;
-	timestamp = b.timestamp;
-	return (*this);
-}
-
-PendingCgiTask::~PendingCgiTask()
-{
-}
-
-pid_t PendingCgiTask::getPid() const
-{
-	return pid;
-}
-
-Request& PendingCgiTask::getRequest() const
-{
-	return request;
-}
-
-std::clock_t	PendingCgiTask::getTimestamp() const
-{
-	return timestamp;
-}
-
-bool	PendingCgiTask::isTimeout(std::clock_t toDuration) const
-{
-	std::clock_t now = std::clock();
-	std::clock_t duration = now - timestamp;
-	return (duration < toDuration);
-}
-
-int			PendingCgiTask::getFd() const
-{
-	return fd;
-}
-
-std::string PendingCgiTask::getTaskOutput()
-{
-	char buf[BUFFER_SIZE + 1];
-	std::string	resBody;
-	int	bytes_read = read(fd, buf, BUFFER_SIZE);
-
-	while (bytes_read == BUFFER_SIZE)
+	if ( this != &b )
 	{
-		buf[BUFFER_SIZE] = 0;
-		resBody += std::string(buf);
-		bytes_read = read(fd, buf, BUFFER_SIZE);
+		this->pid = b.pid;
+		this->request = b.request;
+		this->fd = b.fd;
+		this->timestamp = b.timestamp;
 	}
-	if (bytes_read < 0)
-		Log::Error(std::string("Read from child failed"));
-	buf[bytes_read] = 0;
-	resBody += std::string(buf);
-	close(fd);
-	return resBody;
+	return ( *this );
 }
 
-void PendingCgiTask::applyTaskOutputToReq()
-{
-	char buf[BUFFER_SIZE + 1];
-	std::string	resBody;
-	int bytes_read = read(fd, buf, BUFFER_SIZE);
+PendingCgiTask::~PendingCgiTask( void ) {}
 
-	while (bytes_read == BUFFER_SIZE)
+pid_t	PendingCgiTask::getPid( void ) const
+{
+	return ( this->pid );
+}
+
+Request&	PendingCgiTask::getRequest( void ) const
+{
+	return ( this->request );
+}
+
+std::clock_t	PendingCgiTask::getTimestamp( void ) const
+{
+	return ( this->timestamp );
+}
+
+bool	PendingCgiTask::isTimeout( std::clock_t toDuration ) const
+{
+	std::clock_t	now = std::clock();
+	std::clock_t	duration = now - this->timestamp;
+
+	return ( duration < toDuration );
+}
+
+int	PendingCgiTask::getFd( void ) const
+{
+	return ( this->fd );
+}
+
+std::string	PendingCgiTask::getTaskOutput( void )
+{
+	char		buf[ BUFFER_SIZE + 1 ];
+	std::string	resBody;
+	int			bytes_read = read( this->fd, buf, BUFFER_SIZE );
+
+	while ( bytes_read == BUFFER_SIZE )
 	{
-		buf[bytes_read] = 0;
-		resBody += std::string(buf);
-		bytes_read = read(fd, buf, BUFFER_SIZE);
+		buf[ BUFFER_SIZE ] = 0;
+		resBody += buf;
+		bytes_read = read( this->fd, buf, BUFFER_SIZE );
 	}
-	close(fd);
-	if (bytes_read < 0)
+	if ( bytes_read < 0 )
+		Log::Error( "Read from child failed" );
+	buf[ bytes_read ] = 0;
+	resBody += buf;
+	close( this->fd );
+	return ( resBody );
+}
+
+void	PendingCgiTask::applyTaskOutputToReq( void )
+{
+	char		buf[ BUFFER_SIZE + 1 ];
+	std::string	resBody;
+	int			bytes_read = read( this->fd, buf, BUFFER_SIZE );
+
+	while ( bytes_read == BUFFER_SIZE )
 	{
-		Log::Error(std::string("Read from child failed"));
-		buf[0] = 0;
+		buf[ bytes_read ] = 0;
+		resBody += buf;
+		bytes_read = read( this->fd, buf, BUFFER_SIZE );
+	}
+	close( this->fd );
+	if ( bytes_read < 0 )
+	{
+		Log::Error( "Read from child failed" );
+		buf[ 0 ] = 0;
 		return ;
 	}
-	buf[bytes_read] = 0;
-	resBody += std::string(buf);
-	Log::Success(std::string("read" + resBody));
-	request.setCgiOutput(resBody);
+	buf[ bytes_read ] = 0;
+	resBody += buf;
+	Log::Success( "read" + resBody );
+	this->request.setCgiOutput( resBody );
 }
