@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 11:47:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/17 16:35:03 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/17 16:40:02 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ std::string	FolderLs::recLen( unsigned char input )
 {
 	std::stringstream	st;
 
-	st << (unsigned int)input;
+	st << ( unsigned int )input;
 	return ( st.str() );
 }
 
@@ -45,7 +45,7 @@ std::string	FolderLs::entryType( unsigned char input )
 			return ( strVal[ i ] );
 		i++;
 	}
-	st << "DT out of range [" << (unsigned int)input << "]";
+	st << "DT out of range [" << ( unsigned int )input << "]";
 	return ( st.str() );
 }
 
@@ -73,7 +73,7 @@ void	FolderLs::entryInfo( std::string& cat, const std::string& path )
 	if ( !stat( path.c_str() , &statbuf ) )
 	{
 		st << "<td>";
-		st << (unsigned int)statbuf.st_size;
+		st << ( unsigned int )statbuf.st_size;
 		st << "</td>";
 		st << "<td>";
 		st << epochsToDate( static_cast< unsigned long int >( statbuf.st_mtime ) );
