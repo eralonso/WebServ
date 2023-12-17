@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:58:31 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/17 13:05:20 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/17 14:14:39 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ Requests::Requests( const Requests& b ): std::vector< Request* >( b ) {}
 
 Requests&	Requests::operator=( const Requests& b )
 {
-	if ( this == &b )
+	if ( this != &b )
 		std::vector< Request* >::operator=( b );
 	return ( *this );
 }

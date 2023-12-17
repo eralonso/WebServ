@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/06 11:36:16 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/17 14:45:47 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,314 +18,327 @@
 
 size_t	Request::id_counter = 0;
 
-Request::Request(void)
+Request::Request( void )
 {
-	id = id_counter;
-	id_counter++;
-	client = NULL;
-	status = IDLE;
-	useCgi = false;
-	error = 0;
+	this->id = Request::id_counter;
+	Request::id_counter++;
+	this->client = NULL;
+	this->status = IDLE;
+	this->useCgi = false;
+	this->error = 0;
 	// Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
-Request::Request(Client *cli)
+Request::Request( Client *cli )
 {
-	id = id_counter;
-	id_counter++;
-	client = cli;
-	status = FD_BOND;
-	useCgi = false;
-	error = 0;
+	this->id = Request::id_counter;
+	Request::id_counter++;
+	this->client = cli;
+	this->status = FD_BOND;
+	this->useCgi = false;
+	this->error = 0;
 	// Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
-Request::~Request()
+Request::~Request( void ) {}
+
+Request::Request( const Request& b )
 {
+	this->id = Request::id_counter;
+	Request::id_counter++;
+	this->badRequest = false;
+	this->chunkSize = b.chunkSize;
+	this->client = b.client;
+	this->status = b.status;
+	this->method = b.method;
+	this->route = b.route;
+	this->query = b.query;
+	this->headers = b.headers;
+	this->body = b.body;
+	this->cgiOutput = b.cgiOutput;
+	this->useCgi = b.useCgi;
+	this->error = b.error;
+	this->routeChain = b.routeChain;
+	this->document = b.document;
+	this->docExt = b.docExt;
 }
 
-Request::Request(const Request& b)
+Request&	Request::operator=( const Request& b )
 {
-	id = id_counter;
-	id_counter++;
-	badRequest = false;
-	chunkSize = b.chunkSize;
-	client = b.client;
-	status = b.status;
-	method = b.method;
-	route = b.route;
-	query = b.query;
-	headers = b.headers;
-	body = b.body;
-	cgiOutput = b.cgiOutput;
-	useCgi = b.useCgi;
-	error = b.error;
-	routeChain = b.routeChain;
-	document = b.document;
-	docExt = b.docExt;
+	if ( this != &b )
+	{
+		this->badRequest = false;
+		this->chunkSize = b.chunkSize;
+		this->client = b.client;
+		this->status = b.status;
+		this->method = b.method;
+		this->route = b.route;
+		this->query = b.query;
+		this->headers = b.headers;
+		this->body = b.body;
+		this->cgiOutput = b.cgiOutput;
+		this->useCgi = b.useCgi;
+		this->error = b.error;
+		this->routeChain = b.routeChain;
+		this->document = b.document;
+		this->docExt = b.docExt;
+	}
+	return ( *this );
 }
 
-Request&	Request::operator=(const Request& b)
-{
-	badRequest = false;
-	chunkSize = b.chunkSize;
-	client = b.client;
-	status = b.status;
-	method = b.method;
-	route = b.route;
-	query = b.query;
-	headers = b.headers;
-	body = b.body;
-	cgiOutput = b.cgiOutput;
-	useCgi = b.useCgi;
-	error = b.error;
-	routeChain = b.routeChain;
-	document = b.document;
-	docExt = b.docExt;
-	return (*this);
-}
-
-int Request::bindClient(Client* cli)
+int	Request::bindClient( Client* cli )
 {
 	this->client = cli;
 	status = FD_BOND;
-	return (status);
+	return ( status );
 }
 
-void Request::parseRoute(void)
+void	Request::parseRoute( void )
 {
-	std::vector<std::string> tokens = SplitString::split(route,
-										std::string("?"));
+	StringVector			tokens;
+	size_t					len;
+	StringVector::iterator	doc;
 
-	size_t	len = tokens.end() - tokens.begin();
-	if (len > 2)
+	tokens = SplitString::split( route, "?" );
+	len = tokens.end() - tokens.begin();
+	if ( len > 2 )
 	{
-		Log::Error("Request query string invalid");
-		badRequest = true;
+		Log::Error( "Request query string invalid" );
+		this->badRequest = true;
 		return ;
 	}
-	if (len > 1)
+	if ( len > 1 )
 	{
-		route = SUtils::trim(tokens[0]);
-		query = SUtils::trim(tokens[1]);                                                                                 
+		this->route = SUtils::trim( tokens[ 0 ] );
+		this->query = SUtils::trim( tokens[ 1 ] );                                                                                 
 	}
-	routeChain = SplitString::split(route, std::string("/"));
-	if (routeChain.size() > 0 && (route.size() > 0 && route[route.size() - 1] != '/'))
+	this->routeChain = SplitString::split( this->route, "/" );
+	if ( this->routeChain.size() > 0 && ( this->route.size() > 0 \
+			&& this->route[ this->route.size() - 1 ] != '/' ) )
 	{
-		std::vector<std::string>::iterator doc = routeChain.end();
-		doc--;
-		document = *doc;
-		routeChain.erase(doc);
+		doc = this->routeChain.end() - 1;
+		this->document = *doc;
+		this->routeChain.erase( doc );
 		splitDocExt();
 	}
-	if (routeChain.size() == 0 && (route.size() < 1 || route[0] != '/'))
-		Log::Error("routeChain is empty");
-	Log::Info("Route Chaine: " + getRouteChaineString());
-	Log::Info("Document: " + getDocument());
-	Log::Info("Extension: " + getDocExt());
+	if ( this->routeChain.size() == 0 && ( this->route.size() < 1 \
+			|| this->route[ 0 ] != '/' ) )
+		Log::Error( "routeChain is empty" );
+	Log::Info( "Route Chaine: " + getRouteChaineString() );
+	Log::Info( "Document: " + getDocument() );
+	Log::Info( "Extension: " + getDocExt() );
 	//TODO
 	//check if route is valid
 	//check if route is available
 }
 
-void Request::parseFirstLine(const std::string &line)
+void	Request::parseFirstLine( const std::string &line )
 {
-	std::vector<std::string> tokens = SplitString::split(line,
-										std::string(" "));
-	if ((tokens.end() - tokens.begin()) < 3)
+	StringVector	tokens;
+
+	tokens = SplitString::split( line, " " );
+	if ( ( tokens.end() - tokens.begin() ) < 3 )
 	{
-		Log::Error("Request first line incomplete");
+		Log::Error( "Request first line incomplete" );
 		badRequest = true;
 		return ;
 	}
-	method = SUtils::trim(tokens[0]);
+	this->method = SUtils::trim( tokens[ 0 ] );
 	//TODO
 	// if (method not in implemented)
 	// 	badRequest true;
-	route = SUtils::trim(tokens[1]);
-	protocol = SUtils::trim(tokens[2]);
+	this->route = SUtils::trim( tokens[ 1 ] );
+	this->protocol = SUtils::trim( tokens[ 2 ] );
 	//TODO
 	//check if protocol matches
 	parseRoute();
 }
 
-void Request::parseHeader(const std::string &line)
+void	Request::parseHeader( const std::string &line )
 {
-	std::vector<std::string> tokens = SplitString::split(line,
-										std::string(":"));	
-	if ((tokens.end() - tokens.begin()) < 2)
+	StringVector	tokens;
+
+	tokens = SplitString::split( line, ":" );
+	if ( ( tokens.end() - tokens.begin() ) < 2 )
 	{
-		headers.append(tokens[0], std::string(""));
+		this->headers.append( tokens[ 0 ], "" );
 		return ;
 	}
-	headers.append(tokens[0], SUtils::trim(tokens[1]));	
+	this->headers.append( tokens[ 0 ], SUtils::trim( tokens[ 1 ] ) );	
 }
 
-Request::t_status Request::getStatus() const
+Request::t_status	Request::getStatus( void ) const
 {
-	return (status);
+	return ( this->status );
 }
 
-int Request::getError() const
+int Request::getError( void ) const
 {
-	return error;
+	return ( this->error );
 }
 
-std::string		Request::getCgiOutput() const
+std::string	Request::getCgiOutput( void ) const
 {
-	return (cgiOutput);
+	return ( this->cgiOutput );
 }
 
-bool Request::getUseCgi() const
+bool	Request::getUseCgi( void ) const
 {
-	return useCgi;
+	return ( useCgi );
 }
 
-Client* Request::getClient()
+Client	*Request::getClient( void ) const
 {
-	return (client);
+	return ( this->client );
 }
 
-std::string Request::getProtocol() const
+std::string	Request::getProtocol( void ) const
 {
-	return (protocol);
+	return ( this->protocol );
 }
 
- std::string						Request::getMethod() const
+std::string	Request::getMethod( void ) const
 {
-	return (method);
+	return ( this->method );
 }
 
- std::string						Request::getRoute() const
+std::string	Request::getRoute( void ) const
 {
-	return (route);
+	return ( this->route );
 }
 
-std::vector<std::string> Request::getRouteChaine() const
+StringVector	Request::getRouteChaine( void ) const
 {
-	return routeChain;
+	return ( this->routeChain );
 }
 
-std::string Request::getRouteChaineString() const
+std::string	Request::getRouteChaineString( void ) const
 {
-	size_t it = 0;
-	size_t size = routeChain.size();
-	std::string chain = std::string("/");
-	while (it < size)
+	size_t		it = 0;
+	size_t		size = this->routeChain.size();
+	std::string	chain( "/" );
+
+	while ( it < size )
 	{
-		chain += routeChain[it] + "/";
+		chain += this->routeChain[ it ] + "/";
 		it++;
 	}
-	return chain;
+	return ( chain );
 }
 
-std::string Request::getDocument() const
+std::string	Request::getDocument( void ) const
 {
-	return document;
+	return ( this->document );
 }
 
-std::string Request::getDocExt() const
+std::string	Request::getDocExt( void ) const
 {
-	return docExt;
+	return ( this->docExt );
 }
 
-std::string							Request::getQuery() const
+std::string	Request::getQuery( void ) const
 {
-	return (query);
+	return ( this->query );
 }
 
-const Headers&						Request::getHeaders() const
+const Headers&	Request::getHeaders( void ) const
 {
-	return (headers);
+	return ( this->headers );
 }
 
-std::string Request::getHost()
+std::string	Request::getHost( void )
 {
-	Header* h = headers.firstWithKey("Host");
-	if (h)
-		return h->getValue();
+	Header* h = headers.firstWithKey( "Host" );
+
+	if ( h != NULL )
+		return ( h->getValue() );
 	else
-		return std::string("Unknown");
+		return ( "Unknown" );
 }
 
-size_t								Request::getBodyLength() const
+size_t	Request::getBodyLength( void ) const
 {
-	return (body.length());
+	return ( this->body.length() );
 }
 
-std::string							Request::getBody() const
+std::string	Request::getBody( void ) const
 {
-	return (body);
+	return ( this->body );
 }
 
-size_t Request::getId() const
+size_t	Request::getId( void ) const
 {
-	return id;
+	return ( this->id );
 }
 
-bool Request::processLineOnFdBond(const std::string &line)
+bool	Request::processLineOnFdBond( const std::string &line )
 {
 	size_t len = line.length();
-	if (len == 0 || (len == 1 && line[0] <= ' '))
+
+	if ( len == 0 || ( len == 1 && line[ 0 ] <= ' ' ) )
 	{
-		status = RECVD_START;
-		return true;
+		this->status = RECVD_START;
+		return ( true );
 	}
-	parseFirstLine(line);
-	status = RECVD_REQ_LINE;
-	return true;
+	parseFirstLine( line );
+	this->status = RECVD_REQ_LINE;
+	return ( true );
 }
 
-bool Request::processLineOnRecvdStart(const std::string &line)
+bool	Request::processLineOnRecvdStart( const std::string &line )
 {
-	parseFirstLine(line);
+	parseFirstLine( line );
 	status = RECVD_REQ_LINE;
-	return true;
+	return ( true );
 }
 
-bool Request::processLineOnRecvdReqLine(const std::string &line)
+bool	Request::processLineOnRecvdReqLine( const std::string &line )
 {
-	size_t len = line.length();
-	size_t contentSize = 0;
-	std::string data;
-	if (len == 0 || (len == 1 && line[0] <= ' '))
+	size_t		len = line.length();
+	size_t		contentSize = 0;
+	std::string	data;
+	size_t		got;
+
+	if ( len == 0 || ( len == 1 && line[ 0 ] <= ' ' ) )
 	{
-		status = RECVD_HEADER;
+		this->status = RECVD_HEADER;
 		checkKeepAlive();
-		if (checkChunked())
-			return true;
-		if 	(!checkEmptyContent(contentSize))
+		if ( checkChunked() )
+			return ( true );
+		if ( !checkEmptyContent( contentSize ) )
 		{
-			size_t got = client->getNChars(data, contentSize);
-			body += data;
-			if (got == contentSize)
+			got = this->client->getNChars(data, contentSize);
+			this->body += data;
+			if ( got == contentSize )
 			{
-				status = RECVD_ALL;
+				this->status = RECVD_ALL;
 				// Log::Success(body);
 			}
 		}
-		return true;
+		return ( true );
 	}
-	parseHeader(line);
-	return true;
+	parseHeader( line );
+	return ( true );
 }
 
-bool Request::processLineOnRecvdHeader(const std::string &line)
+bool	Request::processLineOnRecvdHeader( const std::string &line )
 {
-	body += line + '\n';
-	Header* clHead = headers.firstWithKey("Content-Length");
-	if (clHead)
+	Header*	clHead = this->headers.firstWithKey( "Content-Length" );
+	size_t	contentSize;
+
+	this->body += line + '\n';
+	if ( clHead != NULL )
 	{
-		size_t contentSize = atol(clHead->getValue().c_str());
-		if (body.size() >= contentSize)
+		contentSize = std::atol( clHead->getValue().c_str() );
+		if ( this->body.size() >= contentSize )
 		{
 			// Log::Success(body);
-			status = RECVD_ALL;
+			this->status = RECVD_ALL;
 		}
-		return (client->getPendingSize() > 0);
+		return ( this->client->getPendingSize() > 0 );
 	}
-	status = RECVD_ALL;
-	return true;
+	this->status = RECVD_ALL;
+	return ( true );
 }
 
 bool Request::processLineOnRecvdChunkSize(const std::string &line)
