@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 17:38:14 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/17 13:09:04 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/17 13:35:44 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ socket_t	Sockets::acceptConnection( socket_t fd )
 	struct sockaddr_in	addr;
 	socklen_t			addr_size;
 
+	addr_size = sizeof( addr );
 	connected = accept( fd, ( struct sockaddr * )&addr, &addr_size );
 	if ( connected < 0 )
 	{
