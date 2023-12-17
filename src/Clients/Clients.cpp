@@ -6,68 +6,88 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:50 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/06 10:56:33 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/17 14:10:27 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/Clients.hpp"
 #include "Clients.hpp"
 
-Clients::Clients()
-{
-}
+Clients::Clients( void ) {}
 
-Clients::~Clients()
+Clients::~Clients( void )
 {
-}
-
-Clients::Clients(const Clients&): std::map<socket_t, Client*>()
-{
-}
-
-Clients& Clients::operator=(const Clients&)
-{
-	return (*this);
-}
-
-Client* Clients::newClient(socket_t socket, WSPoll& polls)
-{
-	Client* cli = new Client(socket, polls);
-	if (!cli)
-		return (NULL);
-	insert(std::pair<socket_t, Client*>(socket, cli));
-	cli->cgis.appendCgi("py", "/usr/bin/python");
-	return (cli);
-}
-
-size_t Clients::eraseClient(Client* cli)
-{
-	if (cli)
+	for ( Clients::iterator it = this->begin(); it != this->end(); it++ )
 	{
-		socket_t socket = cli->getClientSocket();
-		size_t s = erase(socket);
-		delete cli;
-		return (s);
+		if ( it->second != NULL )
+			delete it->second;
 	}
-	return (0);
 }
 
-size_t Clients::eraseClient(socket_t socket)
+Clients::Clients( const Clients& c ): std::map< socket_t, Client * >( c ) {}
+
+Clients&	Clients::operator=( const Clients& c )
 {
-	return (erase(socket));
+	if ( this != &c )
+		std::map< socket_t, Client * >::operator=( c );
+	return ( *this );
 }
 
-bool Clients::checkPendingToSend()
+Client	*Clients::newClient( socket_t socket, WSPoll& polls )
 {
-	Clients::iterator it = begin();
-	Clients::iterator ite = end();
+	Client	*cli = new Client( socket, polls );
+
+	if ( !cli )
+		return ( NULL );
+	this->insert( std::pair< socket_t, Client * >( socket, cli ) );
+	cli->cgis.appendCgi( "py", "/usr/bin/python" );
+	return ( cli );
+}
+
+size_t	Clients::eraseClient( Client *cli )
+{
+	socket_t	socket;
+	size_t		s;
+
+	if ( cli != NULL )
+	{
+		socket = cli->getClientSocket();
+		s = this->erase( socket );
+		delete cli;
+		return ( s );
+	}
+	return ( 0 );
+}
+
+size_t	Clients::eraseClient( socket_t socket )
+{
+	Client	*cli = NULL;
+
+	try
+	{
+		cli = this->at( socket );
+		if ( cli != NULL )
+			delete cli;
+	}
+	catch ( const std::exception& e )
+	{
+		return ( 0 );
+	}
+	return ( this->erase( socket ) );
+}
+
+bool	Clients::checkPendingToSend( void )
+{
+	Clients::iterator	it = this->begin();
+	Clients::iterator	ite = this->end();
+	bool				somePending = false;
+
 	// if (size()==0)
 	// 	Log::Info("No Client to check");
-	bool somePending = false;
-	while (it != ite)
+	while ( it != ite )
 	{
-		somePending |= it->second->checkPendingToSend();
+		if ( it->second != NULL )
+			somePending |= it->second->checkPendingToSend();
 		it++;
 	}
-	return somePending;
+	return ( somePending );
 }

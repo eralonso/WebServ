@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/17 12:18:14 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/17 13:43:35 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ Receptionist& 	Receptionist::operator=( const Receptionist& b )
 {
 	if ( this != &b )
 	{
-		this->polls = WSPoll( b.polls );
+		this->polls = b.polls;
 		this->_servers = b._servers;
 		this->timeout = b.timeout;
 	}
@@ -94,7 +94,7 @@ int	Receptionist::addNewClient( socket_t serverFd )
 		Log::Error( "Too many clients trying to connect to server" );
 		close( clientFd );
 	}
-	if ( !newClient( clientFd, polls ) )
+	else if ( !Clients::newClient( clientFd, polls ) )
 	{
 		Log::Error( "Failed to append Request" );
 		close( clientFd );
