@@ -6,221 +6,230 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/06 11:37:09 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/17 12:46:14 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/Client.hpp"
-#include "../../inc/Response.hpp"
-#include "../../inc/Receptionist.hpp"
+#include "Response.hpp"
+#include "Receptionist.hpp"
 #include "Client.hpp"
 #include "Router.hpp"
 
 size_t	Client::id_counter = 0;
 
-Client::Client(void)
+Client::Client( void )
 {
-	id = id_counter;
-	id_counter++;
-	keepAlive = false;
-	pending = 0;
-	socket = -1;
+	this->id = Client::id_counter;
+	Client::id_counter++;
+	this->keepAlive = false;
+	this->pending = 0;
+	this->socket = -1;
 	this->polls = NULL;
 	// Log::Info("Created client id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
-Client::Client(socket_t pollsocket, WSPoll& polls)
+Client::Client( socket_t pollsocket, WSPoll& polls )
 {
-	id = id_counter;
-	id_counter++;
-	keepAlive = false;
-	pending = 0;
-	socket = pollsocket;
+	this->id = Client::id_counter;
+	Client::id_counter++;
+	this->keepAlive = false;
+	this->pending = 0;
+	this->socket = pollsocket;
 	this->polls = &polls;
 	// Log::Info("Created client id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
-Client::~Client()
+Client::~Client( void ) {}
+
+Client::Client( const Client& b ): Requests()
 {
+	this->id = Client::id_counter;
+	Client::id_counter++;
+	this->socket = b.socket;
+	this->pending = b.pending;
+	this->received = b.received;
 }
 
-Client::Client(const Client& b): Requests()
+Client&	Client::operator=( const Client& b )
 {
-	id = id_counter;
-	id_counter++;
-	socket = b.socket;
-	pending = b.pending;
-	received = b.received;
+	if ( this != &b )
+	{
+		this->socket = b.socket;
+		this->pending = b.pending;
+		this->received = b.received;
+	}
+	return ( *this );
 }
 
-Client&	Client::operator=(const Client& b)
+int Client::bindClientPoll( socket_t pollsocket )
 {
-	socket = b.socket;
-	pending = b.pending;
-	received = b.received;
-	return (*this);
+	this->socket = pollsocket;
+	return ( 0 );
 }
 
-int Client::bindClientPoll(socket_t pollsocket)
+socket_t	Client::getClientSocket( void ) const
 {
-	socket = pollsocket;
-	return 0;
+	return ( this->socket );
 }
 
-socket_t	Client::getClientSocket()
+size_t	Client::getId( void ) const
 {
-	return (socket);
+	return ( this->id );
 }
 
-size_t	Client::getId()
+void	Client::LogId( void ) const
 {
-	return id;
+	Log::Info( "Client id: " + SUtils::longToString( id ) );
 }
 
-void	Client::LogId()
+Request	*Client::findRecvRequest( void )
 {
-	Log::Info("Client id: " + SUtils::longToString((long)id));
-}
+	Request				*req = NULL;
+	Requests::iterator	it = this->begin();
+	Requests::iterator	ite = this->end();
 
-Request*	Client::findRecvRequest()
-{
-	Request* req;
-	Requests::iterator	it = begin();
-	Requests::iterator	ite = end();
-	while (it != ite)
+	while ( it != ite )
 	{
 		req = *it;
-		if(req && req->isReceiving())
-			return (req);
+		if ( req && req->isReceiving() )
+			return ( req );
 		it++;
 	}
-	return NULL;
+	return ( NULL );
 }
 
-Request* Client::findCompleteRecvRequest()
+Request	*Client::findCompleteRecvRequest( void )
 {
-	Request* req;
-	Requests::iterator	it = begin();
-	Requests::iterator	ite = end();
-	while (it != ite)
+	Request				*req = NULL;
+	Requests::iterator	it = this->begin();
+	Requests::iterator	ite = this->end();
+
+	while ( it != ite )
 	{
 		ite--;
 		req = *ite;
-		if(req && req->isCompleteRecv())
-			return (req);
+		if ( req && req->isCompleteRecv() )
+			return ( req );
 	}
-	return NULL;
+	return ( NULL );
 }
 
-Request* Client::findReadyToSendRequest()
+Request	*Client::findReadyToSendRequest( void )
 {
-	Request* req;
-	Requests::iterator	ite = end();
-	if (size() > 0)
+	Request				*req;
+	Requests::iterator	ite = this->end();
+
+	if ( this->size() > 0 )
 	{
 		ite--;
 		req = *ite;
-		if(req && req->isReadyToSend())
-			return (req);
+		if ( req && req->isReadyToSend() )
+			return ( req );
 	}
-	return NULL;
+	return ( NULL );
 }
 
-int Client::manageRecv(std::string recv)
+int	Client::manageRecv( std::string recv )
 {
-	received += recv;
-	std::string line;
+	std::string	line;
 	bool		fail = false;
 	bool		cont = true;
-	while (cont && !fail && getLine(line))
+	Request		*req = NULL;
+
+	this->received += recv;
+	while ( cont && !fail && getLine( line ) )
 	{
-		Request* req = findRecvRequest();
-		if (req)
-			cont = req->processLine(line);
+		req = findRecvRequest();
+		if ( req != NULL )
+			cont = req->processLine( line );
 		else
 		{
-			req = appendRequest(this);
-			if (req)
-				cont = req->processLine(line);
+			req = Requests::appendRequest( this );
+			if ( req != NULL )
+				cont = req->processLine( line );
 			else
 				fail = true;
 		}
 	}
 	purgeUsedRecv();
-	if (fail)
+	if ( fail == true )
 	{
-		Log::Error("Coudn't create new Request");
-		return 1;
+		Log::Error( "Coudn't create new Request" );
+		return ( 1 );
 	}
-	return 0;
+	return ( 0 );
 }
 
-int	Client::manageCompleteRecv()
+int	Client::manageCompleteRecv( void )
 {
-	Request* req;
-	int count = 0;
-	while ((req = findCompleteRecvRequest()))
+	Request		*req = NULL;
+	int			count = 0;
+
+	while ( ( req = findCompleteRecvRequest() ) )
 	{
-		if (Router::processRequestReceived(*req))
+		if ( Router::processRequestReceived( *req ) )
 			count++;
 	}
-	return (count);
+	return ( count );
 }
 
-int	Client::managePollout()
+int	Client::managePollout( void )
 {
-	Request* req;
-	Response* res;
-	int count = 0;
-	while ((req = findReadyToSendRequest()))
+	Request		*req = NULL;
+	Response	*res = NULL;
+	int			count = 0;
+
+	while ( ( req = findReadyToSendRequest() ) )
 	{
-		res = Router::getResponse(req);
-		if (res && sendResponse(res->toString()))
+		res = Router::getResponse( req );
+		if ( res && sendResponse( res->toString() ) )
 		{
 			count++;
-			eraseRequest();
+			Requests::eraseRequest();
 			delete res;
 			res = NULL;
 		}
 	}
-	return count;
+	return ( count );
 }
 
-bool Client::getKeepAlive() const
+bool	Client::getKeepAlive( void ) const
 {
-	return keepAlive;
+	return ( this->keepAlive );
 }
 
-int	Client::sendResponse(std::string resp)
+int	Client::sendResponse( std::string resp )
 {
-	if (socket >= 0)
-		return (Receptionist::sendResponse(socket, resp));
-	return (0);
+	if ( this->socket >= 0 )
+		return ( Receptionist::sendResponse( this->socket, resp ) );
+	return ( 0 );
 }
 
-bool Client::getLine(std::string& line)
+bool	Client::getLine( std::string& line )
 {
-	size_t found = received.find('\n', pending);
-	if (found == std::string::npos)
-		return false;
-	line = received.substr(pending, found - pending);
-	pending = found + 1;
-	return true;
+	size_t	found = this->received.find( '\n', this->pending );
+
+	if ( found == std::string::npos )
+		return ( false );
+	line = this->received.substr( this->pending, found - this->pending );
+	this->pending = found + 1;
+	return ( true );
 }
 
-size_t Client::getNChars(std::string &data, size_t n)
+size_t	Client::getNChars( std::string &data, size_t n )
 {
-	size_t remain = received.size() - pending;
-	if (n > remain)
+	size_t	remain = this->received.size() - this->pending;
+
+	if ( n > remain )
 		n = remain;
-	data = received.substr(pending, n);
-	pending += n;
-	return n;
+	data = this->received.substr( this->pending, n );
+	this->pending += n;
+	return ( n );
 }
 
-size_t	Client::getPendingSize() const
+size_t	Client::getPendingSize( void ) const
 {
-	return (received.size() - pending);
+	return ( this->received.size() - this->pending );
 }
 
 // int Client::setDummyRecv()
@@ -237,39 +246,40 @@ size_t	Client::getPendingSize() const
 // 	return (1);
 // }
 
-bool Client::setKeepAlive(bool value)
+bool	Client::setKeepAlive( bool value )
 {
-	keepAlive = value;
-	return keepAlive;
+	this->keepAlive = value;
+	return ( this->keepAlive );
 }
 
-size_t Client::purgeUsedRecv()
+size_t	Client::purgeUsedRecv( void )
 {
-	size_t pendSize = getPendingSize();
-	received = received.substr(pending, pendSize);
-	pending = 0;
-	return (pendSize);
+	size_t	pendSize = getPendingSize();
+
+	this->received = this->received.substr( this->pending, pendSize );
+	this->pending = 0;
+	return ( pendSize );
 }
 
-void Client::allowPollWrite(bool value)
+void	Client::allowPollWrite( bool value )
 {
-	struct pollfd	*clientPoll;	
-	if (polls)
+	struct pollfd	*clientPoll = NULL;
+
+	if ( this->polls != NULL )
 	{
 		// polls->allowPollWrite(socket, value);
 		try
 		{
-			clientPoll = &(polls->operator[](socket));
+			clientPoll = &( polls->operator[]( socket ) );
 		}
 		catch ( std::out_of_range& e )
 		{ 
 			Log::Info( "ClientPoll for [ " \
-				+ SUtils::longToString( (long)socket )\
-				+ " ]: " \
-				+ "not found");
+				+ SUtils::longToString( this->socket ) \
+				+ " ]: not found");
 			return ;
 		}
-		if (value)
+		if ( value )
 			clientPoll->events |= POLLOUT;
 		else 
 			clientPoll->events &= ~POLLOUT;
@@ -277,16 +287,17 @@ void Client::allowPollWrite(bool value)
 	// 	polls->allowPollWrite(socket, value);
 	}
 	else
-		Log::Error("Polls not found on Client " + SUtils::longToString(id));
+		Log::Error( "Polls not found on Client " \
+			+ SUtils::longToString( this->id ) );
 }
 
-bool Client::checkPendingToSend()
+bool	Client::checkPendingToSend( void )
 {
 	LogId();
-	if (Requests::checkPendingToSend())
+	if ( Requests::checkPendingToSend() )
 	{
-		allowPollWrite(true);
-		return true;
+		allowPollWrite( true );
+		return ( true );
 	}
-	return false;
+	return ( false );
 }
