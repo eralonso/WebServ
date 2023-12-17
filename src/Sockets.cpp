@@ -6,14 +6,11 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 17:38:14 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/15 19:41:58 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/17 13:09:04 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Sockets.hpp"
-#include <fcntl.h>
-#include <unistd.h>
-
 
 //OCCF = Orthodox canonical class form
 
@@ -63,7 +60,7 @@ struct sockaddr_in	Sockets::fillSockAddr( int family, uint16_t port, uint32_t ip
 {
 	struct sockaddr_in	addr;
 
-	memset( &addr, 0, sizeof( addr ) );
+	std::memset( &addr, 0, sizeof( addr ) );
 	addr.sin_family = family;
 	addr.sin_port = htons( port );
 	addr.sin_addr.s_addr = htonl( ip_addr );
