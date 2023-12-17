@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/17 18:43:01 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/17 18:46:26 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,7 +191,7 @@ void	CgiExecutor::attendPendingCgiTasks( void )
 		// Log::Info("Set Cgi Request " + SUtils::longToString(req.getId()) + " ReadyToSend");
 		req.setReadyToSend();
 		// req.logStatus();
-		if ( pTask )
+		if ( pTask != NULL )
 		{
 			CgiExecutor::pendingTasks.eraseTask( pTask->getPid() );
 		}
