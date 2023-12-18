@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/18 13:51:11 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/18 16:55:19 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ std::string	Router::getHtml(Request* req)
 	{
 		if (FolderLs::getLs(resFolderLs, route, route) == FolderLs::CANTOPENDIR)
 		{
-			infile.open(route, std::ios::in); 	
+			infile.open(route.c_str(), std::ios::in); 	
 			if (infile.is_open())
 			{
 				while (!std::getline(infile, readBuf).eof())
@@ -203,7 +203,7 @@ bool Router::processRequestReceived(Request &req)
 		std::string host = "";
 		std::string port = "";
 		req.getHostPort(host, port);
-		CgiExecutor cgiExe(req, nullptr);
+		CgiExecutor cgiExe(req, NULL);
 		cgiExe.pushEnvVar(std::string("SERVER_SOFTWARE"), "webserv");
 		cgiExe.pushEnvVar(std::string("SERVER_NAME"), host);
 		cgiExe.pushEnvVar(std::string("GATEWAY_INTERFACE"), "CGI/1.0");

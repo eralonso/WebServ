@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/14 17:27:37 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/18 16:53:42 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ CgiExecutor::CgiExecutor(Request& request, char **env) : request(request)
 	argv[0] = (char *)this->binary.c_str();
 	argv[1] = (char *)this->argument.c_str();
 	argv[2] = NULL;
-	childEnv = nullptr;
+	childEnv = NULL;
 }
 
 CgiExecutor::~CgiExecutor()
@@ -151,13 +151,13 @@ PendingCgiTask *CgiExecutor::getCompletedTask()
 	pid_t	pid;
 	pid = waitpid(-1, NULL, WNOHANG);
 	if (pid < 1)
-		return nullptr;
+		return NULL;
 	if (pendingTasks.empty())
-		return nullptr;
+		return NULL;
 	PendingCgiTask& tk = pendingTasks[pid];
 	if (!tk.isMarkedToDelete())
 		return (&tk);
-	return nullptr;
+	return NULL;
 }
 
 PendingCgiTask *CgiExecutor::getTimeoutedTask(double to)
@@ -165,7 +165,7 @@ PendingCgiTask *CgiExecutor::getTimeoutedTask(double to)
 	PendingCgiTasks::iterator it = pendingTasks.begin();
 	PendingCgiTasks::iterator ite= pendingTasks.end();
 	if (pendingTasks.empty())
-		return nullptr;
+		return NULL;
 	while (it != ite)
 	{
 		if(!it->second.isMarkedToDelete() && it->second.isTimeout(to, false))
@@ -180,20 +180,20 @@ PendingCgiTask *CgiExecutor::getMarkedToDeleteTask()
 	PendingCgiTasks::iterator it = pendingTasks.begin();
 	PendingCgiTasks::iterator ite= pendingTasks.end();
 	if (pendingTasks.empty())
-		return nullptr;
+		return NULL;
 	while (it != ite)
 	{
 		if(it->second.isMarkedToDelete())
 			return (&(it->second));
 		it++;
 	}
-	return nullptr;
+	return NULL;
 }
 
 size_t	CgiExecutor::purgeTimeoutedTasks(double to, size_t max)
 {
 	size_t i = 0;
-	PendingCgiTask *task = nullptr;
+	PendingCgiTask *task = NULL;
 	if (pendingTasks.empty())
 		return 0;
 	while (i < max && (task = getTimeoutedTask(to)))
@@ -207,7 +207,7 @@ size_t	CgiExecutor::purgeTimeoutedTasks(double to, size_t max)
 void	CgiExecutor::attendPendingCgiTasks(void)
 {
 	PendingCgiTask* pTask; 
-	Client* cli = nullptr;
+	Client* cli = NULL;
 	while ((pTask = CgiExecutor::getCompletedTask()))
 	{
 		Log::Info( "Cgi Task completed");
@@ -225,11 +225,11 @@ void	CgiExecutor::attendPendingCgiTasks(void)
 		// Log::Info("Set Cgi Request " + SUtils::longToString(req.getId()) + " ReadyToSend");
 		req.setReadyToSend();
 		// req.logStatus();
-		if (cli != nullptr)
+		if (cli != NULL)
 		 	cli->allowPollWrite(true);
-		// cli = nullptr;
+		// cli = NULL;
 	}
-	cli = nullptr;
+	cli = NULL;
 	if ((pTask = CgiExecutor::getTimeoutedTask(CGI_TO)))
 	{
 		Request& req = pTask->getRequest();
@@ -241,9 +241,9 @@ void	CgiExecutor::attendPendingCgiTasks(void)
 		req.setError(500);
 		req.setReadyToSend();
 		cli = req.getClient();		
-		if (cli != nullptr)
+		if (cli != NULL)
 			cli->allowPollWrite(true);
-		cli = nullptr;
+		cli = NULL;
 	}
 	if ((pendingTasks.size() > 0) && (pTask = CgiExecutor::getMarkedToDeleteTask())) 
 	{

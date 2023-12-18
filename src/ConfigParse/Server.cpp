@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/13 11:31:50 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/18 16:50:27 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ Location*	Server::getLocationAtPath( std::string path ) const
 			return lcp;
 		it++;
 	}
-	return (nullptr);
+	return (NULL);
 }
 
 std::string	Server::getErrorPageWithCode( unsigned int code ) const
