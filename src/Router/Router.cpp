@@ -6,12 +6,15 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/14 17:15:30 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/18 13:13:39 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Router.hpp>
 #include <CgiExecutor.hpp>
+#include <fstream>
+#include <iostream>
+#include <unistd.h>
 
 Router::Router()
 {
@@ -49,6 +52,22 @@ int Router::updateResponse(Response &res, Request &req)
 std::string	Router::getHtml(Request* req)
 {
 	std::string	html;
+	std::string	readBuf;
+	std::string	route = req->getRoute();
+	std::ifstream infile;
+	char buffer[100];
+	getcwd(buffer, 100);
+	route = buffer + route;
+	Log::Info("Reading ... " + route);
+	infile.open(route, std::ios::in); 	
+	if (infile.is_open())
+	{
+		while (!std::getline(infile, readBuf).eof())
+			html += readBuf + std::string("\n");
+		Log::Info("Read ... \n" + html);
+		infile.close();
+		return ( html );
+	}
 	html = "<!DOCTYPE html>\n";
 	html += "<html lang=\"en\">\n";
 	html += "<head>\n";
