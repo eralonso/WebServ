@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/19 12:04:37 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/19 12:36:01 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,7 @@ std::string	Router::getHtml(Request* req)
 	std::string	readBuf;
 	std::string	route = req->getRoute();
 	std::ifstream infile;
-	char buffer[100];
-	getcwd(buffer, 100);
-	std::string path = buffer + route;
+	std::string path = std::string(".") + route;
 	Log::Info("Path to GET ... " + path);
 	if (access(path.c_str(), R_OK) == 0)
 	{
