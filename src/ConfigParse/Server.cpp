@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/02 19:21:21 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/19 14:28:57 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ Directives	*Server::getDirectives( void ) const { return ( this->_directives ); 
 Location	Server::getLocationAtPath( std::string path ) const
 {
 	( void ) path;
-	return ( *this->_directives->_locations.begin() );
+	return ( **this->_directives->_locations.begin() );
 }
 
 std::string	Server::getErrorPageWithCode( unsigned int code ) const
