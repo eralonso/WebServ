@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:10:16 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/01 19:25:24 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/17 14:22:30 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ typedef int										socket_t;
 typedef std::vector< std::string >				StringVector;
 typedef std::vector< const std::string >		ConstStringVector;
 typedef std::map< const std::string, bool >		ConstStringBoolMap;
-typedef std::map< std::string, bool >		StringBoolMap;
+typedef std::map< std::string, bool >			StringBoolMap;
 typedef std::pair< const std::string, bool >	ConstStringBoolPair;
-typedef std::pair< std::string, bool >		StringBoolPair;
+typedef std::pair< std::string, bool >			StringBoolPair;
 
 #endif

@@ -6,15 +6,18 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/14 15:52:39 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/19 18:11:18 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _REQUEST_HPP_
 # define _REQUEST_HPP_
+
 # include <string>
 # include <vector>
+
 # include <Headers.hpp>
+# include <Defines.hpp>
 
 class Client;
 
@@ -36,81 +39,83 @@ public:
 		RESP_RENDERED
 	}	t_status;
 private:
-	static size_t				id_counter;
-	size_t						id;
-	t_status					status;
-	int							error;
-	std::string					cgiOutput;
-	bool						useCgi;
-	size_t 						chunkSize;
-	Client*						client;
-	std::string					protocol;
-	std::string					method;
-	std::string					url;
-	std::string					route;
-	std::string					query;
-	Headers						headers;
-	std::string					body;
-	bool						badRequest;
-	std::vector<std::string>	routeChain;
-	std::string					document;
-	std::string					docExt;
-	void 								parseRoute(void);
-	void 								parseFirstLine(const std::string &line);
-	void 								parseHeader(const std::string &line);
-	bool								processLineOnFdBond(const std::string &line);
-	bool								processLineOnRecvdStart(const std::string &line);
-	bool								processLineOnRecvdReqLine(const std::string &line);
-	bool								processLineOnRecvdHeader(const std::string &line);
-	bool								processLineOnRecvdChunkSize(const std::string &line);
-	bool								processLineOnRecvdChunk(const std::string &line);
-	bool								processLineOnRecvdLastChunk(const std::string &line);
-	bool								checkChunked();
-	bool								checkKeepAlive();
-	int									splitDocExt();
-	bool								checkEmptyContent(size_t& size);
+	static size_t	id_counter;
+	size_t			id;
+	t_status		status;
+	int				error;
+	std::string		cgiOutput;
+	bool			useCgi;
+	size_t 			chunkSize;
+	Client			*client;
+	std::string		protocol;
+	std::string		method;
+	std::string		url;
+	std::string		route;
+	std::string		query;
+	Headers			headers;
+	std::string		body;
+	bool			badRequest;
+	StringVector	routeChain;
+	std::string		document;
+	std::string		docExt;
+private:
+	void	parseRoute( void );
+	void	parseFirstLine( const std::string &line );
+	void	parseHeader( const std::string &line );
+	bool	processLineOnFdBond( const std::string &line );
+	bool	processLineOnRecvdStart( const std::string &line );
+	bool	processLineOnRecvdReqLine( const std::string &line );
+	bool	processLineOnRecvdHeader( const std::string &line );
+	bool	processLineOnRecvdChunkSize( const std::string &line );
+	bool	processLineOnRecvdChunk( const std::string &line );
+	bool	processLineOnRecvdLastChunk( const std::string &line );
+	bool	checkChunked( void );
+	bool	checkKeepAlive( void );
+	int		splitDocExt( void );
+	bool	checkEmptyContent( size_t& size );
 public:
-	Request(void);
-	Request(Client *client);
-	~Request();
-	Request(const Request& b);
-	Request&	operator=(const Request& b);
-	int bindClient(Client* cli);
-	t_status							getStatus() const;
-	int									getError() const;
-	std::string							getCgiOutput() const;
-	bool								getUseCgi() const;
-	Client*								getClient() ;
-	std::string							getProtocol() const;
-	std::string							getMethod() const;
-	std::string							getRoute() const;
-	std::vector<std::string>			getRouteChaine() const;
-	std::string							getRouteChaineString() const;
-	std::string							getDocument() const;
-	std::string							getDocExt() const;
-	std::string							getQuery() const;
-	const Headers&						getHeaders() const;
-	std::string							getHost();
-	std::string 						getPort();
-	bool 								getHostPort(std::string &host, std::string &port);
-	std::string getHeaderWithKey(const std::string &key);
-	size_t 								getBodyLength() const;
-	std::string							getBody() const;
-	size_t								getId() const;
-	bool								isCompleteRecv() const;
-	bool								isReadyToSend() const;
-	bool								isCgiLaunched() const;
-	bool								isReceiving() const;
-	std::string							toString();
-	void								setBody(const std::string& content);
-	void								setReadyToSend();
-	void								setReceivedAll();
-	void								setCgiLaunched();
-	void								setCgiOutput(std::string str);
-	void								setUseCgi(bool value);	
-	void								setError(int);
-	void								logStatus();
-	bool								processLine(const std::string& line);
+	Request( void );
+	Request( Client *client );
+	~Request( void );
+	Request( const Request& b );
+	Request&	operator=( const Request& b );
+public:
+	int				bindClient( Client* cli );
+	t_status		getStatus( void ) const;
+	int				getError( void ) const;
+	std::string		getCgiOutput( void ) const;
+	bool			getUseCgi( void ) const;
+	Client*			getClient( void ) const;
+	std::string		getProtocol( void ) const;
+	std::string		getMethod( void ) const;
+	std::string		getRoute( void ) const;
+	StringVector	getRouteChaine( void ) const;
+	std::string		getRouteChaineString( void ) const;
+	std::string		getDocument( void ) const;
+	std::string		getDocExt( void ) const;
+	std::string		getQuery( void ) const;
+	const Headers&	getHeaders( void ) const;
+	std::string		getHost( void );
+	std::string 	getPort();
+	bool 			getHostPort(std::string &host, std::string &port);
+	std::string		getHeaderWithKey(const std::string &key);
+	size_t 			getBodyLength( void ) const;
+	std::string		getBody( void ) const;
+	size_t			getId( void ) const;
+	bool			isCompleteRecv( void ) const;
+	bool			isReadyToSend( void ) const;
+	bool			isCgiLaunched( void ) const;
+	bool			isReceiving( void ) const;
+	std::string		toString( void );
+	void			setBody( const std::string& content );
+	void			setReadyToSend( void );
+	void			setReceivedAll();
+	void			setCgiLaunched( void );
+	void			setCgiOutput( std::string str );
+	void			setUseCgi( bool value );
+	void			setError( int err );
+	void			logStatus( void );
+	bool			processLine( const std::string& line );
 };
 
 #endif

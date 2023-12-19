@@ -6,14 +6,16 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/19 12:00:49 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/19 17:37:29 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _ROUTER_HPP_
 # define _ROUTER_HPP_
+
 # include <Request.hpp>
 # include <Response.hpp>
+# include <CgiExecutor.hpp>
 
 class Router
 {

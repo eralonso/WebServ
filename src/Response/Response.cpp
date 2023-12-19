@@ -6,84 +6,85 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/14 13:04:14 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/19 18:39:09 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/Utils.hpp"
 #include "../../inc/Response.hpp"
-#include "Response.hpp"
 
-Response::Response() : isCgi(false)
+Response::Response( void ) : isCgi(false)
 {
 }
 
-Response::~Response()
+Response::~Response( void ) {}
+
+Response::Response( const Response& b )
 {
+	this->method = b.method;
+	this->route = b.route;
+	this->query = b.query;
+	this->headers = b.headers;
+	this->body = b.body;	
+	this->isCgi = b.isCgi;
 }
 
-Response::Response(const Response& b)
+Response&	Response::operator=( const Response& b )
 {
-	method = b.method;
-	route = b.route;
-	query = b.query;
-	headers = b.headers;
-	body = b.body;	
-	isCgi = b.isCgi;
+	if ( this != &b )
+	{
+		this->method = b.method;
+		this->route = b.route;
+		this->query = b.query;
+		this->headers = b.headers;
+		this->body = b.body;	
+		this->isCgi = b.isCgi;
+	}
+	return ( *this );
 }
 
-Response&	Response::operator=(const Response& b)
-{
-	method = b.method;
-	route = b.route;
-	query = b.query;
-	headers = b.headers;
-	body = b.body;	
-	isCgi = b.isCgi;
-	return (*this);
-}
-
-void	 					Response::setServer(std::string server)
+void	Response::setServer( std::string server )
 {
 	this->server = server;
-	headers.replace("Server", server);
+	headers.replace( "Server", server );
 }
 
-void	 					Response::setProtocol(std::string protocol)
+void	Response::setProtocol( std::string protocol )
 {
 	this->protocol = protocol;
 }
 
-void	 					Response::setMethod(std::string method)
+void	Response::setMethod( std::string method )
 {
 	this->method = method;
 }
 
-void	 					Response::setRoute(std::string route)
+void	Response::setRoute( std::string route )
 {
 	this->route = route;
 }
 
-void	 					Response::setStatus(unsigned int status)
+void	Response::setStatus( unsigned int status )
 {
 	this->status = status;
 }
 
-void	 					Response::setQuery(std::string query)
+void	Response::setQuery( std::string query )
 {
 	this->query = query;
 }
 
-void	 					Response::setHeaders(Headers headers)
+void	Response::setHeaders( Headers headers )
 {
 	this->headers = headers;
 }
 
-void	 					Response::setBody(std::string content)
+void	Response::setBody( std::string content )
 {
-	body = content;
-	Header h("Content-Lenght", SUtils::longToString(body.length()));
-	headers.replace(h);
+	Header	h( "Content-Lenght", SUtils::longToString( content.length() ) );
+
+	this->body = content;
+	this->headers.replace( h );
 }
 
 void Response::setIsCgi(bool value)
@@ -93,91 +94,91 @@ void Response::setIsCgi(bool value)
 
 void Response::appendHeader(Header header)
 {
-	headers.append(header);
+	this->headers.append( header );
 }
 
-std::string				Response::getServer() const
+std::string	Response::getServer( void ) const
 {
-	return (server);
+	return ( this->server );
 }
 
-std::string				Response::getProtocol() const
+std::string	Response::getProtocol( void ) const
 {
-	return (protocol);
+	return ( this->protocol );
 }
 
-std::string				Response::getMethod() const
+std::string	Response::getMethod( void ) const
 {
-	return (method);
+	return ( this->method );
 }
 
-std::string				Response::getRoute() const
+std::string	Response::getRoute( void ) const
 {
-	return (route);
+	return ( this->route );
 }
 
-unsigned int			Response::getStatus() const
+unsigned int	Response::getStatus( void ) const
 {
-	return (status);
+	return ( this->status );
 }
 
-std::string				Response::getResult() const
+std::string	Response::getResult( void ) const
 {
 	/* Informational responses (100 – 199)
 	Successful responses (200 – 299)
 	Redirection messages (300 – 399)
 	Client error responses (400 – 499)
 	Server error responses (500 – 599)*/
-	int hundreds = ((status)/100 % 10);
-	bool informational = hundreds == 1;
-	bool successful = hundreds == 2;
-	bool redirection = hundreds == 3;
-	bool OK = (informational || successful || redirection);
-	(void)OK;
-	return (StatusCodes::decode(status));
+	//int		hundreds = this->status / 100;
+	//bool	informational = ( hundreds == 1 );
+	//bool	successful = ( hundreds == 2 );
+	//bool	redirection = ( hundreds == 3 );
+	//bool	OK = ( informational || successful || redirection );
+	//(void)OK;
+	return ( StatusCodes::decode( this->status ) );
 }
 
-std::string				Response::getQuery() const
+std::string	Response::getQuery( void ) const
 {
-	return (query);
+	return ( this->query );
 }
 
-const Headers&			Response::getHeaders() const
+const Headers&	Response::getHeaders( void ) const
 {
-	return (headers);
+	return ( this->headers );
 }
 
-Header*					Response::getHeader(std::string key)
+Header	*Response::getHeader( std::string key )
 {
-	return (headers.firstWithKey(key));
+	return ( this->headers.firstWithKey( key ) );
 }
 
-size_t					Response::getContentLength() const
+size_t	Response::getContentLength( void ) const
 {
-	return (body.length());
+	return ( this->body.length() );
 }
 
-std::string				Response::getBody() const
+std::string	Response::getBody( void ) const
 {
-	return (body);
+	return ( this->body );
 }
 
-bool					Response::getIsCgi() const
+bool	Response::getIsCgi() const
 {
-	return isCgi;
+	return (isCgi);
 }
 
-std::string				Response::toString()
+std::string	Response::toString( void ) const
 {
 	std::string ret;
 	if (!isCgi)
 	{
-		ret = protocol + " " + SUtils::longToString(status);
-		ret += std::string(" ") + getResult() + HEADER_SEP;
-		ret += headers.toString();
+		ret = this->protocol + " " + SUtils::longToString( this->status );
+		ret += " " + getResult() + HEADER_SEP;
+		ret += this->headers.toString();
 		ret += HEADER_SEP;
-		ret += body;
-		return (ret);
+		ret += this->body;
+		return ( ret );
 	}
 	return (body);
 }

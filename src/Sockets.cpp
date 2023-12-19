@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 17:38:14 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/27 11:00:44 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/17 13:35:44 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ struct sockaddr_in	Sockets::fillSockAddr( int family, uint16_t port, uint32_t ip
 {
 	struct sockaddr_in	addr;
 
-	memset( &addr, 0, sizeof( addr ) );
+	std::memset( &addr, 0, sizeof( addr ) );
 	addr.sin_family = family;
 	addr.sin_port = htons( port );
 	addr.sin_addr.s_addr = htonl( ip_addr );
@@ -103,6 +103,7 @@ socket_t	Sockets::acceptConnection( socket_t fd )
 	struct sockaddr_in	addr;
 	socklen_t			addr_size;
 
+	addr_size = sizeof( addr );
 	connected = accept( fd, ( struct sockaddr * )&addr, &addr_size );
 	if ( connected < 0 )
 	{
@@ -118,49 +119,67 @@ socket_t	Sockets::acceptConnection( socket_t fd )
 	return ( connected );
 }
 
-void	Sockets::codeHost( socket_t fd, int port, std::string host )
+struct addrinfo Sockets::fillAddrinfo( int family, int socktype, \
+							int protocol, int flags )
 {
-	struct addrinfo	hints;
-	struct addrinfo	*res;
-	struct sockaddr_in	addr;
+	struct addrinfo	info;
+	
+	std::memset( &info, 0, sizeof( info ) );
+	info = ( struct addrinfo ){ .ai_family = family, \
+			.ai_socktype = socktype, .ai_protocol = protocol, \
+			.ai_flags = flags };
+	return ( info );
+}
 
-	res = NULL;
-	memset( &hints, 0, sizeof( hints ) );
-	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE | AI_CANONNAME /*| AI_IDN | AI_CANONIDN*/;
-	getaddrinfo( host.c_str(), NULL, &hints, &res );
+struct sockaddr	Sockets::codeHost( const char *host, int port )
+{
+	struct addrinfo		hints;
+	struct addrinfo		*res = NULL;
+	struct sockaddr_in	addr_in;
+	struct sockaddr		addr;
+
+	hints = fillAddrinfo( AF_INET, SOCK_STREAM, IPPROTO_TCP, AI_PASSIVE );
+	getaddrinfo( host, SUtils::longToString( port ).c_str(), &hints, &res );
 	if ( res != NULL )
 	{
-		bindSocket( fd, res->ai_addr, res->ai_addrlen );
+		addr = *res->ai_addr;
 		freeaddrinfo( res );
 	}
 	else
 	{
-		addr = fillSockAddr( AF_INET, port, Binary::codeAddress( host ) );
-		bindSocket( fd, ( struct sockaddr * )&addr, sizeof( addr ) );
+		addr_in = fillSockAddr( AF_INET, port, Binary::codeAddress( host ) );
+		addr = *( ( struct sockaddr * )&addr_in );
 	}
+	Log::Info( "Address -> " + Binary::decodeAddress( ntohl( ( ( \
+		( struct sockaddr_in * )&addr ) )->sin_addr.s_addr ) ) );
+	return ( addr );
 }
 
 //Create a socket and perform it to be a passive socket ( listen )
 socket_t	Sockets::createPassiveSocket( std::string host, int port, int backlog )
 {
-	int					fd;
-	int					optVal;
-	struct sockaddr_in	addr;
+	socket_t		fd;
+	int				optVal;
+	struct sockaddr	info;
 
-	Log::Error( "[ Passive Socket ] -> host: " + host + " && port: " + SUtils::longToString( port ) );
+	Log::Info( "[ Passive Socket ] -> host: " + host + " && port: " \
+				+ SUtils::longToString( port ) );
 	optVal = 1;
 	fd = socketCreate( AF_INET, SOCK_STREAM, 0 );
 	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
 	setsockopt( fd, SOL_SOCKET, SO_REUSEADDR, &optVal, sizeof( int ) );
-	//codeHost( fd, port, host );
-	//addr = fillSockAddr( AF_INET, port, INADDR_ANY );
-	//addr = fillSockAddr( AF_INET, port, Binary::codeAddress( "127.0.0.1" ) );
-	//addr = fillSockAddr( AF_INET, port, codeHost( host ) );
-	//bindSocket( fd, addr );
-	addr = fillSockAddr( AF_INET, port, Binary::codeAddress( host ) );
-	bindSocket( fd, ( struct sockaddr * )&addr, sizeof(addr) );
-	listenFromSocket( fd, backlog );
+	info = codeHost( host.c_str(), port );
+	try
+	{
+		bindSocket( fd, &info, sizeof( info ) );
+		listenFromSocket( fd, backlog );
+	}
+	catch ( const std::logic_error& e )
+	{
+		Log::Info( "Connection closed in creation [ " \
+				+ SUtils::longToString( fd ) + " ]" );
+		close( fd );
+		throw e;
+	}
 	return ( fd );
 }

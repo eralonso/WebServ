@@ -6,115 +6,120 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 10:20:03 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/13 15:14:46 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/19 18:12:06 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/Headers.hpp"
-#include <algorithm>
 #include "Headers.hpp"
 
-Headers::Headers(){}
+Headers::Headers( void ) {}
 
-Headers::Headers(const Headers& b) : std::vector<Header>(b){}
+Headers::Headers( const Headers& b ): std::vector< Header >( b ) {}
 
-Headers::~Headers(){}
+Headers::~Headers( void ) {}
 
-Headers&	Headers::operator=(const Headers& b)
+Headers&	Headers::operator=( const Headers& b )
 {
-	std::vector<Header>::operator=(b);
-	return (*this);
+	if ( this != &b )
+		std::vector< Header >::operator=( b );
+	return ( *this );
 }
 
-Headers		Headers::filterKey(const std::string& key)
+Headers	Headers::filterKey( const std::string& key )
 {
-	Headers fil;
-	Headers::iterator it = begin();
-	Headers::iterator ite = end();
-	while (it != ite)
+	Headers				fil;
+	Headers::iterator	it = this->begin();
+	Headers::iterator	ite = this->end();
+
+	while ( it != ite )
 	{
-		if (toLower(it->getKey()) == toLower(key))
-			fil.push_back(*it);
+		if ( toLower( it->getKey() ) == toLower( key ) )
+			fil.push_back( *it );
 		it++;
 	}
-	return (fil);
+	return ( fil );
 }
 
-Header			*Headers::firstWithKey(const std::string& key)
+Header	*Headers::firstWithKey( const std::string& key )
 {
-	Headers::iterator it = begin();
-	Headers::iterator ite = end();
-	while (it != ite)
+	Headers::iterator	it = this->begin();
+	Headers::iterator	ite = this->end();
+
+	while ( it != ite )
 	{
-		if (toLower(it->getKey()) == toLower(key))
-			return (&(*it));
+		if ( toLower( it->getKey() ) == toLower( key ) )
+			return ( &( *it ) );
 		it++;
 	}
-	return (NULL);
+	return ( NULL );
 }
 
-void			Headers::append(Header& b)
+void	Headers::append( Header& b )
 {
-	push_back(b);
+	this->push_back( b );
 }
 
-void			Headers::append(const std::string& key, const std::string& value)
+void	Headers::append( const std::string& key, const std::string& value )
 {
-	Header b(key, value);
-	push_back(b);
+	Header	b( key, value );
+
+	this->push_back( b );
 }
 
-void			Headers::replace(Header& b)
+void	Headers::replace( Header& b )
 {
-	replace (b.getKey(), b.getValue());
+	replace( b.getKey(), b.getValue() );
 }
 
-void			Headers::replace(const std::string& key, const std::string& value)
+void	Headers::replace( const std::string& key, const std::string& value )
 {
-	Header b(key, value);
-	Header *p = firstWithKey(key);
-	if (p)
+	Header	b( key, value );
+	Header	*p = firstWithKey( key );
+
+	if ( p != NULL )
 		*p = b;
 	else
-		push_back(b);
+		this->push_back( b );
 }
 
-void			Headers::erase(const std::string& key)
+void	Headers::erase( const std::string& key )
 {
-	Headers::iterator it = begin();
-	Headers::iterator ite = end();
-	while (it != ite)
+	Headers::iterator	it = this->begin();
+	Headers::iterator	ite = this->end();
+
+	while ( it != ite )
 	{
-		if (it->getKey() == key)
-			std::vector<Header>::erase(it);
+		if ( it->getKey() == key )
+			std::vector< Header >::erase( it );
 		else
 			it++;
 	}
 }
 
-void			Headers::erase(Header& h)
+void	Headers::erase( Header& h )
 {
-	erase(h.getKey());
+	erase( h.getKey() );
 }
 
-std::string		Headers::toString(void)
+std::string	Headers::toString( void ) const
 {
-	std::string	ret;
-	Headers::iterator it = begin();
-	Headers::iterator ite = end();
-	while (it != ite)
+	std::string				ret;
+	Headers::const_iterator	it = this->begin();
+	Headers::const_iterator	ite = this->end();
+
+	while ( it != ite )
 	{
 		ret += it->toString();
 		it++;
 	}
-	return std::string(ret);
+	return ( ret );
 }
-std::string Headers::toLower(std::string src)
+std::string	Headers::toLower( std::string src )
 {
 	for ( size_t i = 0; src[ i ] != '\0'; i++ )
 	{
 		if ( src[ i ] >= 'A' && src[ i ] <= 'Z' )
 			src[ i ] += 32;
 	}
-	return (src);
+	return ( src );
 }

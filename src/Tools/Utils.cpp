@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:34:13 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/08 19:39:32 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/17 19:22:43 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,7 +181,7 @@ namespace Binary
 		for ( int i = 3; i >= 0; i-- )
 		{
 			pos = address.find( "." );
-			number = atoi( address.substr( 0, pos ).c_str() );
+			number = std::atoi( address.substr( 0, pos ).c_str() );
 			code |= number;
 			if ( i != 0 )
 				code <<= 8;

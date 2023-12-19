@@ -6,11 +6,12 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 17:25:58 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/05 19:07:55 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/15 19:26:37 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <DirectivesParser.hpp>
+#include <Sockets.hpp>
 
 std::string	DirectivesParser::parsePort( std::string arg, int& ret )
 {
@@ -42,7 +43,7 @@ std::string	DirectivesParser::parseHost( std::string arg, int& ret )
 
 std::string	DirectivesParser::parseListenStrError( int ret, std::string aux )
 {
-	int														error;
+	int			error;
 	std::string	errors[ PARSE_LISTEN_ERRORS_SIZE + 1 ] = { \
 		"Success", \
 		"invalid port in \"" + aux + "\" of the \"listen\"", \
@@ -59,18 +60,16 @@ int	DirectivesParser::checkAvailableHostPort( std::string host, std::string port
 {
 	struct addrinfo	hints;
 	struct addrinfo	*res;
-	int				ret;
+	int				gaiError;
 
-	ret = 0;
+	gaiError = 0;
 	res = NULL;
-	memset( &hints, 0, sizeof( hints ) );
-	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE;
-	ret = getaddrinfo( host.c_str(), port.c_str(), &hints, &res );
+	hints = Sockets::fillAddrinfo( AF_INET, SOCK_STREAM, \
+			IPPROTO_TCP, AI_PASSIVE );
+	gaiError = getaddrinfo( host.c_str(), port.c_str(), &hints, &res );
 	if ( res != NULL )
 		freeaddrinfo( res );
-	return ( ret );
+	return ( gaiError );
 }
 
 bool	DirectivesParser::isValidPort( std::string port )

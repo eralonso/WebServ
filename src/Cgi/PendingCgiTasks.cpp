@@ -6,39 +6,34 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:31 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/12 14:50:52 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/19 17:53:29 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/PendingCgiTasks.hpp"
+#include "PendingCgiTasks.hpp"
 #include <Utils.hpp>
 
-PendingCgiTasks::PendingCgiTasks()
+PendingCgiTasks::PendingCgiTasks( void ) {}
+
+PendingCgiTasks::PendingCgiTasks( const PendingCgiTasks &b ): \
+							std::map< pid_t,PendingCgiTask >( b ) {}
+
+PendingCgiTasks& PendingCgiTasks::operator=( const PendingCgiTasks& b )
 {
+	if ( this != &b )
+		std::map< pid_t,PendingCgiTask >::operator=( b );
+	return ( *this );
 }
 
-PendingCgiTasks::PendingCgiTasks(const PendingCgiTasks &b) :
-	map<pid_t,PendingCgiTask>(b)
+PendingCgiTasks::~PendingCgiTasks( void ) {}
+
+int	PendingCgiTasks::appendTask( PendingCgiTask task )
 {
+	this->insert( std::pair< pid_t, PendingCgiTask >( task.getPid(), task ) );
+	return ( 0 );
 }
 
-PendingCgiTasks& PendingCgiTasks::operator=(const PendingCgiTasks& b)
-{
-	map<pid_t,PendingCgiTask>::operator=(b);
-	return (*this);	
-}
-
-PendingCgiTasks::~PendingCgiTasks()
-{
-}
-
-int PendingCgiTasks::appendTask(PendingCgiTask task)
-{
-	insert(std::pair<pid_t, PendingCgiTask>(task.getPid(), task));
-	return 0;
-}
-
-int PendingCgiTasks::eraseTask(pid_t pid)
+int PendingCgiTasks::eraseTask( pid_t pid )
 {
 	if (pid <= 0 and size() == 1)
 	{
@@ -47,6 +42,8 @@ int PendingCgiTasks::eraseTask(pid_t pid)
 		return (1);
 	}
 	Log::Info("Erasing PendingCgiTask with pid: " + SUtils::longToString(pid));
-	size_t tot = erase(pid);
-	return (tot > 0);
+	size_t tot;
+	
+	tot = this->erase( pid );
+	return ( tot > 0 );
 }

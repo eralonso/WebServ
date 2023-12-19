@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:50:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/08 19:39:34 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/17 19:26:11 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,8 @@ private:
 	CgiMap				_cgi;
 	ServersVector		_servers;
 	LocationsSet		_locations;
-	StringBoolMap	_isSet;
-	bool		_isEmpty;
+	StringBoolMap		_isSet;
+	bool				_isEmpty;
 public:
 	Directives( void );
 	Directives( const Directives& s );
@@ -79,8 +79,9 @@ public:
 	CgiMap				getCgi( void ) const;
 	ServersVector		getServers( void ) const;
 	LocationsSet		getLocations( void ) const;
-	StringBoolMap	getIsSet( void ) const;
-	bool		isEmpty( void ) const;
+	StringBoolMap		getIsSet( void ) const;
+	bool				isEmpty( void ) const;
+	bool				isSet( const std::string& key );
 };
 
 #endif

@@ -6,30 +6,27 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/18 16:53:42 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/19 18:40:17 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <signal.h>
-#include "../../inc/CgiExecutor.hpp"
 #include "Router.hpp"
 #include "Client.hpp"
 #include "CgiExecutor.hpp"
 #define FDIN 0
 #define FDOUT 1
-#define CGI_TO 1
 
 PendingCgiTasks	CgiExecutor::pendingTasks;
 
-CgiExecutor::CgiExecutor(Request& request, char **env) : request(request)
+CgiExecutor::CgiExecutor( Request& request, char **env ): request( request )
 {
-	request.getClient()->cgis.findCgi(request.getDocExt(), binary);
-	argument = std::string(".") + request.getRouteChaineString() + request.getDocument();
-	const std::string	reqBody;
-	Log::Info("CgiExecutor binary: " + binary);
-	Log::Info("CgiExecutor argment: " + argument);
 	(void)env;
+	request.getClient()->cgis.findCgi( request.getDocExt(), binary );
+	this->argument = "." + request.getRouteChaineString() + request.getDocument();
+	Log::Info( "CgiExecutor binary: " + this->binary );
+	Log::Info( "CgiExecutor argment: " + this->argument );
 	// char				*envPath;
 	argv[0] = (char *)this->binary.c_str();
 	argv[1] = (char *)this->argument.c_str();
@@ -44,31 +41,31 @@ CgiExecutor::~CgiExecutor()
 		delete childEnv;
 }
 
-void CgiExecutor::onFailFork(void)
+void	CgiExecutor::onFailFork( void )
 {
-		Log::Error("fork: failed create child process");
-		close(fdToChild[FDIN]);
-		close(fdToChild[FDOUT]);
-		close(fdFromChild[FDIN]);
-		close(fdFromChild[FDOUT]);
-		throw;
+		Log::Error( "fork: failed create child process" );
+		close( this->fdToChild[ FDIN ] );
+		close( this->fdToChild[ FDOUT ] );
+		close( this->fdFromChild[ FDIN ] );
+		close( this->fdFromChild[ FDOUT ] );
+		throw ;
 }
 
-void CgiExecutor::onFailToChildPipeOpen(void)
+void	CgiExecutor::onFailToChildPipeOpen( void )
 {
-	Log::Error("pipe: failed to open pipe to child");
-	throw;
+	Log::Error( "pipe: failed to open pipe to child" );
+	throw ;
 }
 
-void CgiExecutor::onFailFromChildPipeOpen(void)
+void	CgiExecutor::onFailFromChildPipeOpen( void )
 {
-	Log::Error("pipe: failed to open pipe from child");
-	close(fdToChild[FDIN]);
-	close(fdToChild[FDOUT]);
-	throw;
+	Log::Error( "pipe: failed to open pipe from child" );
+	close( this->fdToChild[ FDIN ] );
+	close( this->fdToChild[ FDOUT ] );
+	throw ;
 }
 
-char** CgiExecutor::getEnvVarList()
+char** CgiExecutor::getEnvVarList( void )
 {
 	std::vector<std::string>::iterator it = envVars.begin();
 	std::vector<std::string>::iterator ite = envVars.end();
@@ -84,7 +81,7 @@ char** CgiExecutor::getEnvVarList()
 	return childEnv;
 }
 
-void CgiExecutor::onChildProcess(void)
+void	CgiExecutor::onChildProcess( void )
 {
 	//On child
 	getEnvVarList();
@@ -103,7 +100,7 @@ void CgiExecutor::onChildProcess(void)
 	return; //exit(1) not alloed?
 }
 
-void CgiExecutor::onParentProcess(pid_t childPid)
+void	CgiExecutor::onParentProcess( pid_t childPid )
 {
 	std::string	body = request.getBody();
 	// body = std::string("Dommy body");
@@ -118,35 +115,37 @@ void CgiExecutor::onParentProcess(pid_t childPid)
 	CgiExecutor::attendPendingCgiTasks();
 }
 
-std::string CgiExecutor::getChildOutput(PendingCgiTask *task)
+std::string	CgiExecutor::getChildOutput( PendingCgiTask *task )
 {
-	if (!task)
-		return (std::string(""));
-	return task->getTaskOutput();
+	if ( !task )
+		return ( "" );
+	return ( task->getTaskOutput() );
 }
 
-int CgiExecutor::execute(void)
+int	CgiExecutor::execute( void )
 {
-	if (pipe(fdToChild))
+	pid_t	pid;
+
+	if ( pipe( this->fdToChild ) )
 		onFailToChildPipeOpen();
 	// Log::Success("Pipe To Child Created on fds: " + SUtils::longToString(fdToChild[0]) + "," + SUtils::longToString(fdToChild[1]));
-	if (pipe(fdFromChild))
+	if ( pipe( this->fdFromChild ) )
 		onFailFromChildPipeOpen();
 	// Log::Success("Pipe From Child Created on fds: " + SUtils::longToString(fdFromChild[0]) + "," + SUtils::longToString(fdFromChild[1]));
 	// Log::Success("Request " + SUtils::longToString (request.getClient()->getId()));
 	// Log::Success("with client " + SUtils::longToString (request.getClient()->getId()));
 	// Log::Success("using socket " + SUtils::longToString (request.getClient()->getClientSocket()));
-	pid_t pid = fork();
-	if (pid < 0)
+	pid = fork();
+	if ( pid < 0 )
 		onFailFork();
-	if(pid == 0)
+	if ( pid == 0 )
 		onChildProcess();
-	onParentProcess(pid);
-	return 0;
+	onParentProcess( pid );
+	return ( 0 );
 	// return getChildOutput();
 }
 
-PendingCgiTask *CgiExecutor::getCompletedTask()
+PendingCgiTask	*CgiExecutor::getCompletedTask( void )
 {
 	pid_t	pid;
 	pid = waitpid(-1, NULL, WNOHANG);
@@ -172,7 +171,7 @@ PendingCgiTask *CgiExecutor::getTimeoutedTask(double to)
 			return (&(it->second));
 		it++;
 	}
-	return NULL;
+	return ( NULL );
 }
 
 PendingCgiTask *CgiExecutor::getMarkedToDeleteTask()
@@ -198,20 +197,20 @@ size_t	CgiExecutor::purgeTimeoutedTasks(double to, size_t max)
 		return 0;
 	while (i < max && (task = getTimeoutedTask(to)))
 	{
-		pendingTasks.eraseTask(task->getPid());
+		CgiExecutor::pendingTasks.eraseTask( task->getPid() );
 		i++;
 	}
-	return (i);
+	return ( i );
 }
 
-void	CgiExecutor::attendPendingCgiTasks(void)
+void	CgiExecutor::attendPendingCgiTasks( void )
 {
 	PendingCgiTask* pTask; 
 	Client* cli = NULL;
 	while ((pTask = CgiExecutor::getCompletedTask()))
 	{
-		Log::Info( "Cgi Task completed");
-		Request& req = pTask->getRequest();
+		Log::Info( "Cgi Task completed" );
+		Request&	req = pTask->getRequest();
 		pTask->applyTaskOutputToReq();
 		CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
 		// Log::Info("CgiExecutor::attendPendingCgiTasks got:");

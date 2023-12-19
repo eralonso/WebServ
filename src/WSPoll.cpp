@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:05:51 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/05 18:33:51 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/17 13:40:31 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ WSPoll::~WSPoll( void )
 	{
 		closePoll( 0, this->_size );
 		delete [] this->_polls;
+		this->_polls = NULL;
 	}
 }
 
@@ -55,10 +56,8 @@ WSPoll	WSPoll::operator=( const WSPoll& wspoll )
 {
 	if (  this != &wspoll )
 	{
-
 		if ( this->_polls != NULL )
 			this->deletePolls();
-		this->_polls = NULL;
 		this->_maxSize = wspoll._maxSize;
 		this->_size = wspoll._size;
 		this->_serverSizeFd = wspoll._serverSizeFd;

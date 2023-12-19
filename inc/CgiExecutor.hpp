@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:34 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/12 17:31:50 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/19 18:40:37 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,20 @@
 # include <vector>
 # include <unistd.h>
 # include <sys/wait.h>
+
 # include <cerrno>
 # include <ctime>
+
 # include "Utils.hpp"
 # include "Request.hpp"
 # include "PendingCgiTask.hpp"
 # include "PendingCgiTasks.hpp"
+# include "Router.hpp"
+# include "Client.hpp"
+
+# define FDIN 0
+# define FDOUT 1
+# define CGI_TO 2
 
 class CgiExecutor
 {
@@ -41,7 +49,7 @@ private:
 	void					onFailFork(void);
 	void					onFailToChildPipeOpen(void);
 	void					onFailFromChildPipeOpen(void);
-	char **					getEnvVarList();
+	char **					getEnvVarList(void);
 	void 					onChildProcess(void);
 	void					onParentProcess(pid_t childPid);
 public:
