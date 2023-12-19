@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/11 16:25:58 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/19 12:00:49 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ public:
 	static Response* formatContinueResponse(Response &res, Request &req);
 	static Response* formatAcceptResponse(Response &res, Request &req);
 	static Response* formatErrorResponse(Response &res, Request &req);
-	static bool processRequestReceived(Request &req);
+	static bool 		processRequestReceived(Request &req);
+	static std::string 	determineContentType(Response &res, Request &req);
 };
 
 #endif

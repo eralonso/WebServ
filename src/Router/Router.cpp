@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/19 11:28:19 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/19 12:04:37 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,9 +244,20 @@ bool Router::processRequestReceived(Request &req)
 	return false;
 }
 
+std::string Router::determineContentType(Response& res, Request& req)
+{
+	(void)res;
+	std::string ext(req.getDocExt());
+	if (ext == std::string("png") || ext == std::string("PNG"))
+		return std::string("image/png");
+	if (ext == std::string("jpg") || ext == std::string("JPG"))
+		return std::string("image/jpg");
+	return std::string("text/html");
+}
+
 Response *Router::formatGenericResponse(Response& res, Request& req)
 {
-	res.appendHeader(Header("Content-Type", std::string("text/html")));
+	res.appendHeader(Header("Content-Type", determineContentType(res, req)));
 	res.setProtocol(req.getProtocol());
 	int errorStatus = req.getError();
 	if (errorStatus == 0)
