@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/18 16:55:19 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/19 11:28:19 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,13 +59,16 @@ std::string	Router::getHtml(Request* req)
 	std::ifstream infile;
 	char buffer[100];
 	getcwd(buffer, 100);
-	route = buffer + route;
-	Log::Info("Reading ... " + route);
-	if (access(route.c_str(), R_OK) == 0)
+	std::string path = buffer + route;
+	Log::Info("Path to GET ... " + path);
+	if (access(path.c_str(), R_OK) == 0)
 	{
-		if (FolderLs::getLs(resFolderLs, route, route) == FolderLs::CANTOPENDIR)
+		std::string dirPath(path);
+		if (dirPath.size() == 0 || (*(dirPath.end() - 1)) != '/')
+			dirPath += '/';
+		if (FolderLs::getLs(resFolderLs, dirPath, route) == FolderLs::CANTOPENDIR)
 		{
-			infile.open(route.c_str(), std::ios::in); 	
+			infile.open(path.c_str(), std::ios::in); 	
 			if (infile.is_open())
 			{
 				while (!std::getline(infile, readBuf).eof())

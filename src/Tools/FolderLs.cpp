@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 11:47:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/11/22 13:03:55 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/19 11:04:07 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,10 @@ FolderLs::t_error FolderLs::processLsEntry(std::string& cat, struct dirent *pDir
 	std::string	newContent(pDirent->d_name);
 	cat += std::string("\t<tr>");
 	cat += std::string("<td>");
-	cat += "<a href=" + route + newContent + ">";
+	if (route.size() == 0 || *(route.end() - 1) != '/' )
+		cat += "<a href=" + route + std::string("/") + newContent + ">";
+	else
+		cat += "<a href=" + route + newContent + ">";
 	cat += newContent + std::string("</a>");
 	cat += std::string("</td>");
 	cat += std::string("<td>");
@@ -107,7 +110,7 @@ FolderLs::t_error FolderLs::getLs(std::string& res,
 	struct dirent		*pDirent;
 	DIR					*pDir;
 	t_error 			err = NONE;
-//
+
 	pDir = opendir (path.c_str());
 	if (pDir == NULL)
 		return (CANTOPENDIR);
