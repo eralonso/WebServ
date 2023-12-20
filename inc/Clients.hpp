@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:36 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/17 13:57:01 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/20 16:54:12 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ public:
 	~Clients( void );
 	Clients( const Clients& b );
 	Clients&	operator=( const Clients& b );
-	Client		*newClient( socket_t socket, WSPoll& polls );
+	Client		*newClient( socket_t socket, WSPoll& polls, ServersVector& servers );
 	size_t		eraseClient( Client* cli );
 	size_t		eraseClient( socket_t socket );
 	bool		checkPendingToSend( void );

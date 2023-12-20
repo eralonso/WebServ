@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   DirectivesParser.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:41:41 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/17 19:25:17 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/20 19:04:13 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -362,7 +362,6 @@ int	DirectivesParser::isHttpMethod( std::string method )
 void	DirectivesParser::parseCgi( std::string body, Directives *d )
 {
 	StringVector	args;
-	CGIService		cgi;
 
 	SUtils::split( args, body, ISSPACE );
 	if ( args.size() != 2 )
@@ -370,9 +369,7 @@ void	DirectivesParser::parseCgi( std::string body, Directives *d )
 					std::string( "cgi" ) ) );
 	if ( args[ 0 ].find( "." ) == std::string::npos )
 		throw std::logic_error( "\"cgi\" directive, invalid cgi extension" );
-	cgi.setExtension( args[ 0 ] );
-	cgi.setInterpreter( args[ 1 ] );
-	d->_cgi[ cgi.getExtension() ] = cgi;
+	d->_cgis.appendCgi( args[ 0 ].substr( 1, std::string::npos ), args[ 1 ] );
 }
 
 //server

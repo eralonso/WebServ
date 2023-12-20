@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/19 18:41:01 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/20 17:22:47 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,7 +209,7 @@ bool	Router::processRequestReceived( Request &req )
 		std::string host = "";
 		std::string port = "";
 		req.getHostPort(host, port);
-		CgiExecutor cgiExe(req, NULL);
+		CgiExecutor cgiExe(req);
 		cgiExe.pushEnvVar(std::string("SERVER_SOFTWARE"), "webserv");
 		cgiExe.pushEnvVar(std::string("SERVER_NAME"), host);
 		cgiExe.pushEnvVar(std::string("GATEWAY_INTERFACE"), "CGI/1.0");

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Directives.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:55:51 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/17 19:25:33 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/20 18:35:59 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ Directives::Directives( const Directives& d ):
 								_alias( d._alias ), \
 								_return( d._return ), \
 								_allowMethods( d._allowMethods ), \
-								_cgi( d._cgi ), \
+								_cgis( d._cgis ), \
 								_servers( d._servers ), \
 								_locations( d._locations ), \
 								_isSet( d._isSet ),
@@ -59,7 +59,7 @@ Directives&	Directives::operator=( const Directives& d )
 		this->_alias = d._alias;
 		this->_return = d._return;
 		this->_allowMethods = d._allowMethods;
-		this->_cgi = d._cgi;
+		this->_cgis = d._cgis;
 		this->_servers = d._servers;
 		this->_locations = d._locations;
 		this->_isSet = d._isSet;
@@ -74,31 +74,31 @@ int	Directives::getPort( void ) const { return ( this->_port ); }
 
 std::string	Directives::getHost( void ) const { return ( this->_host ); }
 
-StringVector	Directives::getServerNames( void ) const { return ( this->_serverNames ); }
+const StringVector&	Directives::getServerNames( void ) const { return ( this->_serverNames ); }
 
-ErrorPagesMap	Directives::getErrorPages( void ) const { return ( this->_errorPages ); }
+const ErrorPagesMap&	Directives::getErrorPages( void ) const { return ( this->_errorPages ); }
 
 unsigned int	Directives::getClientMaxBodySize( void ) const { return ( this->_clientMaxBodySize ); }
 
 std::string	Directives::getUploadStore( void ) const { return ( this->_uploadStore ); }
 
-StringVector	Directives::getIndex( void ) const { return ( this->_index ); }
+const StringVector&	Directives::getIndex( void ) const { return ( this->_index ); }
 
 bool	Directives::getAutoindex( void ) const { return ( this->_autoindex ); }
 
 std::string	Directives::getAlias( void ) const { return ( this->_alias ); }
 
-ReturnPair	Directives::getReturn( void ) const { return ( this->_return ); }
+const ReturnPair&	Directives::getReturn( void ) const { return ( this->_return ); }
 
-ActionMask	Directives::getAllowMethods( void ) const { return ( this->_allowMethods ); }
+const ActionMask&	Directives::getAllowMethods( void ) const { return ( this->_allowMethods ); }
 
-CgiMap	Directives::getCgi( void ) const { return ( this->_cgi ); }
+const CgisMap&	Directives::getCgis( void ) const { return ( this->_cgis ); }
 
-ServersVector	Directives::getServers( void ) const { return ( this->_servers ); }
+const ServersVector&	Directives::getServers( void ) const { return ( this->_servers ); }
 
-LocationsSet	Directives::getLocations( void ) const { return ( this->_locations ); }
+const LocationsSet&	Directives::getLocations( void ) const { return ( this->_locations ); }
 
-StringBoolMap	Directives::getIsSet( void ) const { return ( this->_isSet ); }
+const StringBoolMap&	Directives::getIsSet( void ) const { return ( this->_isSet ); }
 
 bool	Directives::isEmpty( void ) const { return ( this->_isEmpty ); }
 
@@ -135,9 +135,9 @@ void	Directives::print( void ) const
 						ActionMask::POST ) == true ? "POST " : "" ) \
 				+ std::string( this->_allowMethods.getAction( \
 						ActionMask::DELETE ) == true ? "DELETE" : "" ) );
-	Log::Info( "[ Config ] cgi: " \
-				+ STLUtils::mapToString< CgiMap >( \
-				this->_cgi.begin(), this->_cgi.end() ) );
+	// Log::Info( "[ Config ] cgi: " \
+	// 			+ STLUtils::mapToString< std::map< std::string, std::string > >( \
+	// 			this->_cgis.begin(), this->_cgis.end() ) );
 	Log::Info( "[ Config ] servers: " );
 	Log::Info( "[ Config ] location: " );
 	std::cout << std::endl;

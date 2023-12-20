@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/20 11:37:08 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/20 17:01:30 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ int	Receptionist::addNewClient( socket_t serverFd )
 		Log::Error( "Too many clients trying to connect to server" );
 		close( clientFd );
 	}
-	else if ( !Clients::newClient( clientFd, polls ) )
+	else if ( !Clients::newClient( clientFd, polls, _servers ) )
 	{
 		Log::Error( "Failed to append Request" );
 		close( clientFd );

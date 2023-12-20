@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:34 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/19 18:40:37 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/20 18:41:24 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 # include "PendingCgiTasks.hpp"
 # include "Router.hpp"
 # include "Client.hpp"
+# include <ServerFinder.hpp>
 
 # define FDIN 0
 # define FDOUT 1
@@ -53,7 +54,7 @@ private:
 	void 					onChildProcess(void);
 	void					onParentProcess(pid_t childPid);
 public:
-	CgiExecutor(Request& request, char **env);
+	CgiExecutor(Request& request);
 	~CgiExecutor();
 	int execute(void);
 	static PendingCgiTask*	getCompletedTask();

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/19 18:12:58 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/20 19:02:56 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,23 @@ std::string	Server::getErrorPageWithCode( unsigned int code ) const
 {
 	( void ) code;
 	return ( "a" );
+}
+
+bool	Server::serverMatch( std::string host, std::string port ) const
+{
+	StringVector::const_iterator	it;
+	StringVector::const_iterator	ite = this->_directives->getServerNames().end();
+
+	if ( SUtils::compareNumbersAsStrings( port, \
+		SUtils::longToString( this->_directives->getPort()) ) )
+		return ( false );
+	for ( it = this->_directives->getServerNames().begin(); it != ite; it++ )
+		if ( *it == host )
+			return ( true );
+	return ( false );
+}
+
+const std::string	Server::getCgiBinary( std::string ext ) const
+{
+	return ( this->_directives->getCgis().getBinary( ext ) );
 }

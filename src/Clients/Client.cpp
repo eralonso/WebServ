@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/19 18:30:40 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/20 18:48:08 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,11 @@ Client::Client( void )
 	this->pending = 0;
 	this->socket = -1;
 	this->polls = NULL;
+	this->servers = NULL;
 	// Log::Info("Created client id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
-Client::Client( socket_t pollsocket, WSPoll& polls )
+Client::Client( socket_t pollsocket, WSPoll& polls, ServersVector& servers )
 {
 	this->id = Client::id_counter;
 	Client::id_counter++;
@@ -36,6 +37,7 @@ Client::Client( socket_t pollsocket, WSPoll& polls )
 	this->pending = 0;
 	this->socket = pollsocket;
 	this->polls = &polls;
+	this->servers = &servers;
 	// Log::Info("Created client id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
@@ -48,6 +50,7 @@ Client::Client( const Client& b ): Requests()
 	this->socket = b.socket;
 	this->pending = b.pending;
 	this->received = b.received;
+	this->servers = b.servers;
 }
 
 Client&	Client::operator=( const Client& b )
@@ -57,6 +60,7 @@ Client&	Client::operator=( const Client& b )
 		this->socket = b.socket;
 		this->pending = b.pending;
 		this->received = b.received;
+		this->servers = b.servers;
 	}
 	return ( *this );
 }
@@ -75,6 +79,11 @@ socket_t	Client::getClientSocket( void ) const
 size_t	Client::getId( void ) const
 {
 	return ( this->id );
+}
+
+const ServersVector&	Client::getServers( void ) const
+{
+	return ( *this->servers );
 }
 
 void	Client::LogId( void ) const

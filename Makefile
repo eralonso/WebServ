@@ -6,7 +6,7 @@
 #    By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/22 10:08:41 by eralonso          #+#    #+#              #
-#    Updated: 2023/12/07 19:34:52 by eralonso         ###   ########.fr        #
+#    Updated: 2023/12/20 18:24:27 by omoreno-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,7 +50,8 @@ LIB_SEARCH	:=
 HEADERS		:=	$(INC_ROOT)
 
 #<---------------------------------->DIRS<----------------------------------->#
-SRC_DIRS	:=	./:Tools/:ConfigParse/:Clients/:Headers/:Requests/:Response/:Cgi/:Router/
+SRC_DIRS	:=	./:Tools/:ConfigParse/:Clients/:Headers/:Requests/:Response/\
+					:Cgi/:Router/:ConfigResolver/
 SRC_DIRS	:=	$(subst :,$(SPACE),$(SRC_DIRS))
 SRC_DIRS	:=	$(addprefix $(SRC_ROOT),$(SRC_DIRS))
 SRC_DIRS	:=	$(subst $(SPACE),:,$(SRC_DIRS))
@@ -63,7 +64,7 @@ FILES		:=	main Sockets WSPoll WSSignals Receptionist \
 				CGIService ServerInit Server LocationInit Location Listen \
 				ClientMaxBodySize ErrorPage Client Clients Header Headers Request \
 				Requests Response StatusCodes PendingCgiTask PendingCgiTasks \
-				CgiExecutor CgisMap Router
+				CgiExecutor CgisMap Router ServerFinder
 
 #<---------------------------------->LANG<---------------------------------->#
 LANG		:=	CPP

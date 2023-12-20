@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/19 18:40:17 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/20 18:57:54 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,18 @@
 
 PendingCgiTasks	CgiExecutor::pendingTasks;
 
-CgiExecutor::CgiExecutor( Request& request, char **env ): request( request )
+CgiExecutor::CgiExecutor( Request& request ): request( request )
 {
-	(void)env;
-	request.getClient()->cgis.findCgi( request.getDocExt(), binary );
+	std::string		host;
+	std::string		port;
+	const Server	*s = NULL;
+
+	// request.getClient()->cgis.findCgi( request.getDocExt(), binary );
+	Client *cli = request.getClient();
+	request.getHostPort( host, port );
+	s = ServerFinder::find( cli->getServers(), host, port );
+	binary = s->getCgiBinary( request.getDocExt() );
+	// cli->servers[]
 	this->argument = "." + request.getRouteChaineString() + request.getDocument();
 	Log::Info( "CgiExecutor binary: " + this->binary );
 	Log::Info( "CgiExecutor argment: " + this->argument );

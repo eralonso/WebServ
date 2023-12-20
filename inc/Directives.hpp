@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Directives.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:50:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/17 19:26:11 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/20 18:56:10 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 # include <Server.hpp>
 # include <ActionMask.hpp>
 # include <DirectivesParser.hpp>
+# include <CgisMap.hpp>
 
 class Directives
 {
@@ -52,7 +53,7 @@ private:
 	std::string			_alias;
 	ReturnPair			_return;
 	ActionMask			_allowMethods;
-	CgiMap				_cgi;
+	CgisMap				_cgis;
 	ServersVector		_servers;
 	LocationsSet		_locations;
 	StringBoolMap		_isSet;
@@ -67,21 +68,21 @@ public:
 	std::string			getRoot( void ) const;
 	int					getPort( void ) const;
 	std::string			getHost( void ) const;
-	StringVector		getServerNames( void ) const;
-	ErrorPagesMap		getErrorPages( void ) const;
+	const StringVector&		getServerNames( void ) const;
+	const ErrorPagesMap&		getErrorPages( void ) const;
 	unsigned int		getClientMaxBodySize( void ) const;
 	std::string			getUploadStore( void ) const;
-	StringVector		getIndex( void ) const;
-	bool				getAutoindex( void ) const;
-	std::string			getAlias( void ) const;
-	ReturnPair			getReturn( void ) const;
-	ActionMask			getAllowMethods( void ) const;
-	CgiMap				getCgi( void ) const;
-	ServersVector		getServers( void ) const;
-	LocationsSet		getLocations( void ) const;
-	StringBoolMap		getIsSet( void ) const;
-	bool				isEmpty( void ) const;
-	bool				isSet( const std::string& key );
+	const StringVector&		getIndex( void ) const;
+	bool					getAutoindex( void ) const;
+	std::string				getAlias( void ) const;
+	const ReturnPair&		getReturn( void ) const;
+	const ActionMask&		getAllowMethods( void ) const;
+	const CgisMap&			getCgis( void ) const;
+	const ServersVector&	getServers( void ) const;
+	const LocationsSet&		getLocations( void ) const;
+	const StringBoolMap&	getIsSet( void ) const;
+	bool					isEmpty( void ) const;
+	bool					isSet( const std::string& key );
 };
 
 #endif

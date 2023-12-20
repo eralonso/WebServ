@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/19 18:30:56 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/20 18:47:07 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <Requests.hpp>
 # include <Request.hpp>
 # include <CgisMap.hpp>
+# include <TypesDefines.hpp>
 
 class Client: public Requests
 {
@@ -34,10 +35,11 @@ private:
 	bool		 	keepAlive;
 	WSPoll			*polls;
 public:
+	ServersVector	*servers;
 	CgisMap	cgis;
 public:
 	Client( void );
-	Client( socket_t pollsocket, WSPoll& polls );
+	Client( socket_t pollsocket, WSPoll& polls, ServersVector& servers );
 	~Client( void );
 	Client( const Client& b );
 	Client&	operator=( const Client& b );
@@ -62,6 +64,7 @@ public:
 	size_t		purgeUsedRecv( void );
 	void		allowPollWrite( bool value );
 	bool		checkPendingToSend( void );
+	const ServersVector&	getServers( void ) const;
 };
 
 #endif
