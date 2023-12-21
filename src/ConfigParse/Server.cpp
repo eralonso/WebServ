@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/21 15:44:43 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/21 16:04:10 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,15 @@ Location*	Server::getLocationAtPath( std::string path ) const
 	{
 		lcp = *it;
 		Log::Success("Server::getLocationAtPath comparing: " + lcp->getPath() + " with " + path);
-		if (lcp->getPath() == path)
-			return lcp;
+		std::string lcpPath = lcp->getPath();
+		size_t lcpPathSize = lcpPath.size();
+		if (lcpPathSize > 0)
+		{
+			if (lcpPath[lcpPathSize - 1] != '/')
+				lcpPath += "/";
+			if (lcpPath == path)
+				return lcp;
+		}
 		it++;
 	}
 	return (NULL);
