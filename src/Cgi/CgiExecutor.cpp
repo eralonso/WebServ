@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/21 13:52:24 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/21 15:42:42 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ CgiExecutor::CgiExecutor( Request& request ): request( request )
 	s = ServerFinder::find( cli->getServers(), host, port );
 	if (!s)
 		return;
-	binary = s->getCgiBinary( request.getDocExt(), request.getRoute() );
+	Log::Success("CgiExecutor::CgiExecutor Route Chaine: " + request.getRouteChaineString() );
+	binary = s->getCgiBinary( request.getDocExt(), request.getRouteChaineString() );
 	// cli->servers[]
 	this->argument = "." + request.getRouteChaineString() + request.getDocument();
 	Log::Info( "CgiExecutor binary: " + this->binary );

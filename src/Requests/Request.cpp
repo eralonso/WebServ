@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/21 13:43:07 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/21 15:46:42 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,7 +217,7 @@ void	Request::checkUseCgi( void )
 	s = ServerFinder::find( cli->getServers(), host, port );
 	if (!s)
 		return ;
-	binary = s->getCgiBinary( docExt, route );
+	binary = s->getCgiBinary( docExt, getRouteChaineString() );
 	useCgi = ( binary.size() > 0 );
 }
 
