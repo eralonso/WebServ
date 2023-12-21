@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/21 15:42:42 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/21 19:52:19 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,11 @@ CgiExecutor::CgiExecutor( Request& request ): request( request )
 	Log::Success("CgiExecutor::CgiExecutor Route Chaine: " + request.getRouteChaineString() );
 	binary = s->getCgiBinary( request.getDocExt(), request.getRouteChaineString() );
 	// cli->servers[]
-	this->argument = "." + request.getRouteChaineString() + request.getDocument();
+	//this->argument = "." + request.getRouteChaineString() + request.getDocument();
+	this->argument = s->getFinalPath( request.getRouteChaineString() );
 	Log::Info( "CgiExecutor binary: " + this->binary );
 	Log::Info( "CgiExecutor argment: " + this->argument );
+	Log::Info( "Route chain: " + request.getRouteChaineString() );
 	// char				*envPath;
 	argv[0] = (char *)this->binary.c_str();
 	argv[1] = (char *)this->argument.c_str();
@@ -105,8 +107,6 @@ void	CgiExecutor::onChildProcess( void )
 	close(fdToChild[FDIN]);
 	close(fdFromChild[FDOUT]);
 	execve(binary.c_str(), argv, childEnv);
-	close(FDIN);
-	close(FDOUT);
 	Log::Error(std::string("execve: Not found binary ") + binary);
 	return; //exit(1) not alloed?
 }

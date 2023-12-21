@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/21 16:04:10 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/21 19:53:07 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,27 +44,29 @@ Directives	*Server::getDirectives( void ) const { return ( this->_directives ); 
 
 Location*	Server::getLocationAtPath( std::string path ) const
 {
-	Location *lcp;
-	LocationsSet::iterator it = this->_directives->_locations.begin();
-	LocationsSet::iterator ite = this->_directives->_locations.end();
-	Log::Success("Server::getLocationAtPath size: " + SUtils::longToString(this->_directives->_locations.size()));
-	while (it != ite)
+	Location				*lcit = NULL;
+	Location				*lc = NULL;
+	LocationsSet::iterator	it = this->_directives->_locations.begin();
+	LocationsSet::iterator	ite = this->_directives->_locations.end();
+	int						max = 0;
+	int						cmp;
+
+	while ( it != ite )
 	{
-		lcp = *it;
-		Log::Success("Server::getLocationAtPath comparing: " + lcp->getPath() + " with " + path);
-		std::string lcpPath = lcp->getPath();
-		size_t lcpPathSize = lcpPath.size();
-		if (lcpPathSize > 0)
+		lcit = *it;
+		cmp = lcit->comparePath( path );
+		if ( cmp > max )
 		{
-			if (lcpPath[lcpPathSize - 1] != '/')
-				lcpPath += "/";
-			if (lcpPath == path)
-				return lcp;
+			lc = lcit;
+			max = cmp;
 		}
 		it++;
 	}
-	return (NULL);
+	Log::Error( "max: " + SUtils::longToString( max ) );
+	return ( lc );
 }
+//Log::Success("Server::getLocationAtPath size: " + SUtils::longToString(this->_directives->_locations.size()));
+//Log::Success("Server::getLocationAtPath comparing: " + lcp->getPath() + " with " + path);
 
 std::string	Server::getErrorPageWithCode( unsigned int code ) const
 {
@@ -91,8 +93,19 @@ bool	Server::serverMatch( std::string host, std::string port ) const
 
 const std::string	Server::getCgiBinary( std::string ext, std::string route) const
 {
-	Location* loc = getLocationAtPath(route);
-	if (!loc)
-		return (std::string(""));
-	return (loc->getCgiBinary(ext));
+	Location* loc = getLocationAtPath( route );
+
+	if ( !loc )
+		return ( "" );
+	return ( loc->getCgiBinary( ext ) );
+}
+
+std::string	Server::getFinalPath( const std::string path ) const
+{
+	Location	*loc = getLocationAtPath( path );
+
+	if ( !loc )
+		return ( path );
+	Log::Error( "siiiiii" );
+	return ( loc->getFinalPath( path ) );
 }

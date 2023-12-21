@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:40:55 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/07 15:14:46 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/21 19:49:17 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ public:
 	Directives	*getDirectives( void ) const;
 	std::string	getErrorPageWithCode( unsigned int code ) const;
 	const std::string	getCgiBinary( std::string ext, std::string route ) const;
-	bool		serverMatch( std::string host, std::string port ) const;
+	bool				serverMatch( std::string host, std::string port ) const;
+	std::string			getFinalPath( const std::string path ) const;
 };
 
 #endif
