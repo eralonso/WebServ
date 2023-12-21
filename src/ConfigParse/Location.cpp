@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 12:56:54 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/08 19:39:38 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/21 13:46:17 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,3 +63,15 @@ StringVector	Location::getSplitedPath( void ) const { return ( this->_splitedPat
 bool	Location::isDir( void ) const { return ( this->_isDir ); }
 
 Directives	*Location::getDirectives( void ) const { return ( this->_directives ); }
+
+const std::string Location::getCgiBinary(std::string ext) const
+{
+	const CgisMap* map = NULL;
+	if (this->_directives)
+	{
+		map = &(this->_directives->getCgis());
+		if (map)
+			return ( map->getBinary( ext ) );
+	}
+	return (std::string(""));
+}

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:50 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/20 17:19:53 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/21 12:07:59 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ Client	*Clients::newClient( socket_t socket, WSPoll& polls, ServersVector& serve
 	if ( !cli )
 		return ( NULL );
 	this->insert( std::pair< socket_t, Client * >( socket, cli ) );
-	cli->cgis.appendCgi( "py", "/usr/bin/python" );
+	// cli->cgis.appendCgi( "py", "/usr/bin/python" );
 	return ( cli );
 }
 

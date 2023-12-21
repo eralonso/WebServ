@@ -6,11 +6,12 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 11:18:09 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/20 19:02:09 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/21 13:16:04 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <CgisMap.hpp>
+#include <Utils.hpp>
 
 CgisMap::CgisMap( void ) {}
 
@@ -33,7 +34,15 @@ int	CgisMap::appendCgi( std::string ext, std::string binary )
 
 std::string	CgisMap::getBinary( std::string ext ) const
 {
-	return ( this->at( ext ) );
+	Log::Success("CgisMap::getBinary map.size: " + SUtils::longToString(size()));
+	try
+	{
+		return (this->at( ext ));
+	}
+	catch(const std::exception& e)
+	{
+		return ( std::string("") );
+	}
 }
 
 bool	CgisMap::findCgi( std::string ext, std::string& binary )

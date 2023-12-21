@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/19 18:11:18 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/21 12:02:00 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,8 @@ public:
 	t_status		getStatus( void ) const;
 	int				getError( void ) const;
 	std::string		getCgiOutput( void ) const;
-	bool			getUseCgi( void ) const;
+	void 			checkUseCgi(void);
+	bool 			getUseCgi(void) const;
 	Client*			getClient( void ) const;
 	std::string		getProtocol( void ) const;
 	std::string		getMethod( void ) const;

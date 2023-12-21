@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/20 18:47:07 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/21 12:07:21 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ private:
 	WSPoll			*polls;
 public:
 	ServersVector	*servers;
-	CgisMap	cgis;
+	// CgisMap	cgis;
 public:
 	Client( void );
 	Client( socket_t pollsocket, WSPoll& polls, ServersVector& servers );

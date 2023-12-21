@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/20 17:22:47 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/21 12:02:58 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,6 +197,7 @@ bool	Router::processRequestReceived( Request &req )
 {
 	std::string script;
 
+	req.checkUseCgi();
 	if ( !req.getUseCgi() )
 	{
 		req.setReadyToSend();

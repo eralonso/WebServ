@@ -41,7 +41,7 @@ public:
 	Location*	getLocationAtPath( std::string path ) const;
 	Directives	*getDirectives( void ) const;
 	std::string	getErrorPageWithCode( unsigned int code ) const;
-	const std::string	getCgiBinary( std::string ext ) const;
+	const std::string	getCgiBinary( std::string ext, std::string route ) const;
 	bool		serverMatch( std::string host, std::string port ) const;
 };
 

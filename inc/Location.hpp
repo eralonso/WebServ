@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/08 19:39:33 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/21 13:46:10 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ public:
 	bool			isDir( void ) const;
 	StringVector	getSplitedPath( void ) const;
 	Directives		*getDirectives( void ) const;
+	const std::string	getCgiBinary( std::string ext) const;
 };
 
 #endif

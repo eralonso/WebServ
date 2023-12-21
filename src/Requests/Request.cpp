@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/19 18:41:16 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/21 13:43:07 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <SplitString.hpp>
 #include <Request.hpp>
 #include <Client.hpp>
+#include <ServerFinder.hpp>
 
 size_t	Request::id_counter = 0;
 
@@ -200,9 +201,29 @@ std::string	Request::getCgiOutput( void ) const
 	return ( this->cgiOutput );
 }
 
+void	Request::checkUseCgi( void )
+{
+	useCgi = false;
+	std::string		binary;
+	std::string		host;
+	std::string		port;
+	const Server	*s = NULL;
+	if (docExt.size() == 0)
+		return ;
+	Client *cli = getClient();
+	if (!cli)
+		return ;
+	getHostPort( host, port );
+	s = ServerFinder::find( cli->getServers(), host, port );
+	if (!s)
+		return ;
+	binary = s->getCgiBinary( docExt, route );
+	useCgi = ( binary.size() > 0 );
+}
+
 bool	Request::getUseCgi( void ) const
 {
-	return ( this->useCgi );
+	return ( useCgi );
 }
 
 Client	*Request::getClient( void ) const
@@ -511,7 +532,8 @@ int	Request::splitDocExt( void )
 	if ( len > 1 )
 	{
 		this->docExt = frags[ len - 1 ];
-		this->useCgi = ( this->docExt == std::string( "py" ) );
+
+		// this->useCgi = ( this->docExt == std::string( "py" ) );
 		return ( 1 );
 	}
 	return ( 0 );

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/20 18:48:08 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/21 13:16:23 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ size_t	Client::getId( void ) const
 
 const ServersVector&	Client::getServers( void ) const
 {
+	// Log::Success(std::string("Client::getServers, size: " + SUtils::longToString(servers->size())));
 	return ( *this->servers );
 }
 
