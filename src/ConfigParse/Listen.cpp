@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Listen.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 17:25:58 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/22 13:15:31 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 16:15:49 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ std::string	DirectivesParser::decompressBytes( std::string compressed, \
 	if ( pos == ( size - 1 ) )
 	{
 		decompress = "";
-		num = std::atol( compressed.c_str() );
+		num = SUtils::atol( compressed.c_str() );
 		for ( int i = 4 - size; i >= 0; i-- )
 		{
 			decompress += SUtils::longToString( ( num >> ( i * 8 ) ) & 0xFF );

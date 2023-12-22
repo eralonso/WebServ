@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:34:13 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/17 19:22:43 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 16:24:09 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,21 @@ namespace SUtils
 	
 		ss << num;
 		return ( ss.str() );
+	}
+
+	int	atoi( std::string str )
+	{
+		return ( std::atoi( str.c_str() ) );
+	}
+
+	long	atol( std::string str )
+	{
+		return ( std::atol( str.c_str() ) );
+	}
+
+	void	memset( void *p, int c, size_t size )
+	{
+		std::memset( p, c, size );
 	}
 
 	bool	isNum( std::string num )
@@ -181,7 +196,7 @@ namespace Binary
 		for ( int i = 3; i >= 0; i-- )
 		{
 			pos = address.find( "." );
-			number = std::atoi( address.substr( 0, pos ).c_str() );
+			number = SUtils::atoi( address.substr( 0, pos ).c_str() );
 			code |= number;
 			if ( i != 0 )
 				code <<= 8;

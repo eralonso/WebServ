@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/22 11:59:28 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 16:15:33 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ Client::Client( void )
 	this->socket = -1;
 	this->polls = NULL;
 	this->servers = NULL;
-	std::memset( &this->addr, 0, sizeof( this->addr ) );
+	SUtils::memset( &this->addr, 0, sizeof( this->addr ) );
 	// Log::Info("Created client id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 

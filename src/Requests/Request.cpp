@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/22 12:54:30 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 16:15:49 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -418,7 +418,7 @@ bool	Request::processLineOnRecvdHeader( const std::string &line )
 	this->body += line + '\n';
 	if ( clHead != NULL )
 	{
-		contentSize = std::atol( clHead->getValue().c_str() );
+		contentSize = SUtils::atol( clHead->getValue().c_str() );
 		if ( this->body.size() >= contentSize )
 		{
 			// Log::Success(body);
@@ -471,7 +471,7 @@ bool	Request::processLineOnRecvdChunk( const std::string &line )
 		this->status = RECVD_LAST_CHUNK;
 		return ( true );
 	}
-	this->chunkSize = std::atol( line.c_str() );
+	this->chunkSize = SUtils::atol( line.c_str() );
 	if ( chunkSize > 0 )
 	{
 		// Log::Info("Received" + SUtils::longToString(chunkSize) + "to indicate next chunk size");
@@ -546,7 +546,7 @@ bool	Request::checkEmptyContent( size_t& size )
 	if ( !clHead )
 		this->status = RECVD_ALL;
 	else
-		size = std::atol( clHead->getValue().c_str() );
+		size = SUtils::atol( clHead->getValue().c_str() );
 	return ( this->status == RECVD_ALL );
 }
 

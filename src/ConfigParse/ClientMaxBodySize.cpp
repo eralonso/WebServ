@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ClientMaxBodySize.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 17:59:08 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/30 17:41:57 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 16:15:49 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,5 +50,5 @@ long	DirectivesParser::parseSize( std::string number )
 	if ( SUtils::compareNumbersAsStrings( number, \
 				SUtils::longToString( getMeasureLimit( measure ) ) ) > 0 )
 		throw std::logic_error( "Number too large" );
-	return ( std::atol( number.c_str() ) << ( 10 * measure ) );
+	return ( SUtils::atol( number.c_str() ) << ( 10 * measure ) );
 }

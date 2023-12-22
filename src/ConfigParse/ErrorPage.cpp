@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ErrorPage.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 18:02:40 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/04 17:46:50 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 16:15:49 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +43,5 @@ int	DirectivesParser::parseErrorCode( std::string code, int min, int max )
 			|| SUtils::compareNumbersAsStrings( code, \
 				SUtils::longToString( max ) ) > 0 )
 		return ( -2 );
-	return ( std::atol( code.c_str() ) );
+	return ( SUtils::atol( code.c_str() ) );
 }

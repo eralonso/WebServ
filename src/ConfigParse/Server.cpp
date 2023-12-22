@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/22 12:47:46 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 17:22:47 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,11 +72,26 @@ std::string	Server::getErrorPageWithCode( unsigned int code ) const
 	return ( "a" );
 }
 
-bool	Server::serverMatch( std::string host, std::string port ) const
+bool	Server::strongServerMatch( std::string host, std::string port, unsigned int ip ) const
 {
+	Directives						*directives = this->_directives;
 	StringVector::const_iterator	it;
-	StringVector::const_iterator	ite = this->_directives->getServerNames().end();
+	StringVector::const_iterator	ite = directives->getServerNames().end();
 
+	if ( weakServerMatch( host, port, ip ) == false )
+		return ( false );
+	// if ( directives->isSet( "server_name" ) == false )
+	// 	return ( true );
+	for ( it = directives->getServerNames().begin(); it != ite; it++ )
+	{
+		if ( *it == host )
+			return ( true );
+	}
+	return ( false );
+}
+
+bool	Server::weakServerMatch( std::string host, std::string port, unsigned int ip ) const
+{
 	if ( SUtils::compareNumbersAsStrings( port, \
 		SUtils::longToString( this->_directives->getPort() ) ) )
 		return ( false );
@@ -86,14 +101,7 @@ bool	Server::serverMatch( std::string host, std::string port ) const
 			return ( true );
 		return ( getIpString() == host );
 	}
-	if ( this->_directives->getHost() == host )
-		return ( true );
-	for ( it = this->_directives->getServerNames().begin(); it != ite; it++ )
-	{
-		if ( *it == host )
-			return ( true );
-	}
-	return ( false );
+	return ( getIpNetworkOrder() == ip );
 }
 
 const std::string	Server::getCgiBinary( std::string ext, std::string route ) const
@@ -137,4 +145,18 @@ unsigned int	Server::getIpNetworkOrder( void ) const
 unsigned int	Server::getIpHostOrder( void ) const
 {
 	return ( ntohl( this->addr.sin_addr.s_addr ) );
+}
+
+std::string	Server::getHost( void ) const
+{
+	if ( this->_directives == NULL )
+		return ( "" );
+	return ( this->_directives->getHost() );
+}
+
+int	Server::getPort( void ) const
+{
+	if ( this->_directives == NULL )
+		return ( -1 );
+	return ( this->_directives->getPort() );
 }

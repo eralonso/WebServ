@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:31:42 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/08 14:01:05 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 16:14:40 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@ namespace PUtils
 namespace SUtils
 {
 	std::string					longToString( long int num );
+	int							atoi( std::string str );
+	long						atol( std::string str );
+	void						memset( void *p, int c, size_t size );
 	bool						isNum( std::string num );
 	std::string					trim( const std::string str );
 	std::string					leftTrim( const std::string str );

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:41:41 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/21 13:43:25 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/22 16:15:44 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,7 +177,7 @@ void	DirectivesParser::parseListen( std::string body, Directives *d )
 	if ( checkAvailableHostPort( host, port ) )
 		throw std::logic_error( "host not found \"" + host + "\"" );
 	d->_host = host;
-	d->_port = std::atoi( port.c_str() );
+	d->_port = SUtils::atoi( port.c_str() );
 }
 
 //server_name {list of server names}

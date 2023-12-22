@@ -60,7 +60,7 @@ struct sockaddr_in	Sockets::fillSockAddr( int family, uint16_t port, uint32_t ip
 {
 	struct sockaddr_in	addr;
 
-	std::memset( &addr, 0, sizeof( addr ) );
+	SUtils::memset( &addr, 0, sizeof( addr ) );
 	addr.sin_family = family;
 	addr.sin_port = htons( port );
 	addr.sin_addr.s_addr = htonl( ip_addr );
@@ -123,7 +123,7 @@ struct addrinfo Sockets::fillAddrinfo( int family, int socktype, \
 {
 	struct addrinfo	info;
 	
-	std::memset( &info, 0, sizeof( info ) );
+	SUtils::memset( &info, 0, sizeof( info ) );
 	info = ( struct addrinfo ){ .ai_family = family, \
 			.ai_socktype = socktype, .ai_protocol = protocol, \
 			.ai_flags = flags };
@@ -131,6 +131,31 @@ struct addrinfo Sockets::fillAddrinfo( int family, int socktype, \
 }
 
 struct sockaddr	Sockets::codeHost( const char *host, int port )
+{
+	struct addrinfo		hints;
+	struct addrinfo		*res = NULL;
+	struct sockaddr_in	addr_in;
+	struct sockaddr		addr;
+
+	hints = fillAddrinfo( AF_INET, SOCK_STREAM, IPPROTO_TCP, 0 );
+	getaddrinfo( host, SUtils::longToString( port ).c_str(), &hints, &res );
+	if ( res != NULL )
+	{
+		addr = *res->ai_addr;
+		freeaddrinfo( res );
+	}
+	else
+	{
+		addr_in = fillSockAddr( AF_INET, port, Binary::codeAddress( host ) );
+		addr = *( ( struct sockaddr * )&addr_in );
+	}
+	Log::Info( "Address -> " + Binary::decodeAddress( ntohl( ( ( \
+		( struct sockaddr_in * )&addr ) )->sin_addr.s_addr ) ) );
+	return ( addr );
+}
+
+
+struct sockaddr	Sockets::codeHostPassive( const char *host, int port )
 {
 	struct addrinfo		hints;
 	struct addrinfo		*res = NULL;
@@ -168,7 +193,7 @@ socket_t	Sockets::createPassiveSocket( std::string host, int port, \
 	fd = socketCreate( AF_INET, SOCK_STREAM, 0 );
 	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
 	setsockopt( fd, SOL_SOCKET, SO_REUSEADDR, &optVal, sizeof( int ) );
-	info = codeHost( host.c_str(), port );
+	info = codeHostPassive( host.c_str(), port );
 	try
 	{
 		bindSocket( fd, &info, sizeof( info ) );

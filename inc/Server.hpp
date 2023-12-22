@@ -40,17 +40,20 @@ private:
 public:
 	static StringVector	allowedDirectives;
 public:
-	Location*	getLocationAtPath( std::string path ) const;
-	Directives	*getDirectives( void ) const;
-	std::string	getErrorPageWithCode( unsigned int code ) const;
-	const std::string	getCgiBinary( std::string ext, std::string route ) const;
-	bool				serverMatch( std::string host, std::string port ) const;
-	std::string			getFinalPath( const std::string path ) const;
+	Location					*getLocationAtPath( std::string path ) const;
+	Directives					*getDirectives( void ) const;
+	std::string					getErrorPageWithCode( unsigned int code ) const;
+	const std::string			getCgiBinary( std::string ext, std::string route ) const;
+	bool						strongServerMatch( std::string host, std::string port, unsigned int ip ) const;
+	bool						weakServerMatch( std::string host, std::string port, unsigned int ip ) const;
+	std::string					getFinalPath( const std::string path ) const;
 	void						setAddr( const struct sockaddr_in& info );
 	const struct sockaddr_in&	getAddr( void ) const;
 	std::string					getIpString( void ) const;
 	unsigned int				getIpNetworkOrder( void ) const;
 	unsigned int				getIpHostOrder( void ) const;
+	std::string					getHost( void ) const;
+	int							getPort( void ) const;
 };
 
 #endif

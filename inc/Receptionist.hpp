@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:43:42 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/22 12:14:38 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 17:06:30 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,9 @@ public:
 	~Receptionist( void );
 	Receptionist( const Receptionist& b );
 	Receptionist& 	operator=( const Receptionist& b );
+	bool			serverShareAddr( ServersVector::iterator& begin, \
+											ServersVector::iterator& curr, \
+											struct sockaddr_in& info );
 	int				mainLoop( void );
 	static int		sendResponse( socket_t connected, std::string response );
 	static int		readRequest( socket_t clientFd, std::string& readed );

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/22 12:14:23 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 17:04:52 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,23 +22,50 @@ Receptionist::Receptionist( ServersVector& servers ): Clients(), \
 	Directives				*d;
 	int						backlog = 10;
 	ServersVector::iterator	it;
+	ServersVector::iterator	itb = this->_servers.begin();
 	struct sockaddr_in		info;
 
-	it = this->_servers.begin();
+	it = itb;
 	while ( it != this->_servers.end() )
 	{
 		d = it->getDirectives();
 		if ( d != NULL && d->isEmpty() == false )
 		{
-			serverFd = Sockets::createPassiveSocket( d->getHost(), \
-							d->getPort(), backlog, info );
+			if ( serverShareAddr( itb, it, info ) == false )
+			{
+				serverFd = Sockets::createPassiveSocket( d->getHost(), \
+								d->getPort(), backlog, info );
+				this->polls.addPollfd( serverFd, POLLIN, 0, SPOLLFD );
+			}
 			it->setAddr( info );
-			this->polls.addPollfd( serverFd, POLLIN, 0, SPOLLFD );
 			it++;
 		}
 		else
 			this->_servers.erase( it );
 	}
+}
+
+bool	Receptionist::serverShareAddr( ServersVector::iterator& begin, \
+										ServersVector::iterator& curr, \
+										struct sockaddr_in& info )
+{
+	struct sockaddr		addrAux;
+	struct sockaddr_in	*addr;
+	unsigned int		ip;
+
+	addrAux = Sockets::codeHost( curr->getHost().c_str(), curr->getPort() );
+	addr = ( struct sockaddr_in * )&addrAux;
+	ip = addr->sin_addr.s_addr;
+	for ( ServersVector::iterator it = begin; it != curr; it++ )
+	{
+		if ( it->getPort() == curr->getPort() \
+				&& it->getIpNetworkOrder() == ip )
+		{
+			info = it->getAddr();
+			return ( true );
+		}
+	}
+	return ( false );
 }
 
 Receptionist::~Receptionist( void ) {}
