@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:48:38 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/17 19:25:49 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 12:15:22 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,4 +51,4 @@ void	ConfigParser::readConfig( void )
 	this->_content = SUtils::trim( content );
 }
 
-ServersVector	ConfigParser::getServers( void ) const { return ( this->_directives->_servers ); }
+ServersVector&	ConfigParser::getServers( void ) const { return ( this->_directives->_servers ); }

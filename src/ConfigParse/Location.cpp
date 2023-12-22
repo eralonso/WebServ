@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 12:56:54 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/21 19:53:46 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 10:45:53 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,9 +99,9 @@ int	Location::comparePath( std::string path ) const
 std::string	Location::pathJoin( std::string path1, std::string path2 ) const
 {
 	if ( path1[ path1.length() - 1 ] == '/' )
-		path1.erase( path1.length() - 1 );
+		path1.erase( path1.length() - 1, 1 );
 	if ( path2[ 0 ] == '/' )
-		path2.erase( 0 );
+		path2.erase( 0, 1 );
 	return ( path1 + "/" + path2 );
 }
 
@@ -112,7 +112,6 @@ std::string	Location::getFinalPath( std::string path ) const
 	int				cmp;
 
 	SUtils::split( splited, path, "/" );
-	fPath = path;
 	cmp = comparePath( path );
 	if ( this->_directives->isSet( "root" ) == true )
 		fPath = pathJoin( this->_directives->getRoot(), path );
@@ -120,6 +119,7 @@ std::string	Location::getFinalPath( std::string path ) const
 		fPath = pathJoin( this->_directives->getAlias(), \
 					STLUtils::vectorToString< StringVector >( \
 					splited.begin() + cmp, splited.end() ) );
-	Log::Error( "siiiiii" );
+	else
+		fPath = pathJoin( ".", path );
 	return ( fPath );
 }

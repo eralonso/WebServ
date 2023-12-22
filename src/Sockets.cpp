@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 17:38:14 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/17 13:35:44 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 12:11:39 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,10 +97,9 @@ void	Sockets::listenFromSocket( socket_t fd, int backlog )
 }
 
 //Accept a connection from socket
-socket_t	Sockets::acceptConnection( socket_t fd )
+socket_t	Sockets::acceptConnection( socket_t fd, struct sockaddr_in& addr )
 {
 	socket_t			connected;
-	struct sockaddr_in	addr;
 	socklen_t			addr_size;
 
 	addr_size = sizeof( addr );
@@ -156,7 +155,8 @@ struct sockaddr	Sockets::codeHost( const char *host, int port )
 }
 
 //Create a socket and perform it to be a passive socket ( listen )
-socket_t	Sockets::createPassiveSocket( std::string host, int port, int backlog )
+socket_t	Sockets::createPassiveSocket( std::string host, int port, \
+										int backlog, struct sockaddr_in& addr )
 {
 	socket_t		fd;
 	int				optVal;
@@ -181,5 +181,6 @@ socket_t	Sockets::createPassiveSocket( std::string host, int port, int backlog )
 		close( fd );
 		throw e;
 	}
+	addr = *( ( struct sockaddr_in * )&info );
 	return ( fd );
 }

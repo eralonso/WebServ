@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:49:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/01 13:21:09 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 12:15:06 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ private:
 public:
 	ConfigParser( int argc, char **argv );
 	~ConfigParser( void );
-	ServersVector getServers( void ) const;
+	ServersVector& getServers( void ) const;
 };
 
 #endif

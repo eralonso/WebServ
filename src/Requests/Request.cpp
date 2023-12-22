@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/21 15:46:42 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/22 12:54:30 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -285,9 +285,9 @@ const Headers&	Request::getHeaders( void ) const
 	return ( this->headers );
 }
 
-std::string	Request::getHost( void )
+std::string	Request::getHost( void ) const
 {
-	Header* h = this->headers.firstWithKey( "Host" );
+	const Header* h = this->headers.firstWithKey( "Host" );
 	if (h)
 	{
 		std::string value = h->getValue();
@@ -299,9 +299,9 @@ std::string	Request::getHost( void )
 	return std::string("127.0.0.1");
 }
 
-std::string Request::getPort()
+std::string Request::getPort( void ) const
 {
-	Header* h = headers.firstWithKey("Host");
+	const Header* h = headers.firstWithKey("Host");
 	if (h)
 	{
 		std::string value = h->getValue();
@@ -313,9 +313,9 @@ std::string Request::getPort()
 	return std::string("80");
 }
 
-bool Request::getHostPort(std::string& host, std::string& port)
+bool Request::getHostPort(std::string& host, std::string& port) const
 {
-	Header* h = headers.firstWithKey("Host");
+	const Header* h = headers.firstWithKey("Host");
 	if (h)
 	{
 		std::string value = h->getValue();

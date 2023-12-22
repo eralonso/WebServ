@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/21 19:52:19 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 12:23:55 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,21 +22,23 @@ PendingCgiTasks	CgiExecutor::pendingTasks;
 
 CgiExecutor::CgiExecutor( Request& request ): request( request )
 {
-	std::string		host;
-	std::string		port;
+	//std::string		host;
+	//std::string		port;
 	const Server	*s = NULL;
 
 	// request.getClient()->cgis.findCgi( request.getDocExt(), binary );
-	Client *cli = request.getClient();
-	request.getHostPort( host, port );
-	s = ServerFinder::find( cli->getServers(), host, port );
+	//Client *cli = request.getClient();
+	//request.getHostPort( host, port );
+	//s = ServerFinder::find( cli->getServers(), host, port );
+	s = ServerFinder::find( request );
 	if (!s)
 		return;
-	Log::Success("CgiExecutor::CgiExecutor Route Chaine: " + request.getRouteChaineString() );
+	//Log::Success("CgiExecutor::CgiExecutor Route Chaine: " + request.getRouteChaineString() );
 	binary = s->getCgiBinary( request.getDocExt(), request.getRouteChaineString() );
 	// cli->servers[]
 	//this->argument = "." + request.getRouteChaineString() + request.getDocument();
-	this->argument = s->getFinalPath( request.getRouteChaineString() );
+	this->argument = s->getFinalPath( request.getRouteChaineString() ) \
+					 + request.getDocument();
 	Log::Info( "CgiExecutor binary: " + this->binary );
 	Log::Info( "CgiExecutor argment: " + this->argument );
 	Log::Info( "Route chain: " + request.getRouteChaineString() );

@@ -6,14 +6,14 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/20 17:01:30 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/22 12:14:23 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Receptionist.hpp>
 #include <Response.hpp>
 
-Receptionist::Receptionist( ServersVector servers ): Clients(), \
+Receptionist::Receptionist( ServersVector& servers ): Clients(), \
 													polls( MAX_CLIENTS ), \
 													_servers( servers ), \
 													timeout( 50 )
@@ -22,6 +22,7 @@ Receptionist::Receptionist( ServersVector servers ): Clients(), \
 	Directives				*d;
 	int						backlog = 10;
 	ServersVector::iterator	it;
+	struct sockaddr_in		info;
 
 	it = this->_servers.begin();
 	while ( it != this->_servers.end() )
@@ -30,7 +31,8 @@ Receptionist::Receptionist( ServersVector servers ): Clients(), \
 		if ( d != NULL && d->isEmpty() == false )
 		{
 			serverFd = Sockets::createPassiveSocket( d->getHost(), \
-							d->getPort(), backlog );
+							d->getPort(), backlog, info );
+			it->setAddr( info );
 			this->polls.addPollfd( serverFd, POLLIN, 0, SPOLLFD );
 			it++;
 		}
@@ -97,9 +99,10 @@ int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
 
 int	Receptionist::addNewClient( socket_t serverFd )
 {
-	socket_t	clientFd;
+	socket_t			clientFd;
+	struct sockaddr_in	info;
 	
-	clientFd = Sockets::acceptConnection( serverFd );
+	clientFd = Sockets::acceptConnection( serverFd, info );
 	if ( clientFd < 0 )
 		return ( -1 );
 	if ( polls.addPollfd( clientFd, POLLIN, 0, CPOLLFD ) == false )
@@ -107,7 +110,7 @@ int	Receptionist::addNewClient( socket_t serverFd )
 		Log::Error( "Too many clients trying to connect to server" );
 		close( clientFd );
 	}
-	else if ( !Clients::newClient( clientFd, polls, _servers ) )
+	else if ( !Clients::newClient( clientFd, polls, _servers, info ) )
 	{
 		Log::Error( "Failed to append Request" );
 		close( clientFd );

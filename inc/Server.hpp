@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:40:55 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/21 19:49:17 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 12:48:01 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 
 # include <TypesDefines.hpp>
 # include <Directives.hpp>
+# include <Client.hpp>
 
 # define SERVER_SIZE_DIRECTIVES 7
 
@@ -27,7 +28,8 @@ class Server
 	//Friends
 	friend class DirectivesParser;
 private:
-	Directives	*_directives;
+	Directives			*_directives;
+	struct sockaddr_in	addr;
 public:
 	Server( void );
 	Server( const Server& s );
@@ -44,6 +46,11 @@ public:
 	const std::string	getCgiBinary( std::string ext, std::string route ) const;
 	bool				serverMatch( std::string host, std::string port ) const;
 	std::string			getFinalPath( const std::string path ) const;
+	void						setAddr( const struct sockaddr_in& info );
+	const struct sockaddr_in&	getAddr( void ) const;
+	std::string					getIpString( void ) const;
+	unsigned int				getIpNetworkOrder( void ) const;
+	unsigned int				getIpHostOrder( void ) const;
 };
 
 #endif

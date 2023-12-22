@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 11:03:56 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/08 13:59:49 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 12:45:16 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,9 @@ private:
 	static std::string	decompressBytes( std::string compressed, \
 							size_t pos, size_t size );
 	static unsigned int	getMaskLimit( size_t octetPos );
+public:
 	static bool			checkValidIp( std::string ip );
+private:
 	static bool			checkValidRangeIpMask( std::string num, \
 							size_t pos, size_t size );
 	static bool			checkSyntaxIp( std::string ip );

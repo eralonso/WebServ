@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/21 19:53:07 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 12:47:46 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ Location*	Server::getLocationAtPath( std::string path ) const
 	LocationsSet::iterator	it = this->_directives->_locations.begin();
 	LocationsSet::iterator	ite = this->_directives->_locations.end();
 	int						max = 0;
-	int						cmp;
+	int						cmp = 0;
 
 	while ( it != ite )
 	{
@@ -62,11 +62,9 @@ Location*	Server::getLocationAtPath( std::string path ) const
 		}
 		it++;
 	}
-	Log::Error( "max: " + SUtils::longToString( max ) );
+	//Log::Error( "max: " + SUtils::longToString( max ) );
 	return ( lc );
 }
-//Log::Success("Server::getLocationAtPath size: " + SUtils::longToString(this->_directives->_locations.size()));
-//Log::Success("Server::getLocationAtPath comparing: " + lcp->getPath() + " with " + path);
 
 std::string	Server::getErrorPageWithCode( unsigned int code ) const
 {
@@ -80,20 +78,27 @@ bool	Server::serverMatch( std::string host, std::string port ) const
 	StringVector::const_iterator	ite = this->_directives->getServerNames().end();
 
 	if ( SUtils::compareNumbersAsStrings( port, \
-		SUtils::longToString( this->_directives->getPort()) ) )
+		SUtils::longToString( this->_directives->getPort() ) ) )
 		return ( false );
+	if ( DirectivesParser::checkValidIp( host ) == true )
+	{
+		if ( getIpString() == "0.0.0.0" || host == "0.0.0.0" )
+			return ( true );
+		return ( getIpString() == host );
+	}
+	if ( this->_directives->getHost() == host )
+		return ( true );
 	for ( it = this->_directives->getServerNames().begin(); it != ite; it++ )
 	{
-		// Log::Success(std::string("Server::serverMatch iterate: " + *it + " to locate: " + host));
 		if ( *it == host )
 			return ( true );
 	}
 	return ( false );
 }
 
-const std::string	Server::getCgiBinary( std::string ext, std::string route) const
+const std::string	Server::getCgiBinary( std::string ext, std::string route ) const
 {
-	Location* loc = getLocationAtPath( route );
+	Location	*loc = getLocationAtPath( route );
 
 	if ( !loc )
 		return ( "" );
@@ -106,6 +111,30 @@ std::string	Server::getFinalPath( const std::string path ) const
 
 	if ( !loc )
 		return ( path );
-	Log::Error( "siiiiii" );
 	return ( loc->getFinalPath( path ) );
+}
+
+void	Server::setAddr( const struct sockaddr_in& info )
+{
+	this->addr = info;
+}
+
+const struct sockaddr_in&	Server::getAddr( void ) const
+{
+	return ( this->addr );
+}
+
+std::string	Server::getIpString( void ) const
+{
+	return ( Binary::decodeAddress( ntohl( this->addr.sin_addr.s_addr ) ) );
+}
+
+unsigned int	Server::getIpNetworkOrder( void ) const
+{
+	return ( this->addr.sin_addr.s_addr );
+}
+
+unsigned int	Server::getIpHostOrder( void ) const
+{
+	return ( ntohl( this->addr.sin_addr.s_addr ) );
 }

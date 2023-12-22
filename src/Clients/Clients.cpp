@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:50 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/21 12:07:59 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/22 11:57:19 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,10 @@ Clients&	Clients::operator=( const Clients& c )
 	return ( *this );
 }
 
-Client	*Clients::newClient( socket_t socket, WSPoll& polls, ServersVector& servers )
+Client	*Clients::newClient( socket_t socket, WSPoll& polls, \
+								ServersVector& servers, struct sockaddr_in& info )
 {
-	Client	*cli = new Client( socket, polls, servers);
+	Client	*cli = new Client( socket, polls, servers, info );
 
 	if ( !cli )
 		return ( NULL );

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/21 13:16:23 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/22 11:59:28 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,12 @@ Client::Client( void )
 	this->socket = -1;
 	this->polls = NULL;
 	this->servers = NULL;
+	std::memset( &this->addr, 0, sizeof( this->addr ) );
 	// Log::Info("Created client id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
-Client::Client( socket_t pollsocket, WSPoll& polls, ServersVector& servers )
+Client::Client( socket_t pollsocket, WSPoll& polls, ServersVector& servers, \
+	   				struct sockaddr_in& info )
 {
 	this->id = Client::id_counter;
 	Client::id_counter++;
@@ -38,6 +40,7 @@ Client::Client( socket_t pollsocket, WSPoll& polls, ServersVector& servers )
 	this->socket = pollsocket;
 	this->polls = &polls;
 	this->servers = &servers;
+	this->addr = info;
 	// Log::Info("Created client id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
@@ -51,6 +54,7 @@ Client::Client( const Client& b ): Requests()
 	this->pending = b.pending;
 	this->received = b.received;
 	this->servers = b.servers;
+	this->addr = b.addr;
 }
 
 Client&	Client::operator=( const Client& b )
@@ -61,6 +65,7 @@ Client&	Client::operator=( const Client& b )
 		this->pending = b.pending;
 		this->received = b.received;
 		this->servers = b.servers;
+		this->addr = b.addr;
 	}
 	return ( *this );
 }
@@ -79,6 +84,26 @@ socket_t	Client::getClientSocket( void ) const
 size_t	Client::getId( void ) const
 {
 	return ( this->id );
+}
+
+const struct sockaddr_in&	Client::getAddr( void ) const
+{
+	return ( this->addr );
+}
+
+std::string	Client::getIpString( void ) const
+{
+	return ( Binary::decodeAddress( ntohl( addr.sin_addr.s_addr ) ) );
+}
+
+unsigned int	Client::getIpNetworkOrder( void ) const
+{
+	return ( addr.sin_addr.s_addr );
+}
+
+unsigned int	Client::getIpHostOrder( void ) const
+{
+	return ( ntohl( addr.sin_addr.s_addr ) );
 }
 
 const ServersVector&	Client::getServers( void ) const

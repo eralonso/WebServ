@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/21 12:07:21 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/22 12:01:04 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,19 +27,21 @@
 class Client: public Requests
 {
 private:
-	static size_t	id_counter;
-	size_t		 	id;
-	socket_t	 	socket;
-	size_t		 	pending;
-	std::string	 	received;
-	bool		 	keepAlive;
-	WSPoll			*polls;
+	static size_t		id_counter;
+	size_t				id;
+	socket_t			socket;
+	size_t				pending;
+	std::string			received;
+	bool				keepAlive;
+	WSPoll				*polls;
+	struct sockaddr_in	addr;
 public:
 	ServersVector	*servers;
 	// CgisMap	cgis;
 public:
 	Client( void );
-	Client( socket_t pollsocket, WSPoll& polls, ServersVector& servers );
+	Client( socket_t pollsocket, WSPoll& polls, \
+				ServersVector& servers, struct sockaddr_in& info );
 	~Client( void );
 	Client( const Client& b );
 	Client&	operator=( const Client& b );
@@ -65,6 +67,10 @@ public:
 	void		allowPollWrite( bool value );
 	bool		checkPendingToSend( void );
 	const ServersVector&	getServers( void ) const;
+	const struct sockaddr_in&	getAddr( void ) const;
+	std::string					getIpString( void ) const;
+	unsigned int				getIpNetworkOrder( void ) const;
+	unsigned int				getIpHostOrder( void ) const;
 };
 
 #endif

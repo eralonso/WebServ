@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 10:20:03 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/19 18:12:06 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/22 12:53:03 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,20 @@ Header	*Headers::firstWithKey( const std::string& key )
 {
 	Headers::iterator	it = this->begin();
 	Headers::iterator	ite = this->end();
+
+	while ( it != ite )
+	{
+		if ( toLower( it->getKey() ) == toLower( key ) )
+			return ( &( *it ) );
+		it++;
+	}
+	return ( NULL );
+}
+
+const Header	*Headers::firstWithKey( const std::string& key ) const
+{
+	Headers::const_iterator	it = this->begin();
+	Headers::const_iterator	ite = this->end();
 
 	while ( it != ite )
 	{

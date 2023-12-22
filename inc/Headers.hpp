@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 10:19:37 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/17 17:34:31 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 12:53:24 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ public:
 	Headers&			operator=( const Headers& b );
 	Headers				filterKey( const std::string& key );
 	Header				*firstWithKey( const std::string& key );
+	const Header		*firstWithKey( const std::string& key ) const;
 	void				append( Header& b );
 	void				append( const std::string& key, const std::string& value );
 	void				replace( Header& b );

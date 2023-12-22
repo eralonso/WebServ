@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/21 12:02:00 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/22 12:49:59 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,9 +96,9 @@ public:
 	std::string		getDocExt( void ) const;
 	std::string		getQuery( void ) const;
 	const Headers&	getHeaders( void ) const;
-	std::string		getHost( void );
-	std::string 	getPort();
-	bool 			getHostPort(std::string &host, std::string &port);
+	std::string		getHost( void ) const;
+	std::string 	getPort( void ) const;
+	bool 			getHostPort(std::string &host, std::string &port) const;
 	std::string		getHeaderWithKey(const std::string &key);
 	size_t 			getBodyLength( void ) const;
 	std::string		getBody( void ) const;
