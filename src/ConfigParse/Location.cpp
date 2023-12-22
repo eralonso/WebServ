@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 12:56:54 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/22 10:45:53 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 19:28:35 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,20 @@ Location& 	Location::operator=( const Location& lc )
 bool	Location::operator<( const Location& lc ) const
 {
 	return ( this->_splitedPath.size() > lc._splitedPath.size() );
+}
+
+bool	Location::operator<( const Location* lc ) const
+{
+	if ( !lc )
+		return ( true );
+	return ( this->_splitedPath.size() > lc->_splitedPath.size() );
+}
+
+bool	Location::locationCompare( const Location *lc, const Location *lc2 )
+{
+	if ( lc->_splitedPath.size() == lc2->_splitedPath.size() )
+		return ( std::strcmp( lc->getPath().c_str(), lc2->getPath().c_str() ) );
+	return ( lc->_splitedPath.size() > lc2->_splitedPath.size() );
 }
 
 bool	Location::operator==( const Location& lc ) const
@@ -118,8 +132,8 @@ std::string	Location::getFinalPath( std::string path ) const
 	else if ( this->_directives->isSet( "alias" ) == true )
 		fPath = pathJoin( this->_directives->getAlias(), \
 					STLUtils::vectorToString< StringVector >( \
-					splited.begin() + cmp, splited.end() ) );
+					splited.begin() + cmp, splited.end(), "/" ) );
 	else
 		fPath = pathJoin( ".", path );
-	return ( fPath );
+	return ( fPath + "/" );
 }

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:55:51 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/20 18:35:59 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/22 19:02:22 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 Directives::Directives( void ): _port( 8000 ), \
 								_host( "0.0.0.0" ), \
 								_clientMaxBodySize( 1 << 20 ), \
+								_locations( Location::locationCompare ), \
 								_isEmpty( true )
 {
 	this->_return.first = -1;
@@ -111,7 +112,7 @@ void	Directives::print( void ) const
 	Log::Info( "[ Config ] port: " + SUtils::longToString( this->_port ) );
 	Log::Info( "[ Config ] server_name: " \
 				+ STLUtils::vectorToString< StringVector >( \
-				this->_serverNames.begin(), this->_serverNames.end() ) );
+				this->_serverNames.begin(), this->_serverNames.end(), " " ) );
 	Log::Info( "[ Config ] error_page: " \
 				+ STLUtils::mapToString< ErrorPagesMap >( \
 				this->_errorPages.begin(), this->_errorPages.end() ) );
@@ -120,7 +121,7 @@ void	Directives::print( void ) const
 	Log::Info( "[ Config ] upload_store: " + this->_uploadStore );
 	Log::Info( "[ Config ] index: " \
 				+ STLUtils::vectorToString< StringVector >( \
-				this->_index.begin(), this->_index.end() ) );
+				this->_index.begin(), this->_index.end(), " " ) );
 	Log::Info( "[ Config ] autoindex: " + std::string( \
 				this->_autoindex == true ? "on" : "off" ) );
 	Log::Info( "[ Config ] alias: " + this->_alias );

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/22 17:22:47 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/22 19:30:52 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,8 @@ Location*	Server::getLocationAtPath( std::string path ) const
 		}
 		it++;
 	}
-	//Log::Error( "max: " + SUtils::longToString( max ) );
+	if ( !lc && lcit && lcit->getSplitedPath().size() == 0 )
+		lc = lcit;
 	return ( lc );
 }
 
@@ -117,9 +118,9 @@ std::string	Server::getFinalPath( const std::string path ) const
 {
 	Location	*loc = getLocationAtPath( path );
 
-	if ( !loc )
-		return ( path );
-	return ( loc->getFinalPath( path ) );
+	if ( loc )
+		return ( loc->getFinalPath( path ) );
+	return ( path );
 }
 
 void	Server::setAddr( const struct sockaddr_in& info )

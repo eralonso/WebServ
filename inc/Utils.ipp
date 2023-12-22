@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.ipp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:31:42 by eralonso          #+#    #+#             */
-/*   Updated: 2023/11/18 17:49:03 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 18:20:25 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,16 @@ namespace STLUtils
 	//container to string
 	template < typename T >
 	std::string	vectorToString( typename T::const_iterator begin, \
-							typename T::const_iterator end )
+							typename T::const_iterator end, \
+							std::string join )
 	{
 		std::stringstream	str;
 
 		for ( typename T::const_iterator it = begin; it != end; it++ )
 		{
+			if ( it != begin )
+				str << join;
 			str << *it;
-			if ( it + 1 != end )
-				str << " ";
 		}
 		return ( str.str() );
 	}

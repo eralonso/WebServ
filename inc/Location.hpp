@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/21 19:50:09 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/22 18:58:06 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ public:
 	Location&	operator=( const Location& lc );
 public:
 	bool				operator<( const Location& lc ) const;
+	bool				operator<( const Location* lc ) const;
+	static bool			locationCompare( const Location* lc, const Location* lc2 );
 	bool				operator==( const Location& lc ) const;
 	std::string			getPath( void ) const;
 	bool				isDir( void ) const;

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:31:42 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/22 16:14:40 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/22 18:15:20 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,8 @@ namespace STLUtils
 {
 	template < typename T >
 	std::string	vectorToString( typename T::const_iterator begin, \
-							typename T::const_iterator end );
+							typename T::const_iterator end, \
+							std::string join );
 	template < typename T >
 	std::string	mapToString( typename T::const_iterator begin, \
 							typename T::const_iterator end );
