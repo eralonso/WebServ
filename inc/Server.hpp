@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:40:55 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/22 12:48:01 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/23 18:23:18 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ public:
 	~Server( void );
 	Server&	operator=( const Server& s );
 private:
-	static std::string 		_allowedDirectivesAux[ SERVER_SIZE_DIRECTIVES + 1 ];
+	static std::string	_allowedDirectivesAux[ SERVER_SIZE_DIRECTIVES + 1 ];
 public:
 	static StringVector	allowedDirectives;
 public:
@@ -44,8 +44,10 @@ public:
 	Directives					*getDirectives( void ) const;
 	std::string					getErrorPageWithCode( unsigned int code ) const;
 	const std::string			getCgiBinary( std::string ext, std::string route ) const;
-	bool						strongServerMatch( std::string host, std::string port, unsigned int ip ) const;
-	bool						weakServerMatch( std::string host, std::string port, unsigned int ip ) const;
+	bool						strongServerMatch( std::string host, \
+									std::string port, unsigned int ip ) const;
+	bool						weakServerMatch( std::string host, \
+									std::string port, unsigned int ip ) const;
 	std::string					getFinalPath( const std::string path ) const;
 	void						setAddr( const struct sockaddr_in& info );
 	const struct sockaddr_in&	getAddr( void ) const;

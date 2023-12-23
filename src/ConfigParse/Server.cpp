@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/22 19:30:52 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/23 19:24:27 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ Server&	Server::operator=( const Server& s )
 
 Directives	*Server::getDirectives( void ) const { return ( this->_directives ); }
 
-Location*	Server::getLocationAtPath( std::string path ) const
+Location	*Server::getLocationAtPath( std::string path ) const
 {
 	Location				*lcit = NULL;
 	Location				*lc = NULL;
@@ -109,9 +109,9 @@ const std::string	Server::getCgiBinary( std::string ext, std::string route ) con
 {
 	Location	*loc = getLocationAtPath( route );
 
-	if ( !loc )
-		return ( "" );
-	return ( loc->getCgiBinary( ext ) );
+	if ( loc )
+		return ( loc->getCgiBinary( ext ) );
+	return ( "" );
 }
 
 std::string	Server::getFinalPath( const std::string path ) const

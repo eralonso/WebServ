@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:41:41 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/22 19:18:32 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/23 18:35:29 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,10 @@ Directives	*DirectivesParser::parseDirectives( std::string content, \
 void	DirectivesParser::parseLine( Directives *d, std::string& content, \
 					StringVector allowedDirectives )
 {
-	std::string			head;
-	std::string			body;
-	int					type;
-	std::string			name;
+	std::string	head;
+	std::string	body;
+	int		   	type;
+	std::string	name;
 
 	if ( ( type = TreeSplit::get_pair( head, body, content ) ) != NOT_A_SEPARATOR )
 	{
@@ -416,7 +416,6 @@ void	DirectivesParser::parseLocation( std::string head, std::string body, \
 
 bool	DirectivesParser::isPathDup( LocationsSet lcs, Location lc )
 {
-	Log::Success( "SIZE: " + SUtils::longToString( lcs.size() ) );
 	for ( LocationsSet::iterator it = lcs.begin(); it != lcs.end(); it++ )
 	{
 		if ( **it == lc )

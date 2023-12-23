@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/22 18:58:06 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/23 11:48:38 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ private:
 	bool			_isDir;
 	Directives		*_directives;
 private:
-	static std::string 		_allowedDirectivesAux[ LOCATION_SIZE_DIRECTIVES + 1 ];
+	static std::string	_allowedDirectivesAux[ LOCATION_SIZE_DIRECTIVES + 1 ];
 public:
 	static StringVector	allowedDirectives;
 public:
@@ -41,6 +41,9 @@ public:
 	~Location( void );
 	Location( const Location& lc );
 	Location&	operator=( const Location& lc );
+private:
+	void	deleteLocationsSet( void );
+	void	copyLocationsSet( LocationsSet& locations );
 public:
 	bool				operator<( const Location& lc ) const;
 	bool				operator<( const Location* lc ) const;

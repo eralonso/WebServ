@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:55:51 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/22 19:02:22 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/23 18:35:12 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,10 @@ Directives::Directives( void ): _port( 8000 ), \
 		this->_isSet[ DirectivesParser::directivesList[ i ] ] = false;
 }
 
-Directives::~Directives( void ) {}
+Directives::~Directives( void )
+{
+	deleteLocationsSet();
+}
 
 Directives::Directives( const Directives& d ):
 								_root( d._root ), \
@@ -40,9 +43,12 @@ Directives::Directives( const Directives& d ):
 								_allowMethods( d._allowMethods ), \
 								_cgis( d._cgis ), \
 								_servers( d._servers ), \
-								_locations( d._locations ), \
+								_locations( Location::locationCompare ), \
 								_isSet( d._isSet ),
-								_isEmpty( d._isEmpty ) {}
+								_isEmpty( d._isEmpty )
+{
+	copyLocationsSet( d._locations );
+}
 
 Directives&	Directives::operator=( const Directives& d )
 {
@@ -62,11 +68,33 @@ Directives&	Directives::operator=( const Directives& d )
 		this->_allowMethods = d._allowMethods;
 		this->_cgis = d._cgis;
 		this->_servers = d._servers;
-		this->_locations = d._locations;
 		this->_isSet = d._isSet;
 		this->_isEmpty = d._isEmpty;
+		deleteLocationsSet();
+		copyLocationsSet( d._locations );
 	}
 	return ( *this );
+}
+
+void	Directives::deleteLocationsSet( void )
+{
+	for ( LocationsSet::const_iterator it = this->_locations.begin(); \
+			it != this->_locations.end(); it++ )
+	{
+		if ( *it != NULL )
+			delete *it;
+	}
+	this->_locations.clear();
+}
+
+void	Directives::copyLocationsSet( const LocationsSet& locations )
+{
+	for ( LocationsSet::const_iterator it = locations.begin(); \
+			it != locations.end(); it++ )
+	{
+		if ( *it != NULL )
+			this->_locations.insert( new Location( **it ) );
+	}
 }
 
 std::string	Directives::getRoot( void ) const { return ( this->_root ); }

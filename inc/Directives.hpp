@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:50:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/22 17:01:26 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/23 11:58:57 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,15 +63,18 @@ public:
 	Directives( const Directives& s );
 	~Directives( void );
 	Directives&	operator=( const Directives& d );
+private:
+	void	deleteLocationsSet( void );
+	void	copyLocationsSet( const LocationsSet& locations );
 public:
-	void				print( void ) const;
-	std::string			getRoot( void ) const;
-	int					getPort( void ) const;
-	std::string			getHost( void ) const;
+	void					print( void ) const;
+	std::string				getRoot( void ) const;
+	int						getPort( void ) const;
+	std::string				getHost( void ) const;
 	const StringVector&		getServerNames( void ) const;
-	const ErrorPagesMap&		getErrorPages( void ) const;
-	unsigned int		getClientMaxBodySize( void ) const;
-	std::string			getUploadStore( void ) const;
+	const ErrorPagesMap&	getErrorPages( void ) const;
+	unsigned int			getClientMaxBodySize( void ) const;
+	std::string				getUploadStore( void ) const;
 	const StringVector&		getIndex( void ) const;
 	bool					getAutoindex( void ) const;
 	std::string				getAlias( void ) const;

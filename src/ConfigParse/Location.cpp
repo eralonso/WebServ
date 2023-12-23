@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 12:56:54 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/22 19:28:35 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/23 18:35:06 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ Location::~Location( void )
 
 Location::Location( const Location& lc ): _path( lc._path ), \
 											_splitedPath( lc._splitedPath ), \
-											_isDir(lc._isDir )
+											_isDir( lc._isDir )
 {
 	this->_directives = NULL;
 	if ( lc._directives != NULL )
@@ -59,6 +59,10 @@ bool	Location::operator<( const Location* lc ) const
 
 bool	Location::locationCompare( const Location *lc, const Location *lc2 )
 {
+	if ( !lc )
+		return ( true );
+	else if ( !lc2 )
+		return ( false );
 	if ( lc->_splitedPath.size() == lc2->_splitedPath.size() )
 		return ( std::strcmp( lc->getPath().c_str(), lc2->getPath().c_str() ) );
 	return ( lc->_splitedPath.size() > lc2->_splitedPath.size() );
