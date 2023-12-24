@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 13:56:30 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/22 16:09:18 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/24 11:56:11 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,17 @@ class Sockets
 										struct sockaddr_in& addr );
 		static struct addrinfo		fillAddrinfo( int family, int socktype, \
 										int protocol, int flags );
-		static struct sockaddr		codeHost( const char *host, int port );
-		static struct sockaddr		codeHostPassive( const char *host, int port );
+		static struct sockaddr		codeHostToAddr( const char *host, \
+										int port );
+		static struct sockaddr_in	codeHostToAddrin( const char *host, \
+										int port );
+		static struct sockaddr		codeHostPassiveToAddr( const char *host, \
+										int port );
+		static struct sockaddr_in	codeHostPassiveToAddrin( const char *host, \
+										int port );
 		static socket_t				createPassiveSocket( std::string host, \
-										int port, int backlog, struct sockaddr_in& addr );
+										int port, int backlog, \
+										struct sockaddr_in& addr );
 };
 
 #endif

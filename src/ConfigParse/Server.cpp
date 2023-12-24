@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/23 19:24:27 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/24 17:46:22 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,19 @@ Location	*Server::getLocationAtPath( std::string path ) const
 {
 	Location				*lcit = NULL;
 	Location				*lc = NULL;
-	LocationsSet::iterator	it = this->_directives->_locations.begin();
-	LocationsSet::iterator	ite = this->_directives->_locations.end();
+	LocationsSet::iterator	it;
+	LocationsSet::iterator	ite;
 	int						max = 0;
 	int						cmp = 0;
 
+	if ( this->_directives == NULL )
+		return ( NULL );
+	it = this->_directives->_locations.begin();
+	ite = this->_directives->_locations.end();
 	while ( it != ite )
 	{
 		lcit = *it;
-		cmp = lcit->comparePath( path );
+		cmp = ConfigUtils::comparePathReference( path, lcit->getPath() );
 		if ( cmp > max )
 		{
 			lc = lcit;
@@ -62,7 +66,7 @@ Location	*Server::getLocationAtPath( std::string path ) const
 		}
 		it++;
 	}
-	if ( !lc && lcit && lcit->getSplitedPath().size() == 0 )
+	if ( lc == NULL && lcit != NULL && lcit->getSplitedPath().size() == 0 )
 		lc = lcit;
 	return ( lc );
 }
@@ -73,16 +77,16 @@ std::string	Server::getErrorPageWithCode( unsigned int code ) const
 	return ( "a" );
 }
 
-bool	Server::strongServerMatch( std::string host, std::string port, unsigned int ip ) const
+bool	Server::strongServerMatch( std::string host, std::string port, \
+									unsigned int ip ) const
 {
 	Directives						*directives = this->_directives;
 	StringVector::const_iterator	it;
-	StringVector::const_iterator	ite = directives->getServerNames().end();
+	StringVector::const_iterator	ite;
 
-	if ( weakServerMatch( host, port, ip ) == false )
+	if ( directives == NULL || weakServerMatch( host, port, ip ) == false )
 		return ( false );
-	// if ( directives->isSet( "server_name" ) == false )
-	// 	return ( true );
+	ite = directives->getServerNames().end();
 	for ( it = directives->getServerNames().begin(); it != ite; it++ )
 	{
 		if ( *it == host )
@@ -91,8 +95,11 @@ bool	Server::strongServerMatch( std::string host, std::string port, unsigned int
 	return ( false );
 }
 
-bool	Server::weakServerMatch( std::string host, std::string port, unsigned int ip ) const
+bool	Server::weakServerMatch( std::string host, std::string port, \
+								unsigned int ip ) const
 {
+	if ( this->_directives == NULL )
+		return ( false );
 	if ( SUtils::compareNumbersAsStrings( port, \
 		SUtils::longToString( this->_directives->getPort() ) ) )
 		return ( false );
@@ -103,24 +110,6 @@ bool	Server::weakServerMatch( std::string host, std::string port, unsigned int i
 		return ( getIpString() == host );
 	}
 	return ( getIpNetworkOrder() == ip );
-}
-
-const std::string	Server::getCgiBinary( std::string ext, std::string route ) const
-{
-	Location	*loc = getLocationAtPath( route );
-
-	if ( loc )
-		return ( loc->getCgiBinary( ext ) );
-	return ( "" );
-}
-
-std::string	Server::getFinalPath( const std::string path ) const
-{
-	Location	*loc = getLocationAtPath( path );
-
-	if ( loc )
-		return ( loc->getFinalPath( path ) );
-	return ( path );
 }
 
 void	Server::setAddr( const struct sockaddr_in& info )
@@ -160,4 +149,41 @@ int	Server::getPort( void ) const
 	if ( this->_directives == NULL )
 		return ( -1 );
 	return ( this->_directives->getPort() );
+}
+
+const std::string	Server::getCgiBinary( std::string ext, \
+											std::string route ) const
+{
+	Location	*loc = getLocationAtPath( route );
+
+	if ( loc != NULL )
+		return ( loc->getCgiBinary( ext ) );
+	return ( "" );
+}
+
+std::string	Server::getFinalPath( const std::string path ) const
+{
+	Location	*loc = getLocationAtPath( path );
+	std::string	fpath;
+
+	if ( loc != NULL && loc->getFinalPath( path, fpath ) == true )
+		return ( fpath );
+	if ( this->_directives != NULL \
+			&& this->_directives->isSet( "root" ) == true )
+		return ( ConfigApply::applyRoot( path, this->_directives->getRoot() ) );
+	return ( ConfigUtils::pathJoin( ".", path ) );
+}
+
+std::string	Server::getFinalUploadPath( const std::string path ) const
+{
+	Location	*loc = getLocationAtPath( path );
+	std::string	fpath;
+
+	if ( loc != NULL && loc->getFinalUploadPath( path, fpath ) == true )
+		return ( fpath );
+	if ( this->_directives != NULL \
+			&& this->_directives->isSet( "upload_store" ) == true )
+		return ( ConfigApply::applyUploadStore( path, \
+									this->_directives->getUploadStore() ) );
+	return ( ConfigUtils::pathJoin( ".", path ) );
 }

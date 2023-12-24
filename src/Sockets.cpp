@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 17:38:14 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/22 12:11:39 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/24 11:57:16 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ struct addrinfo Sockets::fillAddrinfo( int family, int socktype, \
 	return ( info );
 }
 
-struct sockaddr	Sockets::codeHost( const char *host, int port )
+struct sockaddr	Sockets::codeHostToAddr( const char *host, int port )
 {
 	struct addrinfo		hints;
 	struct addrinfo		*res = NULL;
@@ -154,8 +154,27 @@ struct sockaddr	Sockets::codeHost( const char *host, int port )
 	return ( addr );
 }
 
+struct sockaddr_in	Sockets::codeHostToAddrin( const char *host, int port )
+{
+	struct addrinfo		hints;
+	struct addrinfo		*res = NULL;
+	struct sockaddr_in	addr_in;
 
-struct sockaddr	Sockets::codeHostPassive( const char *host, int port )
+	hints = fillAddrinfo( AF_INET, SOCK_STREAM, IPPROTO_TCP, 0 );
+	getaddrinfo( host, SUtils::longToString( port ).c_str(), &hints, &res );
+	if ( res != NULL )
+	{
+		addr_in = *( ( struct sockaddr_in * )res->ai_addr );
+		freeaddrinfo( res );
+	}
+	else
+		addr_in = fillSockAddr( AF_INET, port, Binary::codeAddress( host ) );
+	Log::Info( "Address -> " + Binary::decodeAddress( \
+				ntohl( addr_in.sin_addr.s_addr ) ) );
+	return ( addr_in );
+}
+
+struct sockaddr	Sockets::codeHostPassiveToAddr( const char *host, int port )
 {
 	struct addrinfo		hints;
 	struct addrinfo		*res = NULL;
@@ -179,6 +198,25 @@ struct sockaddr	Sockets::codeHostPassive( const char *host, int port )
 	return ( addr );
 }
 
+struct sockaddr_in	Sockets::codeHostPassiveToAddrin( const char *host, int port )
+{
+	struct addrinfo		hints;
+	struct addrinfo		*res = NULL;
+	struct sockaddr_in	addr_in;
+
+	hints = fillAddrinfo( AF_INET, SOCK_STREAM, IPPROTO_TCP, AI_PASSIVE );
+	getaddrinfo( host, SUtils::longToString( port ).c_str(), &hints, &res );
+	if ( res != NULL )
+	{
+		addr_in = *( ( struct sockaddr_in * )res->ai_addr );
+		freeaddrinfo( res );
+	}
+	else
+		addr_in = fillSockAddr( AF_INET, port, Binary::codeAddress( host ) );
+	Log::Info( "Address -> " + Binary::decodeAddress( \
+				ntohl( addr_in.sin_addr.s_addr ) ) );
+	return ( addr_in );
+}
 //Create a socket and perform it to be a passive socket ( listen )
 socket_t	Sockets::createPassiveSocket( std::string host, int port, \
 										int backlog, struct sockaddr_in& addr )
@@ -193,7 +231,7 @@ socket_t	Sockets::createPassiveSocket( std::string host, int port, \
 	fd = socketCreate( AF_INET, SOCK_STREAM, 0 );
 	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
 	setsockopt( fd, SOL_SOCKET, SO_REUSEADDR, &optVal, sizeof( int ) );
-	info = codeHostPassive( host.c_str(), port );
+	info = codeHostPassiveToAddr( host.c_str(), port );
 	try
 	{
 		bindSocket( fd, &info, sizeof( info ) );

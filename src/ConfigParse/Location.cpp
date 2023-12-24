@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 12:56:54 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/23 18:35:06 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/24 17:45:21 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ bool	Location::isDir( void ) const { return ( this->_isDir ); }
 
 Directives	*Location::getDirectives( void ) const { return ( this->_directives ); }
 
-const std::string Location::getCgiBinary(std::string ext) const
+const std::string Location::getCgiBinary( std::string ext ) const
 {
 	const CgisMap	*map = NULL;
 
@@ -95,49 +95,33 @@ const std::string Location::getCgiBinary(std::string ext) const
 	return ( "" );
 }
 
-int	Location::comparePath( std::string path ) const
+bool	Location::getFinalPath( std::string path, std::string& fpath ) const
 {
-	size_t			cmp = 0;
-	StringVector	splited;
-	size_t			size = 0;
+	Directives	*directives = NULL;
 
-	size = this->_splitedPath.size();
-	SUtils::split( splited, path, "/" );
-	if ( splited.size() < size )
-		return ( -1 );
-	for ( size_t i = 0; i < size; i++ )
-	{
-		if ( splited[ i ] != this->_splitedPath[ i ] )
-			break ;
-		cmp++;
-	}
-	return ( cmp );
-}
-
-std::string	Location::pathJoin( std::string path1, std::string path2 ) const
-{
-	if ( path1[ path1.length() - 1 ] == '/' )
-		path1.erase( path1.length() - 1, 1 );
-	if ( path2[ 0 ] == '/' )
-		path2.erase( 0, 1 );
-	return ( path1 + "/" + path2 );
-}
-
-std::string	Location::getFinalPath( std::string path ) const
-{
-	std::string		fPath;
-	StringVector	splited;
-	int				cmp;
-
-	SUtils::split( splited, path, "/" );
-	cmp = comparePath( path );
-	if ( this->_directives->isSet( "root" ) == true )
-		fPath = pathJoin( this->_directives->getRoot(), path );
-	else if ( this->_directives->isSet( "alias" ) == true )
-		fPath = pathJoin( this->_directives->getAlias(), \
-					STLUtils::vectorToString< StringVector >( \
-					splited.begin() + cmp, splited.end(), "/" ) );
+	directives = this->_directives;
+	if ( directives == NULL )
+		return ( false );
+	if ( directives->isSet( "root" ) == true )
+		fpath = ConfigApply::applyRoot( path, directives->getRoot() );
+	else if ( directives->isSet( "alias" ) == true )
+		fpath = ConfigApply::applyAlias( path, this->getPath(), \
+										directives->getAlias() );
 	else
-		fPath = pathJoin( ".", path );
-	return ( fPath + "/" );
+		return ( false );
+	return ( true );
+}
+
+bool	Location::getFinalUploadPath( std::string path, std::string& fpath ) const
+{
+	Directives	*directives = NULL;
+
+	directives = this->_directives;
+	if ( directives == NULL )
+		return ( false );
+	if ( directives->isSet( "upload_store" ) == true )
+		fpath = ConfigApply::applyUploadStore( path, directives->getUploadStore() );
+	else
+		return ( false );
+	return ( true );
 }

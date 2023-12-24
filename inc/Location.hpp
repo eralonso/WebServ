@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/23 11:48:38 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/24 17:36:16 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 # include <Directives.hpp>
 # include <Defines.hpp>
 # include <StringErrors.hpp>
+# include <ConfigUtils.hpp>
+# include <ConfigApply.hpp>
 
 # define LOCATION_SIZE_DIRECTIVES 10
 
@@ -54,9 +56,10 @@ public:
 	StringVector		getSplitedPath( void ) const;
 	Directives			*getDirectives( void ) const;
 	const std::string	getCgiBinary( std::string ext ) const;
-	int					comparePath( std::string path ) const;
-	std::string			getFinalPath( std::string path ) const;
-	std::string			pathJoin( std::string path1, std::string path2 ) const;
+	bool				getFinalPath( std::string path, \
+							std::string& fpath ) const;
+	bool				getFinalUploadPath( std::string path, \
+							std::string& fpath ) const;
 };
 
 #endif

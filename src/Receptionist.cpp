@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/22 17:04:52 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/24 12:03:37 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,12 @@ Receptionist::Receptionist( ServersVector& servers ): Clients(), \
 													timeout( 50 )
 {
 	socket_t				serverFd;
-	Directives				*d;
+	Directives				*d = NULL;
 	int						backlog = 10;
-	ServersVector::iterator	it;
 	ServersVector::iterator	itb = this->_servers.begin();
+	ServersVector::iterator	it = itb;
 	struct sockaddr_in		info;
 
-	it = itb;
 	while ( it != this->_servers.end() )
 	{
 		d = it->getDirectives();
@@ -45,29 +44,6 @@ Receptionist::Receptionist( ServersVector& servers ): Clients(), \
 	}
 }
 
-bool	Receptionist::serverShareAddr( ServersVector::iterator& begin, \
-										ServersVector::iterator& curr, \
-										struct sockaddr_in& info )
-{
-	struct sockaddr		addrAux;
-	struct sockaddr_in	*addr;
-	unsigned int		ip;
-
-	addrAux = Sockets::codeHost( curr->getHost().c_str(), curr->getPort() );
-	addr = ( struct sockaddr_in * )&addrAux;
-	ip = addr->sin_addr.s_addr;
-	for ( ServersVector::iterator it = begin; it != curr; it++ )
-	{
-		if ( it->getPort() == curr->getPort() \
-				&& it->getIpNetworkOrder() == ip )
-		{
-			info = it->getAddr();
-			return ( true );
-		}
-	}
-	return ( false );
-}
-
 Receptionist::~Receptionist( void ) {}
 
 Receptionist::Receptionist( const Receptionist& b ): Clients(), \
@@ -84,6 +60,26 @@ Receptionist& 	Receptionist::operator=( const Receptionist& b )
 		this->timeout = b.timeout;
 	}
 	return ( *this );
+}
+
+bool	Receptionist::serverShareAddr( ServersVector::iterator& begin, \
+										ServersVector::iterator& curr, \
+										struct sockaddr_in& info )
+{
+	struct sockaddr_in	addr;
+	unsigned int		ip;
+
+	addr = Sockets::codeHostToAddrin( curr->getHost().c_str(), curr->getPort() );
+	ip = addr.sin_addr.s_addr;
+	for ( ServersVector::iterator it = begin; it != curr; it++ )
+	{
+		if ( it->getPort() == curr->getPort() && it->getIpNetworkOrder() == ip )
+		{
+			info = it->getAddr();
+			return ( true );
+		}
+	}
+	return ( false );
 }
 
 int	Receptionist::sendResponse( socket_t connected, std::string response )

@@ -6,7 +6,7 @@
 #    By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/22 10:08:41 by eralonso          #+#    #+#              #
-#    Updated: 2023/12/20 18:24:27 by omoreno-         ###   ########.fr        #
+#    Updated: 2023/12/24 17:26:46 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -64,7 +64,7 @@ FILES		:=	main Sockets WSPoll WSSignals Receptionist \
 				CGIService ServerInit Server LocationInit Location Listen \
 				ClientMaxBodySize ErrorPage Client Clients Header Headers Request \
 				Requests Response StatusCodes PendingCgiTask PendingCgiTasks \
-				CgiExecutor CgisMap Router ServerFinder
+				CgiExecutor CgisMap Router ServerFinder ConfigApply ConfigUtils
 
 #<---------------------------------->LANG<---------------------------------->#
 LANG		:=	CPP

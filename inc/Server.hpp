@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:40:55 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/23 18:23:18 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/24 17:36:26 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 # include <TypesDefines.hpp>
 # include <Directives.hpp>
 # include <Client.hpp>
+# include <ConfigUtils.hpp>
+# include <ConfigApply.hpp>
 
 # define SERVER_SIZE_DIRECTIVES 7
 
@@ -40,15 +42,6 @@ private:
 public:
 	static StringVector	allowedDirectives;
 public:
-	Location					*getLocationAtPath( std::string path ) const;
-	Directives					*getDirectives( void ) const;
-	std::string					getErrorPageWithCode( unsigned int code ) const;
-	const std::string			getCgiBinary( std::string ext, std::string route ) const;
-	bool						strongServerMatch( std::string host, \
-									std::string port, unsigned int ip ) const;
-	bool						weakServerMatch( std::string host, \
-									std::string port, unsigned int ip ) const;
-	std::string					getFinalPath( const std::string path ) const;
 	void						setAddr( const struct sockaddr_in& info );
 	const struct sockaddr_in&	getAddr( void ) const;
 	std::string					getIpString( void ) const;
@@ -56,6 +49,16 @@ public:
 	unsigned int				getIpHostOrder( void ) const;
 	std::string					getHost( void ) const;
 	int							getPort( void ) const;
+	Location					*getLocationAtPath( std::string path ) const;
+	Directives					*getDirectives( void ) const;
+	std::string					getErrorPageWithCode( unsigned int code ) const;
+	bool						strongServerMatch( std::string host, \
+									std::string port, unsigned int ip ) const;
+	bool						weakServerMatch( std::string host, \
+									std::string port, unsigned int ip ) const;
+	const std::string			getCgiBinary( std::string ext, std::string route ) const;
+	std::string					getFinalPath( const std::string path ) const;
+	std::string					getFinalUploadPath( const std::string path ) const;
 };
 
 #endif
