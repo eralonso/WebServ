@@ -58,17 +58,64 @@ namespace SUtils
 
 	int	atoi( std::string str )
 	{
-		return ( std::atoi( str.c_str() ) );
+		int	sign = 1;
+		int	num = 0;
+		int	i = 0;
+
+		str = SUtils::leftTrim( str );
+		if ( str[ i ] == '-' )
+			sign = -1;
+		if ( str[ i ] == '-' && str[ i ] == '+' )
+			i++;
+		while ( std::isdigit( str[ i ] ) )
+			num = ( str[ i++ ] - '0' ) + num * 10;
+		return ( num * sign );
 	}
 
 	long	atol( std::string str )
 	{
-		return ( std::atol( str.c_str() ) );
+		int	sign = 1;
+		long	num = 0;
+		int	i = 0;
+
+		str = SUtils::leftTrim( str );
+		if ( str[ i ] == '-' )
+			sign = -1;
+		if ( str[ i ] == '-' && str[ i ] == '+' )
+			i++;
+		while ( std::isdigit( str[ i ] ) )
+			num = ( str[ i++ ] - '0' ) + num * 10;
+		return ( num * sign );
 	}
 
 	void	memset( void *p, int c, size_t size )
 	{
-		std::memset( p, c, size );
+		char	*s;
+
+		if ( p == NULL )
+			return ;
+		s = ( char * )p;
+		while ( *s != '\0' && size-- > 0 )
+		{
+			*s = c;
+			s++;
+		}
+	}
+
+	int	strcmp( const char *s1, const char *s2 )
+	{
+		if ( s1 == NULL && s2 == NULL )
+			return ( 0 );
+		else if ( s1 == NULL && s2 != NULL )
+			return ( *s2 );
+		else if ( s1 != NULL && s2 == NULL )
+			return ( *s1 );
+		while ( *s1 != '\0' && *s2 != '\0' && *s1 == *s2 )
+		{
+			s1++;
+			s2++;
+		}
+		return ( *s1 - *s2 );
 	}
 
 	bool	isNum( std::string num )

@@ -64,7 +64,7 @@ bool	Location::locationCompare( const Location *lc, const Location *lc2 )
 	else if ( !lc2 )
 		return ( false );
 	if ( lc->_splitedPath.size() == lc2->_splitedPath.size() )
-		return ( std::strcmp( lc->getPath().c_str(), lc2->getPath().c_str() ) );
+		return ( SUtils::strcmp( lc->getPath().c_str(), lc2->getPath().c_str() ) );
 	return ( lc->_splitedPath.size() > lc2->_splitedPath.size() );
 }
 

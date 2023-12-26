@@ -124,9 +124,10 @@ struct addrinfo Sockets::fillAddrinfo( int family, int socktype, \
 	struct addrinfo	info;
 	
 	SUtils::memset( &info, 0, sizeof( info ) );
-	info = ( struct addrinfo ){ .ai_family = family, \
-			.ai_socktype = socktype, .ai_protocol = protocol, \
-			.ai_flags = flags };
+	info.ai_family = family;
+	info.ai_socktype = socktype;
+	info.ai_protocol = protocol;
+	info.ai_flags = flags;
 	return ( info );
 }
 

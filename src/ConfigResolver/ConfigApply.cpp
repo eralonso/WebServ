@@ -23,11 +23,11 @@ namespace ConfigApply
 
 		SUtils::split( pathVector, path, "/" );
 		SUtils::split( routeVector, route, "/" );
-		return ( applyAlias( routeVector, pathVector, alias ) );
+		return ( applyAlias( pathVector, routeVector, alias ) );
 	}
 
-	const std::string	applyAlias( const StringVector& route, \
-												const StringVector& path, \
+	const std::string	applyAlias( const StringVector& path, \
+												const StringVector& route, \
 												const std::string alias )
 	{
 		int	cmp = 0;
@@ -41,12 +41,12 @@ namespace ConfigApply
 	const std::string	applyRoot( const std::string& path, \
 												const std::string root )
 	{
-		return ( ConfigUtils::pathJoin( path, root ) );
+		return ( ConfigUtils::pathJoin( root, path ) );
 	}
 
 	const std::string	applyUploadStore( const std::string& path, \
 												const std::string uploadRoot )
 	{
-		return ( ConfigUtils::pathJoin( path, uploadRoot ) );
+		return ( ConfigUtils::pathJoin( uploadRoot, path ) );
 	}
 }

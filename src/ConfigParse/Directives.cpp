@@ -164,8 +164,8 @@ void	Directives::print( void ) const
 						ActionMask::POST ) == true ? "POST " : "" ) \
 				+ std::string( this->_allowMethods.getAction( \
 						ActionMask::DELETE ) == true ? "DELETE" : "" ) );
-	// Log::Info( "[ Config ] cgi: " \
-	// 			+ STLUtils::mapToString< std::map< std::string, std::string > >( \
+	// Log::Info( "[ Config ] cgi: "
+	// 			+ STLUtils::mapToString< std::map< std::string, std::string > >(
 	// 			this->_cgis.begin(), this->_cgis.end() ) );
 	Log::Info( "[ Config ] servers: " );
 	Log::Info( "[ Config ] location: " );
