@@ -74,11 +74,9 @@ void	Sockets::bindSocket( socket_t fd, struct sockaddr *addr, socklen_t len )
 
 	ret = bind( fd, addr, len );
 	if ( ret < 0 )
-	{
 		throw std::logic_error( "Bind socket [ " \
 					+ SUtils::longToString( ret ) \
 					+ " ]" );
-	}
 	Log::Success( "Socket binded [ " \
 			+ SUtils::longToString( fd ) \
 			+ " ]" );
@@ -99,8 +97,8 @@ void	Sockets::listenFromSocket( socket_t fd, int backlog )
 //Accept a connection from socket
 socket_t	Sockets::acceptConnection( socket_t fd, struct sockaddr_in& addr )
 {
-	socket_t			connected;
-	socklen_t			addr_size;
+	socket_t	connected;
+	socklen_t	addr_size;
 
 	addr_size = sizeof( addr );
 	connected = accept( fd, ( struct sockaddr * )&addr, &addr_size );

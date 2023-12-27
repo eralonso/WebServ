@@ -39,31 +39,35 @@ private:
 	static PendingCgiTasks	pendingTasks;
 	std::string				binary;
 	std::string				argument;
-	std::vector<std::string>	envVars;
+	StringVector			envVars;
 	Request&				request;
-	//char					*envPath;
-	int						fdToChild[2];
-	int						fdFromChild[2];
-	char					*argv[3];
+	int						fdToChild[ 2 ];
+	int						fdFromChild[ 2 ];
+	char					*argv[ 3 ];
 	char					**childEnv;
-	static std::string		getChildOutput(PendingCgiTask *task);
-	void					onFailFork(void);
-	void					onFailToChildPipeOpen(void);
-	void					onFailFromChildPipeOpen(void);
-	char **					getEnvVarList(void);
-	void 					onChildProcess(void);
-	void					onParentProcess(pid_t childPid);
+private:
+	static std::string	getChildOutput( PendingCgiTask *task );
+	void				onFailFork( void );
+	void				onFailToChildPipeOpen( void );
+	void				onFailFromChildPipeOpen( void );
+	char 				**getEnvVarList( void );
+	void 				onChildProcess( void );
+	void				onParentProcess( pid_t childPid );
 public:
-	CgiExecutor(Request& request);
-	~CgiExecutor();
-	int execute(void);
-	static PendingCgiTask*	getCompletedTask();
-	static PendingCgiTask*	getTimeoutedTask(double to);
-	static PendingCgiTask*	getMarkedToDeleteTask();
-	static size_t			purgeTimeoutedTasks(double to, size_t max);
-	static void				attendPendingCgiTasks(void);
-	static size_t			getPendingTasksSize();
-	void					pushEnvVar(const std::string& variable, const std::string& value);
+	CgiExecutor( Request& request );
+	~CgiExecutor( void );
+	int						execute( void );
+	static PendingCgiTask	*getCompletedTask( void );
+	static PendingCgiTask	*getTimeoutedTask( double to );
+	static PendingCgiTask	*getMarkedToDeleteTask( void );
+	static size_t			purgeTimeoutedTasks( double to, size_t max );
+	static void				attendPendingCgiTasks( void );	
+	static void				checkCompletedTasks( void );
+	static void				checkTimeoutedTasks( void );
+	static void				checkMarkedToDeleteTasks( void );
+	static size_t			getPendingTasksSize( void );
+	void					pushEnvVar( const std::string& variable, \
+								const std::string& value );
 };
 
 #endif

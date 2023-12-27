@@ -44,7 +44,10 @@ Client::Client( socket_t pollsocket, WSPoll& polls, ServersVector& servers, \
 	// Log::Info("Created client id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
-Client::~Client( void ) {}
+Client::~Client( void )
+{
+	Log::Error( "Calling Client destructor" );
+}
 
 Client::Client( const Client& b ): Requests()
 {

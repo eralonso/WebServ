@@ -18,7 +18,7 @@
 # include <string>
 
 # define BUFFER_SIZE 3000
-# define MAX_CLIENTS 10
+# define MAX_CLIENTS 1000
 
 # define SPOLLFD 0
 # define CPOLLFD 1

@@ -16,6 +16,7 @@ Clients::Clients( void ) {}
 
 Clients::~Clients( void )
 {
+	Log::Error( "Calling Clients destructor" );
 	for ( Clients::iterator it = this->begin(); it != this->end(); it++ )
 	{
 		if ( it->second != NULL )
@@ -33,14 +34,13 @@ Clients&	Clients::operator=( const Clients& c )
 }
 
 Client	*Clients::newClient( socket_t socket, WSPoll& polls, \
-								ServersVector& servers, struct sockaddr_in& info )
+							ServersVector& servers, struct sockaddr_in& info )
 {
 	Client	*cli = new Client( socket, polls, servers, info );
 
 	if ( !cli )
 		return ( NULL );
 	this->insert( std::pair< socket_t, Client * >( socket, cli ) );
-	// cli->cgis.appendCgi( "py", "/usr/bin/python" );
 	return ( cli );
 }
 
@@ -82,8 +82,6 @@ bool	Clients::checkPendingToSend( void )
 	Clients::iterator	ite = this->end();
 	bool				somePending = false;
 
-	// if (size()==0)
-	// 	Log::Info("No Client to check");
 	while ( it != ite )
 	{
 		if ( it->second != NULL )

@@ -17,12 +17,12 @@
 # include <vector>
 # include <Request.hpp>
 
-class Requests: public std::vector< Request* >
+class Requests: public std::vector< Request * >
 {
 private:
 public:
 	Requests( void );
-	~Requests( void );
+	virtual ~Requests( void );
 	Requests( const Requests& b );
 	Requests&	operator=( const Requests& b );
 	Request		*appendRequest( Client *cli );

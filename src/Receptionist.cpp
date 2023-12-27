@@ -16,7 +16,7 @@
 Receptionist::Receptionist( ServersVector& servers ): Clients(), \
 													polls( MAX_CLIENTS ), \
 													_servers( servers ), \
-													timeout( 50 )
+													timeout( 1 )
 {
 	socket_t				serverFd;
 	Directives				*d = NULL;
@@ -44,7 +44,10 @@ Receptionist::Receptionist( ServersVector& servers ): Clients(), \
 	}
 }
 
-Receptionist::~Receptionist( void ) {}
+Receptionist::~Receptionist( void )
+{
+	Log::Error( "Calling Receptionist destructor" );
+}
 
 Receptionist::Receptionist( const Receptionist& b ): Clients(), \
 													polls( b.polls ), \
@@ -102,18 +105,18 @@ int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
 	ssize_t	amount;
 	ssize_t	totalAmount = 0;
 
-	while( true )
+	while ( true )
 	{
-		memset( buffer, 0, BUFFER_SIZE + 1 );
-		amount = recv( clientFd, buffer, BUFFER_SIZE, 0);
-		Log::Info("Received " + SUtils::longToString(amount) + " bytes");
+		amount = recv( clientFd, buffer, BUFFER_SIZE, 0 );
+		//Log::Info( "Received " + SUtils::longToString( amount ) + " bytes" );
 		totalAmount += amount;
 		if ( amount < 0 )
 			return ( -1 );
-		readed += std::string(buffer, amount);
-		if (amount < BUFFER_SIZE)
+		buffer[ amount ] = '\0';
+		readed += buffer;
+		if ( amount < BUFFER_SIZE )
 		{
-			if (totalAmount == 0)
+			if ( totalAmount == 0 )
 				return ( -1 );
 			return ( 1 );
 		}

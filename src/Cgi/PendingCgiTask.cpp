@@ -26,7 +26,8 @@ PendingCgiTask::PendingCgiTask( pid_t pid, Request& request, int fd ): \
 									fd( fd ), markedToDelete( false )
 {
 	this->timestamp = std::clock();
-	Log::Info("Task pid " + SUtils::longToString(pid) + " time: " + SUtils::longToString(timestamp));
+	Log::Info("Task pid " + SUtils::longToString( pid ) \
+		+ " time: " + SUtils::longToString( this->timestamp ) );
 }
 
 PendingCgiTask::PendingCgiTask( const PendingCgiTask &b ): \
@@ -76,8 +77,6 @@ bool	PendingCgiTask::isTimeout( double toDuration, bool logInfo ) const
 
 	if ( logInfo )
 	{
-		// Log::Info("isTimeout at time: " + SUtils::longToString(now));
-		// Log::Info("isTimeout over timestamp: " + SUtils::longToString(timestamp));
 		Log::Info("Cgi Timeout: " + SUtils::longToString( \
 			static_cast< long >( toDuration * 1000 ) ) + "ms" );
 	}
@@ -101,17 +100,17 @@ std::string	PendingCgiTask::getTaskOutput( void )
 
 	while ( bytes_read == BUFFER_SIZE )
 	{
-		buf[BUFFER_SIZE] = 0;
+		buf[ BUFFER_SIZE ] = 0;
 		resBody += std::string(buf, bytes_read);
 		bytes_read = read(fd, buf, BUFFER_SIZE);
 	}
-	if (bytes_read < 0)
-		Log::Error(std::string("Read from child failed"));
-	buf[bytes_read] = 0;
-	if (bytes_read > 0)
+	if ( bytes_read < 0 )
+		Log::Error( "Read from child failed" );
+	buf[ bytes_read ] = 0;
+	if ( bytes_read > 0 )
 		resBody += std::string(buf, bytes_read);
-	close(this->fd);
-	return (resBody);
+	close( this->fd );
+	return ( resBody );
 }
 
 void	PendingCgiTask::applyTaskOutputToReq( void )
@@ -122,45 +121,44 @@ void	PendingCgiTask::applyTaskOutputToReq( void )
 
 	while ( bytes_read == BUFFER_SIZE )
 	{
-		buf[bytes_read] = 0;
-		resBody += std::string(buf, bytes_read);
-		bytes_read = read(fd, buf, BUFFER_SIZE);
+		buf[ bytes_read ] = 0;
+		resBody += buf;
+		bytes_read = read( this->fd, buf, BUFFER_SIZE );
 	}
 	close( this->fd );
-	setMarkedToDelete(true);
+	setMarkedToDelete( true );
 	if ( bytes_read < 0 )
 	{
 		Log::Error( "Read from child failed" );
 		buf[ 0 ] = 0;
 		return ;
 	}
-	buf[bytes_read] = 0;
-	resBody += std::string(buf, bytes_read);
-	// Log::Success(std::string("\nread" + resBody));
-	request.setCgiOutput(resBody);
+	buf[ bytes_read ] = 0;
+	resBody += buf;
+	this->request.setCgiOutput( resBody );
 }
 
-void	PendingCgiTask::closeReadFd()
+void	PendingCgiTask::closeReadFd( void )
 {
-	if (fd >= 0)
-		close(fd);
-	fd = -1;
+	if ( this->fd >= 0 )
+		close( this->fd );
+	this->fd = -1;
 }
 
-void	PendingCgiTask::killPendingTask()
+void	PendingCgiTask::killPendingTask( void )
 {
-	if (pid > 0)
+	if ( this->pid > 0 )
 	{
-		markedToDelete = true;
-		kill(pid, SIGKILL);
+		this->markedToDelete = true;
+		kill( this->pid, SIGKILL );
 	}
-	pid = 0;
-	if (fd >= 0)
-		close(fd);
-	fd = -1;
+	this->pid = 0;
+	if ( this->fd >= 0 )
+		close( this->fd );
+	this->fd = -1;
 }
 
-void PendingCgiTask::setMarkedToDelete(bool value)
+void	PendingCgiTask::setMarkedToDelete( bool value )
 {
-	markedToDelete = value;
+	this->markedToDelete = value;
 }
