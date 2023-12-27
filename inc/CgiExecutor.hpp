@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:34 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/20 18:41:24 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/27 17:11:28 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 
 # include <cerrno>
 # include <ctime>
+# include <exception>
 
 # include "Utils.hpp"
 # include "Request.hpp"
@@ -36,6 +37,9 @@
 class CgiExecutor
 {
 private:
+	std::runtime_error		exceptBinNotAccess;
+	std::runtime_error		exceptScriptNotAccess;
+	std::runtime_error		exceptOther;
 	static PendingCgiTasks	pendingTasks;
 	std::string				binary;
 	std::string				argument;
@@ -53,6 +57,8 @@ private:
 	char **					getEnvVarList(void);
 	void 					onChildProcess(void);
 	void					onParentProcess(pid_t childPid);
+	bool					checkFileReadable(std::string file);
+	bool 					checkFileExecutable(std::string file);
 public:
 	CgiExecutor(Request& request);
 	~CgiExecutor();

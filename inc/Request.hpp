@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/22 12:49:59 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/27 15:25:26 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,22 +43,26 @@ private:
 	size_t			id;
 	t_status		status;
 	int				error;
-	std::string		cgiOutput;
 	bool			useCgi;
+	bool			badRequest;
 	size_t 			chunkSize;
 	Client			*client;
-	std::string		protocol;
+	std::string		cgiOutput;
 	std::string		method;
 	std::string		url;
 	std::string		route;
+	std::string		routeHost;
+	std::string		routePort;
 	std::string		query;
-	Headers			headers;
+	std::string		protocol;
 	std::string		body;
-	bool			badRequest;
-	StringVector	routeChain;
 	std::string		document;
 	std::string		docExt;
+	StringVector	routeChain;
+	Headers			headers;
 private:
+	void 	parseHostPortFromRoute( void );
+	void	parseQueryStringFromRoute( void );
 	void	parseRoute( void );
 	void	parseFirstLine( const std::string &line );
 	void	parseHeader( const std::string &line );
@@ -81,7 +85,7 @@ public:
 	Request&	operator=( const Request& b );
 public:
 	int				bindClient( Client* cli );
-	t_status		getStatus( void ) const;
+	t_status 		getStatus(void) const;
 	int				getError( void ) const;
 	std::string		getCgiOutput( void ) const;
 	void 			checkUseCgi(void);

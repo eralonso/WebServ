@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/21 12:02:58 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/27 15:13:14 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,8 +195,11 @@ Response	*Router::formatErrorResponse( Response &res, int error )
 
 bool	Router::processRequestReceived( Request &req )
 {
-	std::string script;
-
+	Log::Success("Router::processRequestReceived");
+	std::string script = "";
+	std::string host = "";
+	std::string port = "";
+	req.getHostPort(host, port);
 	req.checkUseCgi();
 	if ( !req.getUseCgi() )
 	{
@@ -206,10 +209,6 @@ bool	Router::processRequestReceived( Request &req )
 	try
 	{
 
-		std::string script = "";
-		std::string host = "";
-		std::string port = "";
-		req.getHostPort(host, port);
 		CgiExecutor cgiExe(req);
 		cgiExe.pushEnvVar(std::string("SERVER_SOFTWARE"), "webserv");
 		cgiExe.pushEnvVar(std::string("SERVER_NAME"), host);

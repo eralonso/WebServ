@@ -6,13 +6,14 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/24 17:37:49 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/27 18:06:46 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <signal.h>
 #include "Router.hpp"
+#include <unistd.h>
 #include "Client.hpp"
 #include "CgiExecutor.hpp"
 
@@ -21,7 +22,11 @@
 
 PendingCgiTasks	CgiExecutor::pendingTasks;
 
-CgiExecutor::CgiExecutor( Request& request ): request( request )
+CgiExecutor::CgiExecutor( Request& request ):
+	exceptBinNotAccess ("Binary not accessible"),
+	exceptScriptNotAccess ("Script not accessible"),
+	exceptOther ("Creation either fork or pipe failed"),
+	request( request )
 {
 	//std::string		host;
 	//std::string		port;
@@ -35,7 +40,7 @@ CgiExecutor::CgiExecutor( Request& request ): request( request )
 	if (!s)
 		return;
 	//Log::Success("CgiExecutor::CgiExecutor Route Chaine: " + request.getRouteChaineString() );
-	binary = s->getCgiBinary( request.getDocExt(), request.getRouteChaineString() );
+	this->binary = s->getCgiBinary( request.getDocExt(), request.getRouteChaineString() );
 	// cli->servers[]
 	//this->argument = "." + request.getRouteChaineString() + request.getDocument();
 	this->argument = s->getFinalPath( request.getRouteChaineString() ) \
@@ -44,6 +49,16 @@ CgiExecutor::CgiExecutor( Request& request ): request( request )
 	Log::Info( "CgiExecutor argment: " + this->argument );
 	Log::Info( "Route chain: " + request.getRouteChaineString() );
 	// char				*envPath;
+	if (!checkFileReadable(this->argument))
+	{
+		Log::Error("Either not found or not readable: " + this->argument);
+		throw exceptScriptNotAccess;
+	}
+	if (!checkFileExecutable(this->binary))
+	{
+		Log::Error("Either not found or not executable: " + this->binary);
+		throw exceptBinNotAccess;
+	}
 	argv[0] = (char *)this->binary.c_str();
 	argv[1] = (char *)this->argument.c_str();
 	argv[2] = NULL;
@@ -64,13 +79,13 @@ void	CgiExecutor::onFailFork( void )
 		close( this->fdToChild[ FDOUT ] );
 		close( this->fdFromChild[ FDIN ] );
 		close( this->fdFromChild[ FDOUT ] );
-		throw ;
+		throw exceptOther;
 }
 
 void	CgiExecutor::onFailToChildPipeOpen( void )
 {
 	Log::Error( "pipe: failed to open pipe to child" );
-	throw ;
+		throw exceptOther;
 }
 
 void	CgiExecutor::onFailFromChildPipeOpen( void )
@@ -78,7 +93,7 @@ void	CgiExecutor::onFailFromChildPipeOpen( void )
 	Log::Error( "pipe: failed to open pipe from child" );
 	close( this->fdToChild[ FDIN ] );
 	close( this->fdToChild[ FDOUT ] );
-	throw ;
+	throw exceptOther;
 }
 
 char** CgiExecutor::getEnvVarList( void )
@@ -127,6 +142,20 @@ void	CgiExecutor::onParentProcess( pid_t childPid )
 	PendingCgiTask task(childPid, request, fdFromChild[FDIN]);
 	CgiExecutor::pendingTasks.appendTask(task);
 	CgiExecutor::attendPendingCgiTasks();
+}
+
+bool CgiExecutor::checkFileReadable(std::string file)
+{
+	bool res = (access(file.c_str(), F_OK) == 0);
+	res &= (access(file.c_str(), R_OK) == 0);
+	return (res);
+}
+
+bool CgiExecutor::checkFileExecutable(std::string file)
+{
+	bool res = (access(file.c_str(), F_OK) == 0);
+	res &= (access(file.c_str(), X_OK) == 0);
+	return (res);
 }
 
 std::string	CgiExecutor::getChildOutput( PendingCgiTask *task )

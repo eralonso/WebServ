@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/22 16:15:49 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/27 15:27:13 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,26 +96,48 @@ int	Request::bindClient( Client* cli )
 	return ( this->status );
 }
 
-void	Request::parseRoute( void )
+void	Request::parseQueryStringFromRoute( void )
 {
 	StringVector			tokens;
 	size_t					len;
-	StringVector::iterator	doc;
 
 	tokens = SplitString::split( route, "?" );
 	len = tokens.size();
 	if ( len > 2 )
 	{
 		Log::Error( "Request query string invalid" );
+		this->error = 400;
 		this->badRequest = true;
 		return ;
 	}
 	if ( len > 1 )
 	{
 		this->url = SUtils::trim( tokens[ 0 ] );
-		this->route = url;
+		this->route = this->url;
 		this->query = SUtils::trim( tokens[ 1 ] );                                                                                 
 	}
+}
+
+void	Request::parseHostPortFromRoute( void )
+{
+	StringVector	tokens;
+	size_t			tokensSize;
+	tokens = SplitString::split( this->route, ":" );
+	tokensSize = tokens.size();
+	if (tokensSize > 2)
+	{
+		Log::Error( "Request query string invalid" );
+		this->error = 400;
+		this->badRequest = true;
+		return ;
+	}
+}
+
+void	Request::parseRoute( void )
+{
+	StringVector::iterator	doc;
+	parseQueryStringFromRoute();
+	parseHostPortFromRoute();
 	this->routeChain = SplitString::split( this->route, "/" );
 	if ( this->routeChain.size() > 0 && ( this->route.size() > 0 \
 			&& this->route[ this->route.size() - 1 ] != '/' ) )
@@ -287,6 +309,8 @@ const Headers&	Request::getHeaders( void ) const
 
 std::string	Request::getHost( void ) const
 {
+	if (this->routeHost.size() > 0)
+		return (this->routeHost);
 	const Header* h = this->headers.firstWithKey( "Host" );
 	if (h)
 	{
@@ -301,6 +325,8 @@ std::string	Request::getHost( void ) const
 
 std::string Request::getPort( void ) const
 {
+	if (this->routePort.size() > 0)
+		return (this->routePort);
 	const Header* h = headers.firstWithKey("Host");
 	if (h)
 	{
@@ -315,6 +341,19 @@ std::string Request::getPort( void ) const
 
 bool Request::getHostPort(std::string& host, std::string& port) const
 {
+	std::string defHost("127.0.0.1");
+	std::string defPort("80");
+	if (this->routeHost.size() > 0 || this->routePort.size() > 0)
+	{
+		Log::Info("Request::getHostPort");
+		if (this->routeHost.size() == 0)
+			this->routeHost.copy((char*)defHost.c_str(), defHost.size());
+		if (this->routePort.size() == 0)
+			this->routePort.copy((char*)defPort.c_str(), defPort.size());
+		host = this->routeHost;
+		port = this->routePort;		
+		return true;
+	}
 	const Header* h = headers.firstWithKey("Host");
 	if (h)
 	{
@@ -324,11 +363,11 @@ bool Request::getHostPort(std::string& host, std::string& port) const
 		if (tokens.size() > 0)
 			host = tokens[0];
 		else
-			host = std::string("127.0.0.1");
+			host = defHost;
 		if (tokens.size() > 1)
 			port = tokens[1];
 		else
-			port = std::string("80");
+			port = defPort;
 		return true;
 	}
 	else
