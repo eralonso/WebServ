@@ -27,7 +27,6 @@ Client::Client( void )
 	this->polls = NULL;
 	this->servers = NULL;
 	SUtils::memset( &this->addr, 0, sizeof( this->addr ) );
-	// Log::Info("Created client id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
 Client::Client( socket_t pollsocket, WSPoll& polls, ServersVector& servers, \
@@ -41,7 +40,6 @@ Client::Client( socket_t pollsocket, WSPoll& polls, ServersVector& servers, \
 	this->polls = &polls;
 	this->servers = &servers;
 	this->addr = info;
-	// Log::Info("Created client id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
 Client::~Client( void )
@@ -111,7 +109,6 @@ unsigned int	Client::getIpHostOrder( void ) const
 
 const ServersVector&	Client::getServers( void ) const
 {
-	// Log::Success(std::string("Client::getServers, size: " + SUtils::longToString(servers->size())));
 	return ( *this->servers );
 }
 
@@ -175,7 +172,7 @@ int	Client::manageRecv( std::string recv )
 	Request		*req = NULL;
 
 	this->received += recv;
-	while ( cont && !fail && getLine( line ) )
+	while ( cont && fail == false && getLine( line ) )
 	{
 		req = findRecvRequest();
 		if ( req != NULL )
@@ -327,7 +324,7 @@ void	Client::allowPollWrite( bool value )
 		{ 
 			Log::Info( "ClientPoll for [ " \
 				+ SUtils::longToString( this->socket ) \
-				+ " ]: not found");
+				+ " ]: not found" );
 			return ;
 		}
 		if ( value )

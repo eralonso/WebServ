@@ -10,12 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/Utils.hpp"
-#include "../../inc/Response.hpp"
+#include "Utils.hpp"
+#include "Response.hpp"
 
-Response::Response( void ) : isCgi(false)
-{
-}
+Response::Response( void ) : isCgi( false ) {}
 
 Response::~Response( void ) {}
 

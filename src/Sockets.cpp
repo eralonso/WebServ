@@ -148,8 +148,6 @@ struct sockaddr	Sockets::codeHostToAddr( const char *host, int port )
 		addr_in = fillSockAddr( AF_INET, port, Binary::codeAddress( host ) );
 		addr = *( ( struct sockaddr * )&addr_in );
 	}
-	Log::Info( "Address -> " + Binary::decodeAddress( ntohl( ( ( \
-		( struct sockaddr_in * )&addr ) )->sin_addr.s_addr ) ) );
 	return ( addr );
 }
 
@@ -168,8 +166,6 @@ struct sockaddr_in	Sockets::codeHostToAddrin( const char *host, int port )
 	}
 	else
 		addr_in = fillSockAddr( AF_INET, port, Binary::codeAddress( host ) );
-	Log::Info( "Address -> " + Binary::decodeAddress( \
-				ntohl( addr_in.sin_addr.s_addr ) ) );
 	return ( addr_in );
 }
 
@@ -192,8 +188,6 @@ struct sockaddr	Sockets::codeHostPassiveToAddr( const char *host, int port )
 		addr_in = fillSockAddr( AF_INET, port, Binary::codeAddress( host ) );
 		addr = *( ( struct sockaddr * )&addr_in );
 	}
-	Log::Info( "Address -> " + Binary::decodeAddress( ntohl( ( ( \
-		( struct sockaddr_in * )&addr ) )->sin_addr.s_addr ) ) );
 	return ( addr );
 }
 
@@ -212,8 +206,6 @@ struct sockaddr_in	Sockets::codeHostPassiveToAddrin( const char *host, int port 
 	}
 	else
 		addr_in = fillSockAddr( AF_INET, port, Binary::codeAddress( host ) );
-	Log::Info( "Address -> " + Binary::decodeAddress( \
-				ntohl( addr_in.sin_addr.s_addr ) ) );
 	return ( addr_in );
 }
 //Create a socket and perform it to be a passive socket ( listen )
@@ -231,6 +223,8 @@ socket_t	Sockets::createPassiveSocket( std::string host, int port, \
 	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
 	setsockopt( fd, SOL_SOCKET, SO_REUSEADDR, &optVal, sizeof( int ) );
 	info = codeHostPassiveToAddr( host.c_str(), port );
+	Log::Info( "Address -> " + Binary::decodeAddress( ntohl( ( ( \
+		( struct sockaddr_in * )&info ) )->sin_addr.s_addr ) ) );
 	try
 	{
 		bindSocket( fd, &info, sizeof( info ) );

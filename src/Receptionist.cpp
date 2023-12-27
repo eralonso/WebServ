@@ -95,7 +95,6 @@ int	Receptionist::sendResponse( socket_t connected, std::string response )
 	Log::Success( "Response sended [ " \
 			+ SUtils::longToString( connected ) \
 			+ " ]" );
-	// Log::Success( response );
 	return ( 1 );
 }
 
@@ -103,24 +102,15 @@ int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
 {
 	char	buffer[ BUFFER_SIZE + 1 ];
 	ssize_t	amount;
-	ssize_t	totalAmount = 0;
 
-	while ( true )
-	{
-		amount = recv( clientFd, buffer, BUFFER_SIZE, 0 );
-		//Log::Info( "Received " + SUtils::longToString( amount ) + " bytes" );
-		totalAmount += amount;
-		if ( amount < 0 )
-			return ( -1 );
-		buffer[ amount ] = '\0';
-		readed += buffer;
-		if ( amount < BUFFER_SIZE )
-		{
-			if ( totalAmount == 0 )
-				return ( -1 );
-			return ( 1 );
-		}
-	}
+	amount = recv( clientFd, buffer, BUFFER_SIZE, 0 );
+	if ( amount < 0 )
+		return ( -1 );
+	buffer[ amount ] = '\0';
+	readed += buffer;
+	if ( amount == 0 )
+		return ( -1 );
+	return ( 1 );
 }
 
 int	Receptionist::addNewClient( socket_t serverFd )
@@ -153,12 +143,13 @@ void	Receptionist::manageClientRead( socket_t clientFd, Client *cli )
 	{
 		// Read Failed
 		polls.closePoll( clientFd );
+		eraseClient( cli );
 		return ;
 	}
 	Log::Info( "Readed [ " \
 			+ SUtils::longToString( clientFd ) \
 			+ " ]: " \
-			+ readed);
+			+ readed );
 	cli->manageRecv( readed );
 	if ( cli->manageCompleteRecv() )
 		cli->allowPollWrite( true );
@@ -212,10 +203,6 @@ int	Receptionist::mainLoop( void )
 		if ( waitRes < 0 )
 			return ( 1 );
 		CgiExecutor::attendPendingCgiTasks();
-		// if (checkPendingToSend())
-		// 	Log::Info("Some Pending To Send");
-		// else
-		// 	Log::Info("None Pending To Send");
 		if ( waitRes == 0 )
 		{
 			// Log::Info( "Timeout Waiting for any fd ready to I/O" );

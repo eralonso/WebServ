@@ -24,36 +24,37 @@ Router::~Router( void ) {}
 int	Router::updateResponse( Response &res, Request &req )
 {
 	res.setServer( req.getHost() );
-	if ( req.getDocument() == std::string( "favicon.ico" ) )
+	if ( req.getDocument() == "favicon.ico" )
 		createFaviconRes( res, req );
-	// else if (req.getDocExt() == std::string("py"))
-	else if (req.getUseCgi() && req.getError() == 0)
-		formatCgiResponse(res,req);
-	else if (req.getError() != 0)
+	else if ( req.getUseCgi() && req.getError() == 0 )
+		formatCgiResponse( res,req );
+	else if ( req.getError() != 0 )
 	{
-		Log::Info("updateResponse detect error status: " + SUtils::longToString(req.getError()));
-		if (req.getError() == 100)
-			formatContinueResponse(res, req);
-		else if (req.getError() == 202)
-			formatAcceptResponse(res, req);
+		Log::Info( "updateResponse detect error status: " \
+			+ SUtils::longToString( req.getError() ) );
+		if ( req.getError() == 100 )
+			formatContinueResponse( res, req );
+		else if ( req.getError() == 202 )
+			formatAcceptResponse( res, req );
 		else
-			formatErrorResponse(res, req);
+			formatErrorResponse( res, req );
 	}
-	else if (req.getMethod() == "GET")
-		formatGenericResponse(res, req);	
+	else if ( req.getMethod() == "GET" )
+		formatGenericResponse( res, req );
 	else
-		formatAcceptResponse(res, req);
-	return 0;
+		formatAcceptResponse( res, req );
+	return ( 0 );
 }
 
 std::string	Router::getHtml( Request *req )
 {
-	std::string	html;
-	std::string	resFolderLs;
-	std::string	readBuf;
-	std::string	route = req->getRoute();
-	std::ifstream infile;
-	std::string path = std::string(".") + route;
+	std::string		html;
+	std::string		resFolderLs;
+	std::string		readBuf;
+	std::string		route = req->getRoute();
+	std::ifstream	infile;
+	std::string		path = "." + route;
+
 	Log::Info("Path to GET ... " + path);
 	if (access(path.c_str(), R_OK) == 0)
 	{
@@ -135,20 +136,21 @@ std::string	Router::getForm( void )
 
 Response	*Router::getResponse( Request *req )
 {
-	Response* res = new Response;
-	int error;
-	if (!res)
-		return res;
-	if (!req)
-		formatErrorResponse(*res, 500);
-	else if ((error = req->getError()))
+	Response	*res = new Response;
+	int			error;
+
+	if ( !res )
+		return ( res );
+	if ( !req )
+		formatErrorResponse( *res, 500 );
+	else if ( ( error = req->getError() ) )
 	{
-		if (error == 100)
-			formatContinueResponse(*res, *req);
-		if (error == 202)
-			formatAcceptResponse(*res, *req);
+		if ( error == 100 )
+			formatContinueResponse( *res, *req );
+		if ( error == 202 )
+			formatAcceptResponse( *res, *req );
 		else
-			formatErrorResponse(*res, error);
+			formatErrorResponse( *res, error );
 	}
 	else
 		updateResponse( *res, *req );
@@ -195,7 +197,8 @@ Response	*Router::formatErrorResponse( Response &res, int error )
 
 bool	Router::processRequestReceived( Request &req )
 {
-	std::string script;
+	std::string host;
+	std::string port;
 
 	req.checkUseCgi();
 	if ( !req.getUseCgi() )
@@ -205,32 +208,30 @@ bool	Router::processRequestReceived( Request &req )
 	}
 	try
 	{
-
-		std::string script = "";
-		std::string host = "";
-		std::string port = "";
-		req.getHostPort(host, port);
-		CgiExecutor cgiExe(req);
-		cgiExe.pushEnvVar(std::string("SERVER_SOFTWARE"), "webserv");
-		cgiExe.pushEnvVar(std::string("SERVER_NAME"), host);
-		cgiExe.pushEnvVar(std::string("GATEWAY_INTERFACE"), "CGI/1.0");
-		cgiExe.pushEnvVar(std::string("SERVER_PROTOCOL"), req.getProtocol());
-		cgiExe.pushEnvVar(std::string("SERVER_PORT"), port);
-		cgiExe.pushEnvVar(std::string("REQUEST_METHOD"), req.getMethod());
-		cgiExe.pushEnvVar(std::string("PATH_INFO"), req.getRouteChaineString());
-		cgiExe.pushEnvVar(std::string("PATH_TRANSLATED"), req.getRouteChaineString());
-		cgiExe.pushEnvVar(std::string("SCRIPT_NAME"), req.getDocument());
-		cgiExe.pushEnvVar(std::string("QUERY_STRING"), req.getQuery());
-		cgiExe.pushEnvVar(std::string("REMOTE_HOST"), "localhost");
-		cgiExe.pushEnvVar(std::string("REMOTE_ADDRESS"), "127.0.0.1");
-		cgiExe.pushEnvVar(std::string("AUTH_TYPE"), "none");
-		cgiExe.pushEnvVar(std::string("REMOTE_USER"), "user");
-		cgiExe.pushEnvVar(std::string("REMOTE_IDENT"), "user");
-		if (req.getBody().size() > 0)
-			cgiExe.pushEnvVar(std::string("CONTENT_TYPE"), req.getHeaderWithKey("Content-Type"));
-		cgiExe.pushEnvVar(std::string("CONTENT_LENGTH"), SUtils::longToString(req.getBody().size()));
-		cgiExe.pushEnvVar(std::string("HTTP_ACCEPT"), req.getHeaderWithKey("Accept"));
-		cgiExe.pushEnvVar(std::string("USER_AGENT"), req.getHeaderWithKey("User-Agent"));
+		req.getHostPort( host, port );
+		CgiExecutor cgiExe( req );
+		cgiExe.pushEnvVar( "SERVER_SOFTWARE", "webserv" );
+		cgiExe.pushEnvVar( "SERVER_NAME", host );
+		cgiExe.pushEnvVar( "GATEWAY_INTERFACE", "CGI/1.0" );
+		cgiExe.pushEnvVar( "SERVER_PROTOCOL", req.getProtocol() );
+		cgiExe.pushEnvVar( "SERVER_PORT", port );
+		cgiExe.pushEnvVar( "REQUEST_METHOD", req.getMethod() );
+		cgiExe.pushEnvVar( "PATH_INFO", req.getRouteChaineString() );
+		cgiExe.pushEnvVar( "PATH_TRANSLATED", req.getRouteChaineString() );
+		cgiExe.pushEnvVar( "SCRIPT_NAME", req.getDocument() );
+		cgiExe.pushEnvVar( "QUERY_STRING", req.getQuery() );
+		cgiExe.pushEnvVar( "REMOTE_HOST", "localhost" );
+		cgiExe.pushEnvVar( "REMOTE_ADDRESS", "127.0.0.1" );
+		cgiExe.pushEnvVar( "AUTH_TYPE", "none" );
+		cgiExe.pushEnvVar( "REMOTE_USER", "user" );
+		cgiExe.pushEnvVar( "REMOTE_IDENT", "user" );
+		if ( req.getBody().size() > 0 )
+			cgiExe.pushEnvVar( "CONTENT_TYPE", \
+				req.getHeaderWithKey( "Content-Type" ) );
+		cgiExe.pushEnvVar( "CONTENT_LENGTH", \
+			SUtils::longToString( req.getBody().size() ) );
+		cgiExe.pushEnvVar( "HTTP_ACCEPT", req.getHeaderWithKey( "Accept" ) );
+		cgiExe.pushEnvVar( "USER_AGENT", req.getHeaderWithKey( "User-Agent" ) );
 		cgiExe.execute();
 		req.setCgiLaunched();
 		return ( true );
