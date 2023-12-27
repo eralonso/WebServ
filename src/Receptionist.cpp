@@ -99,10 +99,10 @@ int	Receptionist::sendResponse( socket_t connected, std::string response )
 int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
 {
 	char	buffer[ BUFFER_SIZE + 1 ];
+	ssize_t	amount;
+	ssize_t	totalAmount = 0;
 
-	ssize_t amount;
-	ssize_t totalAmount = 0;
-	while(true)
+	while( true )
 	{
 		memset( buffer, 0, BUFFER_SIZE + 1 );
 		amount = recv( clientFd, buffer, BUFFER_SIZE, 0);

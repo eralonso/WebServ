@@ -15,14 +15,15 @@
 #include "PendingCgiTask.hpp"
 #include "PendingCgiTask.hpp"
 
-PendingCgiTask::PendingCgiTask( void ): request( *new Request() )
+PendingCgiTask::PendingCgiTask( void ): request( *new Request() ), \
+										markedToDelete( false )
 {
 	this->timestamp = std::clock();
 }
 
 PendingCgiTask::PendingCgiTask( pid_t pid, Request& request, int fd ): \
 									pid( pid ), request( request ), \
-									fd( fd ), markedToDelete(false)
+									fd( fd ), markedToDelete( false )
 {
 	this->timestamp = std::clock();
 	Log::Info("Task pid " + SUtils::longToString(pid) + " time: " + SUtils::longToString(timestamp));
@@ -30,7 +31,8 @@ PendingCgiTask::PendingCgiTask( pid_t pid, Request& request, int fd ): \
 
 PendingCgiTask::PendingCgiTask( const PendingCgiTask &b ): \
 									pid( b.pid ), request( b.request ), \
-									timestamp( b.timestamp ), fd( b.fd ) {}
+									timestamp( b.timestamp ), fd( b.fd ), \
+									markedToDelete( b.markedToDelete ) {}
 
 PendingCgiTask&	PendingCgiTask::operator=( const PendingCgiTask &b )
 {
@@ -40,6 +42,7 @@ PendingCgiTask&	PendingCgiTask::operator=( const PendingCgiTask &b )
 		this->request = b.request;
 		this->fd = b.fd;
 		this->timestamp = b.timestamp;
+		this->markedToDelete = b.markedToDelete;
 	}
 	return ( *this );
 }
@@ -61,25 +64,28 @@ std::clock_t	PendingCgiTask::getTimestamp( void ) const
 	return ( this->timestamp );
 }
 
-bool PendingCgiTask::isMarkedToDelete() const
+bool	PendingCgiTask::isMarkedToDelete( void ) const
 {
-	return markedToDelete;
+	return ( this->markedToDelete );
 }
 
-bool PendingCgiTask::isTimeout(double toDuration, bool logInfo) const
+bool	PendingCgiTask::isTimeout( double toDuration, bool logInfo ) const
 {
 	std::clock_t	now = std::clock();
-	if (logInfo)
+	long			duration;
+
+	if ( logInfo )
 	{
 		// Log::Info("isTimeout at time: " + SUtils::longToString(now));
 		// Log::Info("isTimeout over timestamp: " + SUtils::longToString(timestamp));
-		Log::Info("Cgi Timeout: " + SUtils::longToString(static_cast<long>(toDuration*1000)) + "ms");
+		Log::Info("Cgi Timeout: " + SUtils::longToString( \
+			static_cast< long >( toDuration * 1000 ) ) + "ms" );
 	}
-	long	duration = (now - this->timestamp);
-	if (logInfo)
-		Log::Info("exceeded at duration: " + SUtils::longToString(duration) + "ms");
-
-	return ( duration > toDuration  * 1000);
+	duration = now - this->timestamp;
+	if ( logInfo )
+		Log::Info( "exceeded at duration: " \
+			+ SUtils::longToString( duration ) + "ms" );
+	return ( duration > static_cast< long >( toDuration * 1000 ) );
 }
 
 int	PendingCgiTask::getFd( void ) const

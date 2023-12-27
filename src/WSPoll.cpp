@@ -46,8 +46,7 @@ WSPoll::~WSPoll( void )
 	if ( this->_polls != NULL )
 	{
 		closePoll( 0, this->_size );
-		delete [] this->_polls;
-		this->_polls = NULL;
+		this->deletePolls();
 	}
 }
 
@@ -56,8 +55,7 @@ WSPoll	WSPoll::operator=( const WSPoll& wspoll )
 {
 	if (  this != &wspoll )
 	{
-		if ( this->_polls != NULL )
-			this->deletePolls();
+		this->deletePolls();
 		this->_maxSize = wspoll._maxSize;
 		this->_size = wspoll._size;
 		this->_serverSizeFd = wspoll._serverSizeFd;
@@ -265,7 +263,7 @@ void	WSPoll::compressPolls( unsigned int start )
 //Wait a fd to become ready to perform I/O
 int	WSPoll::wait( int timeout )
 {
-	return (checkPollReturn( poll( this->_polls, this->_size, timeout ) ));
+	return ( checkPollReturn( poll( this->_polls, this->_size, timeout ) ) );
 	// if ( checkPollReturn( poll( this->_polls, this->_size, timeout ) ) < 0 )
 	// 	return ( -1 );
 	// return ( 0 );

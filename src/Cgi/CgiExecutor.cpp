@@ -50,10 +50,10 @@ CgiExecutor::CgiExecutor( Request& request ): request( request )
 	childEnv = NULL;
 }
 
-CgiExecutor::~CgiExecutor()
+CgiExecutor::~CgiExecutor( void )
 {
 	envVars.clear();
-	if (childEnv)
+	if ( childEnv )
 		delete childEnv;
 }
 
@@ -125,7 +125,7 @@ void	CgiExecutor::onParentProcess( pid_t childPid )
 	write(fdToChild[FDOUT], reqBody, reqBodySize);
 	close(fdToChild[FDOUT]);
 	PendingCgiTask task(childPid, request, fdFromChild[FDIN]);
-	pendingTasks.appendTask(task);
+	CgiExecutor::pendingTasks.appendTask(task);
 	CgiExecutor::attendPendingCgiTasks();
 }
 
@@ -165,24 +165,25 @@ PendingCgiTask	*CgiExecutor::getCompletedTask( void )
 	pid = waitpid(-1, NULL, WNOHANG);
 	if (pid < 1)
 		return NULL;
-	if (pendingTasks.empty())
+	if (CgiExecutor::pendingTasks.empty())
 		return NULL;
-	PendingCgiTask& tk = pendingTasks[pid];
+	PendingCgiTask& tk = CgiExecutor::pendingTasks[pid];
 	if (!tk.isMarkedToDelete())
 		return (&tk);
 	return NULL;
 }
 
-PendingCgiTask *CgiExecutor::getTimeoutedTask(double to)
+PendingCgiTask	*CgiExecutor::getTimeoutedTask( double to )
 {
-	PendingCgiTasks::iterator it = pendingTasks.begin();
-	PendingCgiTasks::iterator ite= pendingTasks.end();
-	if (pendingTasks.empty())
-		return NULL;
-	while (it != ite)
+	PendingCgiTasks::iterator	it = CgiExecutor::pendingTasks.begin();
+	PendingCgiTasks::iterator	ite = CgiExecutor::pendingTasks.end();
+
+	if ( CgiExecutor::pendingTasks.empty() )
+		return ( NULL );
+	while ( it != ite )
 	{
-		if(!it->second.isMarkedToDelete() && it->second.isTimeout(to, false))
-			return (&(it->second));
+		if ( !it->second.isMarkedToDelete() && it->second.isTimeout( to, true ) )
+			return ( &( it->second ) );
 		it++;
 	}
 	return ( NULL );
@@ -190,26 +191,27 @@ PendingCgiTask *CgiExecutor::getTimeoutedTask(double to)
 
 PendingCgiTask *CgiExecutor::getMarkedToDeleteTask()
 {
-	PendingCgiTasks::iterator it = pendingTasks.begin();
-	PendingCgiTasks::iterator ite= pendingTasks.end();
-	if (pendingTasks.empty())
-		return NULL;
-	while (it != ite)
+	PendingCgiTasks::iterator it = CgiExecutor::pendingTasks.begin();
+	PendingCgiTasks::iterator ite = CgiExecutor::pendingTasks.end();
+
+	if ( CgiExecutor::pendingTasks.empty() )
+		return ( NULL );
+	while ( it != ite )
 	{
-		if(it->second.isMarkedToDelete())
-			return (&(it->second));
+		if ( it->second.isMarkedToDelete() )
+			return ( &( it->second ) );
 		it++;
 	}
-	return NULL;
+	return ( NULL );
 }
 
 size_t	CgiExecutor::purgeTimeoutedTasks(double to, size_t max)
 {
 	size_t i = 0;
 	PendingCgiTask *task = NULL;
-	if (pendingTasks.empty())
+	if ( CgiExecutor::pendingTasks.empty() )
 		return 0;
-	while (i < max && (task = getTimeoutedTask(to)))
+	while ( i < max && ( task = getTimeoutedTask( to ) ) )
 	{
 		CgiExecutor::pendingTasks.eraseTask( task->getPid() );
 		i++;
@@ -219,9 +221,10 @@ size_t	CgiExecutor::purgeTimeoutedTasks(double to, size_t max)
 
 void	CgiExecutor::attendPendingCgiTasks( void )
 {
-	PendingCgiTask* pTask; 
-	Client* cli = NULL;
-	while ((pTask = CgiExecutor::getCompletedTask()))
+	PendingCgiTask	*pTask = NULL;
+	Client			*cli = NULL;
+
+	while ( ( pTask = CgiExecutor::getCompletedTask() ) )
 	{
 		Log::Info( "Cgi Task completed" );
 		Request&	req = pTask->getRequest();
@@ -243,7 +246,8 @@ void	CgiExecutor::attendPendingCgiTasks( void )
 		// cli = NULL;
 	}
 	cli = NULL;
-	if ((pTask = CgiExecutor::getTimeoutedTask(CGI_TO)))
+	pTask = NULL;
+	if ( ( pTask = CgiExecutor::getTimeoutedTask( CGI_TO ) ) != NULL )
 	{
 		Request& req = pTask->getRequest();
 		pTask->isTimeout(CGI_TO, true);
@@ -258,16 +262,17 @@ void	CgiExecutor::attendPendingCgiTasks( void )
 			cli->allowPollWrite(true);
 		cli = NULL;
 	}
-	if ((pendingTasks.size() > 0) && (pTask = CgiExecutor::getMarkedToDeleteTask())) 
+	if ( CgiExecutor::pendingTasks.size() > 0 \
+		&& ( pTask = CgiExecutor::getMarkedToDeleteTask() ) != NULL ) 
 	{
 		Log::Error("Delete Marked pending task for pid: " + SUtils::longToString(pTask->getPid()));
 		CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
 	}
 }
 
-size_t CgiExecutor::getPendingTasksSize()
+size_t CgiExecutor::getPendingTasksSize( void )
 {
-	return pendingTasks.size();
+	return ( CgiExecutor::pendingTasks.size() );
 }
 
 void CgiExecutor::pushEnvVar(const std::string& variable, const std::string& value)
