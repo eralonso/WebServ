@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/27 15:27:13 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/27 19:34:38 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,13 +122,66 @@ void	Request::parseHostPortFromRoute( void )
 {
 	StringVector	tokens;
 	size_t			tokensSize;
+	bool			httpDropped = false;
 	tokens = SplitString::split( this->route, ":" );
 	tokensSize = tokens.size();
-	if (tokensSize > 2)
+	if (tokensSize < 2)
+		return ;
+	if (tokensSize > 3)
 	{
 		Log::Error( "Request query string invalid" );
 		this->error = 400;
 		this->badRequest = true;
+		return ;
+	}
+	if (tokensSize == 3)
+	{
+		if (tokens[0] != "http")
+		{
+			Log::Error( "Protocol must be http");
+			this->error = 400;
+			this->badRequest = true;
+			return ;
+		}
+		if (!(tokens[1].size() > 1 && tokens[1][0] == '/' && tokens[1][1] == '/'))
+		{
+			Log::Error( "http must be followed by ://");
+			this->error = 400;
+			this->badRequest = true;
+			return ;
+		}
+		tokens.erase(tokens.begin(), tokens.begin() + 1);
+		tokens[0].erase(tokens[0].begin(), tokens[0].begin() + 2);
+		tokensSize--;
+		httpDropped = true;
+	}
+	if (tokensSize == 2)
+	{
+		if (!httpDropped)
+		{
+			if (tokens[0] != "http")
+			{
+				Log::Error( "Protocol must be http");
+				this->error = 400;
+				this->badRequest = true;
+				return ;
+			}
+			if (!(tokens[1].size() > 1 && tokens[1][0] == '/' && tokens[1][1] == '/'))
+			{
+				Log::Error( "http must be followed by ://");
+				this->error = 400;
+				this->badRequest = true;
+				return ;
+			}
+			tokens.erase(tokens.begin(), tokens.begin() + 1);
+			tokens[0].erase(tokens[0].begin(), tokens[0].begin() + 2);
+			tokensSize--;
+			httpDropped = true;
+			if (tokensSize > 0)
+				this->routeHost = tokens[0];
+			if (tokensSize > 1)
+				this->routePort = std::string(tokens[0].begin(), std::find(tokens[0].begin(), tokens[0].end(), '/'));
+		}
 		return ;
 	}
 }
@@ -150,6 +203,8 @@ void	Request::parseRoute( void )
 	if ( this->routeChain.size() == 0 && ( this->route.size() < 1 \
 			|| this->route[ 0 ] != '/' ) )
 		Log::Error( "routeChain is empty" );
+	Log::Info( "Host: " + routeHost);
+	Log::Info( "Port: " + routePort);
 	Log::Info( "Route Chaine: " + getRouteChaineString() );
 	Log::Info( "Document: " + getDocument() );
 	Log::Info( "Extension: " + getDocExt() );

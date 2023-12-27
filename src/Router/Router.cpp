@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/27 15:13:14 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/27 18:30:14 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,8 +220,17 @@ bool	Router::processRequestReceived( Request &req )
 		cgiExe.pushEnvVar(std::string("PATH_TRANSLATED"), req.getRouteChaineString());
 		cgiExe.pushEnvVar(std::string("SCRIPT_NAME"), req.getDocument());
 		cgiExe.pushEnvVar(std::string("QUERY_STRING"), req.getQuery());
-		cgiExe.pushEnvVar(std::string("REMOTE_HOST"), "localhost");
-		cgiExe.pushEnvVar(std::string("REMOTE_ADDRESS"), "127.0.0.1");
+		Client *cli = req.getClient();
+		if (cli)
+		{
+			cgiExe.pushEnvVar(std::string("REMOTE_HOST"), cli->getIpString());
+			cgiExe.pushEnvVar(std::string("REMOTE_ADDRESS"), cli->getIpString());
+		}
+		else
+		{
+			cgiExe.pushEnvVar(std::string("REMOTE_HOST"), "0.0.0.0");
+			cgiExe.pushEnvVar(std::string("REMOTE_ADDRESS"), "0.0.0.0");
+		}
 		cgiExe.pushEnvVar(std::string("AUTH_TYPE"), "none");
 		cgiExe.pushEnvVar(std::string("REMOTE_USER"), "user");
 		cgiExe.pushEnvVar(std::string("REMOTE_IDENT"), "user");
