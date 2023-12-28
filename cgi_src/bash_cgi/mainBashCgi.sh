@@ -1,3 +1,9 @@
+
+# i=0
+# while [ $i -lt 2147483647 ]; do
+# 	((i++))
+# done
+
 echo "<h1>Made in Bash though CGI</h1>"
 echo "<h3>This is the environment</h3>"
 # export

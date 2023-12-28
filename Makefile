@@ -6,7 +6,7 @@
 #    By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/22 10:08:41 by eralonso          #+#    #+#              #
-#    Updated: 2023/12/24 17:26:46 by eralonso         ###   ########.fr        #
+#    Updated: 2023/12/28 11:27:38 by omoreno-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -68,7 +68,7 @@ FILES		:=	main Sockets WSPoll WSSignals Receptionist \
 
 #<---------------------------------->LANG<---------------------------------->#
 LANG		:=	CPP
-CFLAGS		:=	-Wall -Wextra -Werror -g -fsanitize=address
+CFLAGS		:=	-Wall -Wextra -Werror -g #-fsanitize=address
 
 ifeq ($(LANG),C)
 	CC := cc

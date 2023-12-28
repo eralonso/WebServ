@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/28 11:12:17 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/28 12:47:37 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 Receptionist::Receptionist( ServersVector& servers ): Clients(), \
 													polls( MAX_CLIENTS ), \
 													_servers( servers ), \
-													timeout( 1 )
+													timeout( 10 )
 {
 	socket_t				serverFd;
 	Directives				*d = NULL;

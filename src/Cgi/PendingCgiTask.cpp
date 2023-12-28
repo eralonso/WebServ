@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/19 18:00:45 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/28 12:29:17 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 #include "PendingCgiTask.hpp"
 #include "PendingCgiTask.hpp"
 
-PendingCgiTask::PendingCgiTask( void ): request( *new Request() ), \
-										markedToDelete( false )
+PendingCgiTask::PendingCgiTask( void ): pid( 0 ), request( *new Request() ), \
+										fd( 0 ), markedToDelete( false )
 {
 	this->timestamp = std::clock();
 }
@@ -73,7 +73,7 @@ bool	PendingCgiTask::isMarkedToDelete( void ) const
 bool	PendingCgiTask::isTimeout( double toDuration, bool logInfo ) const
 {
 	std::clock_t	now = std::clock();
-	long			duration;
+	std::clock_t	duration;
 
 	if ( logInfo )
 	{
@@ -84,7 +84,7 @@ bool	PendingCgiTask::isTimeout( double toDuration, bool logInfo ) const
 	if ( logInfo )
 		Log::Info( "exceeded at duration: " \
 			+ SUtils::longToString( duration ) + "ms" );
-	return ( duration > static_cast< long >( toDuration * 1000 ) );
+	return ( duration > static_cast< std::clock_t >( toDuration * 1000 ) );
 }
 
 int	PendingCgiTask::getFd( void ) const
@@ -150,7 +150,7 @@ void	PendingCgiTask::killPendingTask( void )
 	if ( this->pid > 0 )
 	{
 		this->markedToDelete = true;
-		kill( this->pid, SIGKILL );
+		kill( this->pid, SIGTERM );
 	}
 	this->pid = 0;
 	if ( this->fd >= 0 )

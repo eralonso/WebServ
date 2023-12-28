@@ -2,10 +2,10 @@ import sys
 import os
 sys.stderr.write("Executing python start->\n")
 value = sys.stdin.readline()
-#for i in range(20000000):
 acum = ""
 body = ""
 env = ""
+#for i in range(20000000):
 for i in range(5):
     cat = str(i)
 for var in os.environ:
