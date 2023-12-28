@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/28 10:51:42 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/28 11:12:17 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,10 @@ Receptionist::Receptionist( ServersVector& servers ): Clients(), \
 	}
 }
 
-Receptionist::~Receptionist( void ) {}
+Receptionist::~Receptionist( void )
+{
+	Log::Error( "Calling Receptionist destructor" );
+}
 
 Receptionist::Receptionist( const Receptionist& b ): Clients(), \
 													polls( b.polls ), \
@@ -92,7 +95,6 @@ int	Receptionist::sendResponse( socket_t connected, std::string response )
 	Log::Success( "Response sended [ " \
 			+ SUtils::longToString( connected ) \
 			+ " ]" );
-	// Log::Success( response );
 	return ( 1 );
 }
 
@@ -100,14 +102,12 @@ int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
 {
 	char	buffer[ BUFFER_SIZE + 1 ];
 	ssize_t	amount;
-
-	memset( buffer, 0, BUFFER_SIZE + 1 );
-	amount = recv( clientFd, buffer, BUFFER_SIZE, 0);
-	Log::Info("Received " + SUtils::longToString(amount) + " bytes");
+	amount = recv( clientFd, buffer, BUFFER_SIZE, 0 );
 	if ( amount < 0 )
 		return ( -1 );
-	readed += std::string(buffer, amount);
-	return (1);
+	buffer[ amount ] = '\0';
+	readed += buffer;
+	return ( 1 );
 }
 
 int	Receptionist::addNewClient( socket_t serverFd )
@@ -140,12 +140,13 @@ void	Receptionist::manageClientRead( socket_t clientFd, Client *cli )
 	{
 		// Read Failed
 		polls.closePoll( clientFd );
+		eraseClient( cli );
 		return ;
 	}
 	Log::Info( "Readed [ " \
 			+ SUtils::longToString( clientFd ) \
 			+ " ]: " \
-			+ readed);
+			+ readed );
 	cli->manageRecv( readed );
 	if ( cli->manageCompleteRecv() )
 		cli->allowPollWrite( true );
@@ -199,10 +200,6 @@ int	Receptionist::mainLoop( void )
 		if ( waitRes < 0 )
 			return ( 1 );
 		CgiExecutor::attendPendingCgiTasks();
-		// if (checkPendingToSend())
-		// 	Log::Info("Some Pending To Send");
-		// else
-		// 	Log::Info("None Pending To Send");
 		if ( waitRes == 0 )
 		{
 			// Log::Info( "Timeout Waiting for any fd ready to I/O" );

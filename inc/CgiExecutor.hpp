@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:34 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/27 17:11:28 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/28 11:11:27 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,11 @@ private:
 	static PendingCgiTasks	pendingTasks;
 	std::string				binary;
 	std::string				argument;
-	std::vector<std::string>	envVars;
+	StringVector			envVars;
 	Request&				request;
-	//char					*envPath;
-	int						fdToChild[2];
-	int						fdFromChild[2];
-	char					*argv[3];
+	int						fdToChild[ 2 ];
+	int						fdFromChild[ 2 ];
+	char					*argv[ 3 ];
 	char					**childEnv;
 	static std::string		getChildOutput(PendingCgiTask *task);
 	void					onFailFork(void);
@@ -60,16 +59,20 @@ private:
 	bool					checkFileReadable(std::string file);
 	bool 					checkFileExecutable(std::string file);
 public:
-	CgiExecutor(Request& request);
-	~CgiExecutor();
-	int execute(void);
-	static PendingCgiTask*	getCompletedTask();
-	static PendingCgiTask*	getTimeoutedTask(double to);
-	static PendingCgiTask*	getMarkedToDeleteTask();
-	static size_t			purgeTimeoutedTasks(double to, size_t max);
-	static void				attendPendingCgiTasks(void);
-	static size_t			getPendingTasksSize();
-	void					pushEnvVar(const std::string& variable, const std::string& value);
+	CgiExecutor( Request& request );
+	~CgiExecutor( void );
+	int						execute( void );
+	static PendingCgiTask	*getCompletedTask( void );
+	static PendingCgiTask	*getTimeoutedTask( double to );
+	static PendingCgiTask	*getMarkedToDeleteTask( void );
+	static size_t			purgeTimeoutedTasks( double to, size_t max );
+	static void				attendPendingCgiTasks( void );	
+	static void				checkCompletedTasks( void );
+	static void				checkTimeoutedTasks( void );
+	static void				checkMarkedToDeleteTasks( void );
+	static size_t			getPendingTasksSize( void );
+	void					pushEnvVar( const std::string& variable, \
+								const std::string& value );
 };
 
 #endif

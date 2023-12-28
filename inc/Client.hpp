@@ -42,7 +42,7 @@ public:
 	Client( void );
 	Client( socket_t pollsocket, WSPoll& polls, \
 				ServersVector& servers, struct sockaddr_in& info );
-	~Client( void );
+	virtual ~Client( void );
 	Client( const Client& b );
 	Client&	operator=( const Client& b );
 public:

@@ -21,8 +21,8 @@ class Clients: public std::map< socket_t, Client * >
 {
 private:
 public:
-	Clients(/* args */);
-	~Clients( void );
+	Clients( void );
+	virtual ~Clients( void );
 	Clients( const Clients& b );
 	Clients&	operator=( const Clients& b );
 	Client		*newClient( socket_t socket, WSPoll& polls, \

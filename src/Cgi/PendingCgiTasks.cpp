@@ -35,15 +35,16 @@ int	PendingCgiTasks::appendTask( PendingCgiTask task )
 
 int PendingCgiTasks::eraseTask( pid_t pid )
 {
-	if (pid <= 0 and size() == 1)
+	size_t	tot;
+
+	if ( pid <= 0 && this->size() == 1 )
 	{
-		Log::Info("ClearMap PendingCgiTasks");
-		clear();
-		return (1);
+		Log::Info( "ClearMap PendingCgiTasks" );
+		this->clear();
+		return ( 1 );
 	}
-	Log::Info("Erasing PendingCgiTask with pid: " + SUtils::longToString(pid));
-	size_t tot;
-	
+	Log::Info( "Erasing PendingCgiTask with pid: " \
+				+ SUtils::longToString( pid ) );
 	tot = this->erase( pid );
 	return ( tot > 0 );
 }

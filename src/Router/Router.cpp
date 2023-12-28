@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/27 18:30:14 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/28 11:03:34 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,36 +24,37 @@ Router::~Router( void ) {}
 int	Router::updateResponse( Response &res, Request &req )
 {
 	res.setServer( req.getHost() );
-	if ( req.getDocument() == std::string( "favicon.ico" ) )
+	if ( req.getDocument() == "favicon.ico" )
 		createFaviconRes( res, req );
-	// else if (req.getDocExt() == std::string("py"))
-	else if (req.getUseCgi() && req.getError() == 0)
-		formatCgiResponse(res,req);
-	else if (req.getError() != 0)
+	else if ( req.getUseCgi() && req.getError() == 0 )
+		formatCgiResponse( res,req );
+	else if ( req.getError() != 0 )
 	{
-		Log::Info("updateResponse detect error status: " + SUtils::longToString(req.getError()));
-		if (req.getError() == 100)
-			formatContinueResponse(res, req);
-		else if (req.getError() == 202)
-			formatAcceptResponse(res, req);
+		Log::Info( "updateResponse detect error status: " \
+			+ SUtils::longToString( req.getError() ) );
+		if ( req.getError() == 100 )
+			formatContinueResponse( res, req );
+		else if ( req.getError() == 202 )
+			formatAcceptResponse( res, req );
 		else
-			formatErrorResponse(res, req);
+			formatErrorResponse( res, req );
 	}
-	else if (req.getMethod() == "GET")
-		formatGenericResponse(res, req);	
+	else if ( req.getMethod() == "GET" )
+		formatGenericResponse( res, req );
 	else
-		formatAcceptResponse(res, req);
-	return 0;
+		formatAcceptResponse( res, req );
+	return ( 0 );
 }
 
 std::string	Router::getHtml( Request *req )
 {
-	std::string	html;
-	std::string	resFolderLs;
-	std::string	readBuf;
-	std::string	route = req->getRoute();
-	std::ifstream infile;
-	std::string path = std::string(".") + route;
+	std::string		html;
+	std::string		resFolderLs;
+	std::string		readBuf;
+	std::string		route = req->getRoute();
+	std::ifstream	infile;
+	std::string		path = "." + route;
+
 	Log::Info("Path to GET ... " + path);
 	if (access(path.c_str(), R_OK) == 0)
 	{
@@ -135,20 +136,21 @@ std::string	Router::getForm( void )
 
 Response	*Router::getResponse( Request *req )
 {
-	Response* res = new Response;
-	int error;
-	if (!res)
-		return res;
-	if (!req)
-		formatErrorResponse(*res, 500);
-	else if ((error = req->getError()))
+	Response	*res = new Response;
+	int			error;
+
+	if ( !res )
+		return ( res );
+	if ( !req )
+		formatErrorResponse( *res, 500 );
+	else if ( ( error = req->getError() ) )
 	{
-		if (error == 100)
-			formatContinueResponse(*res, *req);
-		if (error == 202)
-			formatAcceptResponse(*res, *req);
+		if ( error == 100 )
+			formatContinueResponse( *res, *req );
+		if ( error == 202 )
+			formatAcceptResponse( *res, *req );
 		else
-			formatErrorResponse(*res, error);
+			formatErrorResponse( *res, error );
 	}
 	else
 		updateResponse( *res, *req );
