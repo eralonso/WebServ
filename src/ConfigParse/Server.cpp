@@ -105,11 +105,13 @@ bool	Server::weakServerMatch( std::string host, std::string port, \
 		return ( false );
 	if ( DirectivesParser::checkValidIp( host ) == true )
 	{
-		if ( getIpString() == "0.0.0.0" || host == "0.0.0.0" )
+		std::string IpStr = getIpString(); 
+		if ( IpStr == "0.0.0.0" || host == "0.0.0.0" )
 			return ( true );
-		return ( getIpString() == host );
+		return ( IpStr == host );
 	}
-	return ( getIpNetworkOrder() == ip );
+	unsigned int ipNwk = getIpNetworkOrder();
+	return (ipNwk == 0 || ipNwk == ip );
 }
 
 void	Server::setAddr( const struct sockaddr_in& info )
