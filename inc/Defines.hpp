@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Defines.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:10:16 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/17 14:22:30 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/28 10:40:51 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <string>
 
 # define BUFFER_SIZE 3000
-# define MAX_CLIENTS 10
+# define MAX_CLIENTS 3000
 
 # define SPOLLFD 0
 # define CPOLLFD 1

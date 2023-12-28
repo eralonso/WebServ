@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/24 12:03:37 by eralonso         ###   ########.fr       */
+/*   Updated: 2023/12/28 10:51:42 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 Receptionist::Receptionist( ServersVector& servers ): Clients(), \
 													polls( MAX_CLIENTS ), \
 													_servers( servers ), \
-													timeout( 50 )
+													timeout( 1 )
 {
 	socket_t				serverFd;
 	Directives				*d = NULL;
@@ -100,24 +100,14 @@ int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
 {
 	char	buffer[ BUFFER_SIZE + 1 ];
 	ssize_t	amount;
-	ssize_t	totalAmount = 0;
 
-	while( true )
-	{
-		memset( buffer, 0, BUFFER_SIZE + 1 );
-		amount = recv( clientFd, buffer, BUFFER_SIZE, 0);
-		Log::Info("Received " + SUtils::longToString(amount) + " bytes");
-		totalAmount += amount;
-		if ( amount < 0 )
-			return ( -1 );
-		readed += std::string(buffer, amount);
-		if (amount < BUFFER_SIZE)
-		{
-			if (totalAmount == 0)
-				return ( -1 );
-			return ( 1 );
-		}
-	}
+	memset( buffer, 0, BUFFER_SIZE + 1 );
+	amount = recv( clientFd, buffer, BUFFER_SIZE, 0);
+	Log::Info("Received " + SUtils::longToString(amount) + " bytes");
+	if ( amount < 0 )
+		return ( -1 );
+	readed += std::string(buffer, amount);
+	return (1);
 }
 
 int	Receptionist::addNewClient( socket_t serverFd )
