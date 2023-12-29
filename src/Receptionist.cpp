@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Receptionist.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/28 12:47:37 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/29 16:40:06 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,11 +102,11 @@ int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
 {
 	char	buffer[ BUFFER_SIZE + 1 ];
 	ssize_t	amount;
+
 	amount = recv( clientFd, buffer, BUFFER_SIZE, 0 );
 	if ( amount < 0 )
 		return ( -1 );
-	buffer[ amount ] = '\0';
-	readed += buffer;
+	readed += std::string(buffer, amount);
 	return ( 1 );
 }
 

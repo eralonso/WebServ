@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/19 18:39:09 by omoreno-         ###   ########.fr       */
+/*   Updated: 2023/12/29 16:19:55 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	Response::setHeaders( Headers headers )
 
 void	Response::setBody( std::string content )
 {
-	Header	h( "Content-Lenght", SUtils::longToString( content.length() ) );
+	Header	h( "Content-Length", SUtils::longToString( content.length() ) );
 
 	this->body = content;
 	this->headers.replace( h );
