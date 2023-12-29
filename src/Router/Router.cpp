@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/29 13:03:22 by codespace        ###   ########.fr       */
+/*   Updated: 2023/12/29 14:49:12 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,7 +210,6 @@ bool	Router::processRequestReceived( Request &req )
 	}
 	try
 	{
-		Log::Success("getRoute before caling CgiExecutor: " + req.getRoute());
 		CgiExecutor cgiExe(req);
 		cgiExe.pushEnvVar(std::string("SERVER_SOFTWARE"), "webserv");
 		cgiExe.pushEnvVar(std::string("SERVER_NAME"), host);
@@ -219,9 +218,9 @@ bool	Router::processRequestReceived( Request &req )
 		cgiExe.pushEnvVar(std::string("SERVER_PORT"), port);
 		cgiExe.pushEnvVar(std::string("REQUEST_METHOD"), req.getMethod());
 		// cgiExe.pushEnvVar(std::string("FILEPATH_INFO"), req.getRouteChaineString());
-		cgiExe.pushEnvVar(std::string("PATH_INFO"), "/ralph");
-		cgiExe.pushEnvVar(std::string("PATH_TRANSLATED"), "/ralph");
-		cgiExe.pushEnvVar(std::string("SCRIPT_NAME"), req.getDocument());
+		cgiExe.pushEnvVar(std::string("PATH_INFO"), ".");
+		cgiExe.pushEnvVar(std::string("PATH_TRANSLATED"), req.getDocument());
+		// cgiExe.pushEnvVar(std::string("SCRIPT_NAME"), req.getDocument());
 		cgiExe.pushEnvVar(std::string("QUERY_STRING"), req.getQuery());
 		Client *cli = req.getClient();
 		if (cli)
