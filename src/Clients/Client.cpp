@@ -328,9 +328,9 @@ void	Client::allowPollWrite( bool value )
 			return ;
 		}
 		if ( value )
-			clientPoll->events = POLLOUT;
+			clientPoll->events |= POLLOUT;
 		else 
-			clientPoll->events = POLLIN;
+			clientPoll->events &= ~POLLOUT;
 	// if (polls)
 	// 	polls->allowPollWrite(socket, value);
 	}

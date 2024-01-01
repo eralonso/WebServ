@@ -16,7 +16,7 @@
 Receptionist::Receptionist( ServersVector& servers ): Clients(), \
 													polls( MAX_CLIENTS ), \
 													_servers( servers ), \
-													timeout( 10 )
+													timeout( 1000 )
 {
 	socket_t				serverFd;
 	Directives				*d = NULL;
@@ -107,7 +107,7 @@ int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
 	if ( amount < 0 )
 		return ( -1 );
 	readed += std::string(buffer, amount);
-	return ( 1 );
+	return ( amount );
 }
 
 int	Receptionist::addNewClient( socket_t serverFd )
@@ -135,15 +135,19 @@ int	Receptionist::addNewClient( socket_t serverFd )
 void	Receptionist::manageClientRead( socket_t clientFd, Client *cli )
 {
 	std::string	readed;
+	int			amount;
 
-	if ( readRequest( clientFd, readed ) < 0 )
+	amount = readRequest( clientFd, readed );
+	if ( amount <= 0 )
 	{
 		// Read Failed
 		polls.closePoll( clientFd );
 		eraseClient( cli );
 		return ;
 	}
-	Log::Info( "Readed [ " \
+	Log::Info( "Readed " \
+			+ SUtils::longToString( amount ) \
+			+ " bytes from [ " \
 			+ SUtils::longToString( clientFd ) \
 			+ " ]: " \
 			+ readed );
@@ -180,10 +184,10 @@ void	Receptionist::manageClient( socket_t clientFd )
 			+ " ]: not found");
 		return ;
 	}
+	if ( clientPoll->revents & POLLOUT )
+		manageClientWrite( clientFd, cli );
 	if ( clientPoll->revents & POLLIN )
 		manageClientRead( clientFd, cli );
-	else if ( clientPoll->revents & POLLOUT )
-		manageClientWrite( clientFd, cli );
 }
 
 int	Receptionist::mainLoop( void )
@@ -194,8 +198,8 @@ int	Receptionist::mainLoop( void )
 
 	while ( WSSignals::isSig == false )
 	{
-		if ( waitRes != 0 )
-			Log::Info( "Waiting for any fd ready to I/O" );
+		//if ( waitRes != 0 )
+			//Log::Info( "Waiting for any fd ready to I/O" );
 		waitRes = polls.wait( timeout );
 		if ( waitRes < 0 )
 			return ( 1 );

@@ -68,7 +68,7 @@ FILES		:=	main Sockets WSPoll WSSignals Receptionist \
 
 #<---------------------------------->LANG<---------------------------------->#
 LANG		:=	CPP
-CFLAGS		:=	-Wall -Wextra -Werror -g #-fsanitize=address
+CFLAGS		:=	-Wall -Wextra -Werror -g -fsanitize=address
 
 ifeq ($(LANG),C)
 	CC := cc
