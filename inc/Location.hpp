@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/24 17:36:16 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/02 13:11:33 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ public:
 							std::string& fpath ) const;
 	bool				getFinalUploadPath( std::string path, \
 							std::string& fpath ) const;
+	size_t				getMaxBodySize() const;
+	bool				isSet( std::string directive ) const;
 };
 
 #endif

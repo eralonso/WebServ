@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/24 17:46:22 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/02 13:11:41 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,19 @@ Server&	Server::operator=( const Server& s )
 }
 
 Directives	*Server::getDirectives( void ) const { return ( this->_directives ); }
+
+size_t Server::getMaxBodySize(std::string route) const
+{
+	if (this->_directives)
+	{
+		Location	*loc = getLocationAtPath( route );
+		
+		if ( loc != NULL && loc->isSet("client_max_body_size") )
+			return ( loc->getMaxBodySize() );
+		return (this->_directives->getClientMaxBodySize());
+	}	
+    return (1 << 20);
+}
 
 Location	*Server::getLocationAtPath( std::string path ) const
 {

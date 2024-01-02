@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/27 15:25:26 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/02 12:55:54 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ private:
 	bool			useCgi;
 	bool			badRequest;
 	size_t 			chunkSize;
+	size_t			maxBodySize;
 	Client			*client;
 	std::string		cgiOutput;
 	std::string		method;
@@ -77,8 +78,10 @@ private:
 	bool	checkKeepAlive( void );
 	int		splitDocExt( void );
 	bool	checkEmptyContent( size_t& size );
+    bool 	UpdateMaxBodySize();
+
 public:
-	Request( void );
+    Request( void );
 	Request( Client *client );
 	~Request( void );
 	Request( const Request& b );

@@ -51,6 +51,7 @@ public:
 	int							getPort( void ) const;
 	Location					*getLocationAtPath( std::string path ) const;
 	Directives					*getDirectives( void ) const;
+	size_t						getMaxBodySize(std::string route) const;
 	std::string					getErrorPageWithCode( unsigned int code ) const;
 	bool						strongServerMatch( std::string host, \
 									std::string port, unsigned int ip ) const;

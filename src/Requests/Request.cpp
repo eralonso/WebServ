@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/02 11:00:23 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/02 13:13:29 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ Request::Request( void )
 	this->status = IDLE;
 	this->useCgi = false;
 	this->error = 0;
+	this->maxBodySize = 1 << 20;
 	// Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
@@ -38,6 +39,7 @@ Request::Request( Client *cli )
 	this->status = FD_BOND;
 	this->useCgi = false;
 	this->error = 0;
+	this->maxBodySize = 1 << 20;
 	// Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
@@ -63,6 +65,7 @@ Request::Request( const Request& b )
 	this->routeChain = b.routeChain;
 	this->document = b.document;
 	this->docExt = b.docExt;
+	this->maxBodySize = b.maxBodySize;
 }
 
 Request&	Request::operator=( const Request& b )
@@ -85,6 +88,7 @@ Request&	Request::operator=( const Request& b )
 		this->routeChain = b.routeChain;
 		this->document = b.document;
 		this->docExt = b.docExt;
+		this->maxBodySize = b.maxBodySize;
 	}
 	return ( *this );
 }
@@ -487,9 +491,17 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 	{
 		this->status = RECVD_HEADER;
 		checkKeepAlive();
+		if (!UpdateMaxBodySize())
+		{
+			this->badRequest = true;
+			error = 400;
+			this->status = RECVD_ALL;
+			return (true);
+		}
 		if ( checkChunked() )
 			return ( true );
-		if ( !checkEmptyContent( contentSize ) )
+		Log::Error("Request::processLineOnRecvdReqLine maxBodySize: " + SUtils::longToString(maxBodySize));
+		if ( !checkEmptyContent( contentSize ) && (maxBodySize == 0 || contentSize <= maxBodySize) )
 		{
 			got = this->client->getNChars(data, contentSize);
 			this->body += data;
@@ -498,6 +510,12 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 				this->status = RECVD_ALL;
 				// Log::Success(body);
 			}
+		}
+		if (maxBodySize != 0 && contentSize > maxBodySize)
+		{
+			this->badRequest = true;
+			error = 400;
+			this->status = RECVD_ALL;
 		}
 		return ( true );
 	}
@@ -514,6 +532,13 @@ bool	Request::processLineOnRecvdHeader( const std::string &line )
 	if ( clHead != NULL )
 	{
 		contentSize = SUtils::atol( clHead->getValue().c_str() );
+		if (maxBodySize != 0 && contentSize > maxBodySize)
+		{
+			this->badRequest = true;
+			error = 400;
+			this->status = RECVD_ALL;
+			return (true);
+		}
 		if ( this->body.size() >= contentSize )
 		{
 			// Log::Success(body);
@@ -541,12 +566,26 @@ bool	Request::processLineOnRecvdChunkSize( const std::string &line )
 	if ( len == this->chunkSize )
 	{
 		this->body += line;
+		if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
+		{
+			this->badRequest = true;
+			error = 400;
+			this->status = RECVD_ALL;
+			return (true);
+		}
 		this->status = RECVD_CHUNK;
 		return ( true );
 	}
 	if ( ( len == this->chunkSize + 1 ) && ( line[ len - 1 ] <= ' ' ) )
 	{
 		this->body += line.substr( 0, len - 1 );
+		if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
+		{
+			this->badRequest = true;
+			error = 400;
+			this->status = RECVD_ALL;
+			return (true);
+		}
 		this->status = RECVD_CHUNK;
 		return ( true );
 	}
@@ -643,6 +682,17 @@ bool	Request::checkEmptyContent( size_t& size )
 	else
 		size = SUtils::atol( clHead->getValue().c_str() );
 	return ( this->status == RECVD_ALL );
+}
+
+bool Request::UpdateMaxBodySize()
+{
+	const Server* svr= ServerFinder::find(*this);
+	if (svr != NULL)
+	{
+		maxBodySize = svr->getMaxBodySize(getRoute());
+		return (true);
+	}
+	return ( false );
 }
 
 bool	Request::processLine( const std::string &line )

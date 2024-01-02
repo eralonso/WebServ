@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 12:56:54 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/24 17:45:21 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/02 13:11:26 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,4 +124,18 @@ bool	Location::getFinalUploadPath( std::string path, std::string& fpath ) const
 	else
 		return ( false );
 	return ( true );
+}
+
+size_t Location::getMaxBodySize() const
+{
+	if (this->_directives)
+		return ( this->_directives->getClientMaxBodySize() );
+    return (1 << 20);
+}
+
+bool Location::isSet(std::string directive) const
+{
+	if ( this->_directives != NULL )
+		return ( this->_directives->isSet( directive ) );
+    return ( false );
 }
