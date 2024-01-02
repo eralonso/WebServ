@@ -2,3 +2,4 @@ webserv
 .deps/
 .objs/
 *.sw*
+*.log

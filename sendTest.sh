@@ -35,13 +35,13 @@ function readQuestion()
 
 function sendRequest()
 {
-	curl -v "$1:$2"
+	curl -m 2 -v "$1:$2"
 }
 
 function doTest()
 {
-	testOutputLog="$outputLog$1"
-	testErrorLog="$errorLog$1"
+	local testOutputLog="$outputLog$1"
+	local testErrorLog="$errorLog$1"
 
 	> "$testOutputLog" > "$testErrorLog"
 	echo -e "Request [$1] host [$3] port [$4]\n" >> "$testOutputLog"
@@ -55,13 +55,46 @@ function doTest()
 	fi
 }
 
+function launchTests()
+{
+	local iter=1
+
+	while [ "$iter" -le "$3" ]; do
+		if [  "$4" = "y" ]; then
+			( doTest "$iter" "$3" "$1" "$2" & )
+		else
+			doTest "$iter" "$3" "$1" "$2"
+		fi
+		((++iter))
+	done
+}
+
+function waitRequests()
+{
+	while [[ "$( ps aux | awk -v PROGRAM=$0 '{ if ( $12 == PROGRAM ) { print "y" } }' | wc -l )" -gt 2 ]]; do
+		sleep 0.0001;
+		echo "Waiting..."
+	done
+}
+
+function joinFiles()
+{
+	local iter=1
+
+	while [ "$iter" -le "$1" ]; do
+		cat "$outputLog$iter" >> $outputLog
+		cat "$errorLog$iter" >> $errorLog
+		rm -f "$outputLog$iter" "$errorLog$iter"
+		((++iter))
+	done
+}
+
 function main()
 {
 	local host
 	local port
 	local iterations
 	local background
-	local iter=1
 
 	readInput host "Introduce the host:"
 	readNumber port "Introduce the port:"
@@ -69,27 +102,10 @@ function main()
 	readQuestion background "Do you want to send all the requests at the same time? [ y / n ]"
 
 	> "$outputLog" > "$errorLog"
-	while [ "$iter" -le "$iterations" ]; do
-		if [  "$background" = "y" ]; then
-			( doTest "$iter" "$iterations" "$host" "$port" & )
-		else
-			doTest "$iter" "$iterations" "$host" "$port"
-		fi
-		((++iter))
-	done
 
-	while [[ "$( ps aux | awk -v PROGRAM=$0 '{ if ( $12 == PROGRAM ) { print "y" } }' | wc -l )" -gt 2 ]]; do
-		sleep 0.0001;
-		echo "I'm in"
-	done
-
-	iter=1
-	while [ "$iter" -le "$iterations" ]; do
-		cat "$outputLog$iter" >> $outputLog
-		cat "$errorLog$iter" >> $errorLog
-		rm -f "$outputLog$iter" "$errorLog$iter"
-		((++iter))
-	done	
+	launchTests "$host" "$port" "$iterations" "$background"
+	waitRequests
+	joinFiles "$iterations"
 
 	echo -en "\nThe Standard Output of requests is stored in the \"$outputLog\""
 	echo " file and Standard Error in the \"$errorLog\" file"
