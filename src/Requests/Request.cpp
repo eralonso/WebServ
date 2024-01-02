@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/27 19:34:38 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/02 11:00:23 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,6 +228,7 @@ void	Request::parseFirstLine( const std::string &line )
 			Log::Error("First line token: " + tokens[i]);
 		}
 		this->badRequest = true;
+		this->error = 400;
 		return ;
 	}
 	this->method = SUtils::trim( tokens[ 0 ] );
