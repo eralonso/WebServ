@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 10:56:51 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/02 13:11:33 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/02 16:00:55 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ public:
 							std::string& fpath ) const;
 	size_t				getMaxBodySize() const;
 	bool				isSet( std::string directive ) const;
+	bool				getIsAllowedMethod( std::string method ) const;
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:55:51 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/02 11:47:57 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/02 15:59:47 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,17 @@ const StringBoolMap&	Directives::getIsSet( void ) const { return ( this->_isSet 
 
 bool	Directives::isEmpty( void ) const { return ( this->_isEmpty ); }
 
-bool	Directives::isSet( const std::string& key ) { return ( this->_isSet[ key ] ); };
+bool	Directives::isSet( const std::string& key ) { return ( this->_isSet[ key ] ); }
+
+bool	Directives::getIsAllowedMethod( std::string method ) const
+{
+	int	action;
+
+	action = ActionMask::whichAction( method );
+	if ( action != ActionMask::INVALID )
+		return ( this->_allowMethods.getAction( action ) );
+    return ( false );
+};
 
 void	Directives::print( void ) const
 {

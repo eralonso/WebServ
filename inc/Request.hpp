@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/02 12:55:54 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/02 16:42:44 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 
 # include <Headers.hpp>
 # include <Defines.hpp>
+# include <Server.hpp>
 
 class Client;
 
@@ -55,12 +56,14 @@ private:
 	std::string		routeHost;
 	std::string		routePort;
 	std::string		query;
+	std::string		filePath;
 	std::string		protocol;
 	std::string		body;
 	std::string		document;
 	std::string		docExt;
 	StringVector	routeChain;
 	Headers			headers;
+	const  Server*	svr;
 private:
 	void 	parseHostPortFromRoute( void );
 	void	parseQueryStringFromRoute( void );
@@ -78,7 +81,8 @@ private:
 	bool	checkKeepAlive( void );
 	int		splitDocExt( void );
 	bool	checkEmptyContent( size_t& size );
-    bool 	UpdateMaxBodySize();
+	bool	updateServerConfig();
+	void	updateFilePath( void );
 
 public:
     Request( void );
@@ -121,7 +125,7 @@ public:
 	void			setCgiLaunched( void );
 	void			setCgiOutput( std::string str );
 	void			setUseCgi( bool value );
-	void			setError( int err );
+	bool			setError( int err );
 	void			logStatus( void );
 	bool			processLine( const std::string& line );
 };

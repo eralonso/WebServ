@@ -17,7 +17,7 @@
 
 # include <TypesDefines.hpp>
 # include <Directives.hpp>
-# include <Client.hpp>
+// # include <Client.hpp>
 # include <ConfigUtils.hpp>
 # include <ConfigApply.hpp>
 
@@ -52,6 +52,7 @@ public:
 	Location					*getLocationAtPath( std::string path ) const;
 	Directives					*getDirectives( void ) const;
 	size_t						getMaxBodySize(std::string route) const;
+	bool						getIsAllowedMethod(std::string route, std::string method) const;
 	std::string					getErrorPageWithCode( unsigned int code ) const;
 	bool						strongServerMatch( std::string host, \
 									std::string port, unsigned int ip ) const;

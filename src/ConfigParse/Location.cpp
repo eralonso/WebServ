@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 12:56:54 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/02 13:11:26 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/02 16:02:13 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,4 +138,11 @@ bool Location::isSet(std::string directive) const
 	if ( this->_directives != NULL )
 		return ( this->_directives->isSet( directive ) );
     return ( false );
+}
+
+bool	Location::getIsAllowedMethod( std::string method ) const
+{
+	if ( this->_directives != NULL )
+		return ( this->_directives->getIsAllowedMethod( method ) );
+	return ( false );
 }

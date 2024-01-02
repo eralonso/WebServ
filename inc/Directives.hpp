@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Directives.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:50:07 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/23 11:58:57 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/02 15:58:28 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ public:
 	const StringBoolMap&	getIsSet( void ) const;
 	bool					isEmpty( void ) const;
 	bool					isSet( const std::string& key );
+	bool					getIsAllowedMethod( std::string method ) const;
 };
 
 #endif

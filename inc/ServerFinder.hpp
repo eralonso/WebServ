@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerFinder.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/20 17:58:06 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/24 13:26:31 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/02 15:40:31 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <TypesDefines.hpp>
 # include <Server.hpp>
+# include <Clients.hpp>
 
 class ServerFinder
 {

@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/02 13:13:29 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/02 17:14:58 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ Request::Request( void )
 	this->status = IDLE;
 	this->useCgi = false;
 	this->error = 0;
+	this->svr = NULL;
 	this->maxBodySize = 1 << 20;
 	// Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
@@ -39,6 +40,7 @@ Request::Request( Client *cli )
 	this->status = FD_BOND;
 	this->useCgi = false;
 	this->error = 0;
+	this->svr = NULL;
 	this->maxBodySize = 1 << 20;
 	// Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
@@ -65,6 +67,7 @@ Request::Request( const Request& b )
 	this->routeChain = b.routeChain;
 	this->document = b.document;
 	this->docExt = b.docExt;
+	this->svr = b.svr;
 	this->maxBodySize = b.maxBodySize;
 }
 
@@ -88,6 +91,7 @@ Request&	Request::operator=( const Request& b )
 		this->routeChain = b.routeChain;
 		this->document = b.document;
 		this->docExt = b.docExt;
+		this->svr = b.svr;
 		this->maxBodySize = b.maxBodySize;
 	}
 	return ( *this );
@@ -491,16 +495,15 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 	{
 		this->status = RECVD_HEADER;
 		checkKeepAlive();
-		if (!UpdateMaxBodySize())
-		{
-			this->badRequest = true;
-			error = 400;
-			this->status = RECVD_ALL;
-			return (true);
-		}
+		if (!updateServerConfig())
+			return ( setError( 400 ) );
+		maxBodySize = svr->getMaxBodySize(getRoute());
+		if (svr->getIsAllowedMethod( this->route, this->method ) == false)
+			return ( setError( 405 ) );
+		updateFilePath();
 		if ( checkChunked() )
 			return ( true );
-		Log::Error("Request::processLineOnRecvdReqLine maxBodySize: " + SUtils::longToString(maxBodySize));
+		// Log::Error("Request::processLineOnRecvdReqLine maxBodySize: " + SUtils::longToString(maxBodySize));
 		if ( !checkEmptyContent( contentSize ) && (maxBodySize == 0 || contentSize <= maxBodySize) )
 		{
 			got = this->client->getNChars(data, contentSize);
@@ -512,11 +515,7 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 			}
 		}
 		if (maxBodySize != 0 && contentSize > maxBodySize)
-		{
-			this->badRequest = true;
-			error = 400;
-			this->status = RECVD_ALL;
-		}
+			return ( setError( 400 ) );
 		return ( true );
 	}
 	parseHeader( line );
@@ -533,12 +532,7 @@ bool	Request::processLineOnRecvdHeader( const std::string &line )
 	{
 		contentSize = SUtils::atol( clHead->getValue().c_str() );
 		if (maxBodySize != 0 && contentSize > maxBodySize)
-		{
-			this->badRequest = true;
-			error = 400;
-			this->status = RECVD_ALL;
-			return (true);
-		}
+			return ( setError( 400 ) );
 		if ( this->body.size() >= contentSize )
 		{
 			// Log::Success(body);
@@ -567,12 +561,7 @@ bool	Request::processLineOnRecvdChunkSize( const std::string &line )
 	{
 		this->body += line;
 		if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
-		{
-			this->badRequest = true;
-			error = 400;
-			this->status = RECVD_ALL;
-			return (true);
-		}
+			return ( setError( 400 ) );
 		this->status = RECVD_CHUNK;
 		return ( true );
 	}
@@ -580,12 +569,7 @@ bool	Request::processLineOnRecvdChunkSize( const std::string &line )
 	{
 		this->body += line.substr( 0, len - 1 );
 		if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
-		{
-			this->badRequest = true;
-			error = 400;
-			this->status = RECVD_ALL;
-			return (true);
-		}
+			return ( setError( 400 ) );
 		this->status = RECVD_CHUNK;
 		return ( true );
 	}
@@ -684,15 +668,20 @@ bool	Request::checkEmptyContent( size_t& size )
 	return ( this->status == RECVD_ALL );
 }
 
-bool Request::UpdateMaxBodySize()
+bool Request::updateServerConfig()
 {
-	const Server* svr= ServerFinder::find(*this);
+	svr= ServerFinder::find(*this);
 	if (svr != NULL)
-	{
-		maxBodySize = svr->getMaxBodySize(getRoute());
 		return (true);
-	}
 	return ( false );
+}
+
+void Request::updateFilePath(void)
+{
+	if (svr)
+	{
+		this->filePath = svr->getFinalPath(this->route);
+	}
 }
 
 bool	Request::processLine( const std::string &line )
@@ -790,9 +779,13 @@ void	Request::setUseCgi( bool value )
 	this->useCgi = value;
 }
 
-void	Request::setError( int value )
+bool	Request::setError( int value )
 {
+	if ( value >= 400 )
+		this->badRequest = true;
+	this->status = RECVD_ALL;
 	this->error = value;
+	return ( true );
 }
 
 void	Request::logStatus( void )

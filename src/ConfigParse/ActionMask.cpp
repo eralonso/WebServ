@@ -3,14 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ActionMask.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:06:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/04 18:57:25 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/02 15:57:43 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ActionMask.hpp>
+
+int			ActionMask::actions[ 3 ] = { ActionMask::GET, ActionMask::POST, ActionMask::DELETE };
+std::string	ActionMask::stringActions[ 3 ] = { "GET", "POST", "DELETE" };
 
 ActionMask::ActionMask( void ): allowed( \
 						static_cast< t_action >( 0 ) ) {}
@@ -27,14 +30,20 @@ ActionMask&	ActionMask::operator=( const ActionMask& b )
 	return ( *this );
 }
 
-bool	ActionMask::isAction( int method ) const
+bool	ActionMask::isAction( int method )
 {
-	int	actions[ 3 ] = { ActionMask::GET, ActionMask::POST, ActionMask::DELETE };
-
 	for ( int i = 0; i < 3; i++ )
-		if ( actions[ i ] == method )
+		if ( ActionMask::actions[ i ] == method )
 			return ( true );
 	return ( false );
+}
+
+int	ActionMask::whichAction( std::string method )
+{
+	for ( int i = 0; i < 3; i++ )
+		if ( ActionMask::stringActions[ i ] == method )
+			return ( actions[ i ] );
+	return ( ActionMask::INVALID );
 }
 
 void	ActionMask::setAllowed( ActionMask::t_action allowed )

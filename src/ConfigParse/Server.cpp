@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/02 13:11:41 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/02 16:08:39 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,20 @@ size_t Server::getMaxBodySize(std::string route) const
 			return ( loc->getMaxBodySize() );
 		return (this->_directives->getClientMaxBodySize());
 	}	
-    return (1 << 20);
+	return (1 << 20);
+}
+
+bool	Server::getIsAllowedMethod(std::string route, std::string method) const
+{
+	if (this->_directives)
+	{
+		Location	*loc = getLocationAtPath( route );
+		
+		if ( loc != NULL && loc->isSet("allow_methods") )
+			return ( loc->getIsAllowedMethod( method ) );
+		return (this->_directives->getIsAllowedMethod( method ));
+	}	
+	return (false);
 }
 
 Location	*Server::getLocationAtPath( std::string path ) const
