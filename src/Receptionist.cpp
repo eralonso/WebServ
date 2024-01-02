@@ -184,10 +184,10 @@ void	Receptionist::manageClient( socket_t clientFd )
 			+ " ]: not found");
 		return ;
 	}
-	if ( clientPoll->revents & POLLOUT )
-		manageClientWrite( clientFd, cli );
 	if ( clientPoll->revents & POLLIN )
 		manageClientRead( clientFd, cli );
+	else if ( clientPoll->revents & POLLOUT )
+		manageClientWrite( clientFd, cli );
 }
 
 int	Receptionist::mainLoop( void )

@@ -13,7 +13,7 @@
 #include "Utils.hpp"
 #include "Response.hpp"
 
-Response::Response( void ) : isCgi( false ) {}
+Response::Response( void ): server( "OREGINX" ), isCgi( false ) {}
 
 Response::~Response( void ) {}
 
@@ -25,6 +25,7 @@ Response::Response( const Response& b )
 	this->headers = b.headers;
 	this->body = b.body;	
 	this->isCgi = b.isCgi;
+	this->server = b.server;
 }
 
 Response&	Response::operator=( const Response& b )
@@ -37,6 +38,7 @@ Response&	Response::operator=( const Response& b )
 		this->headers = b.headers;
 		this->body = b.body;	
 		this->isCgi = b.isCgi;
+		this->server = b.server;
 	}
 	return ( *this );
 }
