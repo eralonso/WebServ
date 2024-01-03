@@ -1,0 +1,10 @@
+body {
+	margin: 0;
+}
+
+p {
+	margin: 1em;
+	font-size: 2em;
+	color: lightgreen;
+	background-color: darkslategrey;
+}

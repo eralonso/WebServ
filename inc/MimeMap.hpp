@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/03 10:10:16 by codespace         #+#    #+#             */
-/*   Updated: 2024/01/03 11:26:41 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/03 12:37:01 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <string>
 #include <vector>
 
-# define MIME_NB 27
+# define MIME_NB 30
 
 class MimeMap
 {

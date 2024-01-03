@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/29 14:49:12 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/03 12:42:14 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <Router.hpp>
 #include <CgiExecutor.hpp>
 #include <FolderLs.hpp>
+#include <MimeMap.hpp>
 
 Router::Router( void ) {}
 
@@ -164,7 +165,7 @@ Response	*Router::createFaviconRes( Response& res, Request& req )
 	res.setProtocol( req.getProtocol() );
 	res.setStatus( 200 );
 	res.setMethod( req.getMethod() );
-	res.appendHeader( Header( "Content-Type", "image/svg+xml" ) );
+	res.appendHeader( Header( "Content-Type", MimeMap::getMime("svg") ) );
 	html += "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"150\" height=\"100\" viewBox=\"0 0 3 2\">\n";
 	html += "<rect width=\"1\" height=\"2\" x=\"0\" fill=\"#008d46\" />\n";
 	html += "<rect width=\"1\" height=\"2\" x=\"1\" fill=\"#ffffff\" />\n";
@@ -188,7 +189,7 @@ std::string	Router::getRequestEmbed( Request &req )
 
 Response	*Router::formatErrorResponse( Response &res, int error )
 {
-	res.appendHeader( Header( "Content-Type", "text/html" ) );
+	res.appendHeader( Header( "Content-Type", MimeMap::getMime("html") ) );
 	res.setProtocol( "HTTP/1.1" );
 	res.setStatus( error );
 	res.setBody( "Error: " + SUtils::longToString( error ) );
@@ -261,12 +262,12 @@ bool	Router::processRequestReceived( Request &req )
 std::string Router::determineContentType(Response& res, Request& req)
 {
 	(void)res;
-	std::string ext(req.getDocExt());
-	if (ext == std::string("png") || ext == std::string("PNG"))
-		return std::string("image/png");
-	if (ext == std::string("jpg") || ext == std::string("JPG"))
-		return std::string("image/jpg");
-	return std::string("text/html");
+	if (req.getMethod() == "get" || req.getMethod() == "GET")
+	{
+		std::string contentType = MimeMap::getMime(req.getDocExt());
+		return (contentType);
+	}
+	return (std::string("text/html"));
 }
 
 Response*	Router::formatGenericResponse( Response& res, Request& req )

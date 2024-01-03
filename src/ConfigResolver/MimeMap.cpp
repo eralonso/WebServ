@@ -6,40 +6,45 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/03 10:09:12 by codespace         #+#    #+#             */
-/*   Updated: 2024/01/03 11:44:37 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/03 12:41:56 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <MimeMap.hpp>
+#include <Utils.hpp>
 
 const MimeMap::t_dict	MimeMap::dict[ MIME_NB ] = 
 {
+	{ "", "text/html" },
 	{ "html", "text/html" },
 	{ "htm", "text/html"  },
-    { "txt", "text/plain" },
-    { "css", "text/css" },
-    { "js", "text/javascript" },
-    { "png", "image/png" },
-    { "jpg","image/jpeg" },
-    { "jpeg", "image/jpeg" },
-    { "gif", "image/gif" },
-    { "bmp", "image/bmp" },
-    { "webp", "image/webp" },
-    { "svg", "image/svg+xml" },
-    { "ico", "image/x-icon" },
-    { "mpeg", "audio/mpeg" },
-    { "ogg", "audio/ogg" },
-    { "vaw", "audio/wav" },
-    { "webm", "audio/webm" },
-    { "midi", "audio/midi" },
-    { "pdf", "application/pdf" },
-    { "xml", "application/xhtml+xml" },
-    { "xhtml", "application/xhtml+xml" },
-    { "ppt", "application/vnd.mspowerpoint" },
-    { "pkcs12", "application/pkcs12" },
-    { "mpfd", "multipart/form-data" },
-    { "mpbr", "multipart/byteranges" },
-    { "", "application/octet-stream" }
+	{ "txt", "text/plain" },
+	{ "py", "text/plain" },
+	{ "sh", "text/plain" },
+	{ "css", "text/css" },
+	{ "js", "text/javascript" },
+	{ "png", "image/png" },
+	{ "jpg","image/jpeg" },
+	{ "jpeg", "image/jpeg" },
+	{ "gif", "image/gif" },
+	{ "bmp", "image/bmp" },
+	{ "webp", "image/webp" },
+	{ "svg", "image/svg+xml" },
+	{ "ico", "image/x-icon" },
+	{ "mpeg", "audio/mpeg" },
+	{ "ogg", "audio/ogg" },
+	{ "vaw", "audio/wav" },
+	{ "webm", "audio/webm" },
+	{ "midi", "audio/midi" },
+	{ "json", "application/json" },
+	{ "pdf", "application/pdf" },
+	{ "xml", "application/xhtml+xml" },
+	{ "xhtml", "application/xhtml+xml" },
+	{ "ppt", "application/vnd.mspowerpoint" },
+	{ "pkcs12", "application/pkcs12" },
+	{ "mpfd", "multipart/form-data" },
+	{ "mpbr", "multipart/byteranges" },
+	{ "", "application/octet-stream" }
 };
 
 MimeMap::MimeMap(void)
@@ -58,7 +63,7 @@ std::string MimeMap::getMime(std::string fileExt)
 		i++;
 	if ( i < MIME_NB )
 		return ( std::string(dict[ i ].mime) );
-	return ( std::string(dict[ MIME_NB - 1 ].mime) );   
+	return ( std::string("text/plain") );   
 }
 
 std::string MimeMap::getFileExt(std::string mime)
