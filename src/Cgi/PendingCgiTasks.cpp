@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PendingCgiTasks.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:31 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/28 12:36:38 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/03 16:05:55 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,4 +47,25 @@ int PendingCgiTasks::eraseTask( pid_t pid )
 				+ SUtils::longToString( pid ) );
 	tot = this->erase( pid );
 	return ( tot > 0 );
+}
+
+int PendingCgiTasks::eraseTask(Request *req)
+{
+	pid_t pid = findPid(req);
+	if (pid > 0)
+		eraseTask(pid);
+	return (0);
+}
+
+pid_t PendingCgiTasks::findPid(Request *req)
+{
+	PendingCgiTasks::iterator it = begin();	
+	PendingCgiTasks::iterator ite = end();
+	while (it != ite)
+	{
+		if (&(it->second.getRequest()) == req)
+			return (it->first);
+		it++;
+	}
+     return pid_t(0);
 }

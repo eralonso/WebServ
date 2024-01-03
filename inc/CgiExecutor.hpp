@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CgiExecutor.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:34 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/28 11:11:27 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/03 16:08:49 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ public:
 	static void				checkTimeoutedTasks( void );
 	static void				checkMarkedToDeleteTasks( void );
 	static size_t			getPendingTasksSize( void );
+	static int				purgeDiscardedRequest(Request *req);
 	void					pushEnvVar( const std::string& variable, \
 								const std::string& value );
 };

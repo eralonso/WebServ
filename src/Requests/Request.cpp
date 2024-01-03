@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/02 17:14:58 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/03 16:12:23 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <Request.hpp>
 #include <Client.hpp>
 #include <ServerFinder.hpp>
+#include <CgiExecutor.hpp>
 
 size_t	Request::id_counter = 0;
 
@@ -45,7 +46,10 @@ Request::Request( Client *cli )
 	// Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
-Request::~Request( void ) {}
+Request::~Request( void ) 
+{
+	CgiExecutor::purgeDiscardedRequest(this);	
+}
 
 Request::Request( const Request& b )
 {

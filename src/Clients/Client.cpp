@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/28 11:19:47 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/03 16:21:23 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -328,9 +328,11 @@ void	Client::allowPollWrite( bool value )
 			return ;
 		}
 		if ( value )
-			clientPoll->events |= POLLOUT;
+			clientPoll->events = POLLOUT;
+			// clientPoll->events |= POLLOUT;
 		else 
-			clientPoll->events &= ~POLLOUT;
+			clientPoll->events = POLLIN;
+			// clientPoll->events &= ~POLLOUT;
 	// if (polls)
 	// 	polls->allowPollWrite(socket, value);
 	}

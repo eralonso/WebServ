@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PendingCgiTasks.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:30:49 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/17 19:10:32 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/03 16:01:39 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ public:
 	PendingCgiTasks&	operator=( const PendingCgiTasks& b );
 	int					appendTask( PendingCgiTask task );
 	int					eraseTask( pid_t pid );
+	int					eraseTask( Request *req );
+	pid_t				findPid( Request *req );
 };
 
 #endif
