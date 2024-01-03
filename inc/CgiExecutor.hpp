@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:34 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/03 16:08:49 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/03 17:03:31 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ public:
 	static void				checkMarkedToDeleteTasks( void );
 	static size_t			getPendingTasksSize( void );
 	static int				purgeDiscardedRequest(Request *req);
+	static pid_t			findClientPendingPid(Client * cli);
 	void					pushEnvVar( const std::string& variable, \
 								const std::string& value );
 };

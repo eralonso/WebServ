@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/29 16:40:06 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/03 17:13:05 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,9 +138,9 @@ void	Receptionist::manageClientRead( socket_t clientFd, Client *cli )
 	int			amount;
 
 	amount = readRequest( clientFd, readed );
-	if ( amount <= 0 )
+	if ( amount < 0 || (amount == 0 && CgiExecutor::findClientPendingPid(cli) == 0))
 	{
-		// Read Failed
+		// Read Failed or finish to read and not pending of timeout
 		polls.closePoll( clientFd );
 		eraseClient( cli );
 		return ;

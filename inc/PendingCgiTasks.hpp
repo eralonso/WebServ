@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:30:49 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/03 16:01:39 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/03 16:57:48 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ public:
 	int					eraseTask( pid_t pid );
 	int					eraseTask( Request *req );
 	pid_t				findPid( Request *req );
+	pid_t				findPid( Client *cli );
 };
 
 #endif

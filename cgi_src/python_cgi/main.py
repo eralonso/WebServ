@@ -5,8 +5,8 @@ value = sys.stdin.readline()
 acum = ""
 body = ""
 env = ""
-#for i in range(20000000):
-for i in range(5):
+for i in range(20000000):
+#for i in range(5):
     cat = str(i)
 for var in os.environ:
     env += "<p>" + var + ": " + os.environ[var] + "</p>\n"

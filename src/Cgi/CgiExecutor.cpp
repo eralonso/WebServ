@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/03 16:10:55 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/03 17:04:47 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -306,6 +306,14 @@ size_t	CgiExecutor::getPendingTasksSize( void )
 int CgiExecutor::purgeDiscardedRequest(Request *req)
 {
 	pendingTasks.eraseTask(req);
+    return 0;
+}
+
+pid_t CgiExecutor::findClientPendingPid(Client *cli)
+{
+	pid_t pid = pendingTasks.findPid(cli);
+	if (pid > 0)
+		return (pid);
     return 0;
 }
 

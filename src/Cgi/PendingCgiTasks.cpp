@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:31 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/03 16:05:55 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/03 16:59:48 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,5 +67,18 @@ pid_t PendingCgiTasks::findPid(Request *req)
 			return (it->first);
 		it++;
 	}
-     return pid_t(0);
+	return pid_t(0);
+}
+
+pid_t PendingCgiTasks::findPid(Client *cli)
+{
+	PendingCgiTasks::iterator it = begin();	
+	PendingCgiTasks::iterator ite = end();
+	while (it != ite)
+	{
+		if ((it->second.getRequest().getClient()) == cli)
+			return (it->first);
+		it++;
+	}
+	return pid_t(0);
 }
