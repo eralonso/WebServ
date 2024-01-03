@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+         #
+#    By: codespace <codespace@student.42.fr>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/22 10:08:41 by eralonso          #+#    #+#              #
-#    Updated: 2023/12/28 11:27:38 by omoreno-         ###   ########.fr        #
+#    Updated: 2024/01/03 11:09:21 by codespace        ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -64,7 +64,8 @@ FILES		:=	main Sockets WSPoll WSSignals Receptionist \
 				CGIService ServerInit Server LocationInit Location Listen \
 				ClientMaxBodySize ErrorPage Client Clients Header Headers Request \
 				Requests Response StatusCodes PendingCgiTask PendingCgiTasks \
-				CgiExecutor CgisMap Router ServerFinder ConfigApply ConfigUtils
+				CgiExecutor CgisMap Router ServerFinder ConfigApply ConfigUtils \
+				MimeMap
 
 #<---------------------------------->LANG<---------------------------------->#
 LANG		:=	CPP
