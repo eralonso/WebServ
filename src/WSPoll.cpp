@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WSPoll.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:05:51 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/17 13:40:31 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/03 16:37:53 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -299,12 +299,14 @@ void WSPoll::allowPollWrite(socket_t fd, bool value)
 {
 	if (value)
 	{
-		this->_polls[fd].events |= POLLOUT;
+		//this->_polls[fd].events |= POLLOUT;
+		this->_polls[fd].events = POLLOUT;
 		Log::Info("Set Poll for fd " + SUtils::longToString(fd) + " to write");
 	}
 	else
 	{
-		this->_polls[fd].events &= ~POLLOUT;	
+		// this->_polls[fd].events &= ~POLLOUT;	
+		this->_polls[fd].events = POLLIN;
 		Log::Info("Set Poll for fd " + SUtils::longToString(fd) + " not to write");
 	}
 }
