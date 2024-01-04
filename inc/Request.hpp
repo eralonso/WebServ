@@ -63,7 +63,8 @@ private:
 	std::string		docExt;
 	StringVector	routeChain;
 	Headers			headers;
-	const  Server*	svr;
+	const Server	*svr;
+	const Location	*lc;
 private:
 	void 	parseHostPortFromRoute( void );
 	void	parseQueryStringFromRoute( void );
@@ -81,7 +82,8 @@ private:
 	bool	checkKeepAlive( void );
 	int		splitDocExt( void );
 	bool	checkEmptyContent( size_t& size );
-	bool	updateServerConfig();
+	bool	updateServerConfig( void );
+	void	updateLocation( void );
 	void	updateFilePath( void );
 
 public:

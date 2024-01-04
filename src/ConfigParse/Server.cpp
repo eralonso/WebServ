@@ -42,104 +42,6 @@ Server&	Server::operator=( const Server& s )
 
 Directives	*Server::getDirectives( void ) const { return ( this->_directives ); }
 
-size_t Server::getMaxBodySize(std::string route) const
-{
-	if (this->_directives)
-	{
-		Location	*loc = getLocationAtPath( route );
-		
-		if ( loc != NULL && loc->isSet("client_max_body_size") )
-			return ( loc->getMaxBodySize() );
-		return (this->_directives->getClientMaxBodySize());
-	}	
-	return (1 << 20);
-}
-
-bool	Server::getIsAllowedMethod(std::string route, std::string method) const
-{
-	if (this->_directives)
-	{
-		Location	*loc = getLocationAtPath( route );
-		
-		if ( loc != NULL && loc->isSet("allow_methods") )
-			return ( loc->getIsAllowedMethod( method ) );
-		return (this->_directives->getIsAllowedMethod( method ));
-	}	
-	return (false);
-}
-
-Location	*Server::getLocationAtPath( std::string path ) const
-{
-	Location				*lcit = NULL;
-	Location				*lc = NULL;
-	LocationsSet::iterator	it;
-	LocationsSet::iterator	ite;
-	int						max = 0;
-	int						cmp = 0;
-
-	if ( this->_directives == NULL )
-		return ( NULL );
-	it = this->_directives->_locations.begin();
-	ite = this->_directives->_locations.end();
-	while ( it != ite )
-	{
-		lcit = *it;
-		cmp = ConfigUtils::comparePathReference( path, lcit->getPath() );
-		if ( cmp > max )
-		{
-			lc = lcit;
-			max = cmp;
-		}
-		it++;
-	}
-	if ( lc == NULL && lcit != NULL && lcit->getSplitedPath().size() == 0 )
-		lc = lcit;
-	return ( lc );
-}
-
-std::string	Server::getErrorPageWithCode( unsigned int code ) const
-{
-	( void ) code;
-	return ( "a" );
-}
-
-bool	Server::strongServerMatch( std::string host, std::string port, \
-									unsigned int ip ) const
-{
-	Directives						*directives = this->_directives;
-	StringVector::const_iterator	it;
-	StringVector::const_iterator	ite;
-
-	if ( directives == NULL || weakServerMatch( host, port, ip ) == false )
-		return ( false );
-	ite = directives->getServerNames().end();
-	for ( it = directives->getServerNames().begin(); it != ite; it++ )
-	{
-		if ( *it == host )
-			return ( true );
-	}
-	return ( false );
-}
-
-bool	Server::weakServerMatch( std::string host, std::string port, \
-								unsigned int ip ) const
-{
-	if ( this->_directives == NULL )
-		return ( false );
-	if ( SUtils::compareNumbersAsStrings( port, \
-		SUtils::longToString( this->_directives->getPort() ) ) )
-		return ( false );
-	if ( DirectivesParser::checkValidIp( host ) == true )
-	{
-		std::string IpStr = getIpString(); 
-		if ( IpStr == "0.0.0.0" || host == "0.0.0.0" )
-			return ( true );
-		return ( IpStr == host );
-	}
-	unsigned int ipNwk = getIpNetworkOrder();
-	return (ipNwk == 0 || ipNwk == ip );
-}
-
 void	Server::setAddr( const struct sockaddr_in& info )
 {
 	this->addr = info;
@@ -179,8 +81,153 @@ int	Server::getPort( void ) const
 	return ( this->_directives->getPort() );
 }
 
-const std::string	Server::getCgiBinary( std::string ext, \
-											std::string route ) const
+bool	Server::isSet( std::string directive ) const
+{
+	if ( this->_directives != NULL )
+		return ( this->_directives->isSet( directive ) );
+	return ( false );
+}
+
+bool	Server::strongServerMatch( std::string host, std::string port, \
+									unsigned int ip ) const
+{
+	Directives						*directives = this->_directives;
+	StringVector::const_iterator	it;
+	StringVector::const_iterator	ite;
+
+	if ( directives == NULL || weakServerMatch( host, port, ip ) == false )
+		return ( false );
+	ite = directives->getServerNames().end();
+	for ( it = directives->getServerNames().begin(); it != ite; it++ )
+	{
+		if ( *it == host )
+			return ( true );
+	}
+	return ( false );
+}
+
+bool	Server::weakServerMatch( std::string host, std::string port, \
+								unsigned int ip ) const
+{
+	if ( this->_directives == NULL )
+		return ( false );
+	if ( SUtils::compareNumbersAsStrings( port, \
+		SUtils::longToString( this->_directives->getPort() ) ) )
+		return ( false );
+	if ( DirectivesParser::checkValidIp( host ) == true )
+	{
+		std::string IpStr = getIpString(); 
+		if ( IpStr == "0.0.0.0" || host == "0.0.0.0" )
+			return ( true );
+		return ( IpStr == host );
+	}
+	unsigned int ipNwk = getIpNetworkOrder();
+	return (ipNwk == 0 || ipNwk == ip );
+}
+
+Location	*Server::getLocationAtPath( std::string path ) const
+{
+	Location				*lcit = NULL;
+	Location				*lc = NULL;
+	LocationsSet::iterator	it;
+	LocationsSet::iterator	ite;
+	int						max = 0;
+	int						cmp = 0;
+
+	if ( this->_directives == NULL )
+		return ( NULL );
+	it = this->_directives->_locations.begin();
+	ite = this->_directives->_locations.end();
+	while ( it != ite )
+	{
+		lcit = *it;
+		cmp = ConfigUtils::comparePathReference( path, lcit->getPath() );
+		if ( cmp > max )
+		{
+			lc = lcit;
+			max = cmp;
+		}
+		it++;
+	}
+	if ( lc == NULL && lcit != NULL && lcit->getSplitedPath().size() == 0 )
+		lc = lcit;
+	return ( lc );
+}
+
+size_t	Server::getMaxBodySize( std::string route ) const
+{
+	if ( this->_directives != NULL )
+	{
+		const Location	*loc = getLocationAtPath( route );
+
+		if ( loc != NULL && loc->isSet( "client_max_body_size" ) == true )
+			return ( loc->getMaxBodySize() );
+		return ( this->_directives->getClientMaxBodySize() );
+	}	
+	return ( 1 << 20 );
+}
+
+size_t	Server::getMaxBodySize( const Location *loc ) const
+{
+	if ( loc != NULL && loc->isSet( "client_max_body_size" ) == true )
+		return ( loc->getMaxBodySize() );
+	if ( isSet( "client_max_body_size" ) == true )
+		return ( this->_directives->getClientMaxBodySize() );
+	return ( 1 << 20 );
+}
+
+bool	Server::getIsAllowedMethod( std::string route, std::string method ) const
+{
+	if ( this->_directives != NULL )
+	{
+		const Location	*loc = getLocationAtPath( route );
+		
+		if ( loc != NULL && loc->isSet( "allow_methods" ) == true )
+			return ( loc->getIsAllowedMethod( method ) );
+		return ( this->_directives->getIsAllowedMethod( method ) );
+	}	
+	return ( false );
+}
+
+bool	Server::getIsAllowedMethod( const Location *loc, std::string method ) const
+{
+	if ( loc != NULL && loc->isSet( "allow_methods" ) == true )
+		return ( loc->getIsAllowedMethod( method ) );
+	if ( isSet( "allow_methods" ) == true )
+		return ( this->_directives->getIsAllowedMethod( method ) );
+	return ( false );
+}
+
+bool	Server::getErrorPageWithCode( unsigned int code, std::string& page, \
+										std::string path ) const
+{
+	const Location	*lc = NULL;
+	bool			exist = false;
+
+	if ( this->_directives != NULL )
+	{
+		lc = getLocationAtPath( path );
+		if ( lc != NULL && lc->isSet( "error_page" ) == true )
+			exist = lc->getErrorPageWithCode( code, page );
+		if ( exist == false && isSet( "error_page" ) == true )
+			exist = this->_directives->getErrorPageWithCode( code, page );
+	}
+	return ( exist );
+}
+
+bool	Server::getErrorPageWithCode( unsigned int code, std::string& page, \
+										const Location *lc ) const
+{
+	bool	exist = false;
+
+	if ( lc != NULL && lc->isSet( "error_page" ) == true )
+		exist = lc->getErrorPageWithCode( code, page );
+	if ( exist == false && isSet( "error_page" ) == true )
+		exist = this->_directives->getErrorPageWithCode( code, page );
+	return ( exist );
+}
+
+const std::string	Server::getCgiBinary( std::string ext, std::string route ) const
 {
 	Location	*loc = getLocationAtPath( route );
 
@@ -189,15 +236,33 @@ const std::string	Server::getCgiBinary( std::string ext, \
 	return ( "" );
 }
 
+const std::string	Server::getCgiBinary( std::string ext, const Location *loc ) const
+{
+	if ( loc != NULL )
+		return ( loc->getCgiBinary( ext ) );
+	return ( "" );
+}
+
 std::string	Server::getFinalPath( const std::string path ) const
 {
-	Location	*loc = getLocationAtPath( path );
+	const Location	*loc = getLocationAtPath( path );
 	std::string	fpath;
 
 	if ( loc != NULL && loc->getFinalPath( path, fpath ) == true )
 		return ( fpath );
-	if ( this->_directives != NULL \
-			&& this->_directives->isSet( "root" ) == true )
+	if ( isSet( "root" ) == true )
+		return ( ConfigApply::applyRoot( path, this->_directives->getRoot() ) );
+	return ( ConfigUtils::pathJoin( ".", path ) );
+}
+
+std::string	Server::getFinalPath( const std::string path, \
+									const Location *loc ) const
+{
+	std::string	fpath;
+
+	if ( loc != NULL && loc->getFinalPath( path, fpath ) == true )
+		return ( fpath );
+	if ( isSet( "root" ) == true )
 		return ( ConfigApply::applyRoot( path, this->_directives->getRoot() ) );
 	return ( ConfigUtils::pathJoin( ".", path ) );
 }
@@ -209,9 +274,21 @@ std::string	Server::getFinalUploadPath( const std::string path ) const
 
 	if ( loc != NULL && loc->getFinalUploadPath( path, fpath ) == true )
 		return ( fpath );
-	if ( this->_directives != NULL \
-			&& this->_directives->isSet( "upload_store" ) == true )
+	if ( isSet( "upload_store" ) == true )
 		return ( ConfigApply::applyUploadStore( path, \
-									this->_directives->getUploadStore() ) );
+					this->_directives->getUploadStore() ) );
+	return ( ConfigUtils::pathJoin( ".", path ) );
+}
+
+std::string	Server::getFinalUploadPath( const std::string path, \
+											const Location *loc ) const
+{
+	std::string	fpath;
+
+	if ( loc != NULL && loc->getFinalUploadPath( path, fpath ) == true )
+		return ( fpath );
+	if ( isSet( "upload_store" ) == true )
+		return ( ConfigApply::applyUploadStore( path, \
+					this->_directives->getUploadStore() ) );
 	return ( ConfigUtils::pathJoin( ".", path ) );
 }

@@ -69,7 +69,7 @@ function launchTests()
 	done
 }
 
-function waitRequests()
+function waitBackgroundProccess()
 {
 	while [[ "$( ps aux | awk -v PROGRAM=$0 '{ if ( $12 == PROGRAM ) { print "y" } }' | wc -l )" -gt 2 ]]; do
 		sleep 0.0001;
@@ -103,8 +103,10 @@ function main()
 
 	> "$outputLog" > "$errorLog"
 
+	echo "Sending Requests..."
 	launchTests "$host" "$port" "$iterations" "$background"
-	waitRequests
+	waitBackgroundProccess
+	echo "Merging files..."
 	joinFiles "$iterations"
 
 	echo -en "\nThe Standard Output of requests is stored in the \"$outputLog\""

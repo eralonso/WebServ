@@ -63,6 +63,8 @@ public:
 	size_t				getMaxBodySize() const;
 	bool				isSet( std::string directive ) const;
 	bool				getIsAllowedMethod( std::string method ) const;
+	bool				getErrorPageWithCode( unsigned int code, \
+							std::string& page ) const;
 };
 
 #endif

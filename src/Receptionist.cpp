@@ -16,7 +16,7 @@
 Receptionist::Receptionist( ServersVector& servers ): Clients(), \
 													polls( MAX_CLIENTS ), \
 													_servers( servers ), \
-													timeout( 1000 )
+													timeout( 10 )
 {
 	socket_t				serverFd;
 	Directives				*d = NULL;

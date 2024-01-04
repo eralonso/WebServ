@@ -29,6 +29,7 @@ Request::Request( void )
 	this->useCgi = false;
 	this->error = 0;
 	this->svr = NULL;
+	this->lc = NULL;
 	this->maxBodySize = 1 << 20;
 	// Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
@@ -42,6 +43,7 @@ Request::Request( Client *cli )
 	this->useCgi = false;
 	this->error = 0;
 	this->svr = NULL;
+	this->lc = NULL;
 	this->maxBodySize = 1 << 20;
 	// Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
@@ -72,6 +74,7 @@ Request::Request( const Request& b )
 	this->document = b.document;
 	this->docExt = b.docExt;
 	this->svr = b.svr;
+	this->lc = b.lc;
 	this->maxBodySize = b.maxBodySize;
 }
 
@@ -96,6 +99,7 @@ Request&	Request::operator=( const Request& b )
 		this->document = b.document;
 		this->docExt = b.docExt;
 		this->svr = b.svr;
+		this->lc = b.lc;
 		this->maxBodySize = b.maxBodySize;
 	}
 	return ( *this );
@@ -126,7 +130,7 @@ void	Request::parseQueryStringFromRoute( void )
 	{
 		this->url = SUtils::trim( tokens[ 0 ] );
 		this->route = this->url;
-		this->query = SUtils::trim( tokens[ 1 ] );                                                                                 
+		this->query = SUtils::trim( tokens[ 1 ] );
 	}
 }
 
@@ -135,6 +139,7 @@ void	Request::parseHostPortFromRoute( void )
 	StringVector	tokens;
 	size_t			tokensSize;
 	bool			httpDropped = false;
+
 	tokens = SplitString::split( this->route, ":" );
 	tokensSize = tokens.size();
 	if (tokensSize < 2)
@@ -293,21 +298,22 @@ std::string	Request::getCgiOutput( void ) const
 
 void	Request::checkUseCgi( void )
 {
-	useCgi = false;
+	const Server	*s = NULL;
 	std::string		binary;
 	std::string		host;
 	std::string		port;
-	const Server	*s = NULL;
-	if (docExt.size() == 0)
+
+	this->useCgi = false;
+	if ( docExt.size() == 0 )
 		return ;
 	Client *cli = getClient();
-	if (!cli)
+	if ( !cli )
 		return ;
 	getHostPort( host, port );
 	s = ServerFinder::find( cli->getServers(), host, port );
-	if (!s)
+	if ( !s )
 		return ;
-	binary = s->getCgiBinary( docExt, getRouteChaineString() );
+	binary = s->getCgiBinary( docExt, lc );
 	useCgi = ( binary.size() > 0 );
 }
 
@@ -501,6 +507,7 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 		checkKeepAlive();
 		if (!updateServerConfig())
 			return ( setError( 400 ) );
+		updateLocation();
 		maxBodySize = svr->getMaxBodySize(getRoute());
 		if (svr->getIsAllowedMethod( this->route, this->method ) == false)
 			return ( setError( 405 ) );
@@ -672,20 +679,24 @@ bool	Request::checkEmptyContent( size_t& size )
 	return ( this->status == RECVD_ALL );
 }
 
-bool Request::updateServerConfig()
+bool	Request::updateServerConfig( void )
 {
-	svr= ServerFinder::find(*this);
-	if (svr != NULL)
-		return (true);
+	this->svr = ServerFinder::find( *this );
+	if ( this->svr != NULL )
+		return ( true );
 	return ( false );
 }
 
-void Request::updateFilePath(void)
+void	Request::updateLocation( void )
 {
-	if (svr)
-	{
-		this->filePath = svr->getFinalPath(this->route);
-	}
+	if ( this->svr != NULL )
+		this->lc = this->svr->getLocationAtPath( this->route );
+}
+
+void	Request::updateFilePath( void )
+{
+	if ( this->svr != NULL )
+		this->filePath = svr->getFinalPath( this->route );
 }
 
 bool	Request::processLine( const std::string &line )

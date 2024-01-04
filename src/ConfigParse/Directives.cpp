@@ -143,6 +143,17 @@ bool	Directives::getIsAllowedMethod( std::string method ) const
     return ( false );
 };
 
+bool	Directives::getErrorPageWithCode( unsigned int code, std::string& page ) const
+{
+	try
+	{
+		page = this->_errorPages.at( code );
+		return ( true );
+	}
+	catch ( const std::exception& ) {}
+	return ( false );
+}
+
 void	Directives::print( void ) const
 {
 	Log::Info( "[ Config ] root: " + this->_root );

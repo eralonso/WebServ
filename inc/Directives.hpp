@@ -87,6 +87,8 @@ public:
 	bool					isEmpty( void ) const;
 	bool					isSet( const std::string& key );
 	bool					getIsAllowedMethod( std::string method ) const;
+	bool					getErrorPageWithCode( unsigned int code, \
+								std::string& page ) const;
 };
 
 #endif

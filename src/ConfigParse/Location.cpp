@@ -126,14 +126,14 @@ bool	Location::getFinalUploadPath( std::string path, std::string& fpath ) const
 	return ( true );
 }
 
-size_t Location::getMaxBodySize() const
+size_t	Location::getMaxBodySize( void ) const
 {
-	if (this->_directives)
+	if ( this->_directives != NULL )
 		return ( this->_directives->getClientMaxBodySize() );
-    return (1 << 20);
+    return ( 1 << 20 );
 }
 
-bool Location::isSet(std::string directive) const
+bool	Location::isSet( std::string directive ) const
 {
 	if ( this->_directives != NULL )
 		return ( this->_directives->isSet( directive ) );
@@ -144,5 +144,12 @@ bool	Location::getIsAllowedMethod( std::string method ) const
 {
 	if ( this->_directives != NULL )
 		return ( this->_directives->getIsAllowedMethod( method ) );
+	return ( false );
+}
+
+bool	Location::getErrorPageWithCode( unsigned int code, std::string& page ) const
+{
+	if ( this->_directives != NULL )
+		return ( this->_directives->getErrorPageWithCode( code, page ) );
 	return ( false );
 }

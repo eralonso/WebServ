@@ -49,18 +49,33 @@ public:
 	unsigned int				getIpHostOrder( void ) const;
 	std::string					getHost( void ) const;
 	int							getPort( void ) const;
-	Location					*getLocationAtPath( std::string path ) const;
-	Directives					*getDirectives( void ) const;
-	size_t						getMaxBodySize(std::string route) const;
-	bool						getIsAllowedMethod(std::string route, std::string method) const;
-	std::string					getErrorPageWithCode( unsigned int code ) const;
+	bool						isSet( std::string directive ) const;
 	bool						strongServerMatch( std::string host, \
 									std::string port, unsigned int ip ) const;
 	bool						weakServerMatch( std::string host, \
 									std::string port, unsigned int ip ) const;
-	const std::string			getCgiBinary( std::string ext, std::string route ) const;
+	Location					*getLocationAtPath( std::string path ) const;
+	Directives					*getDirectives( void ) const;
+	size_t						getMaxBodySize( std::string route ) const;
+	size_t						getMaxBodySize( const Location *lc ) const;
+	bool						getIsAllowedMethod( std::string route, \
+									std::string method ) const;
+	bool						getIsAllowedMethod( const Location *lc, \
+									std::string method ) const;
+	const std::string			getCgiBinary( std::string ext, \
+									std::string route ) const;
+	const std::string			getCgiBinary( std::string ext, \
+									const Location *lc ) const;
 	std::string					getFinalPath( const std::string path ) const;
+	std::string					getFinalPath( const std::string path, \
+									const Location *lc ) const;
 	std::string					getFinalUploadPath( const std::string path ) const;
+	std::string					getFinalUploadPath( const std::string path, \
+									const Location *lc ) const;
+	bool						getErrorPageWithCode( unsigned int code, \
+									std::string& page, std::string path ) const;
+	bool						getErrorPageWithCode( unsigned int code, \
+									std::string& page, const Location *lc ) const;
 };
 
 #endif
