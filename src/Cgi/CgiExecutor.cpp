@@ -25,11 +25,11 @@ CgiExecutor::CgiExecutor( Request& request ):
 	exceptOther ("Creation either fork or pipe failed"),
 	request( request )
 {
-	const Server	*s = NULL;
+	//const Server	*s = NULL;
 
-	s = request.getServer();
-	if ( !s )
-		return;
+	//s = request.getServer();
+	//if ( !s )
+	//	return;
 	//Log::Success("CgiExecutor::CgiExecutor Route Chaine: " + request.getRouteChaineString() );
 	//this->binary = s->getCgiBinary( request.getDocExt(), request.getLocation() );
 	// cli->servers[]
@@ -37,7 +37,7 @@ CgiExecutor::CgiExecutor( Request& request ):
 	//this->argument = s->getFinalPath( request.getLocation() ) 
 	//				 + request.getDocument();
 	this->binary = request.getCgiBinary( request.getDocExt() );
-	this->argument = request.getFinalPath() + request.getDocument();
+	this->argument = request.getFilePath();
 	Log::Info( "CgiExecutor binary: " + this->binary );
 	Log::Info( "CgiExecutor argment: " + this->argument );
 	Log::Info( "Route chain: " + request.getRouteChaineString() );

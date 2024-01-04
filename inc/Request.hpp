@@ -117,6 +117,7 @@ public:
 	size_t 			getBodyLength( void ) const;
 	std::string		getBody( void ) const;
 	size_t			getId( void ) const;
+	std::string		getFilePath( void ) const;
 	const Server	*getServer( void ) const;
 	const Location	*getLocation( void ) const;
 	std::string		getFinalPath( void ) const;

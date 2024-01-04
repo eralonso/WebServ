@@ -52,8 +52,8 @@ namespace ConfigUtils
 			path += str2.substr( 1 );
 		else
 			path += str2;
-		if ( path[ path.length() - 1 ] != '/' )
-			path += "/";
+		//if ( path[ path.length() - 1 ] != '/' )
+		//	path += "/";
 		return ( path );
 	}
 }

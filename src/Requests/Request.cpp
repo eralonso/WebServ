@@ -473,6 +473,11 @@ size_t	Request::getId( void ) const
 	return ( this->id );
 }
 
+std::string	Request::getFilePath( void ) const
+{
+	return ( this->filePath );
+}
+
 const Server	*Request::getServer( void ) const
 {
 	return ( this->svr );
@@ -485,11 +490,11 @@ const Location	*Request::getLocation( void ) const
 
 std::string	Request::getFinalPath( void ) const
 {
-	std::string	route = getRouteChaineString();
+	std::string	routeWithoutFile = getRouteChaineString();
 
 	if ( this->svr != NULL )
-		return ( this->svr->getFinalPath( route, this->lc ) );
-	return ( ConfigUtils::pathJoin( ".", route ) );
+		return ( this->svr->getFinalPath( routeWithoutFile, this->lc ) );
+	return ( ConfigUtils::pathJoin( ".", routeWithoutFile ) );
 }
 
 std::string	Request::getCgiBinary( std::string ext ) const
@@ -715,14 +720,29 @@ bool	Request::updateServerConfig( void )
 
 void	Request::updateLocation( void )
 {
+	std::string	routeWithoutFile = getRouteChaineString();
+
 	if ( this->svr != NULL )
-		this->lc = this->svr->getLocationAtPath( this->route );
+		this->lc = this->svr->getLocationAtPath( routeWithoutFile );
 }
 
 void	Request::updateFilePath( void )
 {
-	if ( this->svr != NULL )
-		this->filePath = svr->getFinalPath( this->route );
+	std::string	routeWithoutFile = getRouteChaineString();
+
+	if ( this->svr == NULL )
+	{
+		this->filePath = ConfigUtils::pathJoin( ".", this->route );
+		return ;
+	}
+	if ( this->method == "POST" )
+	{
+		this->filePath = svr->getFinalUploadPath( routeWithoutFile ) \
+			+ getDocument();
+		return ;
+	}
+	this->filePath = svr->getFinalPath( routeWithoutFile ) \
+			+ getDocument();
 }
 
 bool	Request::processLine( const std::string &line )

@@ -18,6 +18,12 @@
 #include <FolderLs.hpp>
 #include <MimeMap.hpp>
 
+std::string	Router::methods[ METHODS_NB ] = { "GET", "POST", "DELETE" };
+
+void ( *Router::process[ METHODS_NB ] )( Request& req ) = { &Router::processGetRequest, \
+													&Router::processPostRequest, \
+													&Router::processDeleteRequest };
+
 Router::Router( void ) {}
 
 Router::~Router( void ) {}
@@ -54,7 +60,7 @@ std::string	Router::getHtml( Request *req )
 	std::string		readBuf;
 	std::string		route = req->getRoute();
 	std::ifstream	infile;
-	std::string		path = "." + route;
+	std::string		path = req->getFilePath();
 
 	Log::Info("Path to GET ... " + path);
 	if (access(path.c_str(), R_OK) == 0)
@@ -196,22 +202,16 @@ Response	*Router::formatErrorResponse( Response &res, int error )
 	return ( &res );
 }
 
-bool	Router::processRequestReceived( Request &req )
+bool	Router::processCgi( Request& req )
 {
-	Log::Success("Router::processRequestReceived");
-	std::string script = "";
-	std::string host = "";
-	std::string port = "";
+	std::string host;
+	std::string port;
+
 	req.getHostPort(host, port);
-	req.checkUseCgi();
-	if ( !req.getUseCgi() )
-	{
-		req.setReadyToSend();
-		return ( true );
-	}
 	try
 	{
 		CgiExecutor cgiExe(req);
+
 		cgiExe.pushEnvVar(std::string("SERVER_SOFTWARE"), "webserv");
 		cgiExe.pushEnvVar(std::string("SERVER_NAME"), host);
 		cgiExe.pushEnvVar(std::string("GATEWAY_INTERFACE"), "CGI/1.0");
@@ -259,10 +259,28 @@ bool	Router::processRequestReceived( Request &req )
 	return ( false );
 }
 
+bool	Router::processRequestReceived( Request &req )
+{
+	int			i;
+	std::string	requestMethod = req.getMethod();
+
+	Log::Success("Router::processRequestReceived");
+	req.checkUseCgi();
+	if ( req.getUseCgi() )
+		return ( processCgi( req ) );
+	for ( i = 0; i < METHODS_NB; i++ )
+		if ( Router::methods[ i ] == requestMethod )
+			break ;
+	if ( i < METHODS_NB )
+		Router::process[ i ]( req );
+	req.setReadyToSend();
+	return ( true );
+}
+
 std::string Router::determineContentType(Response& res, Request& req)
 {
 	(void)res;
-	if (req.getMethod() == "get" || req.getMethod() == "GET")
+	if (req.getMethod() == "GET")
 	{
 		std::string contentType = MimeMap::getMime(req.getDocExt());
 		return (contentType);
@@ -327,4 +345,19 @@ Response	*Router::formatErrorResponse( Response& res, Request& req )
 	res.setMethod( req.getMethod() );
 	res.setBody( getHtml( &req ) );
 	return ( &res );
+}
+
+void	Router::processGetRequest( Request& req )
+{
+	( void ) req;
+}
+
+void	Router::processPostRequest( Request& req )
+{
+	( void ) req;
+}
+
+void	Router::processDeleteRequest( Request& req )
+{
+	( void ) req;
 }

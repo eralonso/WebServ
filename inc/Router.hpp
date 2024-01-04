@@ -16,10 +16,16 @@
 # include <Request.hpp>
 # include <Response.hpp>
 # include <CgiExecutor.hpp>
+# include <ActionMask.hpp>
 
 class Router
 {
 private:
+	static std::string	methods[ METHODS_NB ];
+	static void ( *process[ METHODS_NB ] )( Request& req );
+	static void	processGetRequest( Request& req );
+	static void	processPostRequest( Request& req );
+	static void	processDeleteRequest( Request& req );
 public:
 	Router(/* args */);
 	~Router();
@@ -38,6 +44,7 @@ public:
 	static Response* formatErrorResponse(Response &res, Request &req);
 	static bool 		processRequestReceived(Request &req);
 	static std::string 	determineContentType(Response &res, Request &req);
+	static bool			processCgi( Request& req );
 };
 
 #endif

@@ -15,6 +15,8 @@
 
 # include <string>
 
+# define METHODS_NB 3
+
 class ActionMask
 {
 public:
@@ -27,8 +29,8 @@ public:
 	}	t_action;
 private:
 	t_action	allowed;
-	static int			actions[ 3 ];
-	static std::string	stringActions[ 3 ];
+	static int			actions[ METHODS_NB ];
+	static std::string	stringActions[ METHODS_NB ];
 public:
 	ActionMask( void );
 	ActionMask( t_action value );

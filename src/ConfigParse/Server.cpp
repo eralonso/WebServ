@@ -269,8 +269,8 @@ std::string	Server::getFinalPath( const std::string path, \
 
 std::string	Server::getFinalUploadPath( const std::string path ) const
 {
-	Location	*loc = getLocationAtPath( path );
-	std::string	fpath;
+	const Location	*loc = getLocationAtPath( path );
+	std::string		fpath;
 
 	if ( loc != NULL && loc->getFinalUploadPath( path, fpath ) == true )
 		return ( fpath );
@@ -288,7 +288,7 @@ std::string	Server::getFinalUploadPath( const std::string path, \
 	if ( loc != NULL && loc->getFinalUploadPath( path, fpath ) == true )
 		return ( fpath );
 	if ( isSet( "upload_store" ) == true )
-		return ( ConfigApply::applyUploadStore( path, \
+		return ( ConfigApply::applyAlias( path, loc->getPath(), \
 					this->_directives->getUploadStore() ) );
 	return ( ConfigUtils::pathJoin( ".", path ) );
 }
