@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/04 16:12:27 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/04 16:31:31 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -358,23 +358,15 @@ bool	Router::processPostRequest( Request& req )
 	std::string	route = req.getRoute();
 	std::string bodyContent = req.getBody();
 	std::string	document = req.getDocument();
+	std::ofstream	outfile;
+	std::string path;
 	
 	if (bodyContent.size() == 0)
 		return (req.setError(204) ); //Status No Content
 	if (!req.isDirectiveSet( "upload_store" ) || document.size() == 0)
 		return ( req.setError(403) ); //Forbidden
-	std::ofstream	outfile;
-	DIR					*pDir;
-	std::string dirPath = req.getFilePath();
-	std::string path = dirPath + "/" + document;
-
+	path = req.getFilePath();
 	Log::Info("Path to POST ... " + path);
-	if (dirPath.size() == 0 || (*(dirPath.end() - 1)) != '/')
-		dirPath += '/';
-	pDir = opendir (dirPath.c_str());
-	if (pDir == NULL)
-		return ( req.setError(403) ); //Forbidden
-	closedir (pDir);
 	outfile.open(path.c_str(), std::ios::out | std::ios::trunc); 	
 	if (!outfile.is_open())
 		return ( req.setError(403) ); //Forbidden
