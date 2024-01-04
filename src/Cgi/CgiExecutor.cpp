@@ -27,15 +27,17 @@ CgiExecutor::CgiExecutor( Request& request ):
 {
 	const Server	*s = NULL;
 
-	s = ServerFinder::find( request );
-	if (!s)
+	s = request.getServer();
+	if ( !s )
 		return;
 	//Log::Success("CgiExecutor::CgiExecutor Route Chaine: " + request.getRouteChaineString() );
-	this->binary = s->getCgiBinary( request.getDocExt(), request.getRouteChaineString() );
+	//this->binary = s->getCgiBinary( request.getDocExt(), request.getLocation() );
 	// cli->servers[]
 	//this->argument = "." + request.getRouteChaineString() + request.getDocument();
-	this->argument = s->getFinalPath( request.getRouteChaineString() ) \
-					 + request.getDocument();
+	//this->argument = s->getFinalPath( request.getLocation() ) 
+	//				 + request.getDocument();
+	this->binary = request.getCgiBinary( request.getDocExt() );
+	this->argument = request.getFinalPath() + request.getDocument();
 	Log::Info( "CgiExecutor binary: " + this->binary );
 	Log::Info( "CgiExecutor argment: " + this->argument );
 	Log::Info( "Route chain: " + request.getRouteChaineString() );

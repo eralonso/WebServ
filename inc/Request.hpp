@@ -19,6 +19,7 @@
 # include <Headers.hpp>
 # include <Defines.hpp>
 # include <Server.hpp>
+# include <ConfigUtils.hpp>
 
 class Client;
 
@@ -116,6 +117,10 @@ public:
 	size_t 			getBodyLength( void ) const;
 	std::string		getBody( void ) const;
 	size_t			getId( void ) const;
+	const Server	*getServer( void ) const;
+	const Location	*getLocation( void ) const;
+	std::string		getFinalPath( void ) const;
+	std::string		getCgiBinary( std::string ext ) const;
 	bool			isCompleteRecv( void ) const;
 	bool			isReadyToSend( void ) const;
 	bool			isCgiLaunched( void ) const;

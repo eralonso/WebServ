@@ -473,6 +473,32 @@ size_t	Request::getId( void ) const
 	return ( this->id );
 }
 
+const Server	*Request::getServer( void ) const
+{
+	return ( this->svr );
+}
+
+const Location	*Request::getLocation( void ) const
+{
+	return ( this->lc );
+}
+
+std::string	Request::getFinalPath( void ) const
+{
+	std::string	route = getRouteChaineString();
+
+	if ( this->svr != NULL )
+		return ( this->svr->getFinalPath( route, this->lc ) );
+	return ( ConfigUtils::pathJoin( ".", route ) );
+}
+
+std::string	Request::getCgiBinary( std::string ext ) const
+{
+	if ( this->svr != NULL )
+		return ( this->svr->getCgiBinary( ext, this->lc ) );
+	return ( "" );
+}
+
 bool	Request::processLineOnFdBond( const std::string &line )
 {
 	size_t len = line.length();
