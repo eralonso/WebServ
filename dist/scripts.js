@@ -14,27 +14,17 @@ function setChangeEventOfFileInput()
 				statusEl.textContent = 'Error: The File.type property does not appear to be supported on this browser.';
 				return;
 			}
-			const reader = new FileReader();
-			reader.addEventListener('load', event => 
-			{
-				outputEl.textContent = event.target.result;
-				console.log(result);
-			});
-			// reader.readAsDataURL(file);
-			reader.readAsText(file);
-			
+			readFile(file, outputEl);
 		}); 
 	}
 }
 	
-async function sendPOST()
+async function sendPOST(contentBody, filename)
 {
-	const el = document.getElementById("filename");
-	const filename = el.value;
-	if(filename && filename.len() > 0)
+	if(filename && filename.len > 0)
 	{
-
-		const response = await fetch(url,
+		console.log("fetching... " + filename);
+		const response = await fetch("localhost:8000/" + filename,
 		{
 			method: "POST", // *GET, POST, PUT, DELETE, etc.
 			mode: "cors", // no-cors, *cors, same-origin
@@ -46,17 +36,22 @@ async function sendPOST()
 			},
 			//redirect: "follow", // manual, *follow, error
 			//referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-			body: data, // body data type must match "Content-Type" header
+			body: contentBody, // body data type must match "Content-Type" header
 		});
+		console.log(response);
 	}
 }
 
-function readImage(file)
+async function readFile(file, outputEl)
 {
 	const reader = new FileReader();
-	reader.addEventListener('load', (event) =>
+	reader.addEventListener('load', async (event) =>
 	{
-		img.src = event.target.result;
+		console.log(event.target.result);
+		outputEl.textContent = event.target.result;
+		await sendPOST(event.target.result, file);
 	});
 	reader.readAsText(file);
 }
+
+setChangeEventOfFileInput()
