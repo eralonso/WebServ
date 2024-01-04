@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/03 16:12:23 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/04 15:51:46 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -495,6 +495,13 @@ std::string	Request::getFinalPath( void ) const
 	if ( this->svr != NULL )
 		return ( this->svr->getFinalPath( routeWithoutFile, this->lc ) );
 	return ( ConfigUtils::pathJoin( ".", routeWithoutFile ) );
+}
+
+bool	Request::isDirectiveSet( std::string directive ) const
+{
+	if ( this->lc != NULL )
+		return ( this->lc->isSet(directive));
+	return false;	
 }
 
 std::string	Request::getCgiBinary( std::string ext ) const

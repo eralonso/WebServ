@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/02 16:42:44 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/04 15:52:12 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,8 +121,9 @@ public:
 	const Server	*getServer( void ) const;
 	const Location	*getLocation( void ) const;
 	std::string		getFinalPath( void ) const;
-	std::string		getCgiBinary( std::string ext ) const;
-	bool			isCompleteRecv( void ) const;
+    bool			isDirectiveSet( std::string directive ) const;
+    std::string 	getCgiBinary( std::string ext ) const;
+    bool			isCompleteRecv( void ) const;
 	bool			isReadyToSend( void ) const;
 	bool			isCgiLaunched( void ) const;
 	bool			isReceiving( void ) const;

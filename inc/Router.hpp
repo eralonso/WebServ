@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Router.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/19 17:37:29 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/04 16:01:28 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@ class Router
 {
 private:
 	static std::string	methods[ METHODS_NB ];
-	static void ( *process[ METHODS_NB ] )( Request& req );
-	static void	processGetRequest( Request& req );
-	static void	processPostRequest( Request& req );
-	static void	processDeleteRequest( Request& req );
+	static bool ( *process[ METHODS_NB ] )( Request& req );
+	static bool	processGetRequest( Request& req );
+	static bool	processPostRequest( Request& req );
+	static bool	processDeleteRequest( Request& req );
 public:
 	Router(/* args */);
 	~Router();
