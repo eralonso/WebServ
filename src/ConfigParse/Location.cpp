@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 12:56:54 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/02 16:02:13 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/05 10:42:43 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,8 @@ bool	Location::getFinalUploadPath( std::string path, std::string& fpath ) const
 	if ( directives == NULL )
 		return ( false );
 	if ( directives->isSet( "upload_store" ) == true )
-		fpath = ConfigApply::applyUploadStore( path, directives->getUploadStore() );
+		fpath =  ConfigApply::applyAlias( path, getPath(), \
+					this->_directives->getUploadStore() );
 	else
 		return ( false );
 	return ( true );

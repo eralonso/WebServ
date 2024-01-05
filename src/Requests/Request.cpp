@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/04 15:51:46 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/05 10:45:21 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -744,12 +744,12 @@ void	Request::updateFilePath( void )
 	}
 	if ( this->method == "POST" )
 	{
-		this->filePath = svr->getFinalUploadPath( routeWithoutFile ) \
-			+ getDocument();
+		this->filePath = ConfigUtils::pathJoin( svr->getFinalUploadPath( routeWithoutFile ), \
+			getDocument() );
 		return ;
 	}
-	this->filePath = svr->getFinalPath( routeWithoutFile ) \
-			+ getDocument();
+	this->filePath = ConfigUtils::pathJoin( svr->getFinalPath( routeWithoutFile ), \
+			getDocument() );
 }
 
 bool	Request::processLine( const std::string &line )

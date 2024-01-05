@@ -1,30 +1,36 @@
 function setChangeEventOfFileInput()
 {
 	const statusEl = document.getElementById('status');
-	const outputEl = document.getElementById('output');
+	const outputNameEl = document.getElementById('outputName');
+	const outputContEl = document.getElementById('outputContent');
 	if (window.FileList && window.File && window.FileReader)
 	{
 		document.getElementById('file-selector').addEventListener('change', event =>
 		{
-			outputEl.innerText = '';
 			statusEl.textContent = '';
+			outputNameEl.textContent = '';
+			outputContEl.textContent = '';
 			const file = event.target.files[0];
 			if (!file.type)
 			{
 				statusEl.textContent = 'Error: The File.type property does not appear to be supported on this browser.';
 				return;
 			}
-			readFile(file, outputEl);
+			outputNameEl.textContent = file.name;
+			readFile(file, outputContEl);
 		}); 
 	}
 }
 	
-async function sendPOST(contentBody, filename)
+async function sendPOST(contentBody, file)
 {
-	if(filename && filename.len > 0)
+	let urlLoc = window.location.href;
+	urlLoc = urlLoc.split("/").slice(0, -1).join("/");
+	console.log("sendPOST... " + file.name + " at url: " + urlLoc);
+	if(file)
 	{
-		console.log("fetching... " + filename);
-		const response = await fetch("localhost:8000/" + filename,
+		console.log("fetching... " + file.name);
+		const response = await fetch(urlLoc + "/" + file.name,
 		{
 			method: "POST", // *GET, POST, PUT, DELETE, etc.
 			mode: "cors", // no-cors, *cors, same-origin
@@ -48,10 +54,13 @@ async function readFile(file, outputEl)
 	reader.addEventListener('load', async (event) =>
 	{
 		console.log(event.target.result);
+		console.log (event.target);
 		outputEl.textContent = event.target.result;
 		await sendPOST(event.target.result, file);
 	});
 	reader.readAsText(file);
 }
 
+const urlDisplayEl = document.getElementById('urlDisplay');
+urlDisplayEl.textContent = "url of page: " + window.location.href;
 setChangeEventOfFileInput()
