@@ -54,11 +54,12 @@ async function readFile(file, outputEl)
 	reader.addEventListener('load', async (event) =>
 	{
 		console.log(event.target.result);
+		console.log(event.target.result.length);
 		console.log (event.target);
 		outputEl.textContent = event.target.result;
 		await sendPOST(event.target.result, file);
 	});
-	reader.readAsText(file);
+	reader.readAsArrayBuffer(file);
 }
 
 const urlDisplayEl = document.getElementById('urlDisplay');
