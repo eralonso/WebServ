@@ -59,6 +59,8 @@ void	DirectivesParser::parseLine( Directives *d, std::string& content, \
 
 	if ( ( type = TreeSplit::get_pair( head, body, content ) ) != NOT_A_SEPARATOR )
 	{
+		if ( head[ 0 ] == '#' )
+			return ;
 		name = head.substr( 0, head.find_first_of( ISSPACE ) );
 		checkValidDirective( name, allowedDirectives );
 		checkValidSeparator( type, name );
