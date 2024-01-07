@@ -790,6 +790,13 @@ std::string	Request::getOutput( void ) const
 	return ( this->output );
 }
 
+bool	Request::getErrorPage( int error, std::string& uriRedir )
+{
+	if ( this->svr != NULL )
+		return ( this->svr->getErrorPageWithCode( error, uriRedir, this->lc ) );
+	return ( false );
+}
+
 bool	Request::isReadyToSend( void ) const
 {
 	return ( this->status == RESP_RENDERED );

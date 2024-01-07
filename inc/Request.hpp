@@ -123,6 +123,7 @@ public:
 	const Location	*getLocation( void ) const;
 	std::string		getFinalPath( void ) const;
 	std::string		getOutput( void ) const;
+	bool			getErrorPage( int error, std::string& uriRedir );
     bool			isDirectiveSet( std::string directive ) const;
     std::string 	getCgiBinary( std::string ext ) const;
     bool			isCompleteRecv( void ) const;

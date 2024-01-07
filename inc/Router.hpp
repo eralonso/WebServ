@@ -56,6 +56,7 @@ public:
 	static bool			checkPathExist( Request& req, std::string path );
 	static bool			checkPathCanRead( Request& req, std::string path );
 	static bool			processDirectory( Request& req, std::string path );
+	static std::string	getDefaultErrorPage( unsigned int code );
 };
 
 #endif

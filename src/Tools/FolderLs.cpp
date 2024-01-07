@@ -70,7 +70,6 @@ void	FolderLs::entryInfo( std::string& cat, const std::string& path )
 	struct stat			statbuf;
 	std::stringstream	st;
 
-	Log::Error( "LS: PATH -> " + path );
 	if ( !stat( path.c_str() , &statbuf ) )
 	{
 		st << "<td>";

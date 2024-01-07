@@ -202,29 +202,26 @@ bool	Server::getErrorPageWithCode( unsigned int code, std::string& page, \
 										std::string path ) const
 {
 	const Location	*lc = NULL;
-	bool			exist = false;
 
 	if ( this->_directives != NULL )
 	{
 		lc = getLocationAtPath( path );
 		if ( lc != NULL && lc->isSet( "error_page" ) == true )
-			exist = lc->getErrorPageWithCode( code, page );
-		if ( exist == false && isSet( "error_page" ) == true )
-			exist = this->_directives->getErrorPageWithCode( code, page );
+			return ( lc->getErrorPageWithCode( code, page ) );
+		if ( isSet( "error_page" ) == true )
+			return ( this->_directives->getErrorPageWithCode( code, page ) );
 	}
-	return ( exist );
+	return ( false );
 }
 
 bool	Server::getErrorPageWithCode( unsigned int code, std::string& page, \
 										const Location *lc ) const
 {
-	bool	exist = false;
-
 	if ( lc != NULL && lc->isSet( "error_page" ) == true )
-		exist = lc->getErrorPageWithCode( code, page );
-	if ( exist == false && isSet( "error_page" ) == true )
-		exist = this->_directives->getErrorPageWithCode( code, page );
-	return ( exist );
+		return ( lc->getErrorPageWithCode( code, page ) );
+	if ( isSet( "error_page" ) == true )
+		return ( this->_directives->getErrorPageWithCode( code, page ) );
+	return ( false );
 }
 
 const std::string	Server::getCgiBinary( std::string ext, std::string route ) const

@@ -82,14 +82,21 @@ bool	Location::isDir( void ) const { return ( this->_isDir ); }
 
 Directives	*Location::getDirectives( void ) const { return ( this->_directives ); }
 
+bool	Location::isSet( std::string directive ) const
+{
+	if ( this->_directives != NULL )
+		return ( this->_directives->isSet( directive ) );
+    return ( false );
+}
+
 const std::string Location::getCgiBinary( std::string ext ) const
 {
 	const CgisMap	*map = NULL;
 
-	if ( this->_directives )
+	if ( isSet( "cgi" ) == true )
 	{
 		map = &( this->_directives->getCgis() );
-		if ( map )
+		if ( map != NULL )
 			return ( map->getBinary( ext ) );
 	}
 	return ( "" );
@@ -100,11 +107,9 @@ bool	Location::getFinalPath( std::string path, std::string& fpath ) const
 	Directives	*directives = NULL;
 
 	directives = this->_directives;
-	if ( directives == NULL )
-		return ( false );
-	if ( directives->isSet( "root" ) == true )
+	if ( isSet( "root" ) == true )
 		fpath = ConfigApply::applyRoot( path, directives->getRoot() );
-	else if ( directives->isSet( "alias" ) == true )
+	else if ( isSet( "alias" ) == true )
 		fpath = ConfigApply::applyAlias( path, this->getPath(), \
 										directives->getAlias() );
 	else
@@ -114,12 +119,7 @@ bool	Location::getFinalPath( std::string path, std::string& fpath ) const
 
 bool	Location::getFinalUploadPath( std::string path, std::string& fpath ) const
 {
-	Directives	*directives = NULL;
-
-	directives = this->_directives;
-	if ( directives == NULL )
-		return ( false );
-	if ( directives->isSet( "upload_store" ) == true )
+	if ( isSet( "upload_store" ) == true )
 		fpath =  ConfigApply::applyAlias( path, getPath(), \
 					this->_directives->getUploadStore() );
 	else
@@ -129,28 +129,21 @@ bool	Location::getFinalUploadPath( std::string path, std::string& fpath ) const
 
 size_t	Location::getMaxBodySize( void ) const
 {
-	if ( this->_directives != NULL )
+	if ( isSet( "client_max_body_size" ) == true )
 		return ( this->_directives->getClientMaxBodySize() );
     return ( 1 << 20 );
 }
 
-bool	Location::isSet( std::string directive ) const
-{
-	if ( this->_directives != NULL )
-		return ( this->_directives->isSet( directive ) );
-    return ( false );
-}
-
 bool	Location::getIsAllowedMethod( std::string method ) const
 {
-	if ( this->_directives != NULL )
+	if ( isSet( "allow_methods" ) == true )
 		return ( this->_directives->getIsAllowedMethod( method ) );
 	return ( false );
 }
 
 bool	Location::getErrorPageWithCode( unsigned int code, std::string& page ) const
 {
-	if ( this->_directives != NULL )
+	if ( isSet( "error_page" ) == true )
 		return ( this->_directives->getErrorPageWithCode( code, page ) );
 	return ( false );
 }

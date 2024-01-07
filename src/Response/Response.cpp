@@ -171,6 +171,7 @@ bool	Response::getIsCgi() const
 std::string	Response::toString( void ) const
 {
 	std::string ret;
+
 	if (!isCgi)
 	{
 		ret = this->protocol + " " + SUtils::longToString( this->status );

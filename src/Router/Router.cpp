@@ -35,7 +35,9 @@ int	Router::updateResponse( Response &res, Request &req )
 		createFaviconRes( res, req );
 	else if ( req.getUseCgi() && req.getError() == 0 )
 		formatCgiResponse( res,req );
-	else if ( req.getError() != 0 )
+	else
+		formatGenericResponse( res, req );
+	/*else if ( req.getError() != 0 )
 	{
 		Log::Info( "updateResponse detect error status: " \
 			+ SUtils::longToString( req.getError() ) );
@@ -47,9 +49,9 @@ int	Router::updateResponse( Response &res, Request &req )
 			formatErrorResponse( res, req );
 	}
 	else if ( req.getMethod() == "GET" )
-		formatGenericResponse( res, req );
 	else
 		formatAcceptResponse( res, req );
+	*/
 	return ( 0 );
 }
 
@@ -284,17 +286,30 @@ std::string Router::determineContentType(Response& res, Request& req)
 	return (std::string("text/html"));
 }
 
-Response*	Router::formatGenericResponse( Response& res, Request& req )
+Response	*Router::formatGenericResponse( Response& res, Request& req )
 {
-	res.appendHeader(Header("Content-Type", determineContentType(res, req)));
-	res.setProtocol(req.getProtocol());
-	int errorStatus = req.getError();
-	if (errorStatus == 0)
+	int			errorStatus = req.getError();
+	bool		redir = false;
+	std::string	uriRedir;
+
+	res.appendHeader( Header( "Content-Type", determineContentType( res, req ) ) );
+	res.setProtocol( req.getProtocol() );
+	if ( errorStatus == 0 )
 		errorStatus = 200;
+	else if ( errorStatus >= MIN_ERROR_CODE )
+		redir = req.getErrorPage( errorStatus, uriRedir );
+	if ( redir == true )
+	{
+		errorStatus = ( redir == true ) ? HTTP_MOVED_TEMPORARILY : errorStatus; 
+		res.appendHeader( Header( "Location", uriRedir ) );
+	}
 	res.setStatus( errorStatus );
 	res.setMethod( req.getMethod() );
 	//res.setBody( getHtml( &req ) );
-	res.setBody( req.getOutput() );
+	if ( redir == false && errorStatus >= MIN_ERROR_CODE )
+		res.setBody( getDefaultErrorPage( errorStatus ) );
+	else
+		res.setBody( req.getOutput() );
 	return ( &res );
 }
 
@@ -447,4 +462,20 @@ bool	Router::processDeleteRequest( Request& req )
 {
 	( void ) req;
 	return ( false );
+}
+
+std::string	Router::getDefaultErrorPage( unsigned int code )
+{
+	std::string	def;
+	std::string	codeStr;
+
+	codeStr = SUtils::longToString( code ) + " " + StatusCodes::decode( code );
+	def += "<html>\n";
+	def += "<head><title>" + codeStr + "</title></head>\n";
+	def += "<body>\n";
+	def += "<center><h1>" + codeStr + "</h1></center>\n";
+	def += "<hr><center>webserv/1.0 </center>\n";
+	def += "</body>\n";
+	def += "</html>\n";
+	return ( def );
 }
