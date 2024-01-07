@@ -51,6 +51,7 @@ private:
 	size_t			maxBodySize;
 	Client			*client;
 	std::string		cgiOutput;
+	std::string		output;
 	std::string		method;
 	std::string		url;
 	std::string		route;
@@ -121,12 +122,14 @@ public:
 	const Server	*getServer( void ) const;
 	const Location	*getLocation( void ) const;
 	std::string		getFinalPath( void ) const;
+	std::string		getOutput( void ) const;
     bool			isDirectiveSet( std::string directive ) const;
     std::string 	getCgiBinary( std::string ext ) const;
     bool			isCompleteRecv( void ) const;
 	bool			isReadyToSend( void ) const;
 	bool			isCgiLaunched( void ) const;
 	bool			isReceiving( void ) const;
+	bool			isAutoindexAllow( void ) const;
 	std::string		toString( void );
 	void			setBody( const std::string& content );
 	void			setReadyToSend( void );
@@ -134,9 +137,11 @@ public:
 	void			setCgiLaunched( void );
 	void			setCgiOutput( std::string str );
 	void			setUseCgi( bool value );
+	void			setOutput( std::string str );
 	bool			setError( int err );
 	void			logStatus( void );
 	bool			processLine( const std::string& line );
+	bool			tryIndexFiles( std::string& file ) const;
 };
 
 #endif

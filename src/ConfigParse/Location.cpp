@@ -154,3 +154,17 @@ bool	Location::getErrorPageWithCode( unsigned int code, std::string& page ) cons
 		return ( this->_directives->getErrorPageWithCode( code, page ) );
 	return ( false );
 }
+
+bool	Location::isAutoindexAllow( void ) const
+{
+	if ( isSet( "autoindex" ) == true )
+		return ( this->_directives->getAutoindex() );
+	return ( true );
+}
+
+bool	Location::tryIndexFiles( std::string& file, std::string path ) const
+{
+	if ( isSet( "index" ) == true )
+		return ( this->_directives->tryIndexFiles( file, path ) );
+	return ( false );
+}

@@ -281,19 +281,215 @@ void	Request::parseHeader( const std::string &line )
 	this->headers.append(tokens[0], value);	
 }
 
-Request::t_status	Request::getStatus( void ) const
+bool	Request::processLineOnFdBond( const std::string &line )
 {
-	return ( this->status );
+	size_t len = line.length();
+
+	if ( len == 0 || ( len == 1 && line[ 0 ] <= ' ' ) )
+	{
+		this->status = RECVD_START;
+		return ( true );
+	}
+	parseFirstLine( line );
+	this->status = RECVD_REQ_LINE;
+	return ( true );
 }
 
-int Request::getError( void ) const
+bool	Request::processLineOnRecvdStart( const std::string &line )
 {
-	return ( this->error );
+	parseFirstLine( line );
+	this->status = RECVD_REQ_LINE;
+	return ( true );
 }
 
-std::string	Request::getCgiOutput( void ) const
+bool	Request::processLineOnRecvdReqLine( const std::string &line )
 {
-	return ( this->cgiOutput );
+	size_t		len = line.length();
+	size_t		contentSize = 0;
+	std::string	data;
+	size_t		got;
+
+	if ( len == 0 || ( len == 1 && line[ 0 ] <= ' ' ) )
+	{
+		this->status = RECVD_HEADER;
+		checkKeepAlive();
+		if (!updateServerConfig())
+			return ( setError( 400 ) );
+		updateLocation();
+		maxBodySize = svr->getMaxBodySize(getRoute());
+		if (svr->getIsAllowedMethod( this->route, this->method ) == false)
+			return ( setError( 405 ) );
+		updateFilePath();
+		if ( checkChunked() )
+			return ( true );
+		// Log::Error("Request::processLineOnRecvdReqLine maxBodySize: " + SUtils::longToString(maxBodySize));
+		if ( !checkEmptyContent( contentSize ) && (maxBodySize == 0 || contentSize <= maxBodySize) )
+		{
+			got = this->client->getNChars(data, contentSize);
+			this->body += data;
+			if ( got == contentSize )
+			{
+				this->status = RECVD_ALL;
+				// Log::Success(body);
+			}
+		}
+		if (maxBodySize != 0 && contentSize > maxBodySize)
+			return ( setError( 400 ) );
+		return ( true );
+	}
+	parseHeader( line );
+	return ( true );
+}
+
+bool	Request::processLineOnRecvdHeader( const std::string &line )
+{
+	Header*	clHead = this->headers.firstWithKey( "Content-Length" );
+	size_t	contentSize;
+
+	this->body += line + '\n';
+	if ( clHead != NULL )
+	{
+		contentSize = SUtils::atol( clHead->getValue().c_str() );
+		if (maxBodySize != 0 && contentSize > maxBodySize)
+			return ( setError( 400 ) );
+		if ( this->body.size() >= contentSize )
+		{
+			// Log::Success(body);
+			this->status = RECVD_ALL;
+		}
+		return ( this->client->getPendingSize() > 0 );
+	}
+	this->status = RECVD_ALL;
+	return ( true );
+}
+
+bool	Request::processLineOnRecvdChunkSize( const std::string &line )
+{
+	size_t len = line.length();
+	// Log::Info("processLineOnRecvdChunkSize with line:");
+	// Log::Info(line);
+	// Log::Info("chunck size = " + SUtils::longToString(chunkSize));
+	// Log::Info("line length = " + SUtils::longToString(len));
+
+	if ( this->chunkSize == 0 )
+	{
+		this->status = RECVD_LAST_CHUNK;
+		return ( true );
+	}	
+	if ( len == this->chunkSize )
+	{
+		this->body += line;
+		if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
+			return ( setError( 400 ) );
+		this->status = RECVD_CHUNK;
+		return ( true );
+	}
+	if ( ( len == this->chunkSize + 1 ) && ( line[ len - 1 ] <= ' ' ) )
+	{
+		this->body += line.substr( 0, len - 1 );
+		if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
+			return ( setError( 400 ) );
+		this->status = RECVD_CHUNK;
+		return ( true );
+	}
+	return ( true );
+}
+
+bool	Request::processLineOnRecvdChunk( const std::string &line )
+{
+	// Log::Info("processLineOnRecvdChunk with line:");
+	// Log::Info(line);
+	size_t len = line.length();
+
+	if ( ( ( len == 1 || ( len == 2 && line[ 1 ] <= ' ' ) ) && line[ 0 ] == '0' ) )
+	{
+		// Log::Info("Received 0 to indicate last chunk");
+		this->chunkSize = 0;
+		this->status = RECVD_LAST_CHUNK;
+		return ( true );
+	}
+	this->chunkSize = SUtils::atol( line.c_str() );
+	if ( chunkSize > 0 )
+	{
+		// Log::Info("Received" + SUtils::longToString(chunkSize) + "to indicate next chunk size");
+		this->status = RECVD_CHUNK_SIZE;
+		return ( true );
+	}
+	Log::Info( "Received 0 value that indicates last chunk" );
+	this->status = RECVD_LAST_CHUNK;
+	return ( true );
+}
+
+bool	Request::processLineOnRecvdLastChunk( const std::string &line )
+{
+	// Log::Info("processLineOnRecvdLastChunk with line:");
+	// Log::Info(line);
+	size_t len = line.length();
+
+	if ( len == 0 || ( len == 1 && line[ 0 ] <= ' ' ) )
+	{
+		this->status = RECVD_ALL;
+		// Log::Success(body);
+		return ( true );
+	}
+	this->status = RECVD_ALL;
+	return ( true );
+}
+
+bool	Request::processLine( const std::string &line )
+{
+	switch ( status )
+	{
+		case IDLE:
+			return ( false );
+		case FD_BOND:
+			return ( processLineOnFdBond( line ) );
+		case RECVD_START:
+			return ( processLineOnRecvdStart( line ) );	
+		case RECVD_REQ_LINE:
+			return ( processLineOnRecvdReqLine( line ) );
+		case RECVD_HEADER:
+			return ( processLineOnRecvdHeader( line ) );
+		case RECVD_CHUNK_SIZE:
+			return ( processLineOnRecvdChunkSize( line ) );
+		case RECVD_CHUNK:
+			return ( processLineOnRecvdChunk( line ) );
+		case RECVD_LAST_CHUNK:
+			return ( processLineOnRecvdLastChunk( line ) );
+		case RECVD_ALL:
+			Log::Info( "processLine with RECVD_ALL" );
+			return ( false );
+		case CGI_LAUNCHED:
+			Log::Info( "processLine with CGI_LAUNCHED" );
+			return ( false );
+		case RESP_RENDERED:
+			Log::Info( "processLine with RESP_RENDERED" );
+			return ( false );
+	}
+	return ( false );
+}
+
+bool	Request::checkChunked( void )
+{
+	Header	*teHead = this->headers.firstWithKey( "Transfer-Encode" );
+	bool	isChunked = false;
+
+	if ( teHead != NULL && ( isChunked = ( teHead->getValue() == "chunked" ) ) )
+		this->status = RECVD_CHUNK;
+	return ( isChunked );
+}
+
+bool	Request::checkKeepAlive( void )
+{
+	Header	*con = headers.firstWithKey( "Connection" );
+
+	if ( !this->client )
+		return ( false );
+	if ( con != NULL )
+		this->client->setKeepAlive( con->getValue() == "keep-alive" );
+	else
+		this->client->setKeepAlive( false );
+	return ( con != NULL );
 }
 
 void	Request::checkUseCgi( void )
@@ -315,6 +511,91 @@ void	Request::checkUseCgi( void )
 		return ;
 	binary = s->getCgiBinary( docExt, lc );
 	useCgi = ( binary.size() > 0 );
+}
+
+bool	Request::checkEmptyContent( size_t& size )
+{
+	Header	*clHead = headers.firstWithKey( "Content-Length" );
+
+	if ( !clHead )
+		this->status = RECVD_ALL;
+	else
+		size = SUtils::atol( clHead->getValue().c_str() );
+	return ( this->status == RECVD_ALL );
+}
+
+int	Request::splitDocExt( void )
+{
+	StringVector	frags;
+	size_t			len;
+
+	frags = SplitString::split( document, "." );
+	len = frags.size();
+	if ( len > 1 )
+	{
+		this->docExt = frags[ len - 1 ];
+
+		// this->useCgi = ( this->docExt == std::string( "py" ) );
+		return ( 1 );
+	}
+	return ( 0 );
+}
+
+bool	Request::updateServerConfig( void )
+{
+	this->svr = ServerFinder::find( *this );
+	if ( this->svr != NULL )
+		return ( true );
+	return ( false );
+}
+
+void	Request::updateLocation( void )
+{
+	std::string	routeWithoutFile = getRouteChaineString();
+
+	if ( this->svr != NULL )
+		this->lc = this->svr->getLocationAtPath( routeWithoutFile );
+}
+
+void	Request::updateFilePath( void )
+{
+	std::string	routeWithoutFile = getRouteChaineString();
+
+	if ( this->svr == NULL )
+	{
+		this->filePath = ConfigUtils::pathJoin( ".", this->route );
+		return ;
+	}
+	if ( this->method == "POST" )
+	{
+		this->filePath = ConfigUtils::pathJoin( svr->getFinalUploadPath( \
+			routeWithoutFile ), getDocument() );
+		return ;
+	}
+	this->filePath = ConfigUtils::pathJoin( svr->getFinalPath( \
+			routeWithoutFile ), getDocument() );
+}
+
+bool	Request::tryIndexFiles( std::string& file ) const
+{
+	if ( this->svr != NULL )
+		return ( this->svr->tryIndexFiles( file, this->filePath, this->lc ) );
+	return ( false );
+}
+
+Request::t_status	Request::getStatus( void ) const
+{
+	return ( this->status );
+}
+
+int Request::getError( void ) const
+{
+	return ( this->error );
+}
+
+std::string	Request::getCgiOutput( void ) const
+{
+	return ( this->cgiOutput );
 }
 
 bool	Request::getUseCgi( void ) const
@@ -497,13 +778,6 @@ std::string	Request::getFinalPath( void ) const
 	return ( ConfigUtils::pathJoin( ".", routeWithoutFile ) );
 }
 
-bool	Request::isDirectiveSet( std::string directive ) const
-{
-	if ( this->lc != NULL )
-		return ( this->lc->isSet(directive));
-	return false;	
-}
-
 std::string	Request::getCgiBinary( std::string ext ) const
 {
 	if ( this->svr != NULL )
@@ -511,278 +785,9 @@ std::string	Request::getCgiBinary( std::string ext ) const
 	return ( "" );
 }
 
-bool	Request::processLineOnFdBond( const std::string &line )
+std::string	Request::getOutput( void ) const
 {
-	size_t len = line.length();
-
-	if ( len == 0 || ( len == 1 && line[ 0 ] <= ' ' ) )
-	{
-		this->status = RECVD_START;
-		return ( true );
-	}
-	parseFirstLine( line );
-	this->status = RECVD_REQ_LINE;
-	return ( true );
-}
-
-bool	Request::processLineOnRecvdStart( const std::string &line )
-{
-	parseFirstLine( line );
-	this->status = RECVD_REQ_LINE;
-	return ( true );
-}
-
-bool	Request::processLineOnRecvdReqLine( const std::string &line )
-{
-	size_t		len = line.length();
-	size_t		contentSize = 0;
-	std::string	data;
-	size_t		got;
-
-	if ( len == 0 || ( len == 1 && line[ 0 ] <= ' ' ) )
-	{
-		this->status = RECVD_HEADER;
-		checkKeepAlive();
-		if (!updateServerConfig())
-			return ( setError( 400 ) );
-		updateLocation();
-		maxBodySize = svr->getMaxBodySize(getRoute());
-		if (svr->getIsAllowedMethod( this->route, this->method ) == false)
-			return ( setError( 405 ) );
-		updateFilePath();
-		if ( checkChunked() )
-			return ( true );
-		// Log::Error("Request::processLineOnRecvdReqLine maxBodySize: " + SUtils::longToString(maxBodySize));
-		if ( !checkEmptyContent( contentSize ) && (maxBodySize == 0 || contentSize <= maxBodySize) )
-		{
-			got = this->client->getNChars(data, contentSize);
-			this->body += data;
-			if ( got == contentSize )
-			{
-				this->status = RECVD_ALL;
-				// Log::Success(body);
-			}
-		}
-		if (maxBodySize != 0 && contentSize > maxBodySize)
-			return ( setError( 400 ) );
-		return ( true );
-	}
-	parseHeader( line );
-	return ( true );
-}
-
-bool	Request::processLineOnRecvdHeader( const std::string &line )
-{
-	Header*	clHead = this->headers.firstWithKey( "Content-Length" );
-	size_t	contentSize;
-
-	this->body += line + '\n';
-	if ( clHead != NULL )
-	{
-		contentSize = SUtils::atol( clHead->getValue().c_str() );
-		if (maxBodySize != 0 && contentSize > maxBodySize)
-			return ( setError( 400 ) );
-		if ( this->body.size() >= contentSize )
-		{
-			// Log::Success(body);
-			this->status = RECVD_ALL;
-		}
-		return ( this->client->getPendingSize() > 0 );
-	}
-	this->status = RECVD_ALL;
-	return ( true );
-}
-
-bool	Request::processLineOnRecvdChunkSize( const std::string &line )
-{
-	size_t len = line.length();
-	// Log::Info("processLineOnRecvdChunkSize with line:");
-	// Log::Info(line);
-	// Log::Info("chunck size = " + SUtils::longToString(chunkSize));
-	// Log::Info("line length = " + SUtils::longToString(len));
-
-	if ( this->chunkSize == 0 )
-	{
-		this->status = RECVD_LAST_CHUNK;
-		return ( true );
-	}	
-	if ( len == this->chunkSize )
-	{
-		this->body += line;
-		if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
-			return ( setError( 400 ) );
-		this->status = RECVD_CHUNK;
-		return ( true );
-	}
-	if ( ( len == this->chunkSize + 1 ) && ( line[ len - 1 ] <= ' ' ) )
-	{
-		this->body += line.substr( 0, len - 1 );
-		if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
-			return ( setError( 400 ) );
-		this->status = RECVD_CHUNK;
-		return ( true );
-	}
-	return ( true );
-}
-
-bool	Request::processLineOnRecvdChunk( const std::string &line )
-{
-	// Log::Info("processLineOnRecvdChunk with line:");
-	// Log::Info(line);
-	size_t len = line.length();
-
-	if ( ( ( len == 1 || ( len == 2 && line[ 1 ] <= ' ' ) ) && line[ 0 ] == '0' ) )
-	{
-		// Log::Info("Received 0 to indicate last chunk");
-		this->chunkSize = 0;
-		this->status = RECVD_LAST_CHUNK;
-		return ( true );
-	}
-	this->chunkSize = SUtils::atol( line.c_str() );
-	if ( chunkSize > 0 )
-	{
-		// Log::Info("Received" + SUtils::longToString(chunkSize) + "to indicate next chunk size");
-		this->status = RECVD_CHUNK_SIZE;
-		return ( true );
-	}
-	Log::Info( "Received 0 value that indicates last chunk" );
-	this->status = RECVD_LAST_CHUNK;
-	return ( true );
-}
-
-bool	Request::processLineOnRecvdLastChunk( const std::string &line )
-{
-	// Log::Info("processLineOnRecvdLastChunk with line:");
-	// Log::Info(line);
-	size_t len = line.length();
-
-	if ( len == 0 || ( len == 1 && line[ 0 ] <= ' ' ) )
-	{
-		this->status = RECVD_ALL;
-		// Log::Success(body);
-		return ( true );
-	}
-	this->status = RECVD_ALL;
-	return ( true );
-}
-
-bool	Request::checkChunked( void )
-{
-	Header	*teHead = this->headers.firstWithKey( "Transfer-Encode" );
-	bool	isChunked = false;
-
-	if ( teHead != NULL && ( isChunked = ( teHead->getValue() == "chunked" ) ) )
-		this->status = RECVD_CHUNK;
-	return ( isChunked );
-}
-
-bool	Request::checkKeepAlive( void )
-{
-	Header	*con = headers.firstWithKey( "Connection" );
-
-	if ( !this->client )
-		return ( false );
-	if ( con != NULL )
-		this->client->setKeepAlive( con->getValue() == "keep-alive" );
-	else
-		this->client->setKeepAlive( false );
-	return ( con != NULL );
-}
-
-int	Request::splitDocExt( void )
-{
-	StringVector	frags;
-	size_t			len;
-
-	frags = SplitString::split( document, "." );
-	len = frags.size();
-	if ( len > 1 )
-	{
-		this->docExt = frags[ len - 1 ];
-
-		// this->useCgi = ( this->docExt == std::string( "py" ) );
-		return ( 1 );
-	}
-	return ( 0 );
-}
-
-bool	Request::checkEmptyContent( size_t& size )
-{
-	Header	*clHead = headers.firstWithKey( "Content-Length" );
-
-	if ( !clHead )
-		this->status = RECVD_ALL;
-	else
-		size = SUtils::atol( clHead->getValue().c_str() );
-	return ( this->status == RECVD_ALL );
-}
-
-bool	Request::updateServerConfig( void )
-{
-	this->svr = ServerFinder::find( *this );
-	if ( this->svr != NULL )
-		return ( true );
-	return ( false );
-}
-
-void	Request::updateLocation( void )
-{
-	std::string	routeWithoutFile = getRouteChaineString();
-
-	if ( this->svr != NULL )
-		this->lc = this->svr->getLocationAtPath( routeWithoutFile );
-}
-
-void	Request::updateFilePath( void )
-{
-	std::string	routeWithoutFile = getRouteChaineString();
-
-	if ( this->svr == NULL )
-	{
-		this->filePath = ConfigUtils::pathJoin( ".", this->route );
-		return ;
-	}
-	if ( this->method == "POST" )
-	{
-		this->filePath = ConfigUtils::pathJoin( svr->getFinalUploadPath( routeWithoutFile ), \
-			getDocument() );
-		return ;
-	}
-	this->filePath = ConfigUtils::pathJoin( svr->getFinalPath( routeWithoutFile ), \
-			getDocument() );
-}
-
-bool	Request::processLine( const std::string &line )
-{
-	switch ( status )
-	{
-		case IDLE:
-			return ( false );
-		case FD_BOND:
-			return ( processLineOnFdBond( line ) );
-		case RECVD_START:
-			return ( processLineOnRecvdStart( line ) );	
-		case RECVD_REQ_LINE:
-			return ( processLineOnRecvdReqLine( line ) );
-		case RECVD_HEADER:
-			return ( processLineOnRecvdHeader( line ) );
-		case RECVD_CHUNK_SIZE:
-			return ( processLineOnRecvdChunkSize( line ) );
-		case RECVD_CHUNK:
-			return ( processLineOnRecvdChunk( line ) );
-		case RECVD_LAST_CHUNK:
-			return ( processLineOnRecvdLastChunk( line ) );
-		case RECVD_ALL:
-			Log::Info( "processLine with RECVD_ALL" );
-			return ( false );
-		case CGI_LAUNCHED:
-			Log::Info( "processLine with CGI_LAUNCHED" );
-			return ( false );
-		case RESP_RENDERED:
-			Log::Info( "processLine with RESP_RENDERED" );
-			return ( false );
-	}
-	return ( false );
+	return ( this->output );
 }
 
 bool	Request::isReadyToSend( void ) const
@@ -803,6 +808,20 @@ bool	Request::isCgiLaunched( void ) const
 bool	Request::isReceiving( void ) const
 {
 	return ( this->status < RECVD_ALL );
+}
+
+bool	Request::isDirectiveSet( std::string directive ) const
+{
+	if ( this->lc != NULL )
+		return ( this->lc->isSet( directive ) );
+	return ( false );	
+}
+
+bool	Request::isAutoindexAllow( void ) const
+{
+	if ( this->svr != NULL )
+		return ( this->svr->isAutoindexAllow( this->lc ) );
+	return ( false );
 }
 
 std::string	Request::toString( void )
@@ -845,6 +864,11 @@ void	Request::setCgiOutput( std::string str )
 void	Request::setUseCgi( bool value )
 {
 	this->useCgi = value;
+}
+
+void	Request::setOutput( std::string str )
+{
+	this->output = str;
 }
 
 bool	Request::setError( int value )

@@ -146,8 +146,6 @@ Response	*Router::getResponse( Request *req )
 	Response	*res = new Response;
 	int			error;
 
-	if ( !res )
-		return ( res );
 	if ( !req )
 		formatErrorResponse( *res, 500 );
 	else if ( ( error = req->getError() ) )
@@ -212,39 +210,38 @@ bool	Router::processCgi( Request& req )
 	{
 		CgiExecutor cgiExe(req);
 
-		cgiExe.pushEnvVar(std::string("SERVER_SOFTWARE"), "webserv");
-		cgiExe.pushEnvVar(std::string("SERVER_NAME"), host);
-		cgiExe.pushEnvVar(std::string("GATEWAY_INTERFACE"), "CGI/1.0");
-		cgiExe.pushEnvVar(std::string("SERVER_PROTOCOL"), req.getProtocol());
-		cgiExe.pushEnvVar(std::string("SERVER_PORT"), port);
-		cgiExe.pushEnvVar(std::string("REQUEST_METHOD"), req.getMethod());
+		cgiExe.pushEnvVar("SERVER_SOFTWARE", "webserv");
+		cgiExe.pushEnvVar("SERVER_NAME", host);
+		cgiExe.pushEnvVar("GATEWAY_INTERFACE", "CGI/1.0");
+		cgiExe.pushEnvVar("SERVER_PROTOCOL", req.getProtocol());
+		cgiExe.pushEnvVar("SERVER_PORT", port);
+		cgiExe.pushEnvVar("REQUEST_METHOD", req.getMethod());
 		// cgiExe.pushEnvVar(std::string("FILEPATH_INFO"), req.getRouteChaineString());
-		cgiExe.pushEnvVar(std::string("PATH_INFO"), ".");
-		cgiExe.pushEnvVar(std::string("PATH_TRANSLATED"), req.getDocument());
+		cgiExe.pushEnvVar("PATH_INFO", ".");
+		cgiExe.pushEnvVar("PATH_TRANSLATED", req.getDocument());
 		// cgiExe.pushEnvVar(std::string("SCRIPT_NAME"), req.getDocument());
-		cgiExe.pushEnvVar(std::string("QUERY_STRING"), req.getQuery());
+		cgiExe.pushEnvVar("QUERY_STRING", req.getQuery());
 		Client *cli = req.getClient();
 		if (cli)
 		{
-			cgiExe.pushEnvVar(std::string("REMOTE_HOST"), cli->getIpString());
-			cgiExe.pushEnvVar(std::string("REMOTE_ADDRESS"), cli->getIpString());
+			cgiExe.pushEnvVar("REMOTE_HOST", cli->getIpString());
+			cgiExe.pushEnvVar("REMOTE_ADDRESS", cli->getIpString());
 		}
 		else
 		{
-			cgiExe.pushEnvVar(std::string("REMOTE_HOST"), "0.0.0.0");
-			cgiExe.pushEnvVar(std::string("REMOTE_ADDRESS"), "0.0.0.0");
+			cgiExe.pushEnvVar("REMOTE_HOST", "0.0.0.0");
+			cgiExe.pushEnvVar("REMOTE_ADDRESS", "0.0.0.0");
 		}
-		cgiExe.pushEnvVar(std::string("AUTH_TYPE"), "none");
-		cgiExe.pushEnvVar(std::string("REMOTE_USER"), "user");
-		cgiExe.pushEnvVar(std::string("REMOTE_IDENT"), "user");
+		cgiExe.pushEnvVar("AUTH_TYPE", "none");
+		cgiExe.pushEnvVar("REMOTE_USER", "user");
+		cgiExe.pushEnvVar("REMOTE_IDENT", "user");
 		if (req.getBody().size() > 0)
-			cgiExe.pushEnvVar(std::string("CONTENT_TYPE"), req.getHeaderWithKey("Content-Type"));
-		cgiExe.pushEnvVar(std::string("CONTENT_LENGTH"), SUtils::longToString(req.getBody().size()));
-		cgiExe.pushEnvVar(std::string("HTTP_ACCEPT"), req.getHeaderWithKey("Accept"));
-		cgiExe.pushEnvVar(std::string("USER_AGENT"), req.getHeaderWithKey("User-Agent"));
+			cgiExe.pushEnvVar("CONTENT_TYPE", req.getHeaderWithKey("Content-Type"));
+		cgiExe.pushEnvVar("CONTENT_LENGTH", SUtils::longToString(req.getBody().size()));
+		cgiExe.pushEnvVar("HTTP_ACCEPT", req.getHeaderWithKey("Accept"));
+		cgiExe.pushEnvVar("USER_AGENT", req.getHeaderWithKey("User-Agent"));
 		cgiExe.execute();
 		req.setCgiLaunched();
-		return ( true );
 	}
 	catch ( const std::exception& e )
 	{
@@ -253,10 +250,9 @@ bool	Router::processCgi( Request& req )
 		// TODO Set Error to Send in request so the proper response is formed to send
 		req.setError( 500 );
 		req.setReadyToSend();
-		return ( true );
 	}
 	// Once finished CgiTaskPending will send event to change request state to ready to send
-	return ( false );
+	return ( true );
 }
 
 bool	Router::processRequestReceived( Request &req )
@@ -309,7 +305,6 @@ Response	*Router::formatCgiResponse( Response& res, Request& req )
 	res.setMethod(req.getMethod());
 	res.setBody(req.getCgiOutput());
 	std::string doc = req.getDocument();
-	res.setBody(req.getCgiOutput());
 	bool nph = (doc.size() > 2
 		&& (doc[0] == 'n' || doc[0] == 'N')
 		&& (doc[1] == 'p' || doc[1] == 'P')
@@ -347,10 +342,81 @@ Response	*Router::formatErrorResponse( Response& res, Request& req )
 	return ( &res );
 }
 
+bool	Router::checkStatMode( std::string path, unsigned int mode )
+{
+	struct stat	checkMode;
+
+	if ( stat( path.c_str(), &checkMode ) == -1 )
+		return ( false );
+	return ( ( checkMode.st_mode & mode ) == mode );
+}
+
+bool	Router::isDir( std::string path ) { return ( checkStatMode( path, S_IFDIR ) ); }
+
+bool	Router::isFile( std::string path ) { return ( checkStatMode( path, S_IFREG ) ); }
+
+std::string	Router::readFile( std::string file )
+{
+	std::string		storage;
+	std::string		buffer;
+	std::ifstream	fd;
+
+	fd.open( file.c_str() );
+	if ( fd.is_open() == false )
+		return ( "" );
+	while ( !std::getline( fd, buffer ).eof() )
+		storage += buffer;
+	fd.close();
+	return ( storage );
+}
+
+bool	Router::checkPathExist( Request& req, std::string path )
+{
+	if ( checkStatMode( path, F_OK ) == false )
+	{
+		req.setError( 404 );
+		return ( false );
+	}
+	return ( true );
+}
+
+bool	Router::checkPathCanRead( Request& req, std::string path )
+{
+	if ( checkStatMode( path, R_OK ) == false )
+	{
+		req.setError( 403 );
+		return ( false );
+	}
+	return ( true );
+}
+
+bool	Router::processDirectory( Request& req, std::string path )
+{
+	std::string	output;
+
+	if ( req.isAutoindexAllow() == true \
+		&& FolderLs::getLs( output, path, path ) == FolderLs::NONE )
+		req.setOutput( output );
+	else
+		req.setError( 403 );
+	return ( req.getError() != 403 );
+}
+
 bool	Router::processGetRequest( Request& req )
 {
-	( void ) req;
-	return ( false );
+	std::string	path;
+	std::string	file;
+
+	path = req.getFilePath();
+	if ( checkPathExist( req, path ) == false )
+		return ( false );
+	file = path;
+	if ( isDir( path ) == true && req.tryIndexFiles( file ) == false )
+		return ( processDirectory( req, path ) );
+	if ( checkPathCanRead( req, file ) == false )
+		return ( false );
+	req.setOutput( readFile( file ) );
+	return ( true );
 }
 
 bool	Router::processPostRequest( Request& req )

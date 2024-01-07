@@ -3,3 +3,4 @@ webserv
 .objs/
 *.sw*
 *.log
+a.out

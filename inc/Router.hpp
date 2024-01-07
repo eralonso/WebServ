@@ -13,6 +13,10 @@
 #ifndef _ROUTER_HPP_
 # define _ROUTER_HPP_
 
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <unistd.h>
+
 # include <Request.hpp>
 # include <Response.hpp>
 # include <CgiExecutor.hpp>
@@ -45,6 +49,13 @@ public:
 	static bool 		processRequestReceived(Request &req);
 	static std::string 	determineContentType(Response &res, Request &req);
 	static bool			processCgi( Request& req );
+	static bool			checkStatMode( std::string path, unsigned int mode );
+	static bool			isDir( std::string path );
+	static bool			isFile( std::string path );
+	static std::string	readFile( std::string file );
+	static bool			checkPathExist( Request& req, std::string path );
+	static bool			checkPathCanRead( Request& req, std::string path );
+	static bool			processDirectory( Request& req, std::string path );
 };
 
 #endif

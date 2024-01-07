@@ -154,6 +154,23 @@ bool	Directives::getErrorPageWithCode( unsigned int code, std::string& page ) co
 	return ( false );
 }
 
+bool	Directives::tryIndexFiles( std::string& file, std::string path ) const
+{
+	std::string	test;
+
+	for ( StringVector::const_iterator it = this->_index.begin(); \
+			it != this->_index.end(); it++ )
+	{
+		test = path + *it;
+		if ( access( test.c_str(), F_OK ) == 0 )
+		{
+			file = test;
+			return ( true );
+		}
+	}
+	return ( false );
+}
+
 void	Directives::print( void ) const
 {
 	Log::Info( "[ Config ] root: " + this->_root );

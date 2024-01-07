@@ -60,11 +60,13 @@ public:
 							std::string& fpath ) const;
 	bool				getFinalUploadPath( std::string path, \
 							std::string& fpath ) const;
-	size_t				getMaxBodySize() const;
+	size_t				getMaxBodySize( void ) const;
 	bool				isSet( std::string directive ) const;
 	bool				getIsAllowedMethod( std::string method ) const;
 	bool				getErrorPageWithCode( unsigned int code, \
 							std::string& page ) const;
+	bool				isAutoindexAllow( void ) const;
+	bool				tryIndexFiles( std::string& file, std::string path ) const;
 };
 
 #endif

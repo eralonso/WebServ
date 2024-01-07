@@ -292,3 +292,22 @@ std::string	Server::getFinalUploadPath( const std::string path, \
 					this->_directives->getUploadStore() ) );
 	return ( ConfigUtils::pathJoin( ".", path ) );
 }
+
+bool	Server::isAutoindexAllow( const Location *lc ) const
+{
+	if ( lc != NULL && lc->isSet( "autoindex" ) == true )
+		return ( lc->isAutoindexAllow() );
+	else if ( isSet( "autoindex" ) == true )
+		return ( this->_directives->getAutoindex() );
+	return ( true );
+}
+
+bool	Server::tryIndexFiles( std::string& file, std::string path, \
+								const Location *lc ) const
+{
+	if ( lc != NULL && lc->isSet( "index" ) == true )
+		return ( lc->tryIndexFiles( file, path ) );
+	else if ( isSet( "index" ) == true )
+		return ( this->_directives->tryIndexFiles( file, path ) );
+	return ( false );
+}

@@ -76,6 +76,9 @@ public:
 									std::string& page, std::string path ) const;
 	bool						getErrorPageWithCode( unsigned int code, \
 									std::string& page, const Location *lc ) const;
+	bool						isAutoindexAllow( const Location *lc ) const;
+	bool						tryIndexFiles( std::string& file, std::string path, \
+									const Location *lc ) const;
 };
 
 #endif

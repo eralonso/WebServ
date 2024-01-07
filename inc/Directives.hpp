@@ -17,10 +17,11 @@
 # include <limits>
 # include <string>
 # include <algorithm>
-# include <map>
+
 # include <sys/types.h>
 # include <sys/socket.h>
 # include <netdb.h>
+# include <unistd.h>
 
 # include <TypesDefines.hpp>
 # include <Defines.hpp>
@@ -89,6 +90,8 @@ public:
 	bool					getIsAllowedMethod( std::string method ) const;
 	bool					getErrorPageWithCode( unsigned int code, \
 								std::string& page ) const;
+	bool					tryIndexFiles( std::string& file, \
+								std::string path ) const;
 };
 
 #endif
