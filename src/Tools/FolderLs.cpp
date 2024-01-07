@@ -70,6 +70,7 @@ void	FolderLs::entryInfo( std::string& cat, const std::string& path )
 	struct stat			statbuf;
 	std::stringstream	st;
 
+	Log::Error( "LS: PATH -> " + path );
 	if ( !stat( path.c_str() , &statbuf ) )
 	{
 		st << "<td>";
@@ -102,7 +103,7 @@ FolderLs::t_error	FolderLs::processLsEntry( std::string& cat, \
 	cat += "<td>";
 	cat += entryType( pDirent->d_type );
 	cat += "</td>";
-	entryInfo( cat, path + newContent );
+	entryInfo( cat, ConfigUtils::pathJoin( path, newContent ) );
 	cat += "</tr>";
 	cat += "\n";
 	return ( NONE );

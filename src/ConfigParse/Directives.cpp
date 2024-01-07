@@ -161,7 +161,7 @@ bool	Directives::tryIndexFiles( std::string& file, std::string path ) const
 	for ( StringVector::const_iterator it = this->_index.begin(); \
 			it != this->_index.end(); it++ )
 	{
-		test = path + *it;
+		test = ConfigUtils::pathJoin( path, *it );
 		if ( access( test.c_str(), F_OK ) == 0 )
 		{
 			file = test;

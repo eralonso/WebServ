@@ -293,7 +293,8 @@ Response*	Router::formatGenericResponse( Response& res, Request& req )
 		errorStatus = 200;
 	res.setStatus( errorStatus );
 	res.setMethod( req.getMethod() );
-	res.setBody( getHtml( &req ) );
+	//res.setBody( getHtml( &req ) );
+	res.setBody( req.getOutput() );
 	return ( &res );
 }
 
@@ -395,7 +396,7 @@ bool	Router::processDirectory( Request& req, std::string path )
 	std::string	output;
 
 	if ( req.isAutoindexAllow() == true \
-		&& FolderLs::getLs( output, path, path ) == FolderLs::NONE )
+		&& FolderLs::getLs( output, path, req.getRoute() ) == FolderLs::NONE )
 		req.setOutput( output );
 	else
 		req.setError( 403 );

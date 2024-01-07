@@ -18,6 +18,9 @@
 
 # include <string>
 
+# include <Utils.hpp>
+# include <ConfigUtils.hpp>
+
 class FolderLs
 {
 private:
