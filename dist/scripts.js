@@ -32,17 +32,15 @@ async function sendPOST(contentBody, file)
 		console.log("fetching... " + file.name);
 		const response = await fetch(urlLoc + "/" + file.name,
 		{
-			method: "POST", // *GET, POST, PUT, DELETE, etc.
-			mode: "cors", // no-cors, *cors, same-origin
-			cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-			credentials: "same-origin", // include, *same-origin, omit
+			method: "POST",
+			mode: "cors",
+			cache: "no-cache",
+			credentials: "same-origin",
 			headers:
 			{
 				"Content-Type": "text/plain",
 			},
-			//redirect: "follow", // manual, *follow, error
-			//referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-			body: contentBody, // body data type must match "Content-Type" header
+			body: contentBody,
 		});
 		console.log(response);
 	}
@@ -51,12 +49,13 @@ async function sendPOST(contentBody, file)
 async function readFile(file, outputEl)
 {
 	const reader = new FileReader();
+	const dec = new TextDecoder("utf-8");
 	reader.addEventListener('load', async (event) =>
 	{
 		console.log(event.target.result);
 		console.log(event.target.result.length);
 		console.log (event.target);
-		outputEl.textContent = event.target.result;
+		outputEl.textContent = dec.decode(event.target.result);
 		await sendPOST(event.target.result, file);
 	});
 	reader.readAsArrayBuffer(file);
@@ -64,4 +63,4 @@ async function readFile(file, outputEl)
 
 const urlDisplayEl = document.getElementById('urlDisplay');
 urlDisplayEl.textContent = "url of page: " + window.location.href;
-setChangeEventOfFileInput()
+setChangeEventOfFileInput();
