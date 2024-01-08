@@ -1,0 +1,53 @@
+body {
+	margin: auto;
+}
+
+section {
+	display: flex;
+	margin: auto;
+	width: 80vw;
+	height: 50vw;
+	padding: 3em;
+	justify-content: center;
+	background-color: bisque;
+}
+
+.frameBox{
+	margin: auto;
+	padding: 3em;
+	max-width: 30em;
+}
+
+.dialogBox{
+	padding: 1em;
+	width: 100%;
+	background-color: lightpink;
+}
+
+h1 {
+	margin: 5px;
+	padding: 5px;
+	font-size: 4em;
+	font-weight: 800;
+	color: red;
+}
+
+h2 {
+	margin: 5px;
+	padding: 5px;
+	font-size: 2em;
+	font-weight: 300;
+	color: darkred;
+}
+
+a {
+	display: block;
+	margin: 5px;
+	padding: 5px;
+	font-size: 2em;
+	background-color: beige;
+	border: solid 3px black ; 
+	border-radius: 20px;
+	width: 100%;
+	text-align: center;
+}
