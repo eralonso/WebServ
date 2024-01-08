@@ -127,9 +127,9 @@ public:
 	std::string		getOutput( void ) const;
 	bool			getErrorPage( int error, std::string& uriRedir );
 	bool			getRedir( void ) const;
+	std::string 	getCgiBinary( std::string ext ) const;
 	std::string		getUriRedir( void ) const;
     bool			isDirectiveSet( std::string directive ) const;
-    std::string 	getCgiBinary( std::string ext ) const;
     bool			isCompleteRecv( void ) const;
 	bool			isReadyToSend( void ) const;
 	bool			isCgiLaunched( void ) const;
@@ -149,6 +149,7 @@ public:
 	void			logStatus( void );
 	bool			processLine( const std::string& line );
 	bool			tryIndexFiles( std::string& file ) const;
+	bool			findReturnUri( int& uriCode, std::string& uriRedir ) const;
 };
 
 #endif

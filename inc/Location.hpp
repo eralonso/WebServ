@@ -67,6 +67,7 @@ public:
 							std::string& page ) const;
 	bool				isAutoindexAllow( void ) const;
 	bool				tryIndexFiles( std::string& file, std::string path ) const;
+	bool				findReturnUri( int& uriCode, std::string& uriRedir ) const;
 };
 
 #endif

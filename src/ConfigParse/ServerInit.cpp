@@ -20,6 +20,7 @@ std::string	Server::_allowedDirectivesAux[ SERVER_SIZE_DIRECTIVES + 1 ] =
 	"error_page",
 	"client_max_body_size",
 	"upload_store",
+	"return",
 	"location"
 };
 

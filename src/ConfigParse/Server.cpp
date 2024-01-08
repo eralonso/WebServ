@@ -308,3 +308,13 @@ bool	Server::tryIndexFiles( std::string& file, std::string path, \
 		return ( this->_directives->tryIndexFiles( file, path ) );
 	return ( false );
 }
+
+bool	Server::findReturnUri( int& uriCode, std::string& uriRedirection, \
+									const Location *lc ) const
+{
+	if ( isSet( "return" ) == true )
+		return ( this->_directives->findReturnUri( uriCode, uriRedirection ) );
+	else if ( lc != NULL && lc->isSet( "return" ) == true )
+		return ( lc->findReturnUri( uriCode, uriRedirection ) );
+	return ( false );
+}

@@ -589,6 +589,13 @@ bool	Request::tryIndexFiles( std::string& file ) const
 	return ( false );
 }
 
+bool	Request::findReturnUri( int& uriCode, std::string& uriRedirection ) const
+{
+	if ( this->svr != NULL )
+		return ( this->svr->findReturnUri( uriCode, uriRedirection, this->lc ) );
+	return ( false );
+}
+
 Request::t_status	Request::getStatus( void ) const
 {
 	return ( this->status );
