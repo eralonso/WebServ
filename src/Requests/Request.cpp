@@ -31,6 +31,7 @@ Request::Request( void )
 	this->svr = NULL;
 	this->lc = NULL;
 	this->maxBodySize = 1 << 20;
+	this->redir = false;
 	// Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
@@ -45,6 +46,7 @@ Request::Request( Client *cli )
 	this->svr = NULL;
 	this->lc = NULL;
 	this->maxBodySize = 1 << 20;
+	this->redir = false;
 	// Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
@@ -76,6 +78,8 @@ Request::Request( const Request& b )
 	this->svr = b.svr;
 	this->lc = b.lc;
 	this->maxBodySize = b.maxBodySize;
+	this->redir = b.redir;
+	this->uriRedir = b.uriRedir;
 }
 
 Request&	Request::operator=( const Request& b )
@@ -101,6 +105,8 @@ Request&	Request::operator=( const Request& b )
 		this->svr = b.svr;
 		this->lc = b.lc;
 		this->maxBodySize = b.maxBodySize;
+		this->redir = b.redir;
+		this->uriRedir = b.uriRedir;
 	}
 	return ( *this );
 }
@@ -796,6 +802,15 @@ bool	Request::getErrorPage( int error, std::string& uriRedir )
 		return ( this->svr->getErrorPageWithCode( error, uriRedir, this->lc ) );
 	return ( false );
 }
+bool	Request::getRedir( void ) const
+{
+	return ( this->redir );
+}
+
+std::string	Request::getUriRedir( void ) const
+{
+	return ( this->uriRedir );
+}
 
 bool	Request::isReadyToSend( void ) const
 {
@@ -885,6 +900,16 @@ bool	Request::setError( int value )
 	this->status = RECVD_ALL;
 	this->error = value;
 	return ( true );
+}
+
+void	Request::setRedir( bool isRedir )
+{
+	this->redir = isRedir;
+}
+
+void	Request::setUriRedir( std::string uriRedirection )
+{
+	this->uriRedir = uriRedirection;
 }
 
 void	Request::logStatus( void )

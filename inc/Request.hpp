@@ -47,6 +47,7 @@ private:
 	int				error;
 	bool			useCgi;
 	bool			badRequest;
+	bool			redir;
 	size_t 			chunkSize;
 	size_t			maxBodySize;
 	Client			*client;
@@ -63,6 +64,7 @@ private:
 	std::string		body;
 	std::string		document;
 	std::string		docExt;
+	std::string		uriRedir;
 	StringVector	routeChain;
 	Headers			headers;
 	const Server	*svr;
@@ -124,6 +126,8 @@ public:
 	std::string		getFinalPath( void ) const;
 	std::string		getOutput( void ) const;
 	bool			getErrorPage( int error, std::string& uriRedir );
+	bool			getRedir( void ) const;
+	std::string		getUriRedir( void ) const;
     bool			isDirectiveSet( std::string directive ) const;
     std::string 	getCgiBinary( std::string ext ) const;
     bool			isCompleteRecv( void ) const;
@@ -140,6 +144,8 @@ public:
 	void			setUseCgi( bool value );
 	void			setOutput( std::string str );
 	bool			setError( int err );
+	void			setRedir( bool isRedir );
+	void			setUriRedir( std::string uriRedirection );
 	void			logStatus( void );
 	bool			processLine( const std::string& line );
 	bool			tryIndexFiles( std::string& file ) const;
