@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/05 10:45:21 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/08 17:54:25 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -574,6 +574,13 @@ void	Request::updateFilePath( void )
 	}
 	this->filePath = ConfigUtils::pathJoin( svr->getFinalPath( \
 			routeWithoutFile ), getDocument() );
+}
+
+void Request::setDefaultFavicon(void)
+{
+	document = "favicon.png";
+	docExt = "png";
+	routeChain.clear();
 }
 
 bool	Request::tryIndexFiles( std::string& file ) const

@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/04 15:52:12 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/08 17:56:57 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,7 @@ public:
 	void			logStatus( void );
 	bool			processLine( const std::string& line );
 	bool			tryIndexFiles( std::string& file ) const;
+	void			setDefaultFavicon( void );
 };
 
 #endif

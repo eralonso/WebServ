@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/08 11:43:57 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/08 17:56:22 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	Router::updateResponse( Response &res, Request &req )
 {
 	res.setServer( req.getHost() );
 	if ( req.getDocument() == "favicon.ico" )
-		createFaviconRes( res, req );
+	 	createFaviconRes( res, req );
 	else if ( req.getUseCgi() && req.getError() == 0 )
 		formatCgiResponse( res,req );
 	else
@@ -100,6 +100,12 @@ std::string	Router::getHtml( Request *req )
 	// html += "</body>\n";
 	// html += "</html>";
 	// return ( html );
+	if (req->getDocument() == "favicon.ico")
+	{
+		path = "./favicon.png";
+		if (access(path.c_str(), R_OK) == 0)
+				return (readFile(path));
+	}
 	req->setError(404);
 	return(std::string(""));
 }
@@ -171,6 +177,14 @@ Response	*Router::createFaviconRes( Response& res, Request& req )
 {
 	std::string html;
 
+	formatGenericResponse( res, req );
+	if (req.getError() == 404)
+	{
+		req.setError(200);
+		req.setDefaultFavicon();
+		formatGenericResponse( res, req );
+		return (&res);
+	}	
 	res.setProtocol( req.getProtocol() );
 	res.setStatus( 200 );
 	res.setMethod( req.getMethod() );
