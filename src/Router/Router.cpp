@@ -30,6 +30,7 @@ Router::~Router( void ) {}
 
 int	Router::updateResponse( Response &res, Request &req )
 {
+	Log::Error( "updateResponse" );
 	res.setServer( req.getHost() );
 	if ( req.getDocument() == "favicon.ico" )
 	 	createFaviconRes( res, req );
@@ -155,21 +156,21 @@ std::string	Router::getForm( void )
 Response	*Router::getResponse( Request *req )
 {
 	Response	*res = new Response;
-	int			error;
+	//int			error;
 
 	if ( !req )
 		formatErrorResponse( *res, 500 );
-	else if ( ( error = req->getError() ) )
-	{
-		if ( error == 100 )
-			formatContinueResponse( *res, *req );
-		if ( error == 202 )
-			formatAcceptResponse( *res, *req );
-		else
-			formatErrorResponse( *res, error );
-	}
 	else
 		updateResponse( *res, *req );
+	//else if ( ( error = req->getError() ) )
+	//{
+	//	if ( error == 100 )
+	//		formatContinueResponse( *res, *req );
+	//	if ( error == 202 )
+	//		formatAcceptResponse( *res, *req );
+	//	else
+	//		formatErrorResponse( *res, error );
+	//}
 	return ( res );
 }
 
@@ -305,28 +306,13 @@ std::string Router::determineContentType(Response& res, Request& req)
 
 Response	*Router::formatGenericResponse( Response& res, Request& req )
 {
-	int			errorStatus = req.getError();
-	bool		redir = false;
-	std::string	uriRedir;
-
 	res.appendHeader( Header( "Content-Type", determineContentType( res, req ) ) );
 	res.setProtocol( req.getProtocol() );
-	if ( errorStatus == 0 )
-		errorStatus = 200;
-	else if ( errorStatus >= MIN_ERROR_CODE )
-		redir = req.getErrorPage( errorStatus, uriRedir );
-	if ( redir == true )
-	{
-		errorStatus = ( redir == true ) ? HTTP_MOVED_TEMPORARILY : errorStatus; 
-		res.appendHeader( Header( "Location", uriRedir ) );
-	}
-	res.setStatus( errorStatus );
+	if ( req.getRedir() == true )
+		res.appendHeader( Header( "Location", req.getUriRedir() ) );
+	res.setStatus( req.getError() );
 	res.setMethod( req.getMethod() );
-	//res.setBody( getHtml( &req ) );
-	if ( redir == false && errorStatus >= MIN_ERROR_CODE )
-		res.setBody( getDefaultErrorPage( errorStatus ) );
-	else
-		res.setBody( req.getOutput() );
+	res.setBody( req.getOutput() );
 	return ( &res );
 }
 
@@ -442,13 +428,16 @@ bool	Router::processDirectory( Request& req, std::string path )
 
 	if ( req.isAutoindexAllow() == true \
 		&& FolderLs::getLs( output, path, req.getRoute() ) == FolderLs::NONE )
+	{
 		req.setOutput( output );
+		req.setError( 200 );
+	}
 	else
 		req.setError( 403 );
 	return ( req.getError() != 403 );
 }
 
-bool	Router::processGetRequest( Request& req )
+bool	Router::fillOutput( Request& req )
 {
 	std::string	path;
 	std::string	file;
@@ -462,7 +451,51 @@ bool	Router::processGetRequest( Request& req )
 	if ( checkPathCanRead( req, file ) == false )
 		return ( false );
 	req.setOutput( readFile( file ) );
+	req.setError( 200 );
 	return ( true );
+}
+
+void	Router::checkRedir( Request& req )
+{
+	std::string	uriRedir;
+	int			uriCode;
+
+	if ( req.findReturnUri( uriCode, uriRedir ) == true )
+	{
+		req.setRedir( true );
+		req.setUriRedir( uriRedir );
+		req.setError( uriCode );
+	}
+}
+
+void 	Router::checkErrorRedir( int errorStatus, Request& req )
+{
+	bool		redir = false;
+	std::string	uriRedir;
+
+	if ( errorStatus >= MIN_ERROR_CODE )
+		redir = req.getErrorPage( errorStatus, uriRedir );
+	if ( redir == true )
+	{
+		req.setRedir( true );
+		req.setUriRedir( uriRedir );
+		req.setError( HTTP_MOVED_TEMPORARILY );
+	}
+}
+
+void	Router::checkErrorBody( Request& req, int errorStatus )
+{
+	if ( errorStatus >= MIN_ERROR_CODE )
+		req.setOutput( getDefaultErrorPage( errorStatus ) );
+}
+
+bool	Router::processGetRequest( Request& req )
+{
+	fillOutput( req );
+	checkRedir( req );
+	checkErrorRedir( req.getError(), req );
+	checkErrorBody( req, req.getError() );
+	return ( req.getError() >= 400 );
 }
 
 bool	Router::processPostRequest( Request& req )

@@ -161,3 +161,10 @@ bool	Location::tryIndexFiles( std::string& file, std::string path ) const
 		return ( this->_directives->tryIndexFiles( file, path ) );
 	return ( false );
 }
+
+bool	Location::findReturnUri( int& uriCode, std::string& uriRedir ) const
+{
+	if ( isSet( "return" ) == true )
+		return ( this->_directives->findReturnUri( uriCode, uriRedir ) );
+	return ( false );
+}

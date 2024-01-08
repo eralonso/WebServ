@@ -86,12 +86,14 @@ public:
 	const LocationsSet&		getLocations( void ) const;
 	const StringBoolMap&	getIsSet( void ) const;
 	bool					isEmpty( void ) const;
-	bool					isSet( const std::string& key );
+	bool					isSet( const std::string& key ) const;
 	bool					getIsAllowedMethod( std::string method ) const;
 	bool					getErrorPageWithCode( unsigned int code, \
 								std::string& page ) const;
 	bool					tryIndexFiles( std::string& file, \
 								std::string path ) const;
+	bool					findReturnUri( int& uriCode, \
+										std::string& uriRedir ) const;
 };
 
 #endif

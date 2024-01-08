@@ -21,7 +21,7 @@
 # include <ConfigUtils.hpp>
 # include <ConfigApply.hpp>
 
-# define SERVER_SIZE_DIRECTIVES 7
+# define SERVER_SIZE_DIRECTIVES 8
 
 class Directives;
 
@@ -78,6 +78,9 @@ public:
 									std::string& page, const Location *lc ) const;
 	bool						isAutoindexAllow( const Location *lc ) const;
 	bool						tryIndexFiles( std::string& file, std::string path, \
+									const Location *lc ) const;
+	bool						findReturnUri( int& uriCode, \
+									std::string& uriRedirection, \
 									const Location *lc ) const;
 };
 

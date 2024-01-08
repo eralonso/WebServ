@@ -58,6 +58,10 @@ public:
     static bool			checkPathCanRead( Request& req, std::string path );
 	static bool			processDirectory( Request& req, std::string path );
 	static std::string	getDefaultErrorPage( unsigned int code );
+	static bool			fillOutput( Request& req );
+	static void			checkRedir( Request& req );
+	static void 		checkErrorRedir( int errorStatus, Request& req );
+	static void			checkErrorBody( Request& req, int errorStatus );
 };
 
 #endif

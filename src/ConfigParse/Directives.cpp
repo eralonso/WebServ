@@ -131,7 +131,17 @@ const StringBoolMap&	Directives::getIsSet( void ) const { return ( this->_isSet 
 
 bool	Directives::isEmpty( void ) const { return ( this->_isEmpty ); }
 
-bool	Directives::isSet( const std::string& key ) { return ( this->_isSet[ key ] ); }
+bool	Directives::isSet( const std::string& key ) const
+{
+	try
+	{
+		return ( this->_isSet.at( key ) );
+	}
+	catch ( const std::exception& )
+	{
+		return ( false );
+	}
+}
 
 bool	Directives::getIsAllowedMethod( std::string method ) const
 {
@@ -167,6 +177,17 @@ bool	Directives::tryIndexFiles( std::string& file, std::string path ) const
 			file = test;
 			return ( true );
 		}
+	}
+	return ( false );
+}
+
+bool	Directives::findReturnUri( int& uriCode, std::string& uriRedir ) const
+{
+	if ( isSet( "return" ) )
+	{
+		uriCode = this->_return.first;
+		uriRedir = this->_return.second;
+		return ( true );
 	}
 	return ( false );
 }
