@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/04 16:31:31 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/08 11:43:57 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,9 @@ std::string	Router::getHtml( Request *req )
 {
 	std::string		html;
 	std::string		resFolderLs;
-	std::string		readBuf;
+	// std::string		readBuf;
 	std::string		route = req->getRoute();
-	std::ifstream	infile;
+	// std::ifstream	infile;
 	std::string		path = req->getFilePath();
 
 	Log::Info("Path to GET ... " + path);
@@ -71,34 +71,37 @@ std::string	Router::getHtml( Request *req )
 		if (dirPath.size() == 0 || (*(dirPath.end() - 1)) != '/')
 			dirPath += '/';
 		if (FolderLs::getLs(resFolderLs, dirPath, route) == FolderLs::CANTOPENDIR)
-		{
-			infile.open(path.c_str(), std::ios::in); 	
-			if (infile.is_open())
-			{
-				while (!std::getline(infile, readBuf).eof())
-					html += readBuf + std::string("\n");
-				Log::Info("Read ... \n" + html);
-				infile.close();
-				return ( html );
-			}
-		}
+			return (readFile(path));
+		// {
+		// 	infile.open(path.c_str(), std::ios::in);
+		// 	if (infile.is_open())
+		// 	{
+		// 		while (!std::getline(infile, readBuf).eof())
+		// 			html += readBuf + std::string("\n");
+		// 		Log::Info("Read ... \n" + html);
+		// 		infile.close();
+		// 		return ( html );
+		// 	}
+		// }
 		return (resFolderLs);
 	}
-	html = "<!DOCTYPE html>\n";
-	html += "<html lang=\"en\">\n";
-	html += "<head>\n";
-	html += "\t<meta charset=\"UTF-8\">\n";
-	html += "\t<title>ª</title>\n";
-	html += "</head>\n";
-	html += "<body>\n";
-	html += "\t<h1 style=\"color: #00FFFF;\">Message from server</h1>\n";
-	if ( req != NULL )
-		html += getRequestEmbed( *req );
-	html += "\n";
-	html += getForm();
-	html += "</body>\n";
-	html += "</html>";
-	return ( html );
+	// html = "<!DOCTYPE html>\n";
+	// html += "<html lang=\"en\">\n";
+	// html += "<head>\n";
+	// html += "\t<meta charset=\"UTF-8\">\n";
+	// html += "\t<title>ª</title>\n";
+	// html += "</head>\n";
+	// html += "<body>\n";
+	// html += "\t<h1 style=\"color: #00FFFF;\">Message from server</h1>\n";
+	// if ( req != NULL )
+	// 	html += getRequestEmbed( *req );
+	// html += "\n";
+	// html += getForm();
+	// html += "</body>\n";
+	// html += "</html>";
+	// return ( html );
+	req->setError(404);
+	return(std::string(""));
 }
 
 std::string	Router::getHtmlErrorPage( Request *req )
@@ -381,9 +384,22 @@ std::string	Router::readFile( std::string file )
 	if ( fd.is_open() == false )
 		return ( "" );
 	while ( !std::getline( fd, buffer ).eof() )
-		storage += buffer;
+		storage += buffer + "\n";
 	fd.close();
 	return ( storage );
+}
+
+bool	Router::writeFile( std::string file, std::string content )
+{
+	std::ofstream	outfile;
+
+	outfile.open(file.c_str(), std::ios::out | std::ios::trunc); 	
+	if (!outfile.is_open())
+		return ( false );
+	outfile.write(content.c_str(), content.size());
+	Log::Info("Written ... \n" + content);
+	outfile.close();
+	return (true);
 }
 
 bool	Router::checkPathExist( Request& req, std::string path )
@@ -440,7 +456,7 @@ bool	Router::processPostRequest( Request& req )
 	std::string	route = req.getRoute();
 	std::string bodyContent = req.getBody();
 	std::string	document = req.getDocument();
-	std::ofstream	outfile;
+	// std::ofstream	outfile;
 	std::string path;
 	
 	if (bodyContent.size() == 0)
@@ -449,12 +465,14 @@ bool	Router::processPostRequest( Request& req )
 		return ( req.setError(403) ); //Forbidden
 	path = req.getFilePath();
 	Log::Info("Path to POST ... " + path);
-	outfile.open(path.c_str(), std::ios::out | std::ios::trunc); 	
-	if (!outfile.is_open())
+	if (! writeFile(path, bodyContent))
 		return ( req.setError(403) ); //Forbidden
-	outfile.write(bodyContent.c_str(), bodyContent.size());
-	Log::Info("Written ... \n" + bodyContent);
-	outfile.close();
+	// outfile.open(path.c_str(), std::ios::out | std::ios::trunc); 	
+	// if (!outfile.is_open())
+	// 	return ( req.setError(403) ); //Forbidden
+	// outfile.write(bodyContent.c_str(), bodyContent.size());
+	// Log::Info("Written ... \n" + bodyContent);
+	// outfile.close();
 	return ( req.setError(201) ); //Created
 }
 
