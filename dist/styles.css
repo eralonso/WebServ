@@ -8,6 +8,13 @@ section {
 	max-width: 90vw;
 }
 
+div, form
+{
+	margin: 1em;
+	padding: 1em;
+	border: 2px green SOLID;
+}
+
 input {
 	padding: 0.1em;
 	font-size: 1.2em;
