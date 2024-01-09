@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/09 14:06:33 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/09 16:05:22 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,7 +178,7 @@ Response	*Router::createFaviconRes( Response& res, Request& req )
 	std::string html;
 
 	formatGenericResponse( res, req );
-	if (req.getError() == 404)
+	if (req.getError() == 404 || req.getError() == 302)
 	{
 		req.setDefaultFavicon();
 		if (fillOutput( req ))
@@ -187,17 +187,20 @@ Response	*Router::createFaviconRes( Response& res, Request& req )
 			if (req.getError() != 404)
 				return (&res);
 		}
+	}
+	if (req.getError() == 404 || req.getError() == 302)
+	{	
+		res.setProtocol( req.getProtocol() );
+		res.setStatus( 200 );
+		res.setMethod( req.getMethod() );
+		res.appendHeader( Header( "Content-Type", MimeMap::getMime("svg") ) );
+		html += "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"150\" height=\"100\" viewBox=\"0 0 3 2\">\n";
+		html += "<rect width=\"1\" height=\"2\" x=\"0\" fill=\"#008d46\" />\n";
+		html += "<rect width=\"1\" height=\"2\" x=\"1\" fill=\"#ffffff\" />\n";
+		html += "<rect width=\"1\" height=\"2\" x=\"2\" fill=\"#d2232c\" />\n";
+		html += "</svg>\n";
+		res.setBody( html );
 	}	
-	res.setProtocol( req.getProtocol() );
-	res.setStatus( 200 );
-	res.setMethod( req.getMethod() );
-	res.appendHeader( Header( "Content-Type", MimeMap::getMime("svg") ) );
-	html += "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"150\" height=\"100\" viewBox=\"0 0 3 2\">\n";
-	html += "<rect width=\"1\" height=\"2\" x=\"0\" fill=\"#008d46\" />\n";
-	html += "<rect width=\"1\" height=\"2\" x=\"1\" fill=\"#ffffff\" />\n";
-	html += "<rect width=\"1\" height=\"2\" x=\"2\" fill=\"#d2232c\" />\n";
-	html += "</svg>\n";
-	res.setBody( html );
 	return ( &res );
 }
 
