@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/08 17:54:25 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/09 12:26:49 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -584,9 +584,10 @@ void	Request::updateFilePath( void )
 
 void Request::setDefaultFavicon(void)
 {
-	document = "favicon.png";
-	docExt = "png";
-	routeChain.clear();
+	this->route = "/favicon.svg";
+	parseRoute();
+	setError(0);
+	updateFilePath();
 }
 
 bool	Request::tryIndexFiles( std::string& file ) const

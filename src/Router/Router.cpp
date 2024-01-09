@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/08 17:56:22 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/09 12:34:35 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,9 @@ Router::~Router( void ) {}
 
 int	Router::updateResponse( Response &res, Request &req )
 {
-	Log::Error( "updateResponse" );
 	res.setServer( req.getHost() );
 	if ( req.getDocument() == "favicon.ico" )
-	 	createFaviconRes( res, req );
+		createFaviconRes( res, req );
 	else if ( req.getUseCgi() && req.getError() == 0 )
 		formatCgiResponse( res,req );
 	else
@@ -181,10 +180,13 @@ Response	*Router::createFaviconRes( Response& res, Request& req )
 	formatGenericResponse( res, req );
 	if (req.getError() == 404)
 	{
-		req.setError(200);
 		req.setDefaultFavicon();
-		formatGenericResponse( res, req );
-		return (&res);
+		if (fillOutput( req ))
+		{
+			formatGenericResponse( res, req );
+			if (req.getError() != 404)
+				return (&res);
+		}
 	}	
 	res.setProtocol( req.getProtocol() );
 	res.setStatus( 200 );
@@ -194,7 +196,6 @@ Response	*Router::createFaviconRes( Response& res, Request& req )
 	html += "<rect width=\"1\" height=\"2\" x=\"0\" fill=\"#008d46\" />\n";
 	html += "<rect width=\"1\" height=\"2\" x=\"1\" fill=\"#ffffff\" />\n";
 	html += "<rect width=\"1\" height=\"2\" x=\"2\" fill=\"#d2232c\" />\n";
-	html += "<circle cx=\"1\" cy=\"1\" r=\".5\" fill=\"#0000ff\" />\n";
 	html += "</svg>\n";
 	res.setBody( html );
 	return ( &res );
@@ -280,7 +281,6 @@ bool	Router::processRequestReceived( Request &req )
 	int			i;
 	std::string	requestMethod = req.getMethod();
 
-	Log::Success("Router::processRequestReceived");
 	req.checkUseCgi();
 	if ( req.getUseCgi() )
 		return ( processCgi( req ) );
@@ -495,7 +495,7 @@ bool	Router::processGetRequest( Request& req )
 	checkRedir( req );
 	checkErrorRedir( req.getError(), req );
 	checkErrorBody( req, req.getError() );
-	return ( req.getError() >= 400 );
+	return ( req.getError() < 400 );
 }
 
 bool	Router::processPostRequest( Request& req )
