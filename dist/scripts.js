@@ -21,7 +21,22 @@ function setChangeEventOfFileInput()
 		}); 
 	}
 }
-	
+
+function setChangeEventOfDelFileInput()
+{
+	const fileEditEl = document.getElementById('del-file-selector');
+	const outputNameEl = document.getElementById('outputDelName');
+	if (window.FileList && window.File && window.FileReader)
+	{
+		document.getElementById('delSubmit').addEventListener('click', event =>
+		{
+			file = fileEditEl.value;
+			outputNameEl.textContent = file;
+			sendDELETE(file);
+		}); 
+	}
+}
+
 async function sendPOST(contentBody, file)
 {
 	let urlLoc = window.location.href;
@@ -46,6 +61,30 @@ async function sendPOST(contentBody, file)
 	}
 }
 
+async function sendDELETE(file)
+{
+	let urlLoc = window.location.href;
+	urlLoc = urlLoc.split("/").slice(0, -1).join("/");
+	console.log("sendDELETE... " + file + " at url: " + urlLoc);
+	if(file)
+	{
+		console.log("fetching... " + file);
+		const response = await fetch(urlLoc + "/" + file,
+		{
+			method: "DELETE",
+			mode: "cors",
+			cache: "no-cache",
+			credentials: "same-origin",
+			headers:
+			{
+				"Content-Type": "text/plain",
+			},
+			body: "",
+		});
+		console.log(response);
+	}
+}
+
 async function readFile(file, outputEl)
 {
 	const reader = new FileReader();
@@ -64,3 +103,4 @@ async function readFile(file, outputEl)
 const urlDisplayEl = document.getElementById('urlDisplay');
 urlDisplayEl.textContent = "url of page: " + window.location.href;
 setChangeEventOfFileInput();
+setChangeEventOfDelFileInput();

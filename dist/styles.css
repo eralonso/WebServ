@@ -2,9 +2,21 @@ body {
 	margin: 0;
 }
 
+section {
+	margin: auto;
+	padding: 1em;
+	max-width: 90vw;
+}
+
+input {
+	padding: 0.1em;
+	font-size: 1.2em;
+}
+
 p {
 	margin: 1em;
-	font-size: 2em;
+	padding: 1em;
+	font-size: 1.2em;
 	color: lightgreen;
 	background-color: darkslategrey;
 }

@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/09 12:34:35 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/09 14:06:33 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -525,7 +525,20 @@ bool	Router::processPostRequest( Request& req )
 
 bool	Router::processDeleteRequest( Request& req )
 {
-	( void ) req;
+	std::string	path;
+	std::string	file;
+
+	path = req.getFilePath();
+	if ( checkPathExist( req, path ) == false )
+	{
+		req.setError(202);
+		return ( false );
+	}
+	file = path;
+	if ( isDir( path ) == true )
+		return (req.setError( 202 ));
+	std::remove(path.c_str());
+	req.setError( 204 );
 	return ( false );
 }
 

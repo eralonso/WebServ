@@ -7,25 +7,37 @@
 		<title>Document</title>
 	</head>
 	<body>
-		<h1>Index</h1>
-		<h3 id="urlDisplay">url of page: </h3>
-		<h2>Got From File</h2>
-		<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quasi recusandae necessitatibus aut aperiam nihil nostrum vitae cum dolores accusantium, a assumenda quaerat eos expedita quod exercitationem, cumque iure magnam beatae!</p>
-		<form method="POST">
-			<input id="firstname" name="firstname" />
-			<input id="surname" name="surname"/>
-			<input type="submit"/>
-		</form>
-		<form method="POST">
-			<input type="file" id="filename" name="filename"/>
-			<input type="submit"/>
-		</form>
-		<div>
-			<p id="status"></p>
-			<input type="file" id="file-selector" multiple>
-			<p id="outputName">Empty</p>
-			<p id="outputContent">Empty</p>
-		</div>
-		<script src="scripts.js"></script>
+		<section>
+
+			<h1>Index</h1>
+			<h3 id="urlDisplay">url of page: </h3>
+			<h2>Got From File</h2>
+			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quasi recusandae necessitatibus aut aperiam nihil nostrum vitae cum dolores accusantium, a assumenda quaerat eos expedita quod exercitationem, cumque iure magnam beatae!</p>
+			<form method="POST">
+				<h2>Post form</h2>
+				<input id="firstname" name="firstname" />
+				<input id="surname" name="surname"/>
+				<input type="submit"/>
+			</form>
+			<form method="POST">
+				<h2>Post file form</h2>
+				<input type="file" id="filename" name="filename"/>
+				<input type="submit"/>
+			</form>
+			<div>
+				<h2>Upload file</h2>
+				<p id="status"></p>
+				<input type="file" id="file-selector" multiple>
+				<p id="outputName">Empty</p>
+				<p id="outputContent">Empty</p>
+			</div>
+			<div>
+				<h2>Delete file</h2>
+				<input type="text" id="del-file-selector" multiple>
+				<p id="outputDelName">Empty</p>
+				<button id="delSubmit" type="submit">SUBMIT</button>
+			</div>
+			<script src="scripts.js"></script>
+		</section>
 	</body>
 </html>
