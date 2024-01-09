@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/09 16:05:22 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/09 16:51:10 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -290,7 +290,7 @@ bool	Router::processRequestReceived( Request &req )
 	for ( i = 0; i < METHODS_NB; i++ )
 		if ( Router::methods[ i ] == requestMethod )
 			break ;
-	if ( i < METHODS_NB )
+	if ( i < METHODS_NB && req.getError() != 405 )
 		Router::process[ i ]( req );
 	req.setReadyToSend();
 	return ( true );
@@ -494,6 +494,7 @@ void	Router::checkErrorBody( Request& req, int errorStatus )
 
 bool	Router::processGetRequest( Request& req )
 {
+	
 	fillOutput( req );
 	checkRedir( req );
 	checkErrorRedir( req.getError(), req );
