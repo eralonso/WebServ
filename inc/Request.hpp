@@ -146,6 +146,7 @@ public:
 	bool			setError( int err );
 	void			setRedir( bool isRedir );
 	void			setUriRedir( std::string uriRedirection );
+	void			setRedirection( std::string uri, int code );
 	void			logStatus( void );
 	bool			processLine( const std::string& line );
 	bool			tryIndexFiles( std::string& file ) const;

@@ -468,11 +468,7 @@ void	Router::checkRedir( Request& req )
 	int			uriCode;
 
 	if ( req.findReturnUri( uriCode, uriRedir ) == true )
-	{
-		req.setRedir( true );
-		req.setUriRedir( uriRedir );
-		req.setError( uriCode );
-	}
+		req.setRedirection( uriRedir, uriCode );
 }
 
 void 	Router::checkErrorRedir( int errorStatus, Request& req )
@@ -483,11 +479,7 @@ void 	Router::checkErrorRedir( int errorStatus, Request& req )
 	if ( errorStatus >= MIN_ERROR_CODE )
 		redir = req.getErrorPage( errorStatus, uriRedir );
 	if ( redir == true )
-	{
-		req.setRedir( true );
-		req.setUriRedir( uriRedir );
-		req.setError( HTTP_MOVED_TEMPORARILY );
-	}
+		req.setRedirection( uriRedir, HTTP_MOVED_TEMPORARILY );
 }
 
 void	Router::checkErrorBody( Request& req, int errorStatus )

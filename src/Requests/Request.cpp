@@ -572,13 +572,6 @@ void	Request::updateFilePath( void )
 			routeWithoutFile ), getDocument() );
 }
 
-void Request::setDefaultFavicon(void)
-{
-	document = "favicon.png";
-	docExt = "png";
-	routeChain.clear();
-}
-
 bool	Request::tryIndexFiles( std::string& file ) const
 {
 	if ( this->svr != NULL )
@@ -914,6 +907,20 @@ void	Request::setRedir( bool isRedir )
 void	Request::setUriRedir( std::string uriRedirection )
 {
 	this->uriRedir = uriRedirection;
+}
+
+void Request::setDefaultFavicon(void)
+{
+	document = "favicon.png";
+	docExt = "png";
+	routeChain.clear();
+}
+
+void	Request::setRedirection( std::string uri, int code )
+{
+	this->redir = true;
+	this->uriRedir = uri;
+	setError( code );
 }
 
 void	Request::logStatus( void )
