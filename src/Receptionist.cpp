@@ -145,12 +145,13 @@ void	Receptionist::manageClientRead( socket_t clientFd, Client *cli )
 		eraseClient( cli );
 		return ;
 	}
-	Log::Info( "Readed " \
-			+ SUtils::longToString( amount ) \
-			+ " bytes from [ " \
-			+ SUtils::longToString( clientFd ) \
-			+ " ]: " \
-			+ readed );
+	//Log::Info( "Readed " 
+	//		+ SUtils::longToString( amount ) 
+	//		+ " bytes from [ " 
+	//		+ SUtils::longToString( clientFd ) 
+	//		+ " ]: " 
+	//		+ readed );
+	Log::Info( "Reading..." ); 
 	cli->manageRecv( readed );
 	if ( cli->manageCompleteRecv() )
 		cli->allowPollWrite( true );

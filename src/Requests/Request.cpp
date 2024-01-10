@@ -500,23 +500,13 @@ bool	Request::checkKeepAlive( void )
 
 void	Request::checkUseCgi( void )
 {
-	const Server	*s = NULL;
-	std::string		binary;
-	std::string		host;
-	std::string		port;
+	std::string	binary;
 
 	this->useCgi = false;
 	if ( docExt.size() == 0 )
 		return ;
-	Client *cli = getClient();
-	if ( !cli )
-		return ;
-	getHostPort( host, port );
-	s = ServerFinder::find( cli->getServers(), host, port );
-	if ( !s )
-		return ;
-	binary = s->getCgiBinary( docExt, lc );
-	useCgi = ( binary.size() > 0 );
+	binary = this->svr->getCgiBinary( docExt, lc );
+	this->useCgi = ( binary.size() > 0 );
 }
 
 bool	Request::checkEmptyContent( size_t& size )
@@ -913,7 +903,7 @@ bool	Request::setError( int value )
 		this->badRequest = true;
 	this->status = RECVD_ALL;
 	this->error = value;
-	return ( true );
+	return ( this->badRequest != true );
 }
 
 void	Request::setRedir( bool isRedir )

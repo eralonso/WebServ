@@ -32,9 +32,9 @@ int	Router::updateResponse( Response &res, Request &req )
 {
 	Log::Error( "updateResponse" );
 	res.setServer( req.getHost() );
-	if ( req.getDocument() == "favicon.ico" )
-	 	createFaviconRes( res, req );
-	else if ( req.getUseCgi() && req.getError() == 0 )
+	//if ( req.getDocument() == "favicon.ico" )
+	 //	createFaviconRes( res, req );
+	if ( req.getUseCgi() && req.getError() == 0 )
 		formatCgiResponse( res,req );
 	else
 		formatGenericResponse( res, req );
@@ -277,7 +277,7 @@ bool	Router::processCgi( Request& req )
 
 bool	Router::processRequestReceived( Request &req )
 {
-	int			i;
+	int			i = 0;
 	std::string	requestMethod = req.getMethod();
 
 	Log::Success("Router::processRequestReceived");
@@ -286,20 +286,17 @@ bool	Router::processRequestReceived( Request &req )
 	{
 		req.checkUseCgi();
 		if ( req.getUseCgi() )
-			processCgi( req );
+			return ( processCgi( req ) );
+		while ( i < METHODS_NB && Router::methods[ i ] != requestMethod )
+			i++;
+		if ( i < METHODS_NB )
+			Router::process[ i ]( req );
 		else
-		{
-			for ( i = 0; i < METHODS_NB; i++ )
-				if ( Router::methods[ i ] == requestMethod )
-					break ;
-			if ( i < METHODS_NB )
-				Router::process[ i ]( req );
-		}
+			req.setError( 405 );
 	}
 	checkErrorRedir( req.getError(), req );
 	checkErrorBody( req, req.getError() );
-	if ( !req.getUseCgi() )
-		req.setReadyToSend();
+	req.setReadyToSend();
 	return ( true );
 }
 
@@ -407,7 +404,7 @@ bool	Router::writeFile( std::string file, std::string content )
 	if (!outfile.is_open())
 		return ( false );
 	outfile.write(content.c_str(), content.size());
-	Log::Info("Written ... \n" + content);
+	//Log::Info("Written ... \n" + content);
 	outfile.close();
 	return (true);
 }
