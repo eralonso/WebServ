@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/08 17:56:22 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/10 16:28:18 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ Router::~Router( void ) {}
 
 int	Router::updateResponse( Response &res, Request &req )
 {
-	Log::Error( "updateResponse" );
 	res.setServer( req.getHost() );
 	//if ( req.getDocument() == "favicon.ico" )
 	 //	createFaviconRes( res, req );
@@ -179,24 +178,29 @@ Response	*Router::createFaviconRes( Response& res, Request& req )
 	std::string html;
 
 	formatGenericResponse( res, req );
-	if (req.getError() == 404)
+	if (req.getError() == 404 || req.getError() == 302)
 	{
-		req.setError(200);
 		req.setDefaultFavicon();
-		formatGenericResponse( res, req );
-		return (&res);
+		if (fillOutput( req ))
+		{
+			formatGenericResponse( res, req );
+			if (req.getError() != 404)
+				return (&res);
+		}
+	}
+	if (req.getError() == 404 || req.getError() == 302)
+	{	
+		res.setProtocol( req.getProtocol() );
+		res.setStatus( 200 );
+		res.setMethod( req.getMethod() );
+		res.appendHeader( Header( "Content-Type", MimeMap::getMime("svg") ) );
+		html += "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"150\" height=\"100\" viewBox=\"0 0 3 2\">\n";
+		html += "<rect width=\"1\" height=\"2\" x=\"0\" fill=\"#008d46\" />\n";
+		html += "<rect width=\"1\" height=\"2\" x=\"1\" fill=\"#ffffff\" />\n";
+		html += "<rect width=\"1\" height=\"2\" x=\"2\" fill=\"#d2232c\" />\n";
+		html += "</svg>\n";
+		res.setBody( html );
 	}	
-	res.setProtocol( req.getProtocol() );
-	res.setStatus( 200 );
-	res.setMethod( req.getMethod() );
-	res.appendHeader( Header( "Content-Type", MimeMap::getMime("svg") ) );
-	html += "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"150\" height=\"100\" viewBox=\"0 0 3 2\">\n";
-	html += "<rect width=\"1\" height=\"2\" x=\"0\" fill=\"#008d46\" />\n";
-	html += "<rect width=\"1\" height=\"2\" x=\"1\" fill=\"#ffffff\" />\n";
-	html += "<rect width=\"1\" height=\"2\" x=\"2\" fill=\"#d2232c\" />\n";
-	html += "<circle cx=\"1\" cy=\"1\" r=\".5\" fill=\"#0000ff\" />\n";
-	html += "</svg>\n";
-	res.setBody( html );
 	return ( &res );
 }
 
@@ -490,6 +494,7 @@ void	Router::checkErrorBody( Request& req, int errorStatus )
 
 bool	Router::processGetRequest( Request& req )
 {
+	
 	fillOutput( req );
 	return ( req.getError() >= 400 );
 }
@@ -521,7 +526,20 @@ bool	Router::processPostRequest( Request& req )
 
 bool	Router::processDeleteRequest( Request& req )
 {
-	( void ) req;
+	std::string	path;
+	std::string	file;
+
+	path = req.getFilePath();
+	if ( checkPathExist( req, path ) == false )
+	{
+		req.setError(202);
+		return ( false );
+	}
+	file = path;
+	if ( isDir( path ) == true )
+		return (req.setError( 202 ));
+	std::remove(path.c_str());
+	req.setError( 204 );
 	return ( false );
 }
 
