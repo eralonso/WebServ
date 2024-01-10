@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   DirectivesDefines.hpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 16:57:21 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/08 19:39:36 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/10 18:46:13 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,6 @@
 # define HTTPS_PREFIX "https://"
 
 # define HTTP_MOVED_TEMPORARILY 302
+# define HTTP_SEE_OTHER 303
 
 #endif

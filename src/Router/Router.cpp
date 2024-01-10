@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/10 16:28:18 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/10 18:47:54 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -293,6 +293,7 @@ bool	Router::processRequestReceived( Request &req )
 			return ( processCgi( req ) );
 		while ( i < METHODS_NB && Router::methods[ i ] != requestMethod )
 			i++;
+		Log::Error( "To Find: " + req.getFilePath() + " && method: " + SUtils::longToString( i ) );
 		if ( i < METHODS_NB )
 			Router::process[ i ]( req );
 		else
@@ -301,6 +302,7 @@ bool	Router::processRequestReceived( Request &req )
 	checkErrorRedir( req.getError(), req );
 	checkErrorBody( req, req.getError() );
 	req.setReadyToSend();
+	Log::Error( "ErrorCode <AFTER>: " + SUtils::longToString( req.getError() ) );
 	return ( true );
 }
 
@@ -483,7 +485,12 @@ void 	Router::checkErrorRedir( int errorStatus, Request& req )
 	if ( errorStatus >= MIN_ERROR_CODE )
 		redir = req.getErrorPage( errorStatus, uriRedir );
 	if ( redir == true )
-		req.setRedirection( uriRedir, HTTP_MOVED_TEMPORARILY );
+	{
+		if ( req.getMethod() == "GET")
+			req.setRedirection( uriRedir, HTTP_MOVED_TEMPORARILY );
+		else
+			req.setRedirection( uriRedir, HTTP_SEE_OTHER );
+	}
 }
 
 void	Router::checkErrorBody( Request& req, int errorStatus )
@@ -494,7 +501,7 @@ void	Router::checkErrorBody( Request& req, int errorStatus )
 
 bool	Router::processGetRequest( Request& req )
 {
-	
+	Log::Error( "To Find: " + req.getFilePath() );
 	fillOutput( req );
 	return ( req.getError() >= 400 );
 }
@@ -532,12 +539,12 @@ bool	Router::processDeleteRequest( Request& req )
 	path = req.getFilePath();
 	if ( checkPathExist( req, path ) == false )
 	{
-		req.setError(202);
+		req.setError(404);
 		return ( false );
 	}
 	file = path;
 	if ( isDir( path ) == true )
-		return (req.setError( 202 ));
+		return (req.setError( 403 ));
 	std::remove(path.c_str());
 	req.setError( 204 );
 	return ( false );
