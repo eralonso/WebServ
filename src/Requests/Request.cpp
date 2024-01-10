@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/10 16:27:03 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/10 17:12:21 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -915,13 +915,6 @@ void	Request::setRedir( bool isRedir )
 void	Request::setUriRedir( std::string uriRedirection )
 {
 	this->uriRedir = uriRedirection;
-}
-
-void Request::setDefaultFavicon(void)
-{
-	document = "favicon.png";
-	docExt = "png";
-	routeChain.clear();
 }
 
 void	Request::setRedirection( std::string uri, int code )
