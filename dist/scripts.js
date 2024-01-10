@@ -65,11 +65,8 @@ async function sendDELETE(file)
 {
 	let urlLoc = window.location.href;
 	urlLoc = urlLoc.split("/").slice(0, -2);
-	console.log(urlLoc);
 	urlLoc.push("files_upload")
-	console.log(urlLoc);
 	urlLoc = urlLoc.join("/");
-	console.log(urlLoc);
 	console.log("sendDELETE... " + file + " at url: " + urlLoc);
 	if(file)
 	{
