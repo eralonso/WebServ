@@ -21,7 +21,7 @@
 # include <ConfigUtils.hpp>
 # include <ConfigApply.hpp>
 
-# define SERVER_SIZE_DIRECTIVES 8
+# define SERVER_SIZE_DIRECTIVES 10
 
 class Directives;
 

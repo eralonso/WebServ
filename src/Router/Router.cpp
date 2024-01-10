@@ -281,15 +281,25 @@ bool	Router::processRequestReceived( Request &req )
 	std::string	requestMethod = req.getMethod();
 
 	Log::Success("Router::processRequestReceived");
-	req.checkUseCgi();
-	if ( req.getUseCgi() )
-		return ( processCgi( req ) );
-	for ( i = 0; i < METHODS_NB; i++ )
-		if ( Router::methods[ i ] == requestMethod )
-			break ;
-	if ( i < METHODS_NB )
-		Router::process[ i ]( req );
-	req.setReadyToSend();
+	checkRedir( req );
+	if ( req.getError() < 300 )
+	{
+		req.checkUseCgi();
+		if ( req.getUseCgi() )
+			processCgi( req );
+		else
+		{
+			for ( i = 0; i < METHODS_NB; i++ )
+				if ( Router::methods[ i ] == requestMethod )
+					break ;
+			if ( i < METHODS_NB )
+				Router::process[ i ]( req );
+		}
+	}
+	checkErrorRedir( req.getError(), req );
+	checkErrorBody( req, req.getError() );
+	if ( !req.getUseCgi() )
+		req.setReadyToSend();
 	return ( true );
 }
 
@@ -492,9 +502,6 @@ void	Router::checkErrorBody( Request& req, int errorStatus )
 bool	Router::processGetRequest( Request& req )
 {
 	fillOutput( req );
-	checkRedir( req );
-	checkErrorRedir( req.getError(), req );
-	checkErrorBody( req, req.getError() );
 	return ( req.getError() >= 400 );
 }
 
