@@ -43,6 +43,7 @@ public:
 	void	 		setQuery( std::string query );
 	void	 		setHeaders( Headers headers );
 	void	 		setBody( std::string content );
+	void			setBodyLength( size_t len );
 	void			setIsCgi(bool value);
 	void	 		appendHeader( Header header );
 	std::string		getServer( void ) const;

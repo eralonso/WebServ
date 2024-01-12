@@ -326,7 +326,10 @@ Response	*Router::formatGenericResponse( Response& res, Request& req )
 		res.appendHeader( Header( "Location", req.getUriRedir() ) );
 	res.setStatus( req.getError() );
 	res.setMethod( req.getMethod() );
-	res.setBody( req.getOutput() );
+	if ( req.getMethod() != "HEAD" )
+		res.setBody( req.getOutput() );
+	else
+		res.setBodyLength( req.getOutput().length() );
 	return ( &res );
 }
 
@@ -509,13 +512,13 @@ void	Router::checkErrorBody( Request& req, int errorStatus )
 
 bool	Router::processGetRequest( Request& req )
 {
-	fillOutput( req, true);
+	fillOutput( req, true );
 	return ( req.getError() >= 400 );
 }
 
 bool	Router::processHeadRequest( Request& req )
 {
-	fillOutput( req, false );
+	fillOutput( req, true );
 	return ( req.getError() >= 400 );
 }
 

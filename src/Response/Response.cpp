@@ -23,7 +23,7 @@ Response::Response( const Response& b )
 	this->route = b.route;
 	this->query = b.query;
 	this->headers = b.headers;
-	this->body = b.body;	
+	this->body = b.body;
 	this->isCgi = b.isCgi;
 	this->server = b.server;
 }
@@ -84,6 +84,13 @@ void	Response::setBody( std::string content )
 	Header	h( "Content-Length", SUtils::longToString( content.length() ) );
 
 	this->body = content;
+	this->headers.replace( h );
+}
+
+void	Response::setBodyLength( size_t len )
+{
+	Header	h( "Content-Length", SUtils::longToString( len ) );
+
 	this->headers.replace( h );
 }
 
