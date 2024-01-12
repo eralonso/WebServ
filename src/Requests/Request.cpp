@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/12 10:41:27 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/12 10:52:22 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -285,6 +285,7 @@ void	Request::parseRoute( void )
 	StringVector::iterator	doc;
 	parseQueryStringFromRoute();
 	parseHostPortFromRoute();
+	Log::Success("Request::parseRoute route: " + this->route);
 	this->routeChain = SplitString::split( this->route, "/" );
 	if ( this->routeChain.size() > 0 && ( this->route.size() > 0 \
 			&& this->route[ this->route.size() - 1 ] != '/' ) )
