@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:31:42 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/22 18:15:20 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/12 12:05:41 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,10 @@ namespace SUtils
 	int					compareNumbersAsStrings( \
 							const std::string num1, \
 							const std::string num2 );
+	std::string 	compactString(const std::string& src, \
+							size_t maxSize, \
+							size_t headSize, \
+							size_t tailSize);
 }
 
 namespace STLUtils

@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/12 11:07:40 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/12 11:35:34 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,11 +216,11 @@ void	Request::parseHostPortFromRoute( void )
 
 void	Request::parseRoute( void )
 {
-	Log::Success( "Request::parseRoute" );
+	// Log::Success( "Request::parseRoute" );
 	StringVector::iterator	doc;
 	parseQueryStringFromRoute();
 	parseHostPortFromRoute();
-	Log::Success("Request::parseRoute route: " + this->route);
+	// Log::Success("Request::parseRoute route: " + this->route);
 	this->routeChain = SplitString::split( this->route, "/" );
 	if ( this->routeChain.size() > 0 && ( this->route.size() > 0 \
 			&& this->route[ this->route.size() - 1 ] != '/' ) )
@@ -232,7 +232,10 @@ void	Request::parseRoute( void )
 	}
 	if ( this->routeChain.size() == 0 && ( this->route.size() < 1 \
 			|| this->route[ 0 ] != '/' ) )
+	{
 		Log::Error( "routeChain is empty" );
+		setError(400);
+	}
 	Log::Info( "Host: " + routeHost);
 	Log::Info( "Port: " + routePort);
 	Log::Info( "Route Chaine: " + getRouteChaineString() );
@@ -247,7 +250,7 @@ void	Request::parseFirstLine( const std::string &line )
 {
 	StringVector	tokens;
 
-	Log::Error( "Request::parseFirstLine: \n" + line );
+	// Log::Error( "Request::parseFirstLine: \n" + line );
 	tokens = SplitString::split( line, " " );
 	if ( ( tokens.size() ) < 3 )
 	{

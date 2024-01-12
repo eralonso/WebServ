@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/10 18:47:54 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/12 11:59:52 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,7 +283,7 @@ bool	Router::processRequestReceived( Request &req )
 	int			i = 0;
 	std::string	requestMethod = req.getMethod();
 
-	Log::Success("Router::processRequestReceived");
+	// Log::Success("Router::processRequestReceived");
 	checkRedir( req );
 	if ( req.getError() < MIN_ERROR_CODE )
 	{
@@ -292,7 +292,7 @@ bool	Router::processRequestReceived( Request &req )
 			return ( processCgi( req ) );
 		while ( i < METHODS_NB && Router::methods[ i ] != requestMethod )
 			i++;
-		Log::Error( "To Find: " + req.getFilePath() + " && method: " + SUtils::longToString( i ) );
+		// Log::Error( "To Find: " + req.getFilePath() + " && method: " + SUtils::longToString( i ) );
 		if ( i < METHODS_NB )
 			Router::process[ i ]( req );
 		else
@@ -301,7 +301,7 @@ bool	Router::processRequestReceived( Request &req )
 	checkErrorRedir( req.getError(), req );
 	checkErrorBody( req, req.getError() );
 	req.setReadyToSend();
-	Log::Error( "ErrorCode <AFTER>: " + SUtils::longToString( req.getError() ) );
+	// Log::Error( "ErrorCode <AFTER>: " + SUtils::longToString( req.getError() ) );
 	return ( true );
 }
 
@@ -500,7 +500,7 @@ void	Router::checkErrorBody( Request& req, int errorStatus )
 
 bool	Router::processGetRequest( Request& req )
 {
-	Log::Error( "To Find: " + req.getFilePath() );
+	// Log::Error( "To Find: " + req.getFilePath() );
 	fillOutput( req );
 	return ( req.getError() >= 400 );
 }

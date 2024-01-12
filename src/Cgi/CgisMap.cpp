@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CgisMap.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 11:18:09 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/21 13:16:04 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/12 11:36:34 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	CgisMap::appendCgi( std::string ext, std::string binary )
 
 std::string	CgisMap::getBinary( std::string ext ) const
 {
-	Log::Success("CgisMap::getBinary map.size: " + SUtils::longToString(size()));
+	// Log::Success("CgisMap::getBinary map.size: " + SUtils::longToString(size()));
 	try
 	{
 		return (this->at( ext ));
