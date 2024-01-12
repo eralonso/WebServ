@@ -138,7 +138,8 @@ void	Receptionist::manageClientRead( socket_t clientFd, Client *cli )
 	int			amount;
 
 	amount = readRequest( clientFd, readed );
-	if ( amount < 0 || (amount == 0 && CgiExecutor::findClientPendingPid(cli) == 0))
+	if ( amount < 0 || ( amount == 0 \
+		&& CgiExecutor::findClientPendingPid( cli ) == 0 ) )
 	{
 		// Read Failed or finish to read and not pending of timeout
 		polls.closePoll( clientFd );

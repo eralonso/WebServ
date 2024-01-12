@@ -218,6 +218,7 @@ int	Client::managePollout( void )
 
 	while ( ( req = findReadyToSendRequest() ) )
 	{
+		Log::Error( "Generating response klregrthgthgtrh" );
 		res = Router::getResponse( req );
 		// Log::Info("managePollout for: " + SUtils::longToString(req->getId()));
 		// Log::Info("Response: \n" + res->toString());

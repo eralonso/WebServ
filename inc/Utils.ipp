@@ -78,6 +78,19 @@ namespace STLUtils
 			return ( -1 );
 		return ( it - begin );
 	}
+
+	template < typename T >
+	int	charCount( typename T::iterator begin, typename T::iterator end, \
+					char toFind )
+	{
+		size_t	amount;
+
+		amount = 0; 
+		for ( typename T::iterator it = begin; it != end; it++ )
+			if ( *it == toFind )
+				amount++;
+		return ( amount );
+	}
 }
 
 #endif

@@ -83,6 +83,7 @@ private:
 	bool	processLineOnRecvdChunkSize( const std::string &line );
 	bool	processLineOnRecvdChunk( const std::string &line );
 	bool	processLineOnRecvdLastChunk( const std::string &line );
+	bool	checkProtocol( std::string protocol );
 	bool	checkChunked( void );
 	bool	checkKeepAlive( void );
 	int		splitDocExt( void );

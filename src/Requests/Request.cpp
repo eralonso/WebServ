@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/12 11:35:34 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/12 15:10:20 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ void	Request::parseQueryStringFromRoute( void )
 	if ( len > 2 )
 	{
 		Log::Error( "Request query string invalid" );
-		this->error = 400;
+		this->error = HTTP_BAD_REQUEST_CODE;
 		this->badRequest = true;
 		return ;
 	}
@@ -147,7 +147,7 @@ bool	Request::parseDropHttp(StringVector& tokens,  size_t& tokensSize, bool& htt
 	if (httpDropped && (tokens[0].size() < 2 || tokens[0][0] != '/' || tokens[0][1] != '/') )
 	{
 		Log::Error( "Request route invalid, after http: must follow //" );
-		this->setError(400);
+		this->setError(HTTP_BAD_REQUEST_CODE);
 		return true;
 	}
 	tokens[0].erase(tokens[0].begin(), tokens[0].begin() + 2);
@@ -170,7 +170,7 @@ void	Request::parseHostPortFromRoute( void )
 	if (tokensSize > 3 || tokensSize < 1)
 	{
 		Log::Error( "Request route invalid, too colons or empty" );
-		this->setError(400);
+		this->setError(HTTP_BAD_REQUEST_CODE);
 		return ;
 	}
 	if (tokensSize == 3)
@@ -178,7 +178,7 @@ void	Request::parseHostPortFromRoute( void )
 		if (tokens[0] != "http")
 		{
 			Log::Error( "Request route invalid, when 2 colons must start with http" );
-			this->setError(400);
+			this->setError(HTTP_BAD_REQUEST_CODE);
 			return ;
 		}
 		if (parseDropHttp(tokens, tokensSize, httpDropped))
@@ -189,7 +189,7 @@ void	Request::parseHostPortFromRoute( void )
 		if (httpDropped && tokens[0] == "http")
 		{
 			Log::Error( "Request route invalid, http repeated" );
-			this->setError(400);
+			this->setError(HTTP_BAD_REQUEST_CODE);
 			return ;
 		}
 		if (!httpDropped && tokens[0] == "http" && parseDropHttp(tokens, tokensSize, httpDropped))
@@ -234,7 +234,7 @@ void	Request::parseRoute( void )
 			|| this->route[ 0 ] != '/' ) )
 	{
 		Log::Error( "routeChain is empty" );
-		setError(400);
+		setError(HTTP_BAD_REQUEST_CODE);
 	}
 	Log::Info( "Host: " + routeHost);
 	Log::Info( "Port: " + routePort);
@@ -255,24 +255,18 @@ void	Request::parseFirstLine( const std::string &line )
 	if ( ( tokens.size() ) < 3 )
 	{
 		Log::Error( "Request first line incomplete" );
-		Log::Error(line);
-		Log::Error("First line tokens nb: " + SUtils::longToString(tokens.size()));
-		for (size_t i = 0; i < tokens.size(); i++)
-		{
-			Log::Error("First line token: " + tokens[i]);
-		}
-		this->badRequest = true;
-		this->error = 400;
+		Log::Error( line );
+		Log::Error( "First line tokens nb: " + SUtils::longToString( tokens.size() ) );
+		for ( size_t i = 0; i < tokens.size(); i++ )
+			Log::Error( "First line token: " + tokens[ i ] );
+		setError( HTTP_BAD_REQUEST_CODE );
 		return ;
 	}
 	this->method = SUtils::trim( tokens[ 0 ] );
-	//TODO
-	// if (method not in implemented)
-	// 	badRequest true;
 	this->route = SUtils::trim( tokens[ 1 ] );
 	this->protocol = SUtils::trim( tokens[ 2 ] );
-	//TODO
-	//check if protocol matches
+	if ( checkProtocol( this->protocol ) == false )
+		return ;
 	parseRoute();
 }
 
@@ -331,7 +325,7 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 		this->status = RECVD_HEADER;
 		checkKeepAlive();
 		if (!updateServerConfig())
-			return ( setError( 400 ) );
+			return ( setError( HTTP_BAD_REQUEST_CODE ) );
 		updateLocation();
 		maxBodySize = svr->getMaxBodySize(getRoute());
 		if (svr->getIsAllowedMethod( this->route, this->method ) == false)
@@ -351,7 +345,7 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 			}
 		}
 		if (maxBodySize != 0 && contentSize > maxBodySize)
-			return ( setError( 400 ) );
+			return ( setError( HTTP_BAD_REQUEST_CODE ) );
 		return ( true );
 	}
 	parseHeader( line );
@@ -368,7 +362,7 @@ bool	Request::processLineOnRecvdHeader( const std::string &line )
 	{
 		contentSize = SUtils::atol( clHead->getValue().c_str() );
 		if (maxBodySize != 0 && contentSize > maxBodySize)
-			return ( setError( 400 ) );
+			return ( setError( HTTP_BAD_REQUEST_CODE ) );
 		if ( this->body.size() >= contentSize )
 		{
 			// Log::Success(body);
@@ -397,7 +391,7 @@ bool	Request::processLineOnRecvdChunkSize( const std::string &line )
 	{
 		this->body += line;
 		if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
-			return ( setError( 400 ) );
+			return ( setError( HTTP_BAD_REQUEST_CODE ) );
 		this->status = RECVD_CHUNK;
 		return ( true );
 	}
@@ -405,7 +399,7 @@ bool	Request::processLineOnRecvdChunkSize( const std::string &line )
 	{
 		this->body += line.substr( 0, len - 1 );
 		if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
-			return ( setError( 400 ) );
+			return ( setError( HTTP_BAD_REQUEST_CODE ) );
 		this->status = RECVD_CHUNK;
 		return ( true );
 	}
@@ -484,6 +478,28 @@ bool	Request::processLine( const std::string &line )
 			return ( false );
 	}
 	return ( false );
+}
+
+bool	Request::checkProtocol( std::string protocol )
+{
+	StringVector	version;
+
+	if ( protocol.length() < 5 || protocol.compare( 0, 5, "HTTP/" ) != 0 \
+		|| STLUtils::charCount< std::string >( protocol.begin(), \
+			protocol.end(), '.' ) > 1 )
+		return ( setError( HTTP_BAD_REQUEST_CODE ) );
+	SUtils::split( version, protocol.substr( 5, std::string::npos ), "." );
+	if ( version.size() == 0 )
+		return ( setError( HTTP_BAD_REQUEST_CODE ) );
+	for ( StringVector::iterator it = version.begin(); it != version.end(); it++ )
+		if ( SUtils::isNum( *it ) == false \
+			|| SUtils::compareNumbersAsStrings( *it, \
+				SUtils::longToString( std::numeric_limits< short >::max() ) ) > 0 )
+			return ( setError( HTTP_BAD_REQUEST_CODE ) );
+	if ( SUtils::atoi( version[ 0 ] ) != 1 || ( version.size() == 2 \
+		&& SUtils::atoi( version[ 1 ] ) > 1 ) )
+		return ( setError( HTTP_VERSION_NOT_SUPPORTED_CODE ) );
+	return ( true );
 }
 
 bool	Request::checkChunked( void )
@@ -911,7 +927,7 @@ void	Request::setOutput( std::string str )
 
 bool	Request::setError( int value )
 {
-	if ( value >= 400 )
+	if ( value >= HTTP_BAD_REQUEST_CODE )
 		this->badRequest = true;
 	this->status = RECVD_ALL;
 	this->error = value;

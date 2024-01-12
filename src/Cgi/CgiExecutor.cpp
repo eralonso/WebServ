@@ -67,12 +67,12 @@ CgiExecutor::~CgiExecutor( void )
 
 void	CgiExecutor::onFailFork( void )
 {
-		Log::Error( "fork: failed create child process" );
-		close( this->fdToChild[ FDIN ] );
-		close( this->fdToChild[ FDOUT ] );
-		close( this->fdFromChild[ FDIN ] );
-		close( this->fdFromChild[ FDOUT ] );
-		throw exceptOther;
+	Log::Error( "fork: failed create child process" );
+	close( this->fdToChild[ FDIN ] );
+	close( this->fdToChild[ FDOUT ] );
+	close( this->fdFromChild[ FDIN ] );
+	close( this->fdFromChild[ FDOUT ] );
+	throw exceptOther;
 }
 
 void	CgiExecutor::onFailToChildPipeOpen( void )
@@ -252,6 +252,7 @@ void	CgiExecutor::checkCompletedTasks( void )
 		pTask->applyTaskOutputToReq();
 		CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
 		cli = req->getClient();
+		req->setError( HTTP_OK_CODE );
 		req->setReadyToSend();
 		if ( cli != NULL )
 			cli->allowPollWrite( true );
@@ -271,8 +272,10 @@ void	CgiExecutor::checkTimeoutedTasks( void )
 			+ " process id: " + SUtils::longToString( pTask->getPid() ) );
 		pTask->killPendingTask();
 		CgiExecutor::pendingTasks.eraseTask( pTask->getPid() );
-		req.setUseCgi( false );
-		req.setError( HTTP_INTERNAL_SERVER_ERROR_CODE );
+		//req.setUseCgi( false );
+		req.setError( HTTP_GATEWAY_TIMEOUT_CODE );
+		Router::checkErrorRedir( req.getError(), req );
+		Router::checkErrorBody( req, req.getError() );
 		req.setReadyToSend();
 		cli = req.getClient();		
 		if ( cli != NULL )
