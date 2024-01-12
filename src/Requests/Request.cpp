@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/10 17:12:21 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/12 09:05:51 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,6 +180,7 @@ void	Request::parseHostPortFromRoute( void )
 	}
 	if (tokensSize == 2)
 	{
+		Log::Success( "Request::parseHostPortFromRoute tokensSize = 2, httpDropped = " + std::string(httpDropped ? "true" : "false") );
 		if (!httpDropped)
 		{
 			if (tokens[0] != "http")
@@ -240,6 +241,7 @@ void	Request::parseFirstLine( const std::string &line )
 {
 	StringVector	tokens;
 
+	Log::Error( "Request::parseFirstLine: \n" + line );
 	tokens = SplitString::split( line, " " );
 	if ( ( tokens.size() ) < 3 )
 	{
