@@ -292,7 +292,7 @@ void	DirectivesParser::parseReturn( std::string body, Directives *d )
 	int				code;
 	std::string		uri;
 
-	code = HTTP_MOVED_TEMPORARILY;
+	code = HTTP_MOVED_TEMPORARILY_CODE;
 	SUtils::split( args, body, ISSPACE );
 	if ( args.size() == 0 || args.size() > 2 )
 		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \

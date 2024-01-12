@@ -25,7 +25,20 @@
 # define HTTP_PREFIX "http://"
 # define HTTPS_PREFIX "https://"
 
-# define HTTP_MOVED_TEMPORARILY 302
-# define HTTP_SEE_OTHER 303
+//Success Codes
+# define HTTP_OK_CODE 200
+# define HTTP_CREATED_CODE 201
+# define HTTP_ACCEPTED_CODE 202
+# define HTTP_NO_CONTENT_CODE 204
+
+//Redirect Codes
+# define HTTP_MOVED_TEMPORARILY_CODE 302
+# define HTTP_SEE_OTHER_CODE 303
+
+//Error Codes
+# define HTTP_FORBIDDEN_CODE 403
+# define HTTP_NOT_FOUND_CODE 404
+# define HTTP_NOT_ALLOWED_CODE 405
+# define HTTP_INTERNAL_SERVER_ERROR_CODE 500
 
 #endif

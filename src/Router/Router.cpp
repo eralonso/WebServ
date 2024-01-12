@@ -31,8 +31,6 @@ Router::~Router( void ) {}
 int	Router::updateResponse( Response &res, Request &req )
 {
 	res.setServer( req.getHost() );
-	//if ( req.getDocument() == "favicon.ico" )
-	 //	createFaviconRes( res, req );
 	if ( req.getUseCgi() && req.getError() == 0 )
 		formatCgiResponse( res,req );
 	else
@@ -43,12 +41,11 @@ int	Router::updateResponse( Response &res, Request &req )
 			+ SUtils::longToString( req.getError() ) );
 		if ( req.getError() == 100 )
 			formatContinueResponse( res, req );
-		else if ( req.getError() == 202 )
+		else if ( req.getError() == HTTP_ACCEPTED_CODE )
 			formatAcceptResponse( res, req );
 		else
 			formatErrorResponse( res, req );
 	}
-	else if ( req.getMethod() == "GET" )
 	else
 		formatAcceptResponse( res, req );
 	*/
@@ -106,7 +103,7 @@ std::string	Router::getHtml( Request *req )
 		if (access(path.c_str(), R_OK) == 0)
 				return (readFile(path));
 	}
-	req->setError(404);
+	req->setError(HTTP_NOT_FOUND_CODE);
 	return(std::string(""));
 }
 
@@ -158,14 +155,14 @@ Response	*Router::getResponse( Request *req )
 	//int			error;
 
 	if ( !req )
-		formatErrorResponse( *res, 500 );
+		formatErrorResponse( *res, HTTP_INTERNAL_SERVER_ERROR_CODE );
 	else
 		updateResponse( *res, *req );
 	//else if ( ( error = req->getError() ) )
 	//{
 	//	if ( error == 100 )
 	//		formatContinueResponse( *res, *req );
-	//	if ( error == 202 )
+	//	if ( error == HTTP_ACCEPTED_CODE )
 	//		formatAcceptResponse( *res, *req );
 	//	else
 	//		formatErrorResponse( *res, error );
@@ -178,22 +175,24 @@ Response	*Router::createFaviconRes( Response& res, Request& req )
 	std::string html;
 
 	formatGenericResponse( res, req );
-	if (req.getError() == 404 || req.getError() == 302)
+	if ( req.getError() == HTTP_NOT_FOUND_CODE \
+		|| req.getError() == HTTP_MOVED_TEMPORARILY_CODE )
 	{
 		req.setDefaultFavicon();
-		if (fillOutput( req ))
+		if ( fillOutput( req ) )
 		{
 			formatGenericResponse( res, req );
-			if (req.getError() != 404)
-				return (&res);
+			if ( req.getError() != HTTP_NOT_FOUND_CODE )
+				return ( &res );
 		}
 	}
-	if (req.getError() == 404 || req.getError() == 302)
+	if ( req.getError() == HTTP_NOT_FOUND_CODE \
+		|| req.getError() == HTTP_MOVED_TEMPORARILY_CODE )
 	{	
 		res.setProtocol( req.getProtocol() );
-		res.setStatus( 200 );
+		res.setStatus( HTTP_OK_CODE );
 		res.setMethod( req.getMethod() );
-		res.appendHeader( Header( "Content-Type", MimeMap::getMime("svg") ) );
+		res.appendHeader( Header( "Content-Type", MimeMap::getMime( "svg" ) ) );
 		html += "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"150\" height=\"100\" viewBox=\"0 0 3 2\">\n";
 		html += "<rect width=\"1\" height=\"2\" x=\"0\" fill=\"#008d46\" />\n";
 		html += "<rect width=\"1\" height=\"2\" x=\"1\" fill=\"#ffffff\" />\n";
@@ -272,7 +271,7 @@ bool	Router::processCgi( Request& req )
 		Log::Error ( "When trying to execute CGI" );
 		Log::Error ( e.what() );
 		// TODO Set Error to Send in request so the proper response is formed to send
-		req.setError( 500 );
+		req.setError( HTTP_INTERNAL_SERVER_ERROR_CODE );
 		req.setReadyToSend();
 	}
 	// Once finished CgiTaskPending will send event to change request state to ready to send
@@ -286,7 +285,7 @@ bool	Router::processRequestReceived( Request &req )
 
 	Log::Success("Router::processRequestReceived");
 	checkRedir( req );
-	if ( req.getError() < 300 )
+	if ( req.getError() < MIN_ERROR_CODE )
 	{
 		req.checkUseCgi();
 		if ( req.getUseCgi() )
@@ -297,7 +296,7 @@ bool	Router::processRequestReceived( Request &req )
 		if ( i < METHODS_NB )
 			Router::process[ i ]( req );
 		else
-			req.setError( 405 );
+			req.setError( HTTP_NOT_ALLOWED_CODE );
 	}
 	checkErrorRedir( req.getError(), req );
 	checkErrorBody( req, req.getError() );
@@ -333,7 +332,7 @@ Response	*Router::formatCgiResponse( Response& res, Request& req )
 {
 	res.appendHeader(Header("Content-Type", std::string("text/html")));
 	res.setProtocol(req.getProtocol());
-	res.setStatus(200);
+	res.setStatus( HTTP_OK_CODE );
 	res.setMethod(req.getMethod());
 	res.setBody(req.getCgiOutput());
 	std::string doc = req.getDocument();
@@ -359,7 +358,7 @@ Response *Router::formatAcceptResponse(Response& res, Request& req)
 {
 	Log::Info("formatAcceptResponse");
 	res.setProtocol(req.getProtocol());
-	res.setStatus(202);
+	res.setStatus(HTTP_ACCEPTED_CODE);
 	res.setMethod(req.getMethod());
 	return &res;
 }
@@ -419,7 +418,7 @@ bool	Router::checkPathExist( Request& req, std::string path )
 {
 	if ( checkStatMode( path, F_OK ) == false )
 	{
-		req.setError( 404 );
+		req.setError( HTTP_NOT_FOUND_CODE );
 		return ( false );
 	}
 	return ( true );
@@ -429,7 +428,7 @@ bool	Router::checkPathCanRead( Request& req, std::string path )
 {
 	if ( checkStatMode( path, R_OK ) == false )
 	{
-		req.setError( 403 );
+		req.setError( HTTP_FORBIDDEN_CODE );
 		return ( false );
 	}
 	return ( true );
@@ -443,11 +442,11 @@ bool	Router::processDirectory( Request& req, std::string path )
 		&& FolderLs::getLs( output, path, req.getRoute() ) == FolderLs::NONE )
 	{
 		req.setOutput( output );
-		req.setError( 200 );
+		req.setError( HTTP_OK_CODE );
 	}
 	else
-		req.setError( 403 );
-	return ( req.getError() != 403 );
+		req.setError( HTTP_FORBIDDEN_CODE );
+	return ( req.getError() != HTTP_FORBIDDEN_CODE );
 }
 
 bool	Router::fillOutput( Request& req )
@@ -464,7 +463,7 @@ bool	Router::fillOutput( Request& req )
 	if ( checkPathCanRead( req, file ) == false )
 		return ( false );
 	req.setOutput( readFile( file ) );
-	req.setError( 200 );
+	req.setError( HTTP_OK_CODE );
 	return ( true );
 }
 
@@ -487,9 +486,9 @@ void 	Router::checkErrorRedir( int errorStatus, Request& req )
 	if ( redir == true )
 	{
 		if ( req.getMethod() == "GET")
-			req.setRedirection( uriRedir, HTTP_MOVED_TEMPORARILY );
+			req.setRedirection( uriRedir, HTTP_MOVED_TEMPORARILY_CODE );
 		else
-			req.setRedirection( uriRedir, HTTP_SEE_OTHER );
+			req.setRedirection( uriRedir, HTTP_SEE_OTHER_CODE );
 	}
 }
 
@@ -515,20 +514,20 @@ bool	Router::processPostRequest( Request& req )
 	std::string path;
 	
 	if (bodyContent.size() == 0)
-		return (req.setError(204) ); //Status No Content
+		return (req.setError(HTTP_NO_CONTENT_CODE) ); //Status No Content
 	if (!req.isDirectiveSet( "upload_store" ) || document.size() == 0)
-		return ( req.setError(403) ); //Forbidden
+		return ( req.setError(HTTP_FORBIDDEN_CODE) ); //Forbidden
 	path = req.getFilePath();
 	Log::Info("Path to POST ... " + path);
 	if (! writeFile(path, bodyContent))
-		return ( req.setError(403) ); //Forbidden
+		return ( req.setError(HTTP_FORBIDDEN_CODE) ); //Forbidden
 	// outfile.open(path.c_str(), std::ios::out | std::ios::trunc); 	
 	// if (!outfile.is_open())
-	// 	return ( req.setError(403) ); //Forbidden
+	// 	return ( req.setError(HTTP_FORBIDDEN_CODE) ); //Forbidden
 	// outfile.write(bodyContent.c_str(), bodyContent.size());
 	// Log::Info("Written ... \n" + bodyContent);
 	// outfile.close();
-	return ( req.setError(201) ); //Created
+	return ( req.setError( HTTP_CREATED_CODE ) ); //Created
 }
 
 bool	Router::processDeleteRequest( Request& req )
@@ -539,14 +538,14 @@ bool	Router::processDeleteRequest( Request& req )
 	path = req.getFilePath();
 	if ( checkPathExist( req, path ) == false )
 	{
-		req.setError(404);
+		req.setError(HTTP_NOT_FOUND_CODE);
 		return ( false );
 	}
 	file = path;
 	if ( isDir( path ) == true )
-		return (req.setError( 403 ));
+		return (req.setError( HTTP_FORBIDDEN_CODE ));
 	std::remove(path.c_str());
-	req.setError( 204 );
+	req.setError( HTTP_NO_CONTENT_CODE );
 	return ( false );
 }
 

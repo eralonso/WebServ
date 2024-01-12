@@ -324,7 +324,7 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 		updateLocation();
 		maxBodySize = svr->getMaxBodySize(getRoute());
 		if (svr->getIsAllowedMethod( this->route, this->method ) == false)
-			return ( setError( 405 ) );
+			return ( setError( HTTP_NOT_ALLOWED_CODE ) );
 		updateFilePath();
 		if ( checkChunked() )
 			return ( true );

@@ -272,7 +272,7 @@ void	CgiExecutor::checkTimeoutedTasks( void )
 		pTask->killPendingTask();
 		CgiExecutor::pendingTasks.eraseTask( pTask->getPid() );
 		req.setUseCgi( false );
-		req.setError( 500 );
+		req.setError( HTTP_INTERNAL_SERVER_ERROR_CODE );
 		req.setReadyToSend();
 		cli = req.getClient();		
 		if ( cli != NULL )
