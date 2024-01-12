@@ -30,8 +30,9 @@ Router::~Router( void ) {}
 
 int	Router::updateResponse( Response &res, Request &req )
 {
+	Log::Error( "Uppdating response" );
 	res.setServer( req.getHost() );
-	if ( req.getUseCgi() && req.getError() == 0 )
+	if ( req.getUseCgi() )
 		formatCgiResponse( res,req );
 	else
 		formatGenericResponse( res, req );
@@ -292,7 +293,6 @@ bool	Router::processRequestReceived( Request &req )
 			return ( processCgi( req ) );
 		while ( i < METHODS_NB && Router::methods[ i ] != requestMethod )
 			i++;
-		Log::Error( "To Find: " + req.getFilePath() + " && method: " + SUtils::longToString( i ) );
 		if ( i < METHODS_NB )
 			Router::process[ i ]( req );
 		else
@@ -301,7 +301,6 @@ bool	Router::processRequestReceived( Request &req )
 	checkErrorRedir( req.getError(), req );
 	checkErrorBody( req, req.getError() );
 	req.setReadyToSend();
-	Log::Error( "ErrorCode <AFTER>: " + SUtils::longToString( req.getError() ) );
 	return ( true );
 }
 
@@ -318,6 +317,7 @@ std::string Router::determineContentType(Response& res, Request& req)
 
 Response	*Router::formatGenericResponse( Response& res, Request& req )
 {
+	Log::Error( "Generic response" );
 	res.appendHeader( Header( "Content-Type", determineContentType( res, req ) ) );
 	res.setProtocol( req.getProtocol() );
 	if ( req.getRedir() == true )
@@ -330,11 +330,16 @@ Response	*Router::formatGenericResponse( Response& res, Request& req )
 
 Response	*Router::formatCgiResponse( Response& res, Request& req )
 {
-	res.appendHeader(Header("Content-Type", std::string("text/html")));
-	res.setProtocol(req.getProtocol());
-	res.setStatus( HTTP_OK_CODE );
-	res.setMethod(req.getMethod());
-	res.setBody(req.getCgiOutput());
+	Log::Error( "Cgi response" );
+	res.appendHeader( Header( "Content-Type", "text/html" ) );
+	res.setProtocol( req.getProtocol() );
+	//res.setStatus( HTTP_OK_CODE );
+	res.setStatus( req.getError() );
+	res.setMethod( req.getMethod() );
+	if ( req.getError() < MIN_ERROR_CODE )
+		res.setBody( req.getCgiOutput() );
+	else
+		res.setBody( req.getOutput() );
 	std::string doc = req.getDocument();
 	bool nph = (doc.size() > 2
 		&& (doc[0] == 'n' || doc[0] == 'N')
@@ -500,7 +505,6 @@ void	Router::checkErrorBody( Request& req, int errorStatus )
 
 bool	Router::processGetRequest( Request& req )
 {
-	Log::Error( "To Find: " + req.getFilePath() );
 	fillOutput( req );
 	return ( req.getError() >= 400 );
 }
