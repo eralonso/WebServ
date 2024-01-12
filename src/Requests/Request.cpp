@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/12 09:05:51 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/12 10:36:07 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,25 @@ void	Request::parseQueryStringFromRoute( void )
 	}
 }
 
+bool	Request::parseDropHttp(StringVector& tokens,  size_t& tokensSize, bool& httpDropped)
+{
+	tokens.erase(tokens.begin(), tokens.begin() + 1);
+	httpDropped = true;
+	if (httpDropped && (tokens[0].size() < 2 || tokens[0][0] != '/' || tokens[0][1] != '/') )
+	{
+		Log::Error( "Request route invalid, after http: must follow //" );
+		this->setError(400);
+		return true;
+	}
+	tokens[0].erase(tokens[0].begin(), tokens[0].begin() + 2);
+	tokensSize--;
+	if (tokensSize > 1)
+		this->route = tokens[0] + ":" + tokens[1];
+	else
+		this->route = tokens[0];
+	return false;	
+}
+
 void	Request::parseHostPortFromRoute( void )
 {
 	StringVector	tokens;
@@ -148,70 +167,121 @@ void	Request::parseHostPortFromRoute( void )
 
 	tokens = SplitString::split( this->route, ":" );
 	tokensSize = tokens.size();
-	if (tokensSize < 2)
-		return ;
-	if (tokensSize > 3)
+	if (tokensSize > 3 || tokensSize < 1)
 	{
-		Log::Error( "Request query string invalid" );
-		this->error = 400;
-		this->badRequest = true;
+		Log::Error( "Request route invalid, too colons or empty" );
+		this->setError(400);
 		return ;
 	}
 	if (tokensSize == 3)
 	{
 		if (tokens[0] != "http")
 		{
-			Log::Error( "Protocol must be http");
-			this->error = 400;
-			this->badRequest = true;
+			Log::Error( "Request route invalid, when 2 colons must start with http" );
+			this->setError(400);
 			return ;
 		}
-		if (!(tokens[1].size() > 1 && tokens[1][0] == '/' && tokens[1][1] == '/'))
-		{
-			Log::Error( "http must be followed by ://");
-			this->error = 400;
-			this->badRequest = true;
+		if (parseDropHttp(tokens, tokensSize, httpDropped))
 			return ;
-		}
-		tokens.erase(tokens.begin(), tokens.begin() + 1);
-		tokens[0].erase(tokens[0].begin(), tokens[0].begin() + 2);
-		tokensSize--;
-		httpDropped = true;
 	}
 	if (tokensSize == 2)
 	{
-		Log::Success( "Request::parseHostPortFromRoute tokensSize = 2, httpDropped = " + std::string(httpDropped ? "true" : "false") );
-		if (!httpDropped)
+		if (httpDropped && tokens[0] == "http")
 		{
-			if (tokens[0] != "http")
-			{
-				Log::Error( "Protocol must be http");
-				this->error = 400;
-				this->badRequest = true;
-				return ;
-			}
-			if (!(tokens[1].size() > 1 && tokens[1][0] == '/' && tokens[1][1] == '/'))
-			{
-				Log::Error( "http must be followed by ://");
-				this->error = 400;
-				this->badRequest = true;
-				return ;
-			}
-			tokens.erase(tokens.begin(), tokens.begin() + 1);
-			tokens[0].erase(tokens[0].begin(), tokens[0].begin() + 2);
-			tokensSize--;
-			httpDropped = true;
-			if (tokensSize > 0)
-				this->routeHost = tokens[0];
-			if (tokensSize > 1)
-				this->routePort = std::string(tokens[0].begin(), std::find(tokens[0].begin(), tokens[0].end(), '/'));
+			Log::Error( "Request route invalid, http repeated" );
+			this->setError(400);
+			return ;
 		}
-		return ;
+		if (!httpDropped && tokens[0] == "http" && parseDropHttp(tokens, tokensSize, httpDropped))
+				return ;
 	}
+	if (tokensSize == 2) //Stil left 2
+	{
+		this->routeHost = tokens[0];
+		size_t pos = tokens[1].find_first_of('/', 0);
+		if (pos != std::string::npos)
+		{
+			if (pos > 0)
+				this->routePort = tokens[1].substr(0, pos - 1);
+			this->route = tokens[1].substr(pos, tokens[1].size() - pos);
+		}
+	}
+	return ;
 }
+
+// void	Request::parseHostPortFromRoute( void )
+// {
+// 	StringVector	tokens;
+// 	size_t			tokensSize;
+// 	bool			httpDropped = false;
+
+// 	tokens = SplitString::split( this->route, ":" );
+// 	tokensSize = tokens.size();
+// 	if (tokensSize < 2)
+// 		return ;
+// 	if (tokensSize > 3)
+// 	{
+// 		Log::Error( "Request route invalid" );
+// 		this->error = 400;
+// 		this->badRequest = true;
+// 		return ;
+// 	}
+// 	if (tokensSize == 3)
+// 	{
+// 		if (tokens[0] != "http")
+// 		{
+// 			Log::Error( "Protocol must be http");
+// 			this->error = 400;
+// 			this->badRequest = true;
+// 			return ;
+// 		}
+// 		if (!(tokens[1].size() > 1 && tokens[1][0] == '/' && tokens[1][1] == '/'))
+// 		{
+// 			Log::Error( "http must be followed by ://");
+// 			this->error = 400;
+// 			this->badRequest = true;
+// 			return ;
+// 		}
+// 		tokens.erase(tokens.begin(), tokens.begin() + 1);
+// 		tokens[0].erase(tokens[0].begin(), tokens[0].begin() + 2);
+// 		tokensSize--;
+// 		httpDropped = true;
+// 	}
+// 	if (tokensSize == 2)
+// 	{
+// 		Log::Success( "Request::parseHostPortFromRoute tokensSize = 2, httpDropped = " + std::string(httpDropped ? "true" : "false") );
+// 		if (!httpDropped)
+// 		{
+// 			if (tokens[0] != "http")
+// 			{
+// 				Log::Error( "Protocol must be http");
+// 				this->error = 400;
+// 				this->badRequest = true;
+// 				return ;
+// 			}
+// 			if (!(tokens[1].size() > 1 && tokens[1][0] == '/' && tokens[1][1] == '/'))
+// 			{
+// 				Log::Error( "http must be followed by ://");
+// 				this->error = 400;
+// 				this->badRequest = true;
+// 				return ;
+// 			}
+// 			tokens.erase(tokens.begin(), tokens.begin() + 1);
+// 			tokens[0].erase(tokens[0].begin(), tokens[0].begin() + 2);
+// 			tokensSize--;
+// 			httpDropped = true;
+// 			if (tokensSize > 0)
+// 				this->routeHost = tokens[0];
+// 			if (tokensSize > 1)
+// 				this->routePort = std::string(tokens[0].begin(), std::find(tokens[0].begin(), tokens[0].end(), '/'));
+// 		}
+// 		return ;
+// 	}
+// }
 
 void	Request::parseRoute( void )
 {
+	Log::Success( "Request::parseRoute" );
 	StringVector::iterator	doc;
 	parseQueryStringFromRoute();
 	parseHostPortFromRoute();

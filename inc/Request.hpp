@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/08 17:56:57 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/12 10:10:49 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,9 @@ private:
 private:
 	void 	parseHostPortFromRoute( void );
 	void	parseQueryStringFromRoute( void );
-	void	parseRoute( void );
-	void	parseFirstLine( const std::string &line );
+    bool 	parseDropHttp(StringVector &tokens, size_t &tokensSize, bool &httpDropped);
+    void 	parseRoute(void);
+    void	parseFirstLine( const std::string &line );
 	void	parseHeader( const std::string &line );
 	bool	processLineOnFdBond( const std::string &line );
 	bool	processLineOnRecvdStart( const std::string &line );
