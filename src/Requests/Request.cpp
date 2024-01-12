@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/12 10:36:07 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/12 10:41:27 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,7 +202,7 @@ void	Request::parseHostPortFromRoute( void )
 		if (pos != std::string::npos)
 		{
 			if (pos > 0)
-				this->routePort = tokens[1].substr(0, pos - 1);
+				this->routePort = tokens[1].substr(0, pos);
 			this->route = tokens[1].substr(pos, tokens[1].size() - pos);
 		}
 	}
