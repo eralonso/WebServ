@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/08 11:42:58 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/12 16:36:35 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,11 @@ private:
 	static std::string	methods[ METHODS_NB ];
 	static bool ( *process[ METHODS_NB ] )( Request& req );
 	static bool	processGetRequest( Request& req );
-	static bool	processPostRequest( Request& req );
-	static bool	processDeleteRequest( Request& req );
+    static bool	processHeadRequest(Request &req);
+    static bool processPostRequest(Request &req);
+    static bool	processPutRequest(Request &req);
+    static bool processDeleteRequest(Request &req);
+
 public:
 	Router(/* args */);
 	~Router();
@@ -56,9 +59,9 @@ public:
     static bool			writeFile(std::string file, std::string content);
     static bool 		checkPathExist(Request &req, std::string path);
     static bool			checkPathCanRead( Request& req, std::string path );
-	static bool			processDirectory( Request& req, std::string path );
+	static bool			processDirectory( Request& req, std::string path, bool fillBody );
 	static std::string	getDefaultErrorPage( unsigned int code );
-	static bool			fillOutput( Request& req );
+	static bool			fillOutput( Request& req, bool fillBody );
 	static void			checkRedir( Request& req );
 	static void 		checkErrorRedir( int errorStatus, Request& req );
 	static void			checkErrorBody( Request& req, int errorStatus );

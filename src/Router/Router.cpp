@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/12 15:10:47 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/12 16:36:18 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,13 @@
 #include <FolderLs.hpp>
 #include <MimeMap.hpp>
 
-std::string	Router::methods[ METHODS_NB ] = { "GET", "POST", "DELETE" };
+std::string	Router::methods[ METHODS_NB ] = { "GET", "POST", "PUT", "DELETE", "HEAD" };
 
 bool ( *Router::process[ METHODS_NB ] )( Request& req ) = { &Router::processGetRequest, \
 													&Router::processPostRequest, \
-													&Router::processDeleteRequest };
+													&Router::processPutRequest, \
+													&Router::processDeleteRequest, \
+													&Router::processHeadRequest };
 
 Router::Router( void ) {}
 
@@ -180,7 +182,7 @@ Response	*Router::createFaviconRes( Response& res, Request& req )
 		|| req.getError() == HTTP_MOVED_TEMPORARILY_CODE )
 	{
 		req.setDefaultFavicon();
-		if ( fillOutput( req ) )
+		if ( fillOutput( req, true ) )
 		{
 			formatGenericResponse( res, req );
 			if ( req.getError() != HTTP_NOT_FOUND_CODE )
@@ -439,14 +441,15 @@ bool	Router::checkPathCanRead( Request& req, std::string path )
 	return ( true );
 }
 
-bool	Router::processDirectory( Request& req, std::string path )
+bool	Router::processDirectory( Request& req, std::string path, bool fillBody )
 {
 	std::string	output;
 
 	if ( req.isAutoindexAllow() == true \
 		&& FolderLs::getLs( output, path, req.getRoute() ) == FolderLs::NONE )
 	{
-		req.setOutput( output );
+		if ( fillBody == true )
+			req.setOutput( output );
 		req.setError( HTTP_OK_CODE );
 	}
 	else
@@ -454,7 +457,7 @@ bool	Router::processDirectory( Request& req, std::string path )
 	return ( req.getError() != HTTP_FORBIDDEN_CODE );
 }
 
-bool	Router::fillOutput( Request& req )
+bool	Router::fillOutput( Request& req, bool fillBody )
 {
 	std::string	path;
 	std::string	file;
@@ -464,10 +467,11 @@ bool	Router::fillOutput( Request& req )
 		return ( false );
 	file = path;
 	if ( isDir( path ) == true && req.tryIndexFiles( file ) == false )
-		return ( processDirectory( req, path ) );
+		return ( processDirectory( req, path, fillBody ) );
 	if ( checkPathCanRead( req, file ) == false )
 		return ( false );
-	req.setOutput( readFile( file ) );
+	if ( fillBody )
+		req.setOutput( readFile( file ) );
 	req.setError( HTTP_OK_CODE );
 	return ( true );
 }
@@ -490,7 +494,7 @@ void 	Router::checkErrorRedir( int errorStatus, Request& req )
 		redir = req.getErrorPage( errorStatus, uriRedir );
 	if ( redir == true )
 	{
-		if ( req.getMethod() == "GET")
+		if ( req.getMethod() == "GET" )
 			req.setRedirection( uriRedir, HTTP_MOVED_TEMPORARILY_CODE );
 		else
 			req.setRedirection( uriRedir, HTTP_SEE_OTHER_CODE );
@@ -505,7 +509,13 @@ void	Router::checkErrorBody( Request& req, int errorStatus )
 
 bool	Router::processGetRequest( Request& req )
 {
-	fillOutput( req );
+	fillOutput( req, true);
+	return ( req.getError() >= 400 );
+}
+
+bool	Router::processHeadRequest( Request& req )
+{
+	fillOutput( req, false );
 	return ( req.getError() >= 400 );
 }
 
@@ -525,12 +535,25 @@ bool	Router::processPostRequest( Request& req )
 	Log::Info("Path to POST ... " + path);
 	if (! writeFile(path, bodyContent))
 		return ( req.setError(HTTP_FORBIDDEN_CODE) ); //Forbidden
-	// outfile.open(path.c_str(), std::ios::out | std::ios::trunc); 	
-	// if (!outfile.is_open())
-	// 	return ( req.setError(HTTP_FORBIDDEN_CODE) ); //Forbidden
-	// outfile.write(bodyContent.c_str(), bodyContent.size());
-	// Log::Info("Written ... \n" + bodyContent);
-	// outfile.close();
+	return ( req.setError( HTTP_CREATED_CODE ) ); //Created
+}
+
+bool	Router::processPutRequest( Request& req )
+{
+	std::string	route = req.getRoute();
+	std::string bodyContent = req.getBody();
+	std::string	document = req.getDocument();
+	// std::ofstream	outfile;
+	std::string path;
+	
+	if (bodyContent.size() == 0)
+		return (req.setError(HTTP_NO_CONTENT_CODE) ); //Status No Content
+	if (!req.isDirectiveSet( "upload_store" ) || document.size() == 0)
+		return ( req.setError(HTTP_FORBIDDEN_CODE) ); //Forbidden
+	path = req.getFilePath();
+	Log::Info("Path to POST ... " + path);
+	if (! writeFile(path, bodyContent))
+		return ( req.setError(HTTP_FORBIDDEN_CODE) ); //Forbidden
 	return ( req.setError( HTTP_CREATED_CODE ) ); //Created
 }
 

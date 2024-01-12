@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   DirectivesParser.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:41:41 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/23 18:35:29 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/12 15:47:59 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -339,25 +339,12 @@ void	DirectivesParser::parseAllowMethods( std::string body, Directives *d )
 					std::string( "allow_methods" ) ) );
 	for ( StringVector::iterator it = args.begin(); it != args.end(); it++ )
 	{
-		if ( ( method = isHttpMethod( *it ) ) == 0 )
+		if ( ( method = ActionMask::whichAction( *it ) ) == ActionMask::INVALID )
 			throw std::logic_error( INVALID_VALUE_DIRECTIVE( \
 						std::string( "allow_methods" ), *it ) );
 		else
 			d->_allowMethods.setAction( method );
 	}
-}
-
-int	DirectivesParser::isHttpMethod( std::string method )
-{
-	std::string	methods[ 3 ] = { "GET", "POST", "DELETE" };
-	int			code;
-
-	for ( code = 0; code < 3; code++ )
-		if ( method == methods[ code ] )
-			break ;
-	if ( code == 3 )
-		return ( 0 );
-	return ( 1 << code );
 }
 
 //cgi <cgi_extension> <cgi_interpreter>

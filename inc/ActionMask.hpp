@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:06:08 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/02 15:57:35 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/12 15:21:44 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include <string>
 
-# define METHODS_NB 3
+# define METHODS_NB 5
 
 class ActionMask
 {
@@ -25,7 +25,9 @@ public:
 		INVALID = 0,
 		GET = 1,
 		POST = 2,
-		DELETE = 4
+		PUT = 4,
+		DELETE = 8,
+		HEAD = 16
 	}	t_action;
 private:
 	t_action	allowed;

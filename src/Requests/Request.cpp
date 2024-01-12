@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/12 15:10:20 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/12 16:19:51 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -589,7 +589,7 @@ void	Request::updateFilePath( void )
 		this->filePath = ConfigUtils::pathJoin( ".", this->route );
 		return ;
 	}
-	if ( this->method == "POST" )
+	if ( this->method == "POST" || this->method == "PUT" )
 	{
 		this->filePath = ConfigUtils::pathJoin( svr->getFinalUploadPath( \
 			routeWithoutFile ), getDocument() );

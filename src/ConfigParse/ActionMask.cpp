@@ -6,14 +6,24 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:06:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/02 15:57:43 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/12 15:22:47 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ActionMask.hpp>
 
-int			ActionMask::actions[ 3 ] = { ActionMask::GET, ActionMask::POST, ActionMask::DELETE };
-std::string	ActionMask::stringActions[ 3 ] = { "GET", "POST", "DELETE" };
+int			ActionMask::actions[ METHODS_NB ] = {
+					ActionMask::GET,
+					ActionMask::POST,
+					ActionMask::PUT,
+					ActionMask::DELETE,
+					ActionMask::HEAD };
+std::string	ActionMask::stringActions[ METHODS_NB ] = {
+					"GET",
+					"POST",
+					"PUT",
+					"DELETE",
+					"HEAD"};
 
 ActionMask::ActionMask( void ): allowed( \
 						static_cast< t_action >( 0 ) ) {}
@@ -32,7 +42,7 @@ ActionMask&	ActionMask::operator=( const ActionMask& b )
 
 bool	ActionMask::isAction( int method )
 {
-	for ( int i = 0; i < 3; i++ )
+	for ( int i = 0; i < METHODS_NB; i++ )
 		if ( ActionMask::actions[ i ] == method )
 			return ( true );
 	return ( false );
@@ -40,7 +50,7 @@ bool	ActionMask::isAction( int method )
 
 int	ActionMask::whichAction( std::string method )
 {
-	for ( int i = 0; i < 3; i++ )
+	for ( int i = 0; i < METHODS_NB; i++ )
 		if ( ActionMask::stringActions[ i ] == method )
 			return ( actions[ i ] );
 	return ( ActionMask::INVALID );
@@ -79,42 +89,3 @@ bool	ActionMask::getAction( int method ) const
 		return ( allowed & method );
 	return ( false );
 }
-
-//void	ActionMask::setGetAction( bool value )
-//{
-//	if ( value )
-//		allowed = static_cast< t_action >( allowed | ActionMask::GET );
-//	else
-//		allowed = static_cast< t_action >( allowed & ~ActionMask::GET );
-//}
-
-//bool	ActionMask::getGetAction( void ) const
-//{
-//	return ( ( allowed & ActionMask::GET ) != 0 );
-//}
-
-//void	ActionMask::setPostAction( bool value )
-//{
-//	if ( value )
-//		allowed = static_cast< t_action >( allowed | ActionMask::POST );
-//	else
-//		allowed = static_cast< t_action >( allowed & ~ActionMask::POST );
-//}
-
-//bool	ActionMask::getPostAction( void ) const
-//{
-//	return ( ( allowed & ActionMask::POST ) != 0 );
-//}
-
-//void	ActionMask::setDeleteAction( bool value )
-//{
-//	if ( value )
-//		allowed = static_cast< t_action >( allowed | ActionMask::DELETE );
-//	else
-//		allowed = static_cast< t_action >( allowed & ~ActionMask::DELETE );
-//}
-
-//bool	ActionMask::getDeleteAction( void ) const
-//{
-//	return ( ( allowed & ActionMask::DELETE ) != 0 );
-//}

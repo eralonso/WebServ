@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   DirectivesParser.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 11:03:56 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/22 12:45:16 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/12 15:48:20 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,8 +131,6 @@ private:
 
 	//allow_methods
 	static void	parseAllowMethods( std::string body, Directives *d );
-
-	static int	isHttpMethod( std::string method );
 
 	//cgi
 	static void	parseCgi( std::string body, Directives *d );
