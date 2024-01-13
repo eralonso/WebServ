@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/12 10:10:49 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/13 11:46:18 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ private:
 	Headers			headers;
 	const Server	*svr;
 	const Location	*lc;
+	size_t			outputLength;
 private:
 	void 	parseHostPortFromRoute( void );
 	void	parseQueryStringFromRoute( void );
@@ -131,6 +132,7 @@ public:
 	bool			getRedir( void ) const;
 	std::string 	getCgiBinary( std::string ext ) const;
 	std::string		getUriRedir( void ) const;
+	size_t			getOutputLength( void ) const;
     bool			isDirectiveSet( std::string directive ) const;
     bool			isCompleteRecv( void ) const;
 	bool			isReadyToSend( void ) const;
@@ -149,6 +151,7 @@ public:
 	void			setRedir( bool isRedir );
 	void			setUriRedir( std::string uriRedirection );
 	void			setRedirection( std::string uri, int code );
+	void			setOutputLength( size_t size );
 	void			logStatus( void );
 	bool			processLine( const std::string& line );
 	bool			tryIndexFiles( std::string& file ) const;

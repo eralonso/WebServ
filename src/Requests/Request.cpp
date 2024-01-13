@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/12 16:19:51 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/13 11:49:08 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ Request::Request( void )
 	this->lc = NULL;
 	this->maxBodySize = 1 << 20;
 	this->redir = false;
+	this->outputLength = 0;
 	// Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
@@ -47,12 +48,13 @@ Request::Request( Client *cli )
 	this->lc = NULL;
 	this->maxBodySize = 1 << 20;
 	this->redir = false;
+	this->outputLength = 0;
 	// Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
 Request::~Request( void ) 
 {
-	CgiExecutor::purgeDiscardedRequest(this);	
+	CgiExecutor::purgeDiscardedRequest(this);
 }
 
 Request::Request( const Request& b )
@@ -80,6 +82,7 @@ Request::Request( const Request& b )
 	this->maxBodySize = b.maxBodySize;
 	this->redir = b.redir;
 	this->uriRedir = b.uriRedir;
+	this->outputLength = b.outputLength;
 }
 
 Request&	Request::operator=( const Request& b )
@@ -107,6 +110,7 @@ Request&	Request::operator=( const Request& b )
 		this->maxBodySize = b.maxBodySize;
 		this->redir = b.redir;
 		this->uriRedir = b.uriRedir;
+		this->outputLength = b.outputLength;
 	}
 	return ( *this );
 }
@@ -844,6 +848,11 @@ std::string	Request::getUriRedir( void ) const
 	return ( this->uriRedir );
 }
 
+size_t	Request::getOutputLength( void ) const
+{
+	return ( this->outputLength );
+}
+
 bool	Request::isReadyToSend( void ) const
 {
 	return ( this->status == RESP_RENDERED );
@@ -949,6 +958,11 @@ void	Request::setRedirection( std::string uri, int code )
 	this->redir = true;
 	this->uriRedir = uri;
 	setError( code );
+}
+
+void	Request::setOutputLength( size_t size )
+{
+	this->outputLength = size;
 }
 
 void	Request::logStatus( void )

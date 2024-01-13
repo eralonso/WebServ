@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/12 16:36:35 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/13 11:40:52 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,10 @@ public:
     static bool			writeFile(std::string file, std::string content);
     static bool 		checkPathExist(Request &req, std::string path);
     static bool			checkPathCanRead( Request& req, std::string path );
-	static bool			processDirectory( Request& req, std::string path, bool fillBody );
+	static bool			processDirectory( Request& req, std::string path, \
+							std::string& output );
 	static std::string	getDefaultErrorPage( unsigned int code );
-	static bool			fillOutput( Request& req, bool fillBody );
+	static int			getFileToRead( Request& req, std::string& file );
 	static void			checkRedir( Request& req );
 	static void 		checkErrorRedir( int errorStatus, Request& req );
 	static void			checkErrorBody( Request& req, int errorStatus );

@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/12 16:36:18 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/13 12:11:00 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,38 +173,38 @@ Response	*Router::getResponse( Request *req )
 	return ( res );
 }
 
-Response	*Router::createFaviconRes( Response& res, Request& req )
-{
-	std::string html;
-
-	formatGenericResponse( res, req );
-	if ( req.getError() == HTTP_NOT_FOUND_CODE \
-		|| req.getError() == HTTP_MOVED_TEMPORARILY_CODE )
-	{
-		req.setDefaultFavicon();
-		if ( fillOutput( req, true ) )
-		{
-			formatGenericResponse( res, req );
-			if ( req.getError() != HTTP_NOT_FOUND_CODE )
-				return ( &res );
-		}
-	}
-	if ( req.getError() == HTTP_NOT_FOUND_CODE \
-		|| req.getError() == HTTP_MOVED_TEMPORARILY_CODE )
-	{	
-		res.setProtocol( req.getProtocol() );
-		res.setStatus( HTTP_OK_CODE );
-		res.setMethod( req.getMethod() );
-		res.appendHeader( Header( "Content-Type", MimeMap::getMime( "svg" ) ) );
-		html += "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"150\" height=\"100\" viewBox=\"0 0 3 2\">\n";
-		html += "<rect width=\"1\" height=\"2\" x=\"0\" fill=\"#008d46\" />\n";
-		html += "<rect width=\"1\" height=\"2\" x=\"1\" fill=\"#ffffff\" />\n";
-		html += "<rect width=\"1\" height=\"2\" x=\"2\" fill=\"#d2232c\" />\n";
-		html += "</svg>\n";
-		res.setBody( html );
-	}	
-	return ( &res );
-}
+//Response	*Router::createFaviconRes( Response& res, Request& req )
+//{
+//	std::string html;
+//
+//	formatGenericResponse( res, req );
+//	if ( req.getError() == HTTP_NOT_FOUND_CODE \
+//		|| req.getError() == HTTP_MOVED_TEMPORARILY_CODE )
+//	{
+//		req.setDefaultFavicon();
+//		if ( fillOutput( req, true ) )
+//		{
+//			formatGenericResponse( res, req );
+//			if ( req.getError() != HTTP_NOT_FOUND_CODE )
+//				return ( &res );
+//		}
+//	}
+//	if ( req.getError() == HTTP_NOT_FOUND_CODE \
+//		|| req.getError() == HTTP_MOVED_TEMPORARILY_CODE )
+//	{	
+//		res.setProtocol( req.getProtocol() );
+//		res.setStatus( HTTP_OK_CODE );
+//		res.setMethod( req.getMethod() );
+//		res.appendHeader( Header( "Content-Type", MimeMap::getMime( "svg" ) ) );
+//		html += "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"150\" height=\"100\" viewBox=\"0 0 3 2\">\n";
+//		html += "<rect width=\"1\" height=\"2\" x=\"0\" fill=\"#008d46\" />\n";
+//		html += "<rect width=\"1\" height=\"2\" x=\"1\" fill=\"#ffffff\" />\n";
+//		html += "<rect width=\"1\" height=\"2\" x=\"2\" fill=\"#d2232c\" />\n";
+//		html += "</svg>\n";
+//		res.setBody( html );
+//	}	
+//	return ( &res );
+//}
 
 std::string	Router::getRequestEmbed( Request &req )
 {
@@ -329,7 +329,7 @@ Response	*Router::formatGenericResponse( Response& res, Request& req )
 	if ( req.getMethod() != "HEAD" )
 		res.setBody( req.getOutput() );
 	else
-		res.setBodyLength( req.getOutput().length() );
+		res.setBodyLength( req.getOutputLength() );
 	return ( &res );
 }
 
@@ -444,39 +444,15 @@ bool	Router::checkPathCanRead( Request& req, std::string path )
 	return ( true );
 }
 
-bool	Router::processDirectory( Request& req, std::string path, bool fillBody )
+bool	Router::processDirectory( Request& req, std::string path, \
+									std::string& output )
 {
-	std::string	output;
-
 	if ( req.isAutoindexAllow() == true \
 		&& FolderLs::getLs( output, path, req.getRoute() ) == FolderLs::NONE )
-	{
-		if ( fillBody == true )
-			req.setOutput( output );
 		req.setError( HTTP_OK_CODE );
-	}
 	else
 		req.setError( HTTP_FORBIDDEN_CODE );
 	return ( req.getError() != HTTP_FORBIDDEN_CODE );
-}
-
-bool	Router::fillOutput( Request& req, bool fillBody )
-{
-	std::string	path;
-	std::string	file;
-
-	path = req.getFilePath();
-	if ( checkPathExist( req, path ) == false )
-		return ( false );
-	file = path;
-	if ( isDir( path ) == true && req.tryIndexFiles( file ) == false )
-		return ( processDirectory( req, path, fillBody ) );
-	if ( checkPathCanRead( req, file ) == false )
-		return ( false );
-	if ( fillBody )
-		req.setOutput( readFile( file ) );
-	req.setError( HTTP_OK_CODE );
-	return ( true );
 }
 
 void	Router::checkRedir( Request& req )
@@ -510,15 +486,52 @@ void	Router::checkErrorBody( Request& req, int errorStatus )
 		req.setOutput( getDefaultErrorPage( errorStatus ) );
 }
 
+int	Router::getFileToRead( Request& req, std::string& retFile )
+{
+	std::string	path;
+	std::string	file;
+
+	path = req.getFilePath();
+	if ( checkPathExist( req, path ) == false )
+		return ( ENOENT );
+	file = path;
+	if ( isDir( path ) == true && req.tryIndexFiles( file ) == false )
+	{
+		retFile = path;
+		return ( EISDIR );
+	}
+	if ( checkPathCanRead( req, file ) == false )
+		return ( EACCES );
+	retFile = file;
+	req.setError( HTTP_OK_CODE );
+	return ( EXIT_SUCCESS );
+}
+
 bool	Router::processGetRequest( Request& req )
 {
-	fillOutput( req, true );
+	std::string	path;
+	std::string	output;
+	int			error = 0;
+
+	if ( ( error = getFileToRead( req, path ) ) == EXIT_SUCCESS )
+		req.setOutput( readFile( path ) );
+	else if ( error == EISDIR && processDirectory( req, path, output ) == true )
+		req.setOutput( output );
 	return ( req.getError() >= 400 );
 }
 
 bool	Router::processHeadRequest( Request& req )
 {
-	fillOutput( req, true );
+	std::string	path;
+	std::string	output;
+	int			error = 0;
+	struct stat	info;
+
+	if ( ( error = getFileToRead( req, path ) ) == EXIT_SUCCESS \
+		&& !stat( path.c_str(), &info ) )
+		req.setOutputLength( info.st_size );
+	else if ( error == EISDIR && processDirectory( req, path, output ) == true )
+		req.setOutputLength( output.length() );
 	return ( req.getError() >= 400 );
 }
 
