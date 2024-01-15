@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/15 09:57:59 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/15 13:22:16 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ std::string	Router::getHtml( Request *req )
 		std::string dirPath(path);
 		if (dirPath.size() == 0 || (*(dirPath.end() - 1)) != '/')
 			dirPath += '/';
-		if (FolderLs::getLs(resFolderLs, dirPath, route) == FolderLs::CANTOPENDIR)
+		if (FolderLs::getLs(resFolderLs, dirPath, route) == LsEntry::CANTOPENDIR)
 			return (readFile(path));
 		// {
 		// 	infile.open(path.c_str(), std::ios::in);
@@ -415,7 +415,7 @@ bool	Router::processDirectory( Request& req, std::string path, \
 									std::string& output )
 {
 	if ( req.isAutoindexAllow() == true \
-		&& FolderLs::getLs( output, path, req.getRoute() ) == FolderLs::NONE )
+		&& FolderLs::getLs( output, path, req.getRoute() ) == LsEntry::NONE )
 		req.setError( HTTP_OK_CODE );
 	else
 		req.setError( HTTP_FORBIDDEN_CODE );
