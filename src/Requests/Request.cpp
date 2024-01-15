@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/15 09:13:41 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/15 09:55:16 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -306,14 +306,16 @@ bool	Request::processLineOnFdBond( const std::string &line )
 		return ( true );
 	}
 	parseFirstLine( line );
-	this->status = RECVD_REQ_LINE;
+	if ( this->badRequest == false )
+		this->status = RECVD_REQ_LINE;
 	return ( true );
 }
 
 bool	Request::processLineOnRecvdStart( const std::string &line )
 {
 	parseFirstLine( line );
-	this->status = RECVD_REQ_LINE;
+	if ( this->badRequest == false )
+		this->status = RECVD_REQ_LINE;
 	return ( true );
 }
 
