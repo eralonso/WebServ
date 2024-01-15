@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:10:16 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/28 11:11:04 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/14 16:11:49 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,9 @@
 # define ISSPACE "\t\n\v\f\r "
 
 # define NOT_A_SEPARATOR 0
-# define SEMICOLON_SEPARATOR 1
-# define BRACET_SEPARATOR 2
+# define COMMENT_SEPARATOR 1
+# define SEMICOLON_SEPARATOR 2
+# define BRACET_SEPARATOR 3
 
 typedef int										socket_t;
 typedef std::vector< std::string >				StringVector;

@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/13 11:49:08 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/15 09:13:41 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -496,9 +496,7 @@ bool	Request::checkProtocol( std::string protocol )
 	if ( version.size() == 0 )
 		return ( setError( HTTP_BAD_REQUEST_CODE ) );
 	for ( StringVector::iterator it = version.begin(); it != version.end(); it++ )
-		if ( SUtils::isNum( *it ) == false \
-			|| SUtils::compareNumbersAsStrings( *it, \
-				SUtils::longToString( std::numeric_limits< short >::max() ) ) > 0 )
+		if ( SUtils::isNum( *it ) == false || COMPARE_NBR_MAX_STR( *it, short ) > 0 )
 			return ( setError( HTTP_BAD_REQUEST_CODE ) );
 	if ( SUtils::atoi( version[ 0 ] ) != 1 || ( version.size() == 2 \
 		&& SUtils::atoi( version[ 1 ] ) > 1 ) )
