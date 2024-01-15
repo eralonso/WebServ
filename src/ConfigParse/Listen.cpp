@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 17:25:58 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/22 16:15:49 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/15 09:04:57 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,8 @@ int	DirectivesParser::checkAvailableHostPort( std::string host, std::string port
 
 bool	DirectivesParser::isValidPort( std::string port )
 {
-	return ( !( SUtils::compareNumbersAsStrings( port, \
-			SUtils::longToString( std::numeric_limits< \
-				unsigned short >::max() ) ) > 0 \
-			|| SUtils::compareNumbersAsStrings( port, "0" ) == 0 ) );
+	return ( !( COMPARE_NBR_MAX_STR( port, unsigned short ) > 0 ||
+		    SUtils::compareNumbersAsStrings( port, "0" ) == 0 ) );
 }
 
 std::string	DirectivesParser::decompressIp( std::string ip )
@@ -118,7 +116,7 @@ std::string	DirectivesParser::decompressBytes( std::string compressed, \
 
 unsigned int	DirectivesParser::getMaskLimit( size_t octetPos )
 {
-	return ( std::numeric_limits< unsigned int >::max() >> ( octetPos * 8 ) );
+	return ( MAX_NUMERIC_LIMITS( unsigned int ) >> ( octetPos * 8 ) );
 }
 
 bool	DirectivesParser::checkValidIp( std::string ip )

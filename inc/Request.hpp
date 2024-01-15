@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/13 11:46:18 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/15 08:28:49 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 
 # include <Headers.hpp>
 # include <Defines.hpp>
+# include <DefinesFunctions.hpp>
 # include <Server.hpp>
 # include <ConfigUtils.hpp>
 

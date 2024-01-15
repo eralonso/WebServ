@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:41:41 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/12 15:47:59 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/15 08:05:53 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,8 @@ void	DirectivesParser::parseLine( Directives *d, std::string& content, \
 	int		   	type;
 	std::string	name;
 
-	if ( ( type = TreeSplit::get_pair( head, body, content ) ) != NOT_A_SEPARATOR )
+	if ( ( type = TreeSplit::get_pair( head, body, content ) ) > COMMENT_SEPARATOR )
 	{
-		if ( head[ 0 ] == '#' )
-			return ;
 		name = head.substr( 0, head.find_first_of( ISSPACE ) );
 		checkValidDirective( name, allowedDirectives );
 		checkValidSeparator( type, name );
@@ -69,7 +67,7 @@ void	DirectivesParser::parseLine( Directives *d, std::string& content, \
 		d->_isEmpty = false;
 		parseDirective( head, body, d );
 	}
-	else if ( content.length() > 0 )
+	else if ( type == NOT_A_SEPARATOR && content.length() > 0 )
 		throw std::logic_error( "Unxpected \"}\" or end of file" );
 }
 

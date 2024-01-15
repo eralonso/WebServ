@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 11:03:56 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/12 15:48:20 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/15 09:04:21 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <TreeSplit.hpp>
 # include <Location.hpp>
 # include <Defines.hpp>
+# include <DefinesFunctions.hpp>
 # include <Directives.hpp>
 # include <Utils.hpp>
 # include <DirectivesDefines.hpp>

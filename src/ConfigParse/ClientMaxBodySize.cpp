@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 17:59:08 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/22 16:15:49 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/15 09:04:40 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 long	DirectivesParser::getMeasureLimit( int unit )
 {
-	return ( std::numeric_limits< long >::max() >> ( 10 * unit ) );
+	return ( MAX_NUMERIC_LIMITS( long ) >> ( 10 * unit ) );
 }
 
 int	DirectivesParser::parseMeasure( std::string number )
