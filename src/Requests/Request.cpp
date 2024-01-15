@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/15 09:55:16 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/15 10:00:57 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ Request::Request( void )
 {
 	this->id = Request::id_counter;
 	Request::id_counter++;
+	this->badRequest = false;
 	this->client = NULL;
 	this->status = IDLE;
 	this->useCgi = false;
@@ -40,6 +41,7 @@ Request::Request( Client *cli )
 {
 	this->id = Request::id_counter;
 	Request::id_counter++;
+	this->badRequest = false;
 	this->client = cli;
 	this->status = FD_BOND;
 	this->useCgi = false;

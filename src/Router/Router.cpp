@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/14 17:01:30 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/15 09:57:59 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,39 +172,6 @@ Response	*Router::getResponse( Request *req )
 	//}
 	return ( res );
 }
-
-//Response	*Router::createFaviconRes( Response& res, Request& req )
-//{
-//	std::string html;
-//
-//	formatGenericResponse( res, req );
-//	if ( req.getError() == HTTP_NOT_FOUND_CODE \
-//		|| req.getError() == HTTP_MOVED_TEMPORARILY_CODE )
-//	{
-//		req.setDefaultFavicon();
-//		if ( fillOutput( req, true ) )
-//		{
-//			formatGenericResponse( res, req );
-//			if ( req.getError() != HTTP_NOT_FOUND_CODE )
-//				return ( &res );
-//		}
-//	}
-//	if ( req.getError() == HTTP_NOT_FOUND_CODE \
-//		|| req.getError() == HTTP_MOVED_TEMPORARILY_CODE )
-//	{	
-//		res.setProtocol( req.getProtocol() );
-//		res.setStatus( HTTP_OK_CODE );
-//		res.setMethod( req.getMethod() );
-//		res.appendHeader( Header( "Content-Type", MimeMap::getMime( "svg" ) ) );
-//		html += "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"150\" height=\"100\" viewBox=\"0 0 3 2\">\n";
-//		html += "<rect width=\"1\" height=\"2\" x=\"0\" fill=\"#008d46\" />\n";
-//		html += "<rect width=\"1\" height=\"2\" x=\"1\" fill=\"#ffffff\" />\n";
-//		html += "<rect width=\"1\" height=\"2\" x=\"2\" fill=\"#d2232c\" />\n";
-//		html += "</svg>\n";
-//		res.setBody( html );
-//	}	
-//	return ( &res );
-//}
 
 std::string	Router::getRequestEmbed( Request &req )
 {
