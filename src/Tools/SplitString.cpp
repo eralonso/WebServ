@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 15:05:57 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/16 12:44:37 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/16 16:27:36 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ namespace SplitString
 			if (! emptyLine)
 			{
 				std::string line = content.substr( prev_pos, chunk_size );
-				Log::Info("splitHeaderBody line: " + line);
 				ret.push_back( line );
 			}
 			prev_pos = pos + 1;
@@ -70,5 +69,17 @@ namespace SplitString
 		else
 			body = std::string("");
 		return ( ret );
+	}
+
+	bool		splitHeaderLine(std::string& key, std::string& value, const std::string& line)
+	{
+		size_t pos = line.find( ":", 0 );
+		
+		if ( pos != std::string::npos)
+		{
+			key = SUtils::trim(line.substr( 0, pos ));
+			value = SUtils::trim(line.substr( pos + 1, line.size() - pos));
+		}
+		return (true);
 	}
 }

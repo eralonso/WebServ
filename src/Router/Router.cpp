@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/16 12:46:33 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/16 16:34:12 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,18 @@ Router::~Router( void ) {}
 
 int	Router::updateResponse( Response &res, Request &req )
 {
-	Log::Error( "Uppdating response" );
+	// Log::Error( "Uppdating response" );
 	res.setServer( req.getHost() );
 	if ( req.getUseCgi() )
+	{
 		formatCgiResponse( res,req );
+		// Log::Success("Router::updateResponse");
+		// Log::Success(res.toString());
+		// if (res.getIsCgi())
+		// 	Log::Success("Router::updateResponse is CGI");
+		// else
+		// 	Log::Success("Router::updateResponse is NOT CGI");
+	}
 	else
 		formatGenericResponse( res, req );
 	/*else if ( req.getError() != 0 )
@@ -287,7 +295,7 @@ std::string Router::determineContentType(Response& res, Request& req)
 
 Response	*Router::formatGenericResponse( Response& res, Request& req )
 {
-	Log::Error( "Generic response" );
+	// Log::Error( "Generic response" );
 	res.appendHeader( Header( "Content-Type", determineContentType( res, req ) ) );
 	res.setProtocol( req.getProtocol() );
 	if ( req.getRedir() == true )
@@ -301,43 +309,83 @@ Response	*Router::formatGenericResponse( Response& res, Request& req )
 	return ( &res );
 }
 
-bool	Router::parseCgiOutput (Response& res, Request& req)
+bool	Router::parseCgiHeaderLine (Response& res, Request& req, const std::string& line)
 {
-	std::string cgiOut = req.getCgiOutput();
-	std::string doc = req.getDocument();
-	std::string	body;
-	bool nph = req.isDocumentNPH ();
-	Log::Success("Router::parseCgiOutput read from cgi out");
-	Log::Success(cgiOut);
-	if (nph)
+	std::string	headKey;
+	std::string	headValue;
+
+	// (void)req;
+	// Log::Info("Router::parseCgiHeaderLine");
+	if (! SplitString::splitHeaderLine(headKey, headValue, line))
+		return (false);
+	// Log::Info(headKey);
+	// Log::Info(headValue);
+	// Log::Info("Router::parseCgiHeaderLine check Status");
+	if (headKey == "Status")
 	{
-		Log::Success("Router::parseCgiOutput NPH");
-		res.setIsCgi(true);
-		res.setBody(cgiOut);
-		return ( true );
+		StringVector sv = SplitString::split(headValue, " ");
+		size_t svs = sv.size();
+		// Log::Info("Router::parseCgiHeaderLine Status check els " + SUtils::longToString(svs));
+		if (svs < 1 || svs > 2)
+			return (false);
+		std::string statCodeStr = SUtils::trim(sv[0]);
+		// Log::Info("Router::parseCgiHeaderLine Status check cde len " + statCodeStr );
+		if (statCodeStr.size() != 3)
+			return (false);
+		long stat = SUtils::atol(statCodeStr);
+		res.setStatus(stat);
+		req.setError(stat);
+		// Log::Info("Router::parseCgiHeaderLine Status Parsed");
+		return (true);
 	}
+	// Log::Info("Router::parseCgiHeaderLine");
+	// Log::Info("appended header: " + headKey + ": " + headValue);
+	res.appendHeader(Header(headKey, headValue));
+	return (true);
+}
+
+bool	Router::parseCgiHeaders (Response& res, Request& req, const std::string& cgiOut)
+{
+	std::string	body;
+	
 	res.setIsCgi(false);
 	StringVector sv = SplitString::splitHeaderBody(body, cgiOut);
 	StringVector::iterator it = sv.begin();
 	StringVector::iterator ite = sv.end();
-	Log::Success("Router::parseCgiOutput");
-	Log::Success(body);
-	//TODO for each line of CGI HEADER
-	//Check if Status: cgi header, and then update Response status
-	//Check if an HTTP header, and then add it to Response Headers
+	// Log::Success("Router::parseCgiOutput");
+	// Log::Success(body);
 	while (it != ite)
 	{
-		Log::Success(*it);
+		// Log::Success(*it);
+		if (!parseCgiHeaderLine(res, req, *it))
+		 	break;
 		it++;
 	}
 	res.setBody(body);
-	return ( false );
+	return (it == ite);
+}
+
+bool	Router::parseCgiOutput (Response& res, Request& req)
+{
+	const std::string& cgiOut = req.getCgiOutput();
+	std::string	body;
+	bool nph = req.isDocumentNPH ();
+	// Log::Success("Router::parseCgiOutput read from cgi out");
+	// Log::Success(cgiOut);
+	if (nph)
+	{
+		// Log::Success("Router::parseCgiOutput NPH");
+		res.setIsCgi(true);
+		res.setBody(cgiOut);
+		return ( true );
+	}
+	return (parseCgiHeaders( res, req, cgiOut ));
 }
 
 Response	*Router::formatCgiResponse( Response& res, Request& req )
 {
-	Log::Error( "Cgi response" );
-	res.appendHeader( Header( "Content-Type", "text/html" ) );
+	// Log::Error( "Cgi response" );
+	//res.appendHeader( Header( "Content-Type", "text/html" ) );
 	res.setProtocol( req.getProtocol() );
 	//res.setStatus( HTTP_OK_CODE );
 	res.setStatus( req.getError() );
@@ -345,7 +393,12 @@ Response	*Router::formatCgiResponse( Response& res, Request& req )
 	if ( req.getError() < MIN_ERROR_CODE )
 		parseCgiOutput(res, req);
 	else
+	{
+		res.appendHeader( Header( "Content-Type", "text/html" ) );
 		res.setBody( req.getOutput() );
+	}
+	// Log::Success("Router::formatCgiResponse");
+	// Log::Success(SUtils::longToString(req.getError()));
 	return &res;
 }
 

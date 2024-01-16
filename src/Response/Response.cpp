@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/16 11:18:48 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/16 14:58:22 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,10 +170,10 @@ std::string	Response::getBody( void ) const
 	return ( this->body );
 }
 
-// bool	Response::getIsCgi() const
-// {
-// 	return (isCgi);
-// }
+bool	Response::getIsCgi() const
+{
+	return (isCgi);
+}
 
 std::string	Response::toString( void ) const
 {

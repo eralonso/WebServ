@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/03 16:21:23 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/16 16:34:44 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,7 @@ int	Client::managePollout( void )
 
 	while ( ( req = findReadyToSendRequest() ) )
 	{
-		Log::Error( "Generating response klregrthgthgtrh" );
+		// Log::Error( "Generating response klregrthgthgtrh" );
 		res = Router::getResponse( req );
 		// Log::Info("managePollout for: " + SUtils::longToString(req->getId()));
 		// Log::Info("Response: \n" + res->toString());

@@ -4,6 +4,9 @@
 #	((i++))
 #done
 
+echo "Status: 200 OK"
+echo "Content-Type: text/html"
+echo ""
 echo "<h1>Made in Bash though CGI</h1>"
 echo "<h3>This is the environment</h3>"
 # export

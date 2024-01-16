@@ -1,4 +1,4 @@
-echo "HTTP/1.1 200 OK"
+echo $SERVER_PROTOCOL "200 OK"
 echo "Content-Type: text/html"
 echo "Content-Length: 925"
 echo "Location: localhost:8000/"
