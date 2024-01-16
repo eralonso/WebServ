@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/15 13:22:16 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/16 12:46:33 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <CgiExecutor.hpp>
 #include <FolderLs.hpp>
 #include <MimeMap.hpp>
+#include <SplitString.hpp>
 
 std::string	Router::methods[ METHODS_NB ] = { "GET", "POST", "PUT", "DELETE", "HEAD" };
 
@@ -300,6 +301,39 @@ Response	*Router::formatGenericResponse( Response& res, Request& req )
 	return ( &res );
 }
 
+bool	Router::parseCgiOutput (Response& res, Request& req)
+{
+	std::string cgiOut = req.getCgiOutput();
+	std::string doc = req.getDocument();
+	std::string	body;
+	bool nph = req.isDocumentNPH ();
+	Log::Success("Router::parseCgiOutput read from cgi out");
+	Log::Success(cgiOut);
+	if (nph)
+	{
+		Log::Success("Router::parseCgiOutput NPH");
+		res.setIsCgi(true);
+		res.setBody(cgiOut);
+		return ( true );
+	}
+	res.setIsCgi(false);
+	StringVector sv = SplitString::splitHeaderBody(body, cgiOut);
+	StringVector::iterator it = sv.begin();
+	StringVector::iterator ite = sv.end();
+	Log::Success("Router::parseCgiOutput");
+	Log::Success(body);
+	//TODO for each line of CGI HEADER
+	//Check if Status: cgi header, and then update Response status
+	//Check if an HTTP header, and then add it to Response Headers
+	while (it != ite)
+	{
+		Log::Success(*it);
+		it++;
+	}
+	res.setBody(body);
+	return ( false );
+}
+
 Response	*Router::formatCgiResponse( Response& res, Request& req )
 {
 	Log::Error( "Cgi response" );
@@ -309,15 +343,9 @@ Response	*Router::formatCgiResponse( Response& res, Request& req )
 	res.setStatus( req.getError() );
 	res.setMethod( req.getMethod() );
 	if ( req.getError() < MIN_ERROR_CODE )
-		res.setBody( req.getCgiOutput() );
+		parseCgiOutput(res, req);
 	else
 		res.setBody( req.getOutput() );
-	std::string doc = req.getDocument();
-	bool nph = (doc.size() > 2
-		&& (doc[0] == 'n' || doc[0] == 'N')
-		&& (doc[1] == 'p' || doc[1] == 'P')
-		&& (doc[2] == 'h' || doc[2] == 'H'));
-	res.setIsCgi(nph);
 	return &res;
 }
 

@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/15 08:28:49 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/16 11:33:40 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,7 @@ public:
 	StringVector	getRouteChaine( void ) const;
 	std::string		getRouteChaineString( void ) const;
 	std::string		getDocument( void ) const;
+	bool			isDocumentNPH( ) const;
 	std::string		getDocExt( void ) const;
 	std::string		getQuery( void ) const;
 	const Headers&	getHeaders( void ) const;

@@ -28,6 +28,10 @@ acum += "HTTP/1.1 200 OK\r\n"
 acum += "Content-Type: text/html\r\n"
 acum += "Content-Length: " + str(len(body)) + "\r\n"
 acum += "Location: localhost:8000/\r\n"
+#acum += "Set-Cookie: <cookie-name>=<cookie-value>; Expires=<date>\r\n"
+acum += "Set-Cookie: sessionId=38afes7a8; Max-Age=2592000\r\n"
+#acum += "Set-Cookie: <cookie-name>=<cookie-value>; Domain=<domain-value>\r\n"
+#acum += "Set-Cookie: <cookie-name>=<cookie-value>; Path=<path-value>\r\n"
 acum += "\r\n"
 acum += body
 sys.stdout.write(acum)

@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   SplitString.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 15:05:57 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/17 16:44:51 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/16 12:44:37 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <SplitString.hpp>
+#include <Utils.hpp>
 
 namespace SplitString
 {
@@ -38,6 +39,36 @@ namespace SplitString
 		chunk_size = content_size - prev_pos;
 		if ( chunk_size > 0 )
 			ret.push_back( content.substr( prev_pos, chunk_size ) );
+		return ( ret );
+	}
+
+	StringVector	splitHeaderBody(std::string& body, const std::string& content)
+	{
+		StringVector	ret;
+		size_t			content_size = content.length();
+		size_t			prev_pos = 0;
+		size_t			pos;
+		size_t			chunk_size;
+		bool			emptyLine = false;
+
+		while ( prev_pos < content_size && !emptyLine \
+				&& ( pos = content.find( "\n", prev_pos ) ) != std::string::npos )
+		{
+			chunk_size = pos - prev_pos;
+			emptyLine = chunk_size == 0 || (chunk_size == 1 && content[pos] <= ' ');
+			if (! emptyLine)
+			{
+				std::string line = content.substr( prev_pos, chunk_size );
+				Log::Info("splitHeaderBody line: " + line);
+				ret.push_back( line );
+			}
+			prev_pos = pos + 1;
+		}
+		chunk_size = content_size - prev_pos;
+		if ( chunk_size > 0 )
+			body = content.substr( prev_pos, chunk_size );
+		else
+			body = std::string("");
 		return ( ret );
 	}
 }

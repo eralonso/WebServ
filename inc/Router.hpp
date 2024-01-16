@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/13 11:40:52 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/16 11:46:46 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,9 @@ public:
 	static std::string getRequestEmbed(Request& req);
 	static Response* formatErrorResponse(Response& res, int error);
 	static Response* formatGenericResponse(Response& res, Request& req);
-	static Response* formatCgiResponse(Response& res, Request& req);
-	static Response* formatContinueResponse(Response &res, Request &req);
+    static bool		parseCgiOutput(Response &res, Request &req);
+    static Response *formatCgiResponse(Response &res, Request &req);
+    static Response* formatContinueResponse(Response &res, Request &req);
 	static Response* formatAcceptResponse(Response &res, Request &req);
 	static Response* formatErrorResponse(Response &res, Request &req);
 	static bool 		processRequestReceived(Request &req);

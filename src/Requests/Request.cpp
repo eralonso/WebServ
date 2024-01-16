@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/15 10:00:57 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/16 11:34:55 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -689,6 +689,16 @@ std::string	Request::getRouteChaineString( void ) const
 std::string	Request::getDocument( void ) const
 {
 	return ( this->document );
+}
+
+bool	Request::isDocumentNPH( void ) const
+{
+	bool nph = ( this->document.size() > 4
+		&& (this->document[0] == 'n' || this->document[0] == 'N')
+		&& (this->document[1] == 'p' || this->document[1] == 'P')
+		&& (this->document[2] == 'h' || this->document[2] == 'H')
+		&& (this->document[2] == '-') );
+	return ( nph );
 }
 
 std::string	Request::getDocExt( void ) const
