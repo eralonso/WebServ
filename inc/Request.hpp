@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/16 11:33:40 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/17 16:47:02 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +159,8 @@ public:
 	bool			tryIndexFiles( std::string& file ) const;
 	void			setDefaultFavicon( void );
 	bool			findReturnUri( int& uriCode, std::string& uriRedir ) const;
+	std::string		getCookies(void) const;
+
 };
 
 #endif

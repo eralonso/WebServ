@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Headers.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 10:19:37 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/22 12:53:24 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/17 16:45:54 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ public:
 	void				erase( Header& h );
 	std::string			toString( void ) const;
 	static std::string	toLower( std::string src );
+    std::string			getCookies(void) const;
 };
 
 #endif

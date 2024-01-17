@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/17 16:05:56 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/17 16:48:47 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,8 @@ bool	Router::processCgi( Request& req )
 		cgiExe.pushEnvVar("AUTH_TYPE", "none");
 		cgiExe.pushEnvVar("REMOTE_USER", "user");
 		cgiExe.pushEnvVar("REMOTE_IDENT", "user");
+		
+		cgiExe.pushEnvVar("HTTP_COOKIE", req.getCookies());
 		if (req.getBody().size() > 0)
 			cgiExe.pushEnvVar("CONTENT_TYPE", req.getHeaderWithKey("Content-Type"));
 		cgiExe.pushEnvVar("CONTENT_LENGTH", SUtils::longToString(req.getBody().size()));

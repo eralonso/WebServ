@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/17 16:02:49 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/17 16:48:21 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -981,4 +981,8 @@ void	Request::logStatus( void )
 		default:
 			Log::Success( "status = " + SUtils::longToString( status ) );
 	}
+}
+std::string Request::getCookies( void ) const
+{
+	return (headers.getCookies());	
 }
