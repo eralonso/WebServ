@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/16 11:34:55 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/17 11:35:06 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -697,7 +697,7 @@ bool	Request::isDocumentNPH( void ) const
 		&& (this->document[0] == 'n' || this->document[0] == 'N')
 		&& (this->document[1] == 'p' || this->document[1] == 'P')
 		&& (this->document[2] == 'h' || this->document[2] == 'H')
-		&& (this->document[2] == '-') );
+		&& (this->document[3] == '-') );
 	return ( nph );
 }
 

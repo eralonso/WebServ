@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/12 12:11:34 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/17 11:06:46 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ int	Receptionist::sendResponse( socket_t connected, std::string response )
 	}
 	Log::Success( "Response sended [ " \
 			+ SUtils::longToString( connected ) \
-			+ " ]" );
+			+ " ]\n" + response );
 	return ( 1 );
 }
 

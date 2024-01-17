@@ -25,6 +25,7 @@ body += ("</div>\n")
 body += ("</body>\n")
 #acum += "HTTP/1.1 307 Temporary Redirect\r\n"
 acum += os.environ["SERVER_PROTOCOL"] + " 200 OK\r\n"
+acum += "Server: " + os.environ["SERVER_NAME"] + "\r\n"
 acum += "Content-Type: text/html\r\n"
 acum += "Content-Length: " + str(len(body)) + "\r\n"
 acum += "Location: localhost:8000/\r\n"
