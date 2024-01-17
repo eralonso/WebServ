@@ -1,4 +1,5 @@
-let body = "<h1>Rendered with CGI through NODEJS</h1>\n";
+console.error("Start NodeJS script -->")
+let body = "<h1>Rendered with CGI NPH through NODEJS</h1>\n";
 body += "<div style=\"background-color:9900FF\">\n"
 body += Object.keys(process.env).map(it => ("<p>" + it + ": " + process.env[it] + "</p>")).join("\n");
 body += "</div>";
@@ -16,3 +17,4 @@ console.log(body);
 // }
 // Object.keys(process.env).map(it => console.log("<p>" + it + ": " + process.env[it] + "</p>"));
 // console.log("</div>");
+console.error("Finish NodeJS script <--")

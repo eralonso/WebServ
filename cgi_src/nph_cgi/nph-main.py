@@ -10,14 +10,14 @@ for i in range(5):
     cat = str(i)
 for var in os.environ:
     env += "<p>" + var + ": " + os.environ[var] + "</p>\n"
-sys.stderr.write("Read from webserv: ")
-sys.stderr.write(value)
-sys.stderr.write("\n")
-sys.stderr.write("Environment variables: \n")
-sys.stderr.write(env)
-sys.stderr.write("\n")
+# sys.stderr.write("Read from webserv: ")
+# sys.stderr.write(value)
+# sys.stderr.write("\n")
+# sys.stderr.write("Environment variables: \n")
+# sys.stderr.write(env)
+# sys.stderr.write("\n")
 body += ("<body>\n")
-body += "<h1 style=\"color: #F00F0F;\">This is the body given by python</h1>\n"
+body += "<h1 style=\"color: #F00F0F;\">This is the body given by python with CGI NPH</h1>\n"
 body += ("<div>\n")
 body += "<h3 style=\"color: #000F0F;\">This is the environment</h3>\n"
 body += env
@@ -36,6 +36,6 @@ acum += "Set-Cookie: sessionId=38afes7a8; Max-Age=2592000\r\n"
 acum += "\r\n"
 acum += body
 sys.stdout.write(acum)
-sys.stderr.write("Written to webserv: ")
-sys.stderr.write(acum)
+# sys.stderr.write("Written to webserv: ")
+# sys.stderr.write(acum)
 sys.stderr.write("Executing python finished-<\n")
