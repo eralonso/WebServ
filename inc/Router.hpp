@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/16 14:16:28 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/17 16:06:09 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,14 @@ private:
     static bool processPostRequest(Request &req);
     static bool	processPutRequest(Request &req);
     static bool processDeleteRequest(Request &req);
-
-public:
-	Router(/* args */);
+private:
+	Router( void );
 	~Router();
+	Router( const Router& );
+	Router&	operator=( const Router& );
+public:
 	static int updateResponse(Response& res, Request& req);
-	static std::string getHtml(Request *req);
-	static std::string getHtmlErrorPage(Request *req);
-	static std::string getForm(void);
 	static Response* getResponse(Request *req);
-	// static Response* createFaviconRes(Response& res, Request& req);
 	static std::string getRequestEmbed(Request& req);
 	static Response* formatErrorResponse(Response& res, int error);
 	static Response* formatGenericResponse(Response& res, Request& req);
@@ -49,9 +47,6 @@ public:
     static bool 	parseCgiHeaders(Response &res, Request &req, const std::string &cgiOut);
     static bool 	parseCgiOutput(Response &res, Request &req);
     static Response *formatCgiResponse(Response &res, Request &req);
-    static Response* formatContinueResponse(Response &res, Request &req);
-	static Response* formatAcceptResponse(Response &res, Request &req);
-	static Response* formatErrorResponse(Response &res, Request &req);
 	static bool 		processRequestReceived(Request &req);
 	static std::string 	determineContentType(Response &res, Request &req);
 	static bool			processCgi( Request& req );

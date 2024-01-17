@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/17 15:20:50 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/17 16:02:49 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ Request::Request( void )
 	this->maxBodySize = 1 << 20;
 	this->redir = false;
 	this->outputLength = 0;
-	// Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
 Request::Request( Client *cli )
@@ -222,11 +221,9 @@ void	Request::parseHostPortFromRoute( void )
 
 void	Request::parseRoute( void )
 {
-	// Log::Success( "Request::parseRoute" );
 	StringVector::iterator	doc;
 	parseQueryStringFromRoute();
 	parseHostPortFromRoute();
-	// Log::Success("Request::parseRoute route: " + this->route);
 	this->routeChain = SplitString::split( this->route, "/" );
 	if ( this->routeChain.size() > 0 && ( this->route.size() > 0 \
 			&& this->route[ this->route.size() - 1 ] != '/' ) )
@@ -242,21 +239,17 @@ void	Request::parseRoute( void )
 		Log::Error( "routeChain is empty" );
 		setError(HTTP_BAD_REQUEST_CODE);
 	}
-	Log::Info( "Host: " + routeHost);
-	Log::Info( "Port: " + routePort);
-	Log::Info( "Route Chaine: " + getRouteChaineString() );
-	Log::Info( "Document: " + getDocument() );
-	Log::Info( "Extension: " + getDocExt() );
-	//TODO
-	//check if route is valid
-	//check if route is available
+	// Log::Info( "Host: " + routeHost);
+	// Log::Info( "Port: " + routePort);
+	// Log::Info( "Route Chaine: " + getRouteChaineString() );
+	// Log::Info( "Document: " + getDocument() );
+	// Log::Info( "Extension: " + getDocExt() );
 }
 
 void	Request::parseFirstLine( const std::string &line )
 {
 	StringVector	tokens;
 
-	// Log::Error( "Request::parseFirstLine: \n" + line );
 	tokens = SplitString::split( line, " " );
 	if ( ( tokens.size() ) < 3 )
 	{
@@ -332,16 +325,12 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 		updateFilePath();
 		if ( checkChunked() )
 			return ( true );
-		// Log::Error("Request::processLineOnRecvdReqLine maxBodySize: " + SUtils::longToString(maxBodySize));
 		if ( !checkEmptyContent( contentSize ) && (maxBodySize == 0 || contentSize <= maxBodySize) )
 		{
 			got = this->client->getNChars(data, contentSize);
 			this->body += data;
 			if ( got == contentSize )
-			{
 				this->status = RECVD_ALL;
-				// Log::Success(body);
-			}
 		}
 		if (maxBodySize != 0 && contentSize > maxBodySize)
 			return ( setError( HTTP_BAD_REQUEST_CODE ) );
@@ -363,10 +352,7 @@ bool	Request::processLineOnRecvdHeader( const std::string &line )
 		if (maxBodySize != 0 && contentSize > maxBodySize)
 			return ( setError( HTTP_BAD_REQUEST_CODE ) );
 		if ( this->body.size() >= contentSize )
-		{
-			// Log::Success(body);
 			this->status = RECVD_ALL;
-		}
 		return ( this->client->getPendingSize() > 0 );
 	}
 	this->status = RECVD_ALL;
@@ -376,10 +362,6 @@ bool	Request::processLineOnRecvdHeader( const std::string &line )
 bool	Request::processLineOnRecvdChunkSize( const std::string &line )
 {
 	size_t len = line.length();
-	// Log::Info("processLineOnRecvdChunkSize with line:");
-	// Log::Info(line);
-	// Log::Info("chunck size = " + SUtils::longToString(chunkSize));
-	// Log::Info("line length = " + SUtils::longToString(len));
 
 	if ( this->chunkSize == 0 )
 	{
@@ -407,13 +389,10 @@ bool	Request::processLineOnRecvdChunkSize( const std::string &line )
 
 bool	Request::processLineOnRecvdChunk( const std::string &line )
 {
-	// Log::Info("processLineOnRecvdChunk with line:");
-	// Log::Info(line);
 	size_t len = line.length();
 
 	if ( ( ( len == 1 || ( len == 2 && line[ 1 ] <= ' ' ) ) && line[ 0 ] == '0' ) )
 	{
-		// Log::Info("Received 0 to indicate last chunk");
 		this->chunkSize = 0;
 		this->status = RECVD_LAST_CHUNK;
 		return ( true );
@@ -421,7 +400,6 @@ bool	Request::processLineOnRecvdChunk( const std::string &line )
 	this->chunkSize = SUtils::atol( line.c_str() );
 	if ( chunkSize > 0 )
 	{
-		// Log::Info("Received" + SUtils::longToString(chunkSize) + "to indicate next chunk size");
 		this->status = RECVD_CHUNK_SIZE;
 		return ( true );
 	}
@@ -432,14 +410,11 @@ bool	Request::processLineOnRecvdChunk( const std::string &line )
 
 bool	Request::processLineOnRecvdLastChunk( const std::string &line )
 {
-	// Log::Info("processLineOnRecvdLastChunk with line:");
-	// Log::Info(line);
 	size_t len = line.length();
 
 	if ( len == 0 || ( len == 1 && line[ 0 ] <= ' ' ) )
 	{
 		this->status = RECVD_ALL;
-		// Log::Success(body);
 		return ( true );
 	}
 	this->status = RECVD_ALL;
@@ -554,8 +529,6 @@ int	Request::splitDocExt( void )
 	if ( len > 1 )
 	{
 		this->docExt = frags[ len - 1 ];
-
-		// this->useCgi = ( this->docExt == std::string( "py" ) );
 		return ( 1 );
 	}
 	return ( 0 );

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Clients.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:50 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/22 11:57:19 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/17 16:00:52 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ Clients::Clients( void ) {}
 
 Clients::~Clients( void )
 {
-	Log::Error( "Calling Clients destructor" );
 	for ( Clients::iterator it = this->begin(); it != this->end(); it++ )
 	{
 		if ( it->second != NULL )

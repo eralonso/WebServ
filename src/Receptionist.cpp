@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/17 11:06:46 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/17 16:02:13 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ Receptionist::Receptionist( ServersVector& servers ): Clients(), \
 
 Receptionist::~Receptionist( void )
 {
-	Log::Error( "Calling Receptionist destructor" );
 }
 
 Receptionist::Receptionist( const Receptionist& b ): Clients(), \
@@ -94,7 +93,7 @@ int	Receptionist::sendResponse( socket_t connected, std::string response )
 	}
 	Log::Success( "Response sended [ " \
 			+ SUtils::longToString( connected ) \
-			+ " ]\n" + response );
+			+ " ]");
 	return ( 1 );
 }
 
@@ -199,17 +198,12 @@ int	Receptionist::mainLoop( void )
 
 	while ( WSSignals::isSig == false )
 	{
-		//if ( waitRes != 0 )
-			//Log::Info( "Waiting for any fd ready to I/O" );
 		waitRes = polls.wait( timeout );
 		if ( waitRes < 0 )
 			return ( 1 );
 		CgiExecutor::attendPendingCgiTasks();
 		if ( waitRes == 0 )
-		{
-			// Log::Info( "Timeout Waiting for any fd ready to I/O" );
 			continue ;
-		}
 		serverFd = polls.isNewClient();
 		if ( serverFd > 0 )
 		{
