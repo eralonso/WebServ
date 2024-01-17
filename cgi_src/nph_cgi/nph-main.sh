@@ -1,7 +1,7 @@
 echo $SERVER_PROTOCOL "200 OK"
 echo "Server:" $SERVER_NAME
 echo "Content-Type: text/html"
-echo "Content-Length: 925"
+echo "Content-Length: 797"
 echo "Location: localhost:8000/"
 echo ""
 echo "<h1>Made in Bash though CGI</h1>"
