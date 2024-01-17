@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/17 11:35:06 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/17 15:20:50 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,24 +278,15 @@ void	Request::parseFirstLine( const std::string &line )
 
 void	Request::parseHeader( const std::string &line )
 {
-	StringVector	tokens;
+	std::string		key;
 	std::string		value;
-	size_t			len;
 
-	tokens = SplitString::split( line, ":" );
-	len = tokens.size();
-	if ( len < 2 )
+	if (SplitString::splitHeaderLine(key, value, line))
 	{
-		this->headers.append( tokens[ 0 ], "" );
+		this->headers.append(key, value);
 		return ;
 	}
-	for (size_t i = 1; i < len; i++)
-	{
-		value += SUtils::trim(tokens[i]); 
-		if (len - i > 1)
-			value += ":"; 
-	}
-	this->headers.append(tokens[0], value);	
+	setError(400);
 }
 
 bool	Request::processLineOnFdBond( const std::string &line )

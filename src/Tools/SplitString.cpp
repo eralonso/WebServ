@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 15:05:57 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/16 16:27:36 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/17 15:10:22 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,8 @@ namespace SplitString
 		{
 			key = SUtils::trim(line.substr( 0, pos ));
 			value = SUtils::trim(line.substr( pos + 1, line.size() - pos));
+			return (true);
 		}
-		return (true);
+		return (false);
 	}
 }
