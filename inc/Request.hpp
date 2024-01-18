@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/17 16:47:02 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/18 18:12:38 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,8 @@ private:
 	std::string		routeHost;
 	std::string		routePort;
 	std::string		query;
-	std::string		filePath;
+	std::string		filePathWrite;
+	std::string		filePathRead;
 	std::string		protocol;
 	std::string		body;
 	std::string		document;
@@ -92,7 +93,7 @@ private:
 	bool	checkEmptyContent( size_t& size );
 	bool	updateServerConfig( void );
 	void	updateLocation( void );
-	void	updateFilePath( void );
+	void	updateFilePaths( void );
 
 public:
     Request( void );
@@ -125,7 +126,8 @@ public:
 	size_t 			getBodyLength( void ) const;
 	std::string		getBody( void ) const;
 	size_t			getId( void ) const;
-	std::string		getFilePath( void ) const;
+	std::string		getFilePathWrite( void ) const;
+	std::string		getFilePathRead( void ) const;
 	const Server	*getServer( void ) const;
 	const Location	*getLocation( void ) const;
 	std::string		getFinalPath( void ) const;

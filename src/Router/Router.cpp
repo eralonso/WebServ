@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/18 17:25:26 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/18 18:54:03 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,6 +254,12 @@ Response	*Router::formatCgiResponse( Response& res, Request& req )
 		res.appendHeader( Header( "Content-Type", "text/html" ) );
 		res.setBody( req.getOutput() );
 	}
+	checkErrorRedir( res.getStatus(), req );
+	if ( req.getRedir() == true )
+	{
+		res.setStatus( req.getError() );
+		res.appendHeader( Header( "Location", req.getUriRedir() ) );
+	}
 	return &res;
 }
 
@@ -370,7 +376,7 @@ int	Router::getFileToRead( Request& req, std::string& retFile )
 	std::string	path;
 	std::string	file;
 
-	path = req.getFilePath();
+	path = req.getFilePathRead();
 	if ( checkPathExist( req, path ) == false )
 		return ( ENOENT );
 	file = path;
@@ -393,7 +399,7 @@ bool	Router::processGetRequest( Request& req )
 	std::string	output;
 	int			error;
 
-	Log::Info( "path to get file: " + req.getFilePath() );
+	Log::Info( "path to get file: " + req.getFilePathRead() );
 	error = getFileToRead( req, path );
 	if ( error == EXIT_SUCCESS )
 		req.setOutput( readFile( path ) );
@@ -438,7 +444,7 @@ bool	Router::processPostRequest( Request& req )
 		return (req.setError(HTTP_NO_CONTENT_CODE) );
 	if (!req.isDirectiveSet( "upload_store" ) || document.size() == 0)
 		return ( req.setError(HTTP_FORBIDDEN_CODE) );
-	path = req.getFilePath();
+	path = req.getFilePathWrite();
 	Log::Info("Path to POST ... " + path);
 	if (! writeFile(path, bodyContent))
 		return ( req.setError(HTTP_FORBIDDEN_CODE) );
@@ -456,7 +462,7 @@ bool	Router::processPutRequest( Request& req )
 		return (req.setError(HTTP_NO_CONTENT_CODE) );
 	if (!req.isDirectiveSet( "upload_store" ) || document.size() == 0)
 		return ( req.setError(HTTP_FORBIDDEN_CODE) );
-	path = req.getFilePath();
+	path = req.getFilePathWrite();
 	Log::Info("Path to POST ... " + path);
 	if (! writeFile(path, bodyContent))
 		return ( req.setError(HTTP_FORBIDDEN_CODE) );
@@ -468,7 +474,7 @@ bool	Router::processDeleteRequest( Request& req )
 	std::string	path;
 	std::string	file;
 
-	path = req.getFilePath();
+	path = req.getFilePathRead();
 	if ( checkPathExist( req, path ) == false )
 	{
 		req.setError(HTTP_NOT_FOUND_CODE);

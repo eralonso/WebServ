@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CgiExecutor.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/17 16:02:29 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/18 18:25:46 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ CgiExecutor::CgiExecutor( Request& request ):
 	request( request )
 {
 	this->binary = request.getCgiBinary( request.getDocExt() );
-	this->argument = request.getFilePath();
+	this->argument = request.getFilePathRead();
 	// Log::Info( "CgiExecutor binary: " + this->binary );
 	// Log::Info( "CgiExecutor argment: " + this->argument );
 	// Log::Info( "Route chain: " + request.getRouteChaineString() );

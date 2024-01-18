@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/18 17:32:47 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/18 18:18:19 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -322,7 +322,7 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 		maxBodySize = svr->getMaxBodySize(getRoute());
 		if (svr->getIsAllowedMethod( this->lc, this->method ) == false)
 			return ( setError( HTTP_NOT_ALLOWED_CODE ) );
-		updateFilePath();
+		updateFilePaths();
 		if ( checkChunked() )
 			return ( true );
 		if ( !checkEmptyContent( contentSize ) && (maxBodySize == 0 || contentSize <= maxBodySize) )
@@ -552,22 +552,24 @@ void	Request::updateLocation( void )
 		this->lc = this->svr->getLocationAtPath( routeWithoutFile );
 }
 
-void	Request::updateFilePath( void )
+void	Request::updateFilePaths( void )
 {
 	std::string	routeWithoutFile = getRoute();
 
 	if ( this->svr == NULL )
 	{
-		this->filePath = ConfigUtils::pathJoin( ".", this->route );
+		this->filePathWrite = ConfigUtils::pathJoin( ".", this->route );
+		this->filePathRead = ConfigUtils::pathJoin( ".", this->route );
 		return ;
 	}
-	if ( this->method == "POST" || this->method == "PUT" )
-	{
-		this->filePath = svr->getFinalUploadPath( routeWithoutFile, this->lc );
-		return ;
-	}
-	this->filePath = svr->getFinalPath( routeWithoutFile, this->lc );
-	Log::Success( "filePath == " + this->filePath );
+	// if ( this->method == "POST" || this->method == "PUT" )
+	// {
+	// 	return ;
+	// }
+	this->filePathWrite = svr->getFinalUploadPath( routeWithoutFile, this->lc );
+	this->filePathRead = svr->getFinalPath( routeWithoutFile, this->lc );
+	Log::Success( "filePathRead == " + this->filePathRead );
+	Log::Success( "filePathWrite == " + this->filePathWrite );
 }
 
 void Request::setDefaultFavicon(void)
@@ -575,13 +577,13 @@ void Request::setDefaultFavicon(void)
 	this->route = "/favicon.svg";
 	parseRoute();
 	setError(0);
-	updateFilePath();
+	updateFilePaths();
 }
 
 bool	Request::tryIndexFiles( std::string& file ) const
 {
 	if ( this->svr != NULL )
-		return ( this->svr->tryIndexFiles( file, this->filePath, this->lc ) );
+		return ( this->svr->tryIndexFiles( file, this->filePathRead, this->lc ) );
 	return ( false );
 }
 
@@ -773,9 +775,14 @@ size_t	Request::getId( void ) const
 	return ( this->id );
 }
 
-std::string	Request::getFilePath( void ) const
+std::string	Request::getFilePathWrite( void ) const
 {
-	return ( this->filePath );
+	return ( this->filePathWrite );
+}
+
+std::string	Request::getFilePathRead( void ) const
+{
+	return ( this->filePathRead );
 }
 
 const Server	*Request::getServer( void ) const
