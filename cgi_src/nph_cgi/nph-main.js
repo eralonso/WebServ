@@ -7,6 +7,8 @@ console.log(process.env["SERVER_PROTOCOL"] + " 200 OK\r");
 console.log("Server: " + process.env["SERVER_NAME"] + "\r");
 console.log("Content-Type: text/html\r");
 console.log("Content-Length: " + String(body.length) + "\r");
+console.log("Location: localhost:8000/\r");
+console.log("Set-Cookie: sessionId=nodejs38afes7a8; Max-Age=2592000\r");
 console.log("\r");
 console.log(body);
 // console.log("<h1>Rendered with CGI through NODEJS</h1>");

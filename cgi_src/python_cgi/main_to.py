@@ -16,6 +16,14 @@ sys.stderr.write("\n")
 sys.stderr.write("Environment variables: \n")
 sys.stderr.write(env)
 sys.stderr.write("\n")
+acum += "Status: 200 OK\r\n"
+acum += "Content-Type: text/html; charset=utf-8\r\n"
+acum += "Location: localhost:8000/\r\n"
+#acum += "Set-Cookie: <cookie-name>=<cookie-value>; Expires=<date>\r\n"
+acum += "Set-Cookie: sessionId=python38afes7a8; Max-Age=2592000\r\n"
+#acum += "Set-Cookie: <cookie-name>=<cookie-value>; Domain=<domain-value>\r\n"
+#acum += "Set-Cookie: <cookie-name>=<cookie-value>; Path=<path-value>\r\n"
+acum += "\r\n"
 body += ("<body>\n")
 body += "<h1 style=\"color: #F00F0F;\">This is the body given by python</h1>\n"
 body += ("<div>\n")
