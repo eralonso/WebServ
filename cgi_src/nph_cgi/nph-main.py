@@ -16,14 +16,17 @@ for var in os.environ:
 # sys.stderr.write("Environment variables: \n")
 # sys.stderr.write(env)
 # sys.stderr.write("\n")
-body += ("<body>\n")
-body += "<h1 style=\"color: #F00F0F;\">This is the body given by python with CGI NPH</h1>\n"
-body += ("<div>\n")
-body += "<h3 style=\"color: #000F0F;\">This is the environment</h3>\n"
+body += ("<body>\r\n")
+body += "<h1 style=\"color: #F00F0F;\">This is the body given by python</h1>\r\n"
+body += "<h3 style=\"color: #000F0F;\">This is the environment</h3>\r\n"
+body += ("<div>\r\n")
+body += "<details close>\r\n"
+body += "<summary>Environment Variables</summary>\r\n"
 body += env
-body += ("</div>\n")
-body += ("<button onclick=\"document.cookie = 'sessionId=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';\">LOGOUT</button>\n")
-body += ("</body>\n")
+body += ("</div>\r\n")
+body += ("</details>\n")
+body += ("<button onclick=\"document.cookie = 'sessionId=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';\">LOGOUT</button>\r\n")
+body += ("</body>\r\n")
 #acum += "HTTP/1.1 307 Temporary Redirect\r\n"
 acum += os.environ["SERVER_PROTOCOL"] + " 200 OK\r\n"
 acum += "Server: " + os.environ["SERVER_NAME"] + "\r\n"

@@ -2,6 +2,8 @@ echo "Start BASH script -->" 1>&2
 LINEEND="\r\n"
 BODY="<h1>Made in Bash though CGI</h1>"$LINEEND
 BODY+="<h3>This is the environment</h3>"$LINEEND
+BODY+="<details close>"$LINEEND
+BODY+="<summary>Environment Variables</summary>"$LINEEND
 BODY+="<div style="background-color:AA9988">"$LINEEND
 BODY+="<p>SERVER_SOFTWARE:"$SERVER_SOFTWARE"</p>"$LINEEND
 BODY+="<p>SERVER_NAME:"$SERVER_NAME"</p>"$LINEEND
@@ -25,6 +27,7 @@ BODY+="<p>USER_AGENT:"$USER_AGENT"</p>"$LINEEND
 BODY+="<p>__CF_USER_TEXT_ENCODING:"$__CF_USER_TEXT_ENCODING"</p>"$LINEEND
 BODY+="<p>LC_CTYPE:"$LC_CTYPE"</p>"$LINEEND
 BODY+="</div>"$LINEEND
+BODY+="</details>"$LINEEND
 BODY+="<button onclick=\"document.cookie = 'sessionId=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';\">LOGOUT</button>\n"$LINEEND
 
 echo "Status: 200 OK"

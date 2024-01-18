@@ -1,9 +1,13 @@
 console.error("Start NodeJS script -->")
-let body = "<h1>Rendered with CGI NPH through NODEJS</h1>\n";
-body += "<div style=\"background-color:9900FF\">\n"
-body += Object.keys(process.env).map(it => ("<p>" + it + ": " + process.env[it] + "</p>")).join("\n");
-body += "</div>";
-body += "<button onclick=\"document.cookie = 'sessionId=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';\">LOGOUT</button>\n";
+let body = "<h1>Rendered with CGI NPH through NODEJS</h1>\r\n";
+body += "<h3>This is the environment</h3>\r\n";
+body += "<details close>\r\n";
+body += "<summary>Environment Variables</summary>\r\n";
+body += "<div style=\"background-color:9900FF\">\r\n"
+body += Object.keys(process.env).map(it => ("<p>" + it + ": " + process.env[it] + "</p>")).join("\r\n");
+body += "</div>\r\n";
+body += ("</details>\r\n");
+body += "<button onclick=\"document.cookie = 'sessionId=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';\">LOGOUT</button>\r\n";
 
 console.log(process.env["SERVER_PROTOCOL"] + " 200 OK\r");
 console.log("Server: " + process.env["SERVER_NAME"] + "\r");

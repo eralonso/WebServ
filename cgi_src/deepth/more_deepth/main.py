@@ -18,10 +18,13 @@ sys.stderr.write(env)
 sys.stderr.write("\n")
 body += ("<body>\n")
 body += "<h1 style=\"color: #F00F0F;\">This is the body given by python</h1>\n"
-body += ("<div>\n")
 body += "<h3 style=\"color: #000F0F;\">This is the environment</h3>\n"
+body += "<details close>\r\n"
+body += "<summary>Environment Variables</summary>\r\n"
+body += ("<div>\n")
 body += env
 body += ("</div>\n")
+body += ("</details>\n")
 body += ("<button onclick=\"document.cookie = 'sessionId=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';\">LOGOUT</button>\n")
 body += ("</body>\n")
 acum += "Status: 200 OK\r\n"
