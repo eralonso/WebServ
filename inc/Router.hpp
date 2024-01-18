@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/13 11:40:52 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/16 12:53:28 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ public:
 	static void			checkRedir( Request& req );
 	static void 		checkErrorRedir( int errorStatus, Request& req );
 	static void			checkErrorBody( Request& req, int errorStatus );
+	static bool			isValidDirectory( std::string dir );
 };
 
 #endif

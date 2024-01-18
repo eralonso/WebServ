@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/12 12:11:34 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/16 16:33:23 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,12 +146,12 @@ void	Receptionist::manageClientRead( socket_t clientFd, Client *cli )
 		eraseClient( cli );
 		return ;
 	}
-	Log::Info( "Readed " 
-			+ SUtils::longToString( amount ) 
-			+ " bytes from [ " 
-			+ SUtils::longToString( clientFd ) 
-			+ " ]: =>\n" 
-			+ SUtils::compactString(readed, 200, 80, 40 ) );
+	//Log::Info( "Readed " 
+	//		+ SUtils::longToString( amount ) 
+	//		+ " bytes from [ " 
+	//		+ SUtils::longToString( clientFd ) 
+	//		+ " ]: =>\n" 
+	//		+ SUtils::compactString(readed, 200, 80, 40 ) );
 	cli->manageRecv( readed );
 	if ( cli->manageCompleteRecv() )
 		cli->allowPollWrite( true );

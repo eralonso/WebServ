@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/15 10:00:57 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/15 13:27:57 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -580,15 +580,18 @@ bool	Request::updateServerConfig( void )
 
 void	Request::updateLocation( void )
 {
-	std::string	routeWithoutFile = getRouteChaineString();
+	//std::string	routeWithoutFile = getRouteChaineString();
+	std::string	routeWithoutFile = getRoute();
 
+	Log::Error( "location string: " + routeWithoutFile );
 	if ( this->svr != NULL )
 		this->lc = this->svr->getLocationAtPath( routeWithoutFile );
 }
 
 void	Request::updateFilePath( void )
 {
-	std::string	routeWithoutFile = getRouteChaineString();
+	//std::string	routeWithoutFile = getRouteChaineString();
+	std::string	routeWithoutFile = getRoute();
 
 	if ( this->svr == NULL )
 	{
@@ -597,12 +600,15 @@ void	Request::updateFilePath( void )
 	}
 	if ( this->method == "POST" || this->method == "PUT" )
 	{
-		this->filePath = ConfigUtils::pathJoin( svr->getFinalUploadPath( \
-			routeWithoutFile ), getDocument() );
+		this->filePath = svr->getFinalUploadPath( routeWithoutFile, this->lc );
+		//this->filePath = ConfigUtils::pathJoin( svr->getFinalUploadPath( 
+		//	routeWithoutFile, this->lc ), getDocument() );
 		return ;
 	}
-	this->filePath = ConfigUtils::pathJoin( svr->getFinalPath( \
-			routeWithoutFile ), getDocument() );
+	this->filePath = svr->getFinalPath( routeWithoutFile, this->lc );
+	//this->filePath = ConfigUtils::pathJoin( svr->getFinalPath( 
+	//		routeWithoutFile, this->lc ), getDocument() );
+	Log::Success( "filePath == " + this->filePath );
 }
 
 void Request::setDefaultFavicon(void)

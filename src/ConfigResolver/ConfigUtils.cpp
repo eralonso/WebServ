@@ -6,7 +6,7 @@
 /*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/24 16:29:17 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/24 17:51:04 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/16 11:26:16 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,13 @@ namespace ConfigUtils
 	{
 		StringVector	pathVector;
 		StringVector	referenceVector;
+		size_t			i = 0;
 
-		SUtils::split( pathVector, path, "/" );
-		SUtils::split( referenceVector, reference, "/" );
-		return ( comparePathReference( pathVector, referenceVector ) );
+		if ( path.size() < reference.size() )
+			return ( -1 );
+		while ( i < reference.size() && path[ i ] == reference[ i ] )
+			i++;
+		return ( i );
 	}
 
 	int	comparePathReference( const StringVector path, \
@@ -52,8 +55,6 @@ namespace ConfigUtils
 			path += str2.substr( 1 );
 		else
 			path += str2;
-		//if ( path[ path.length() - 1 ] != '/' )
-		//	path += "/";
 		return ( path );
 	}
 }

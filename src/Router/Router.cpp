@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/15 09:57:59 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/16 12:36:51 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ std::string	Router::getHtmlErrorPage( Request *req )
 	html += "\t<h1 style=\"color: #FF2222;\">Error Message from server</h1>\n";
 	if ( req != NULL )
 	{
-		html += "<h3style=\"color: #FF0000;\">Error: ";
+		html += "<h3 style=\"color: #FF0000;\">Error: ";
 		html += SUtils::longToString( req->getError() ) + "</h3>\n\n";
 		html += getRequestEmbed( *req );
 	}
@@ -411,15 +411,21 @@ bool	Router::checkPathCanRead( Request& req, std::string path )
 	return ( true );
 }
 
+bool	Router::isValidDirectory( std::string dir )
+{
+	return ( dir[ dir.length() -1 ] == '/' );
+}
+
 bool	Router::processDirectory( Request& req, std::string path, \
 									std::string& output )
 {
+	Log::Info( "path to get directory: " + path );
 	if ( req.isAutoindexAllow() == true \
 		&& FolderLs::getLs( output, path, req.getRoute() ) == FolderLs::NONE )
 		req.setError( HTTP_OK_CODE );
 	else
 		req.setError( HTTP_FORBIDDEN_CODE );
-	return ( req.getError() != HTTP_FORBIDDEN_CODE );
+	return ( req.getError() == HTTP_OK_CODE );
 }
 
 void	Router::checkRedir( Request& req )
@@ -462,6 +468,7 @@ int	Router::getFileToRead( Request& req, std::string& retFile )
 	if ( checkPathExist( req, path ) == false )
 		return ( ENOENT );
 	file = path;
+		Log::Info( "path to get directory: " + path );
 	if ( isDir( path ) == true && req.tryIndexFiles( file ) == false )
 	{
 		retFile = path;
@@ -478,12 +485,19 @@ bool	Router::processGetRequest( Request& req )
 {
 	std::string	path;
 	std::string	output;
-	int			error = 0;
+	int			error;
 
-	if ( ( error = getFileToRead( req, path ) ) == EXIT_SUCCESS )
+	Log::Info( "path to get file: " + req.getFilePath() );
+	error = getFileToRead( req, path );
+	if ( error == EXIT_SUCCESS )
 		req.setOutput( readFile( path ) );
-	else if ( error == EISDIR && processDirectory( req, path, output ) == true )
-		req.setOutput( output );
+	else if ( error == EISDIR )
+	{
+		if ( isValidDirectory( path ) == false )
+			req.setError( HTTP_NOT_FOUND_CODE );
+		else if ( processDirectory( req, path, output ) == true )
+			req.setOutput( output );
+	}
 	return ( req.getError() >= 400 );
 }
 
@@ -491,14 +505,19 @@ bool	Router::processHeadRequest( Request& req )
 {
 	std::string	path;
 	std::string	output;
-	int			error = 0;
+	int			error;
 	struct stat	info;
 
-	if ( ( error = getFileToRead( req, path ) ) == EXIT_SUCCESS \
-		&& !stat( path.c_str(), &info ) )
+	error = getFileToRead( req, path );
+	if ( error == EXIT_SUCCESS && !stat( path.c_str(), &info ) )
 		req.setOutputLength( info.st_size );
-	else if ( error == EISDIR && processDirectory( req, path, output ) == true )
-		req.setOutputLength( output.length() );
+	else if ( error == EISDIR )
+	{
+		if ( isValidDirectory( path ) == false )
+			req.setError( HTTP_NOT_FOUND_CODE );
+		else if ( processDirectory( req, path, output ) == true )
+			req.setOutputLength( output.length() );
+	}
 	return ( req.getError() >= 400 );
 }
 
