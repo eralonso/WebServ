@@ -29,7 +29,7 @@ BODY+="</div>"$LINEEND
 echo "Status: 200 OK"
 echo "Content-Type: text/html"
 echo "Location: "$SERVER_NAME":"$SERVER_PORT
-echo "Set-Cookie: sessionId=bash38afes7a8; Max-Age=2592000\r";
+echo "Set-Cookie: sessionId=bash38afes7a8; Path=/; Max-Age=2592000\r";
 echo ""
 echo -e $BODY
 echo "Finish BASH script <--" 1>&2

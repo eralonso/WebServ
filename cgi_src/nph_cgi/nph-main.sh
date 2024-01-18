@@ -31,7 +31,7 @@ echo "Server:" $SERVER_NAME
 echo "Content-Type: text/html"
 echo "Content-Length: "${#BODY}
 echo "Location: "$SERVER_NAME":"$SERVER_PORT
-echo "Set-Cookie: sessionId=bash38afes7a8; Max-Age=2592000\r";
+echo "Set-Cookie: sessionId=bash38afes7a8; Path=/; Max-Age=2592000\r";
 echo ""
 echo -e $BODY
 # echo "<h1>Made in Bash though CGI</h1>"
