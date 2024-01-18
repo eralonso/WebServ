@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 17:11:41 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/14 16:41:44 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/16 15:45:05 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,10 +59,14 @@ namespace TreeSplit
 
 	bool	isComment( std::string& src )
 	{
+		size_t	pos;
+
 		src = SUtils::leftTrim( src );
 		if ( src[ 0 ] == '#' )
 		{
-			src = src.erase( 0, src.find( '\n' ) + 1 );
+			pos = src.find( '\n' );
+			pos += ( pos != std::string::npos ) ? 1 : 0;
+			src = src.erase( 0, pos );
 			return ( true );
 		}
 		return ( false );
