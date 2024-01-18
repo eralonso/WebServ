@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/13 18:53:20 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/17 11:52:10 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,12 +181,16 @@ std::string	Response::toString( void ) const
 
 	if (!isCgi)
 	{
+		// Log::Info("Response::toString compose response");
 		ret = this->protocol + " " + SUtils::longToString( this->status );
 		ret += " " + getResult() + HEADER_SEP;
 		ret += this->headers.toString();
 		ret += HEADER_SEP;
 		ret += this->body;
+		// Log::Info(ret);
 		return ( ret );
 	}
+	// Log::Info("Response::toString use only body content");
+	// Log::Info(body);
 	return (body);
 }

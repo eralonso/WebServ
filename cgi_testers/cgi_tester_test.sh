@@ -17,12 +17,12 @@
 		export USER_AGENT="User-Agent: cgi_tester_test"
 		#export FILEPATH_INFO="./tester_meal"
 		#export PATH_INFO="./tester_meal"
-		export PATH_INFO="rwetwtw"
+		export PATH_INFO="./"
 		#export PATH_TRANSLATED="./tester_meal"
         echo "tester_meal content: "
         cat tester_meal
         echo "calling... cat tester_meal | ./ubuntu_cgi_tester;"
-        cat tester_meal | ./ubuntu_cgi_tester;
+        cat tester_meal | ./ubuntu_cgi_tester tester_meal;
         # echo "calling... ./ubuntu_cgi_tester;"
         # ./ubuntu_cgi_tester;
         echo ""

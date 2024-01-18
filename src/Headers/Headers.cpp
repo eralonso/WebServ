@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Headers.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 10:20:03 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/22 12:53:03 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/17 16:45:09 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,6 +128,7 @@ std::string	Headers::toString( void ) const
 	}
 	return ( ret );
 }
+
 std::string	Headers::toLower( std::string src )
 {
 	for ( size_t i = 0; src[ i ] != '\0'; i++ )
@@ -136,4 +137,18 @@ std::string	Headers::toLower( std::string src )
 			src[ i ] += 32;
 	}
 	return ( src );
+}
+std::string Headers::getCookies( void ) const
+{
+	std::string	ret;
+	std::vector<Header>::const_iterator it = begin();
+	std::vector<Header>::const_iterator ite = end();
+
+	while (it != ite)
+	{
+		if (toLower(it->getKey()) == "cookie")
+			ret += it->getValue() + ";";
+		it++;
+	}
+	return (ret);	
 }

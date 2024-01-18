@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Router.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/16 12:36:51 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/18 16:10:59 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <CgiExecutor.hpp>
 #include <FolderLs.hpp>
 #include <MimeMap.hpp>
+#include <SplitString.hpp>
 
 std::string	Router::methods[ METHODS_NB ] = { "GET", "POST", "PUT", "DELETE", "HEAD" };
 
@@ -30,146 +31,31 @@ Router::Router( void ) {}
 
 Router::~Router( void ) {}
 
+Router::Router( const Router& ) {}
+
+Router&	Router::operator=( const Router& )
+{
+	return ( *this );
+}
+
 int	Router::updateResponse( Response &res, Request &req )
 {
-	Log::Error( "Uppdating response" );
 	res.setServer( req.getHost() );
 	if ( req.getUseCgi() )
 		formatCgiResponse( res,req );
 	else
 		formatGenericResponse( res, req );
-	/*else if ( req.getError() != 0 )
-	{
-		Log::Info( "updateResponse detect error status: " \
-			+ SUtils::longToString( req.getError() ) );
-		if ( req.getError() == 100 )
-			formatContinueResponse( res, req );
-		else if ( req.getError() == HTTP_ACCEPTED_CODE )
-			formatAcceptResponse( res, req );
-		else
-			formatErrorResponse( res, req );
-	}
-	else
-		formatAcceptResponse( res, req );
-	*/
 	return ( 0 );
-}
-
-std::string	Router::getHtml( Request *req )
-{
-	std::string		html;
-	std::string		resFolderLs;
-	// std::string		readBuf;
-	std::string		route = req->getRoute();
-	// std::ifstream	infile;
-	std::string		path = req->getFilePath();
-
-	Log::Info("Path to GET ... " + path);
-	if (access(path.c_str(), R_OK) == 0)
-	{
-		std::string dirPath(path);
-		if (dirPath.size() == 0 || (*(dirPath.end() - 1)) != '/')
-			dirPath += '/';
-		if (FolderLs::getLs(resFolderLs, dirPath, route) == FolderLs::CANTOPENDIR)
-			return (readFile(path));
-		// {
-		// 	infile.open(path.c_str(), std::ios::in);
-		// 	if (infile.is_open())
-		// 	{
-		// 		while (!std::getline(infile, readBuf).eof())
-		// 			html += readBuf + std::string("\n");
-		// 		Log::Info("Read ... \n" + html);
-		// 		infile.close();
-		// 		return ( html );
-		// 	}
-		// }
-		return (resFolderLs);
-	}
-	// html = "<!DOCTYPE html>\n";
-	// html += "<html lang=\"en\">\n";
-	// html += "<head>\n";
-	// html += "\t<meta charset=\"UTF-8\">\n";
-	// html += "\t<title>ª</title>\n";
-	// html += "</head>\n";
-	// html += "<body>\n";
-	// html += "\t<h1 style=\"color: #00FFFF;\">Message from server</h1>\n";
-	// if ( req != NULL )
-	// 	html += getRequestEmbed( *req );
-	// html += "\n";
-	// html += getForm();
-	// html += "</body>\n";
-	// html += "</html>";
-	// return ( html );
-	if (req->getDocument() == "favicon.ico")
-	{
-		path = "./favicon.png";
-		if (access(path.c_str(), R_OK) == 0)
-				return (readFile(path));
-	}
-	req->setError(HTTP_NOT_FOUND_CODE);
-	return(std::string(""));
-}
-
-std::string	Router::getHtmlErrorPage( Request *req )
-{
-	std::string	html;
-
-	html = "<!DOCTYPE html>\n";
-	html += "<html lang=\"en\">\n";
-	html += "<head>\n";
-	html += "\t<meta charset=\"UTF-8\">\n";
-	html += "\t<title>ª</title>\n";
-	html += "</head>\n";
-	html += "<body>\n";
-	html += "\t<h1 style=\"color: #FF2222;\">Error Message from server</h1>\n";
-	if ( req != NULL )
-	{
-		html += "<h3 style=\"color: #FF0000;\">Error: ";
-		html += SUtils::longToString( req->getError() ) + "</h3>\n\n";
-		html += getRequestEmbed( *req );
-	}
-	html += "</body>\n";
-	html += "</html>";
-	return ( html );
-}
-
-std::string	Router::getForm( void )
-{
-	std::string form = std::string( "<form method=\"POST\">\n" );
-
-	form += "<input id=\"firstname\" name=\"firstname\"/>\n";
-	form += "<input id=\"surname\" name=\"surname\"/>\n";
-	form += "<input type=\"submit\"/>\n";
-	form += "</form>\n";
-	form += "<form method=\"POST\">\n";
-	form += "<input type=\"file\" id=\"filename\" name=\"filename\"/>\n";
-	form += "<input type=\"submit\"/>\n";
-	form += "</form>\n";
-	form += "<form method=\"POST\">\n";
-	form += "<input type=\"file\" id=\"filename\" name=\"filename\"/>\n";
-	form += "<input type=\"submit\"/>\n";
-	form += "</form>\n";
-	return ( form );
 }
 
 Response	*Router::getResponse( Request *req )
 {
 	Response	*res = new Response;
-	//int			error;
 
 	if ( !req )
 		formatErrorResponse( *res, HTTP_INTERNAL_SERVER_ERROR_CODE );
 	else
 		updateResponse( *res, *req );
-	//else if ( ( error = req->getError() ) )
-	//{
-	//	if ( error == 100 )
-	//		formatContinueResponse( *res, *req );
-	//	if ( error == HTTP_ACCEPTED_CODE )
-	//		formatAcceptResponse( *res, *req );
-	//	else
-	//		formatErrorResponse( *res, error );
-	//}
 	return ( res );
 }
 
@@ -228,6 +114,8 @@ bool	Router::processCgi( Request& req )
 		cgiExe.pushEnvVar("AUTH_TYPE", "none");
 		cgiExe.pushEnvVar("REMOTE_USER", "user");
 		cgiExe.pushEnvVar("REMOTE_IDENT", "user");
+		
+		cgiExe.pushEnvVar("HTTP_COOKIE", req.getCookies());
 		if (req.getBody().size() > 0)
 			cgiExe.pushEnvVar("CONTENT_TYPE", req.getHeaderWithKey("Content-Type"));
 		cgiExe.pushEnvVar("CONTENT_LENGTH", SUtils::longToString(req.getBody().size()));
@@ -240,7 +128,6 @@ bool	Router::processCgi( Request& req )
 	{
 		Log::Error ( "When trying to execute CGI" );
 		Log::Error ( e.what() );
-		// TODO Set Error to Send in request so the proper response is formed to send
 		req.setError( HTTP_INTERNAL_SERVER_ERROR_CODE );
 		req.setReadyToSend();
 	}
@@ -253,7 +140,6 @@ bool	Router::processRequestReceived( Request &req )
 	int			i = 0;
 	std::string	requestMethod = req.getMethod();
 
-	// Log::Success("Router::processRequestReceived");
 	checkRedir( req );
 	if ( req.getError() < MIN_ERROR_CODE )
 	{
@@ -286,7 +172,6 @@ std::string Router::determineContentType(Response& res, Request& req)
 
 Response	*Router::formatGenericResponse( Response& res, Request& req )
 {
-	Log::Error( "Generic response" );
 	res.appendHeader( Header( "Content-Type", determineContentType( res, req ) ) );
 	res.setProtocol( req.getProtocol() );
 	if ( req.getRedir() == true )
@@ -300,54 +185,76 @@ Response	*Router::formatGenericResponse( Response& res, Request& req )
 	return ( &res );
 }
 
+bool	Router::parseCgiHeaderLine (Response& res, Request& req, const std::string& line)
+{
+	std::string	headKey;
+	std::string	headValue;
+
+	if (! SplitString::splitHeaderLine(headKey, headValue, line))
+		return (false);
+	if (headKey == "Status")
+	{
+		StringVector sv = SplitString::split(headValue, " ");
+		size_t svs = sv.size();
+		if (svs < 1 || svs > 2)
+			return (false);
+		std::string statCodeStr = SUtils::trim(sv[0]);
+		if (statCodeStr.size() != 3)
+			return (false);
+		long stat = SUtils::atol(statCodeStr);
+		res.setStatus(stat);
+		req.setError(stat);
+		return (true);
+	}
+	res.appendHeader(Header(headKey, headValue));
+	return (true);
+}
+
+bool	Router::parseCgiHeaders (Response& res, Request& req, const std::string& cgiOut)
+{
+	std::string	body;
+	
+	res.setIsCgi(false);
+	StringVector sv = SplitString::splitHeaderBody(body, cgiOut);
+	StringVector::iterator it = sv.begin();
+	StringVector::iterator ite = sv.end();
+	while (it != ite)
+	{
+		if (!parseCgiHeaderLine(res, req, *it))
+		 	break;
+		it++;
+	}
+	res.setBody(body);
+	return (it == ite);
+}
+
+bool	Router::parseCgiOutput (Response& res, Request& req)
+{
+	const std::string& cgiOut = req.getCgiOutput();
+	std::string	body;
+	bool nph = req.isDocumentNPH ();
+	if (nph)
+	{
+		res.setIsCgi(true);
+		res.setBody(cgiOut);
+		return ( true );
+	}
+	return (parseCgiHeaders( res, req, cgiOut ));
+}
+
 Response	*Router::formatCgiResponse( Response& res, Request& req )
 {
-	Log::Error( "Cgi response" );
-	res.appendHeader( Header( "Content-Type", "text/html" ) );
 	res.setProtocol( req.getProtocol() );
-	//res.setStatus( HTTP_OK_CODE );
 	res.setStatus( req.getError() );
 	res.setMethod( req.getMethod() );
 	if ( req.getError() < MIN_ERROR_CODE )
-		res.setBody( req.getCgiOutput() );
+		parseCgiOutput(res, req);
 	else
+	{
+		res.appendHeader( Header( "Content-Type", "text/html" ) );
 		res.setBody( req.getOutput() );
-	std::string doc = req.getDocument();
-	bool nph = (doc.size() > 2
-		&& (doc[0] == 'n' || doc[0] == 'N')
-		&& (doc[1] == 'p' || doc[1] == 'P')
-		&& (doc[2] == 'h' || doc[2] == 'H'));
-	res.setIsCgi(nph);
+	}
 	return &res;
-}
-
-Response *Router::formatContinueResponse(Response& res, Request& req)
-{
-	Log::Info("formatContinueResponse");
-	res.appendHeader(Header("Accept", req.getHeaderWithKey("Content-Type")));
-	res.setProtocol(req.getProtocol());
-	res.setStatus(req.getError());
-	res.setMethod(req.getMethod());
-	return &res;
-}
-
-Response *Router::formatAcceptResponse(Response& res, Request& req)
-{
-	Log::Info("formatAcceptResponse");
-	res.setProtocol(req.getProtocol());
-	res.setStatus(HTTP_ACCEPTED_CODE);
-	res.setMethod(req.getMethod());
-	return &res;
-}
-
-Response	*Router::formatErrorResponse( Response& res, Request& req )
-{
-	res.appendHeader( Header( "Content-Type", "text/html" ) );
-	res.setProtocol( req.getProtocol() );
-	res.setStatus( req.getError() );
-	res.setMethod( req.getMethod() );
-	res.setBody( getHtml( &req ) );
-	return ( &res );
 }
 
 bool	Router::checkStatMode( std::string path, unsigned int mode )
@@ -386,7 +293,6 @@ bool	Router::writeFile( std::string file, std::string content )
 	if (!outfile.is_open())
 		return ( false );
 	outfile.write(content.c_str(), content.size());
-	//Log::Info("Written ... \n" + content);
 	outfile.close();
 	return (true);
 }
@@ -421,7 +327,7 @@ bool	Router::processDirectory( Request& req, std::string path, \
 {
 	Log::Info( "path to get directory: " + path );
 	if ( req.isAutoindexAllow() == true \
-		&& FolderLs::getLs( output, path, req.getRoute() ) == FolderLs::NONE )
+		&& FolderLs::getLs( output, path, req.getRoute() ) == LsEntry::NONE )
 		req.setError( HTTP_OK_CODE );
 	else
 		req.setError( HTTP_FORBIDDEN_CODE );
@@ -526,18 +432,17 @@ bool	Router::processPostRequest( Request& req )
 	std::string	route = req.getRoute();
 	std::string bodyContent = req.getBody();
 	std::string	document = req.getDocument();
-	// std::ofstream	outfile;
 	std::string path;
 	
 	if (bodyContent.size() == 0)
-		return (req.setError(HTTP_NO_CONTENT_CODE) ); //Status No Content
+		return (req.setError(HTTP_NO_CONTENT_CODE) );
 	if (!req.isDirectiveSet( "upload_store" ) || document.size() == 0)
-		return ( req.setError(HTTP_FORBIDDEN_CODE) ); //Forbidden
+		return ( req.setError(HTTP_FORBIDDEN_CODE) );
 	path = req.getFilePath();
 	Log::Info("Path to POST ... " + path);
 	if (! writeFile(path, bodyContent))
-		return ( req.setError(HTTP_FORBIDDEN_CODE) ); //Forbidden
-	return ( req.setError( HTTP_CREATED_CODE ) ); //Created
+		return ( req.setError(HTTP_FORBIDDEN_CODE) );
+	return ( req.setError( HTTP_CREATED_CODE ) );
 }
 
 bool	Router::processPutRequest( Request& req )
@@ -545,18 +450,17 @@ bool	Router::processPutRequest( Request& req )
 	std::string	route = req.getRoute();
 	std::string bodyContent = req.getBody();
 	std::string	document = req.getDocument();
-	// std::ofstream	outfile;
 	std::string path;
 	
 	if (bodyContent.size() == 0)
-		return (req.setError(HTTP_NO_CONTENT_CODE) ); //Status No Content
+		return (req.setError(HTTP_NO_CONTENT_CODE) );
 	if (!req.isDirectiveSet( "upload_store" ) || document.size() == 0)
-		return ( req.setError(HTTP_FORBIDDEN_CODE) ); //Forbidden
+		return ( req.setError(HTTP_FORBIDDEN_CODE) );
 	path = req.getFilePath();
 	Log::Info("Path to POST ... " + path);
 	if (! writeFile(path, bodyContent))
-		return ( req.setError(HTTP_FORBIDDEN_CODE) ); //Forbidden
-	return ( req.setError( HTTP_CREATED_CODE ) ); //Created
+		return ( req.setError(HTTP_FORBIDDEN_CODE) );
+	return ( req.setError( HTTP_CREATED_CODE ) );
 }
 
 bool	Router::processDeleteRequest( Request& req )

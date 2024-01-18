@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/03 17:04:47 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/17 16:02:29 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,23 +25,11 @@ CgiExecutor::CgiExecutor( Request& request ):
 	exceptOther ("Creation either fork or pipe failed"),
 	request( request )
 {
-	//const Server	*s = NULL;
-
-	//s = request.getServer();
-	//if ( !s )
-	//	return;
-	//Log::Success("CgiExecutor::CgiExecutor Route Chaine: " + request.getRouteChaineString() );
-	//this->binary = s->getCgiBinary( request.getDocExt(), request.getLocation() );
-	// cli->servers[]
-	//this->argument = "." + request.getRouteChaineString() + request.getDocument();
-	//this->argument = s->getFinalPath( request.getLocation() ) 
-	//				 + request.getDocument();
 	this->binary = request.getCgiBinary( request.getDocExt() );
 	this->argument = request.getFilePath();
-	Log::Info( "CgiExecutor binary: " + this->binary );
-	Log::Info( "CgiExecutor argment: " + this->argument );
-	Log::Info( "Route chain: " + request.getRouteChaineString() );
-	// char				*envPath;
+	// Log::Info( "CgiExecutor binary: " + this->binary );
+	// Log::Info( "CgiExecutor argment: " + this->argument );
+	// Log::Info( "Route chain: " + request.getRouteChaineString() );
 	if (!checkFileReadable(this->argument))
 	{
 		Log::Error("Either not found or not readable: " + this->argument);
@@ -272,7 +260,6 @@ void	CgiExecutor::checkTimeoutedTasks( void )
 			+ " process id: " + SUtils::longToString( pTask->getPid() ) );
 		pTask->killPendingTask();
 		CgiExecutor::pendingTasks.eraseTask( pTask->getPid() );
-		//req.setUseCgi( false );
 		req.setError( HTTP_GATEWAY_TIMEOUT_CODE );
 		Router::checkErrorRedir( req.getError(), req );
 		Router::checkErrorBody( req, req.getError() );

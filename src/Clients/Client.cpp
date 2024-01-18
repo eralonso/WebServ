@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/03 16:21:23 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/17 16:00:12 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ Client::Client( socket_t pollsocket, WSPoll& polls, ServersVector& servers, \
 
 Client::~Client( void )
 {
-	Log::Error( "Calling Client destructor" );
 }
 
 Client::Client( const Client& b ): Requests()
@@ -202,7 +201,6 @@ int	Client::manageCompleteRecv( void )
 
 	while ( ( req = findCompleteRecvRequest() ) )
 	{
-		// Log::Info("Req. Completed Recv: " + SUtils::longToString(req->getId()));
 		if ( Router::processRequestReceived( *req ) )
 			count++;
 	}
@@ -214,14 +212,10 @@ int	Client::managePollout( void )
 	Request		*req = NULL;
 	Response	*res = NULL;
 	int			count = 0;
-	// Log::Info("managePollout: ");
 
 	while ( ( req = findReadyToSendRequest() ) )
 	{
-		Log::Error( "Generating response klregrthgthgtrh" );
 		res = Router::getResponse( req );
-		// Log::Info("managePollout for: " + SUtils::longToString(req->getId()));
-		// Log::Info("Response: \n" + res->toString());
 		if ( res && sendResponse( res->toString() ) )
 		{
 			count++;
@@ -235,10 +229,6 @@ int	Client::managePollout( void )
 
 bool	Client::getKeepAlive( void ) const
 {
-	// if (keepAlive)
-	// 	Log::Info("getKeepAlive: true");
-	// else
-	// 	Log::Info("getKeepAlive: false");
 	return ( this->keepAlive );
 }
 
@@ -276,28 +266,10 @@ size_t	Client::getPendingSize( void ) const
 	return ( this->received.size() - this->pending );
 }
 
-// int Client::setDummyRecv()
-// {
-// 	std::string init("GET / Http/1.1\r\n");
-// 	init += std::string("Host: localhost\r\n");
-// 	init += std::string("Content-Type: text/xml; charset=utf-8\r\n");
-// 	init += std::string("Content-Lenght: 6\r\n");
-// 	init += std::string("Accept-Language: en-us\r\n");
-// 	init += std::string("Accept-Encoding: gzip, deflate\r\n");
-// 	init += std::string("\r\n");
-// 	init += std::string("NoBody\r\n");
-// 	received += init;
-// 	return (1);
-// }
-
 bool	Client::setKeepAlive( bool value )
 {
 	this->keepAlive = value;
 	
-	// if (value)
-	// 	Log::Info("setKeepAlive: true");
-	// else
-	// 	Log::Info("setKeepAlive: false");
 	return ( this->keepAlive );
 }
 
@@ -316,7 +288,6 @@ void	Client::allowPollWrite( bool value )
 
 	if ( this->polls != NULL )
 	{
-		// polls->allowPollWrite(socket, value);
 		try
 		{
 			clientPoll = &( polls->operator[]( socket ) );
@@ -330,12 +301,8 @@ void	Client::allowPollWrite( bool value )
 		}
 		if ( value )
 			clientPoll->events = POLLOUT;
-			// clientPoll->events |= POLLOUT;
 		else 
 			clientPoll->events = POLLIN;
-			// clientPoll->events &= ~POLLOUT;
-	// if (polls)
-	// 	polls->allowPollWrite(socket, value);
 	}
 	else
 		Log::Error( "Polls not found on Client " \

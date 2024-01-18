@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   FolderLs.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 11:47:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/19 17:30:02 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/15 13:34:01 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,39 +17,50 @@
 #include <iomanip>
 #include <ctime>
 
-FolderLs::FolderLs( /* args */ ) {}
-
-FolderLs::~FolderLs( void ) {}
-
-std::string	FolderLs::recLen( unsigned char input )
+LsEntry::LsEntry(std::string name, unsigned char type)
 {
-	std::stringstream	st;
-
-	st << ( unsigned int )input;
-	return ( st.str() );
+	this->name = name;
+	this->type = type;
 }
 
-std::string	FolderLs::entryType( unsigned char input )
+LsEntry::~LsEntry()
 {
-	unsigned char		val[] = { DT_UNKNOWN, DT_FIFO, DT_CHR, DT_DIR, DT_BLK, \
-									DT_REG, DT_LNK, DT_SOCK, DT_WHT };
-	std::string			strVal[] = { "UNKNOWN", "FIFO", "CHR", "DIR", "BLK", \
-									"REG", "LNK", "SOCK", "WHT" };
-	unsigned char		n = sizeof( val ) / sizeof( unsigned char );
-	unsigned char		i = 0;
-	std::stringstream	st;
-
-	while ( i < n )
-	{
-		if ( val[ i ] == input )
-			return ( strVal[ i ] );
-		i++;
-	}
-	st << "DT out of range [" << ( unsigned int )input << "]";
-	return ( st.str() );
 }
 
-std::string	FolderLs::epochsToDate( unsigned long int epochs )
+LsEntry::LsEntry(const LsEntry &b)
+{
+	name = b.name;
+	type = b.type;
+}
+
+LsEntry &LsEntry::operator=(const LsEntry &b)
+{
+	name = b.name;
+	type = b.type;
+	return (*this);
+}
+
+bool LsEntry::operator<(const LsEntry &b) const
+{
+	if (this->type < b.type)
+		return true;
+	if (b.type < this->type)
+		return false;
+    return (this->name < b.name);
+}
+
+const std::string& LsEntry::getName( void ) const
+{
+    return (this->name);
+}
+
+const unsigned char &LsEntry::getType( void ) const
+{
+	return (this->type);
+}
+
+
+std::string	LsEntry::epochsToDate( unsigned long int epochs )
 {
 	std::stringstream	st;
 	time_t				tt;
@@ -65,7 +76,27 @@ std::string	FolderLs::epochsToDate( unsigned long int epochs )
 	return ( st.str() );
 }
 
-void	FolderLs::entryInfo( std::string& cat, const std::string& path )
+std::string	LsEntry::entryType( void ) const
+{
+	unsigned char		val[] = { DT_UNKNOWN, DT_FIFO, DT_CHR, DT_DIR, DT_BLK, \
+									DT_REG, DT_LNK, DT_SOCK, DT_WHT };
+	std::string			strVal[] = { "UNKNOWN", "FIFO", "CHR", "DIR", "BLK", \
+									"REG", "LNK", "SOCK", "WHT" };
+	unsigned char		n = sizeof( val ) / sizeof( unsigned char );
+	unsigned char		i = 0;
+	std::stringstream	st;
+
+	while ( i < n )
+	{
+		if ( val[ i ] == type )
+			return ( strVal[ i ] );
+		i++;
+	}
+	st << "DT out of range [" << ( unsigned int )type << "]";
+	return ( st.str() );
+}
+
+void	LsEntry::entryInfo( std::string& cat, const std::string& path ) const
 {
 	struct stat			statbuf;
 	std::stringstream	st;
@@ -84,28 +115,69 @@ void	FolderLs::entryInfo( std::string& cat, const std::string& path )
 	cat += "<td>?</td>";
 }
 
-FolderLs::t_error	FolderLs::processLsEntry( std::string& cat, \
-												struct dirent *pDirent,	\
+LsEntry::t_error	LsEntry::processLsEntry( std::string& cat, \
 												const std::string& path, \
-												const std::string& route)
+												const std::string& route) const
 {
-	std::string	newContent( pDirent->d_name );
-
 	cat += "\t<tr>";
 	cat += "<td>";
 	if (route.size() == 0 || *(route.end() - 1) != '/' )
-		cat += "<a href=" + route + std::string("/") + newContent + ">";
+		cat += "<a href=" + route + std::string("/") + name + ">";
 	else
-		cat += "<a href=" + route + newContent + ">";
-	cat += newContent + "</a>";
+		cat += "<a href=" + route + name + ">";
+	cat += name + "</a>";
 	cat += "</td>";
 	cat += "<td>";
-	cat += entryType( pDirent->d_type );
+	cat += entryType();
 	cat += "</td>";
-	entryInfo( cat, ConfigUtils::pathJoin( path, newContent ) );
+	entryInfo( cat, ConfigUtils::pathJoin( path, name ) );
 	cat += "</tr>";
 	cat += "\n";
 	return ( NONE );
+}
+
+FolderLs::FolderLs( void ) {}
+
+FolderLs::~FolderLs( void ) {}
+
+FolderLs::FolderLs(const FolderLs &){}
+
+FolderLs &FolderLs::operator=(const FolderLs &)
+{
+    return (*this);
+}
+
+std::string	FolderLs::recLen( unsigned char input )
+{
+	std::stringstream	st;
+
+	st << ( unsigned int )input;
+	return ( st.str() );
+}
+
+FolderLs::t_error	FolderLs::formatLs(std::string& res,\
+										DirSet& dirMap, \
+										const std::string& path, \
+										const std::string& route)  
+{
+	LsEntry::t_error err = LsEntry::NONE;
+	DirSetIter	it;
+	DirSetIter	ite;
+
+	it = dirMap.begin();
+	ite = dirMap.end();
+	res = std::string("<table>\n");
+	res += std::string("<thead>");
+	res += std::string("<tr>");
+	res += std::string("<th>Name</th><th>Type</th><th>Size</th><th>Last Modif.</th>");
+	res += std::string("</tr>");
+	res += std::string("</thead>");
+	res += std::string("<tbody>");
+	while (it != ite)
+		err = (it++)->processLsEntry(res, path, route);
+	res += std::string("</tbody>");
+	res += std::string("<table>\n");
+	return (err);
 }
 
 FolderLs::t_error	FolderLs::getLs(std::string& res, \
@@ -114,23 +186,16 @@ FolderLs::t_error	FolderLs::getLs(std::string& res, \
 {
 	struct dirent		*pDirent;
 	DIR					*pDir;
-	t_error 			err = NONE;
+	DirSet			dirMap;
 
 	pDir = opendir (path.c_str());
 	if (pDir == NULL)
-		return (CANTOPENDIR);
-	res = std::string("<table>\n");
-	res += std::string("<thead>");
-	res += std::string("<tr>");
-	res += std::string("<th>Name</th><th>Type</th><th>Size</th><th>Last Modif.</th>");
-	res += std::string("</tr>");
-	res += std::string("</thead>");
-	res += std::string("<tbody>");
+		return (LsEntry::CANTOPENDIR);
 	while ((pDirent = readdir(pDir)) != NULL)
-		err = processLsEntry(res, pDirent, path, route);
+	{
+		dirMap.insert( LsEntry(std::string(pDirent->d_name), pDirent->d_type) );
+	}
 	closedir (pDir);
-	res += std::string("</tbody>");
-	res += std::string("<table>\n");
-	return (err);
+	return formatLs(res, dirMap, path, route);
 }
 

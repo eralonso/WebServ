@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Receptionist.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/16 16:33:23 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/18 16:08:31 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ Receptionist::Receptionist( ServersVector& servers ): Clients(), \
 
 Receptionist::~Receptionist( void )
 {
-	Log::Error( "Calling Receptionist destructor" );
 }
 
 Receptionist::Receptionist( const Receptionist& b ): Clients(), \
@@ -94,7 +93,7 @@ int	Receptionist::sendResponse( socket_t connected, std::string response )
 	}
 	Log::Success( "Response sended [ " \
 			+ SUtils::longToString( connected ) \
-			+ " ]" );
+			+ " ]");
 	return ( 1 );
 }
 
@@ -199,17 +198,12 @@ int	Receptionist::mainLoop( void )
 
 	while ( WSSignals::isSig == false )
 	{
-		//if ( waitRes != 0 )
-			//Log::Info( "Waiting for any fd ready to I/O" );
 		waitRes = polls.wait( timeout );
 		if ( waitRes < 0 )
 			return ( 1 );
 		CgiExecutor::attendPendingCgiTasks();
 		if ( waitRes == 0 )
-		{
-			// Log::Info( "Timeout Waiting for any fd ready to I/O" );
 			continue ;
-		}
 		serverFd = polls.isNewClient();
 		if ( serverFd > 0 )
 		{
