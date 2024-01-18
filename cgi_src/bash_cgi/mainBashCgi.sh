@@ -25,6 +25,8 @@ BODY+="<p>USER_AGENT:"$USER_AGENT"</p>"$LINEEND
 BODY+="<p>__CF_USER_TEXT_ENCODING:"$__CF_USER_TEXT_ENCODING"</p>"$LINEEND
 BODY+="<p>LC_CTYPE:"$LC_CTYPE"</p>"$LINEEND
 BODY+="</div>"$LINEEND
+BODY+="<button onclick=\"document.cookie = 'sessionId=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';\">LOGOUT</button>\n"$LINEEND
+
 
 echo "Status: 200 OK"
 echo "Content-Type: text/html"

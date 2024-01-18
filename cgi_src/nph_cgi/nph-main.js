@@ -3,6 +3,8 @@ let body = "<h1>Rendered with CGI NPH through NODEJS</h1>\n";
 body += "<div style=\"background-color:9900FF\">\n"
 body += Object.keys(process.env).map(it => ("<p>" + it + ": " + process.env[it] + "</p>")).join("\n");
 body += "</div>";
+body += "<button onclick=\"document.cookie = 'sessionId=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';\">LOGOUT</button>\n";
+
 console.log(process.env["SERVER_PROTOCOL"] + " 200 OK\r");
 console.log("Server: " + process.env["SERVER_NAME"] + "\r");
 console.log("Content-Type: text/html\r");

@@ -22,6 +22,7 @@ body += ("<div>\n")
 body += "<h3 style=\"color: #000F0F;\">This is the environment</h3>\n"
 body += env
 body += ("</div>\n")
+body += ("<button onclick=\"document.cookie = 'sessionId=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';\">LOGOUT</button>\n")
 body += ("</body>\n")
 #acum += "HTTP/1.1 307 Temporary Redirect\r\n"
 acum += os.environ["SERVER_PROTOCOL"] + " 200 OK\r\n"
