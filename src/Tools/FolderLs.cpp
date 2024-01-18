@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   FolderLs.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 11:47:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/15 13:34:01 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/18 17:31:38 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,12 +119,17 @@ LsEntry::t_error	LsEntry::processLsEntry( std::string& cat, \
 												const std::string& path, \
 												const std::string& route) const
 {
+	bool		isDirectory;
+	std::string	fname;
+	
+	fname = ConfigUtils::pathJoin( path, name );
+	isDirectory = Router::isDir( fname );
 	cat += "\t<tr>";
 	cat += "<td>";
 	if (route.size() == 0 || *(route.end() - 1) != '/' )
-		cat += "<a href=" + route + std::string("/") + name + ">";
+		cat += "<a href=" + route + std::string("/") + name + ( isDirectory ? "/" : "" ) + ">";
 	else
-		cat += "<a href=" + route + name + ">";
+		cat += "<a href=" + route + name + ( isDirectory ? "/" : "" ) + ">";
 	cat += name + "</a>";
 	cat += "</td>";
 	cat += "<td>";

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ConfigUtils.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/24 16:29:17 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/16 11:26:16 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/18 17:32:21 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,9 @@ namespace ConfigUtils
 	int	comparePathReference( const std::string path, \
 								const std::string reference )
 	{
-		StringVector	pathVector;
-		StringVector	referenceVector;
-		size_t			i = 0;
-
-		if ( path.size() < reference.size() )
+		if ( path.size() < reference.size() || path.compare( 0, reference.size(), reference ) )
 			return ( -1 );
-		while ( i < reference.size() && path[ i ] == reference[ i ] )
-			i++;
-		return ( i );
+		return ( reference.size() );
 	}
 
 	int	comparePathReference( const StringVector path, \

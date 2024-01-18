@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   FolderLs.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 11:44:16 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/15 13:33:30 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/18 16:30:24 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 
 # include <Utils.hpp>
 # include <ConfigUtils.hpp>
+# include <Router.hpp>
 
 class LsEntry
 {

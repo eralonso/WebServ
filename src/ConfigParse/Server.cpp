@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/15 11:42:24 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/18 17:32:37 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,8 +149,6 @@ Location	*Server::getLocationAtPath( std::string path ) const
 		}
 		it++;
 	}
-	if ( lc == NULL && lcit != NULL && lcit->getSplitedPath().size() == 0 )
-		lc = lcit;
 	return ( lc );
 }
 

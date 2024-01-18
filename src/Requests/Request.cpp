@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/18 16:08:52 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/18 17:32:47 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -320,7 +320,7 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 			return ( setError( HTTP_BAD_REQUEST_CODE ) );
 		updateLocation();
 		maxBodySize = svr->getMaxBodySize(getRoute());
-		if (svr->getIsAllowedMethod( this->route, this->method ) == false)
+		if (svr->getIsAllowedMethod( this->lc, this->method ) == false)
 			return ( setError( HTTP_NOT_ALLOWED_CODE ) );
 		updateFilePath();
 		if ( checkChunked() )
@@ -554,7 +554,6 @@ void	Request::updateLocation( void )
 
 void	Request::updateFilePath( void )
 {
-	//std::string	routeWithoutFile = getRouteChaineString();
 	std::string	routeWithoutFile = getRoute();
 
 	if ( this->svr == NULL )
@@ -565,13 +564,9 @@ void	Request::updateFilePath( void )
 	if ( this->method == "POST" || this->method == "PUT" )
 	{
 		this->filePath = svr->getFinalUploadPath( routeWithoutFile, this->lc );
-		//this->filePath = ConfigUtils::pathJoin( svr->getFinalUploadPath( 
-		//	routeWithoutFile, this->lc ), getDocument() );
 		return ;
 	}
 	this->filePath = svr->getFinalPath( routeWithoutFile, this->lc );
-	//this->filePath = ConfigUtils::pathJoin( svr->getFinalPath( 
-	//		routeWithoutFile, this->lc ), getDocument() );
 	Log::Success( "filePath == " + this->filePath );
 }
 
