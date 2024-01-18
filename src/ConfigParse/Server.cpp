@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/02 16:08:39 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/15 11:42:24 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -272,7 +272,7 @@ std::string	Server::getFinalUploadPath( const std::string path ) const
 	if ( loc != NULL && loc->getFinalUploadPath( path, fpath ) == true )
 		return ( fpath );
 	if ( isSet( "upload_store" ) == true )
-		return ( ConfigApply::applyUploadStore( path, \
+		return ( ConfigApply::applyAlias( path, loc->getPath(), \
 					this->_directives->getUploadStore() ) );
 	return ( ConfigUtils::pathJoin( ".", path ) );
 }
