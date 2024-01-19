@@ -15,7 +15,7 @@ def getBody():
 	evalBody += env
 	evalBody += ("</div>\r\n")
 	evalBody += ("</details>\n")
-	evalBody += ("<script>window.location.assign(\"./main.py\")</script>\n")
+	evalBody += ("<script>window.location.assign(\"./nph-main.py\")</script>\n")
 	evalBody += ("</body>\r\n")
 	return evalBody
 
@@ -25,20 +25,26 @@ sys.stderr.write("Read from webserv: ")
 sys.stderr.write(value)
 sys.stderr.write("\n")
 if (os.environ["REQUEST_METHOD"] == "POST"):
-	acum += "Status: 200 OK\r\n"
+	acum = ""
+	body = getBody()
+	acum += os.environ["SERVER_PROTOCOL"] + " 200 OK\r\n"
+	acum += "Server: " + os.environ["SERVER_NAME"] + "\r\n"
 	acum += "Content-Type: text/html; charset=utf-8\r\n"
-	acum += "Location: " + os.environ["SERVER_NAME"] + ":" + os.environ["SERVER_PORT"] + "/cgi_src/python_cgi/main.py\r\n"
-	#acum += "Set-Cookie: <cookie-name>=<cookie-value>; Expires=<date>\r\n"
+	acum += "Content-Length: " + str(len(body)) + "\r\n"
+	acum += "Location: " + os.environ["SERVER_NAME"] + ":" + os.environ["SERVER_PORT"] + "./nph-main.py\r\n"
 	acum += "Set-Cookie: sessionId=python["+ value +"]; Path=/; Max-Age=2592000\r\n"
-	#acum += "Set-Cookie: <cookie-name>=<cookie-value>; Domain=<domain-value>\r\n"
-	#acum += "Set-Cookie: <cookie-name>=<cookie-value>; Path=<path-value>\r\n"
 	acum += "\r\n"
-	acum += getBody()
+	acum += body
 else:
-	acum += "Status: 405 NotAllowedMethod\r\n"
+	acum = ""
+	body = ""
+	acum += os.environ["SERVER_PROTOCOL"] + " 405 NotAllowedMethod\r\n"
+	acum += "Server: " + os.environ["SERVER_NAME"] + "\r\n"
 	acum += "Content-Type: text/html; charset=utf-8\r\n"
-	# acum += "Location: localhost:" + os.environ["SERVER_PORT"] + "/\r\n"
-	acum += getBody()
+	acum += "Content-Length: " + str(len(body)) + "\r\n"
+	acum += "Location: " + os.environ["SERVER_NAME"] + ":" + os.environ["SERVER_PORT"] + "/error_pages/405.html\r\n"
+	acum += "\r\n"
+	acum += body
 
 sys.stdout.write(acum)
 sys.stderr.write("Written to webserv: ")

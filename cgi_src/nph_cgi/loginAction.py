@@ -15,7 +15,7 @@ def getBody():
 	evalBody += env
 	evalBody += ("</div>\r\n")
 	evalBody += ("</details>\n")
-	evalBody += ("<script>window.location.assign(\"./main.py\")</script>\n")
+	evalBody += ("<script>window.location.assign(\"./nph-main.py\")</script>\n")
 	evalBody += ("</body>\r\n")
 	return evalBody
 
