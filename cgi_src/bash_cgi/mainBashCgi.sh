@@ -1,40 +1,54 @@
-echo "Start BASH script -->" 1>&2
-LINEEND="\r\n"
-BODY="<h1>Made in Bash though CGI</h1>"$LINEEND
-BODY+="<h3>This is the environment</h3>"$LINEEND
-BODY+="<details close>"$LINEEND
-BODY+="<summary>Environment Variables</summary>"$LINEEND
-BODY+="<div style="background-color:AA9988">"$LINEEND
-BODY+="<p>SERVER_SOFTWARE:"$SERVER_SOFTWARE"</p>"$LINEEND
-BODY+="<p>SERVER_NAME:"$SERVER_NAME"</p>"$LINEEND
-BODY+="<p>GATEWAY_INTERFACE:"$GATEWAY_INTERFACE"</p>"$LINEEND
-BODY+="<p>SERVER_PROTOCOL:"$SERVER_PROTOCOL"</p>"$LINEEND
-BODY+="<p>SERVER_PORT:"$SERVER_PORT"</p>"$LINEEND
-BODY+="<p>REQUEST_METHOD:"$REQUEST_METHOD"</p>"$LINEEND
-BODY+="<p>PATH_INFO:"$PATH_INFO"</p>"$LINEEND
-BODY+="<p>PATH_TRANSLATED:"$PATH_TRANSLATED"</p>"$LINEEND
-BODY+="<p>SCRIPT_NAME:"$SCRIPT_NAME"</p>"$LINEEND
-BODY+="<p>QUERY_STRING:"$QUERY_STRING"</p>"$LINEEND
-BODY+="<p>REMOTE_HOST:"$REMOTE_HOST"</p>"$LINEEND
-BODY+="<p>REMOTE_ADDRESS:"$REMOTE_ADDRESS"</p>"$LINEEND
-BODY+="<p>AUTH_TYPE:"$AUTH_TYPE"</p>"$LINEEND
-BODY+="<p>REMOTE_USER:"$REMOTE_USER"</p>"$LINEEND
-BODY+="<p>REMOTE_IDENT:"$REMOTE_IDENT"</p>"$LINEEND
-BODY+="<p>HTTP_COOKIE:"$HTTP_COOKIE"</p>"$LINEEND
-BODY+="<p>CONTENT_LENGTH:"$CONTENT_LENGTH"</p>"$LINEEND
-BODY+="<p>HTTP_ACCEPT:"$HTTP_ACCEPT"</p>"$LINEEND
-BODY+="<p>USER_AGENT:"$USER_AGENT"</p>"$LINEEND
-BODY+="<p>__CF_USER_TEXT_ENCODING:"$__CF_USER_TEXT_ENCODING"</p>"$LINEEND
-BODY+="<p>LC_CTYPE:"$LC_CTYPE"</p>"$LINEEND
-BODY+="</div>"$LINEEND
-BODY+="</details>"$LINEEND
-BODY+="<button onclick=\"document.cookie = 'sessionId=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';\">LOGOUT</button>\n"$LINEEND
+echo "Start BASH script -->" 1>&2;
+LINEEND=$'\r\n';
 
+format_env ()
+{
+	envContent=$(env | awk -F '=' '{print "<p>"$1": "$2"</p>"}');
+}
 
-echo "Status: 200 OK"
-echo "Content-Type: text/html"
-echo "Location: "$SERVER_NAME":"$SERVER_PORT
-echo "Set-Cookie: sessionId=bash38afes7a8; Path=/; Max-Age=2592000\r";
-echo ""
-echo -e $BODY
-echo "Finish BASH script <--" 1>&2
+format_body()
+{
+	BODY="<body>"$LINEEND;
+	BODY+="<h1>Made in Bash though CGI</h1>"$LINEEND;
+	BODY+="<h3>This is the environment</h3>"$LINEEND;
+	BODY+="<details close>"$LINEEND;
+	BODY+="<summary>Environment Variables</summary>"$LINEEND;
+	BODY+="<div style="background-color:AA9988">"$LINEEND;
+	format_env;
+	BODY+="$envContent";
+	BODY+="</div>"$LINEEND;
+	BODY+="</details>"$LINEEND;
+	userCookie=$HTTP_COOKIE;
+	userCookie=$(echo  $userCookie | awk -F '[][]' '{for(i=2;i<=NF;i+=2) print $i}');
+	userCookie=$(echo  $userCookie | awk -F '&' '{print $1}');
+	userCookie=$(echo  $userCookie | awk -F '=' '{print $2}');
+	if [ "$userCookie" != "" ]; then
+		BODY+="<h3>$userCookie</h3>$LINEEND";
+		BODY+="<button onclick=\"document.cookie = 'sessionId=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';  location.reload();\">LOGOUT</button>"$LINEEND;
+	else
+		BODY+="<form method=\"POST\" action=\"loginAction.sh\" style=\"display: flex; flex-direction: column; max-width:20em; margin: auto; padding: 1em; border: solid black 1px\">"$LINEEND;
+		BODY+="<h3>Login Form</h3>"$LINEEND;
+		BODY+="<div style=\"max-width:18em; margin: auto; padding: 1em;\">"$LINEEND;
+		BODY+="<label for=\"user\">user</label>"$LINEEND;
+		BODY+="<input type=\"user\" id=\"user\" name=\"user\"\>"$LINEEND;
+		BODY+="</div>"$LINEEND;
+		BODY+="<div style=\"max-width:18em; margin: auto; padding: 1em;\">"$LINEEND;
+		BODY+="<label for=\"pass\">password</label>"$LINEEND;
+		BODY+="<input type=\"password\" id=\"pass\" name=\"pass\"\>"$LINEEND;
+		BODY+="</div>"$LINEEND;
+		BODY+="<input type=\"submit\" style=\"width:16em; self-justify: center; margin: auto; padding: 1em;\" id=\"submit\"\>"$LINEEND;
+		BODY+="</form>"$LINEEND;
+	fi
+	BODY+="</body>"$LINEEND;
+}
+
+ACUM="Status: 200 OK "$LINEEND;
+ACUM+="Content-Type: text/html"$LINEEND;
+ACUM+="Location: $SERVER_NAME:$SERVER_PORT"$LINEEND;
+ACUM+=$LINEEND;
+format_body;
+ACUM+=$BODY;
+echo -e "$ACUM";
+echo -e "Written to server..." 1>&2;
+echo -e "$ACUM" 1>&2;
+echo "Finish BASH script <--" 1>&2;
