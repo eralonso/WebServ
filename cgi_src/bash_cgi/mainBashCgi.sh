@@ -1,9 +1,16 @@
 echo "Start BASH script -->" 1>&2;
 LINEEND=$'\r\n';
 
-format_env ()
+format_env_line()
 {
-	envContent=$(env | awk -F '=' '{print "<p>"$1": "$2"</p>"}');
+	LINEVAL=${1#*=};  # Remove everything up to and including first =
+	LINEKEY+=${1%%=*};
+	echo "$LINEKEY: $LINEVAL";
+}
+
+format_env()
+{
+	envContent=$(env | while read line ; do (echo "<p>"$(format_env_line $line)"</p>";) done);
 }
 
 format_body()
