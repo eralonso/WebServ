@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/18 18:54:03 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/22 10:51:26 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,9 +111,9 @@ bool	Router::processCgi( Request& req )
 			cgiExe.pushEnvVar("REMOTE_HOST", "0.0.0.0");
 			cgiExe.pushEnvVar("REMOTE_ADDRESS", "0.0.0.0");
 		}
-		cgiExe.pushEnvVar("AUTH_TYPE", "none");
-		cgiExe.pushEnvVar("REMOTE_USER", "user");
-		cgiExe.pushEnvVar("REMOTE_IDENT", "user");
+		// cgiExe.pushEnvVar("AUTH_TYPE", "none");
+		// cgiExe.pushEnvVar("REMOTE_USER", "user");
+		// cgiExe.pushEnvVar("REMOTE_IDENT", "user");
 		
 		cgiExe.pushEnvVar("HTTP_COOKIE", req.getCookies());
 		if (req.getBody().size() > 0)
