@@ -38,7 +38,7 @@ else:
 	acum += "Status: 405 NotAllowedMethod\r\n"
 	acum += "Content-Type: text/html; charset=utf-8\r\n"
 	# acum += "Location: localhost:" + os.environ["SERVER_PORT"] + "/\r\n"
-	acum += getBody()
+	# acum += getBody()
 
 sys.stdout.write(acum)
 sys.stderr.write("Written to webserv: ")

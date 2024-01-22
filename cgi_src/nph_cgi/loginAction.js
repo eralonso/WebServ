@@ -69,9 +69,9 @@ async function main()
 	else
 	{
 		acum += "Content-Type: text/html; charset=utf-8\r\n";
-		acum += "Status: 200 NotAllowedMethod\r\n";
+		acum += "Status: 405 NotAllowedMethod\r\n";
 		acum += "\r\n";
-		acum += getBody();
+		// acum += getBody();
 	}
 	console.log(acum);
 	console.error("Written to webserv: ");

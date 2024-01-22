@@ -44,7 +44,7 @@ else:
 	acum += "Content-Length: " + str(len(body)) + "\r\n"
 	acum += "Location: " + os.environ["SERVER_NAME"] + ":" + os.environ["SERVER_PORT"] + "/error_pages/405.html\r\n"
 	acum += "\r\n"
-	acum += body
+	# acum += body
 
 sys.stdout.write(acum)
 sys.stderr.write("Written to webserv: ")

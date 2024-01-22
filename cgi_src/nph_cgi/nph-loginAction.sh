@@ -42,9 +42,9 @@ else
 	ACUM+="Server: "$SERVER_NAME$LINEEND;
 	ACUM+="Content-Type: text/html; charset=utf-8"$LINEEND;
 	ACUM+="Location: $SERVER_NAME:$SERVER_PORT"$LINEEND;
-	ACUM+="Content-Length: "${#BODY}$LINEEND;
-	ACUM+=$LINEEND;
-	ACUM+=$BODY;
+	# ACUM+="Content-Length: "${#BODY}$LINEEND;
+	# ACUM+=$LINEEND;
+	# ACUM+=$BODY;
 fi
 echo -e "$ACUM";
 echo -e "Written to server..." 1>&2;

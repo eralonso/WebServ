@@ -38,8 +38,8 @@ else
 	ACUM="Status: 405 NotAllowedMethod"$LINEEND;
 	ACUM+="Content-Type: text/html; charset=utf-8"$LINEEND;
 	ACUM+=$LINEEND;
-	format_body;
-	ACUM+=$BODY;
+	# format_body;
+	# ACUM+=$BODY;
 fi
 echo -e "$ACUM";
 echo -e "Written to server..." 1>&2;

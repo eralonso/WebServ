@@ -71,13 +71,13 @@ async function main()
 	}
 	else
 	{
-		acum += process.env["SERVER_PROTOCOL"] + " 200 OK\r\n"
+		acum += process.env["SERVER_PROTOCOL"] + " 405 NotAllowedMethod\r\n"
 		acum += "Server: " + process.env["SERVER_NAME"] + "\r\n"
 		acum += "Content-Type: text/html; charset=utf-8\r\n";
 		acum += "Content-Length: " + String(body.length) + "\r\n"
 		acum += "Location: "+ process.env["SERVER_NAME"] +":" + process.env["SERVER_PORT"] + "/\r\n"
 		acum += "\r\n"
-		acum += body;
+		// acum += body;
 	}
 	console.log(acum);
 	console.error("Written to webserv: ");
