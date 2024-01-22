@@ -26,7 +26,7 @@ def getBody():
 		evalBody += "<h3>Current User: " + userCookie + "</h3>\r\n"
 		evalBody += "<button onclick=\"document.cookie = 'sessionId=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'; location.reload();\">LOGOUT</button>\r\n"
 	else:
-		evalBody += "<form method=\"POST\" action=\"loginAction.py\" style=\"display: flex; flex-direction: column; max-width:20em; margin: auto; padding: 1em; border: solid black 1px\">\r\n"
+		evalBody += "<form method=\"POST\" action=\"/loginAction.py\" style=\"display: flex; flex-direction: column; max-width:20em; margin: auto; padding: 1em; border: solid black 1px\">\r\n"
 		evalBody += "<h3>Login Form</h3>\r\n"
 		evalBody += "<div style=\"max-width:18em; margin: auto; padding: 1em;\">\r\n"
 		evalBody += "<label for=\"user\">user</label>\r\n"

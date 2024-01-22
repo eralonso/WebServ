@@ -89,9 +89,9 @@ bool	Router::processCgi( Request& req )
 		cgiExe.pushEnvVar("SERVER_PORT", port);
 		cgiExe.pushEnvVar("REQUEST_METHOD", req.getMethod());
 		// cgiExe.pushEnvVar(std::string("FILEPATH_INFO"), req.getRouteChaineString());
-		cgiExe.pushEnvVar("PATH_INFO", ".");
-		cgiExe.pushEnvVar("PATH_TRANSLATED", req.getDocument());
-		// cgiExe.pushEnvVar(std::string("SCRIPT_NAME"), req.getDocument());
+		cgiExe.pushEnvVar("PATH_INFO", req.getPathInfo());
+		cgiExe.pushEnvVar("PATH_TRANSLATED", req.getFilePathRead());
+		cgiExe.pushEnvVar(std::string("SCRIPT_NAME"), req.getRoute());
 		cgiExe.pushEnvVar("QUERY_STRING", req.getQuery());
 		Client *cli = req.getClient();
 		if (cli)
@@ -136,7 +136,7 @@ bool	Router::processRequestReceived( Request &req )
 	checkRedir( req );
 	if ( req.getError() < MIN_ERROR_CODE )
 	{
-		req.checkUseCgi();
+		//req.checkUseCgi();
 		if ( req.getUseCgi() )
 			return ( processCgi( req ) );
 		while ( i < METHODS_NB && Router::methods[ i ] != requestMethod )

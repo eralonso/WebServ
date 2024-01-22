@@ -58,7 +58,7 @@ function getBody()
 	}
 	else
 	{
-		evalBody += "<form method=\"POST\" action=\"nph-loginAction.js\" style=\"display: flex; flex-direction: column; max-width:20em; margin: auto; padding: 1em; border: solid black 1px\">\r\n";
+		evalBody += "<form method=\"POST\" action=\"/cgi_src/nph_cgi/nph-loginAction.js\" style=\"display: flex; flex-direction: column; max-width:20em; margin: auto; padding: 1em; border: solid black 1px\">\r\n";
 		evalBody += "<h3>Login Form</h3>\r\n";
 		evalBody += "<div style=\"max-width:18em; margin: auto; padding: 1em;\">\r\n";
 		evalBody += "<label for=\"user\">user</label>\r\n";

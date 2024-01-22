@@ -109,7 +109,7 @@ public:
 	t_status 		getStatus(void) const;
 	int				getError( void ) const;
 	std::string		getCgiOutput( void ) const;
-	void 			checkUseCgi(void);
+	//void 			checkUseCgi(void);
 	bool 			getUseCgi(void) const;
 	Client*			getClient( void ) const;
 	std::string		getProtocol( void ) const;
@@ -140,6 +140,7 @@ public:
 	std::string 	getCgiBinary( std::string ext ) const;
 	std::string		getUriRedir( void ) const;
 	size_t			getOutputLength( void ) const;
+	std::string		getPathInfo( void ) const;
     bool			isDirectiveSet( std::string directive ) const;
     bool			isCompleteRecv( void ) const;
 	bool			isReadyToSend( void ) const;

@@ -130,19 +130,17 @@ void	Request::parseQueryStringFromRoute( void )
 
 	tokens = SplitString::split( route, "?" );
 	len = tokens.size();
-	if ( len > 2 )
-	{
-		Log::Error( "Request query string invalid" );
-		this->error = HTTP_BAD_REQUEST_CODE;
-		this->badRequest = true;
-		return ;
-	}
+	//if ( len > 2 )
+	//{
+	//	Log::Error( "Request query string invalid" );
+	//	this->error = HTTP_BAD_REQUEST_CODE;
+	//	this->badRequest = true;
+	//	return ;
+	//}
+	this->url = SUtils::trim( tokens[ 0 ] );
+	this->route = this->url;
 	if ( len > 1 )
-	{
-		this->url = SUtils::trim( tokens[ 0 ] );
-		this->route = this->url;
 		this->query = SUtils::trim( tokens[ 1 ] );
-	}
 }
 
 bool	Request::parseDropHttp(StringVector& tokens,  size_t& tokensSize, bool& httpDropped)
@@ -221,7 +219,7 @@ void	Request::parseHostPortFromRoute( void )
 
 bool	Request::getExtensionForPath( std::string path, std::string& ext )
 {
-	std::string	pos;
+	size_t	pos;
 
 	pos = path.find_last_of( "." );
 	if ( pos == std::string::npos )
@@ -229,6 +227,8 @@ bool	Request::getExtensionForPath( std::string path, std::string& ext )
 	ext = path.substr( pos + 1 );	
 	return ( true );
 }
+
+#include <Utils.hpp>
 
 bool	Request::checkCgiInRoute( void )
 {
@@ -242,20 +242,28 @@ bool	Request::checkCgiInRoute( void )
 	for ( it = this->routeChain.begin(); it != ite; it++ )
 	{
 		if ( getExtensionForPath( *it, ext ) == true )
-			binary = this->svr->getCgiBinary( this->cgiDocExt, lc );
+			binary = this->svr->getCgiBinary( ext, lc );
+		this->docExt = ext;
+		this->document = *it;
 		if ( binary.length() > 0 )
 		{
-			it++;
-			this->docExt = ext;
-			this->document = "/" + STLUtils::vectorToString< StringVector >( \
-				this->routeChain.begin(), it, "/" );
-			break ;
+			if ( it + 1 != ite )
+				this->pathInfo = "/" + STLUtils::vectorToString< StringVector >( \
+					it + 1, ite, "/" );
+			this->route = "/" + STLUtils::vectorToString< StringVector >( \
+					this->routeChain.begin(), it + 1, "/" );
+			this->routeChain.erase( it, ite );
+			Log::Info( "Is a cgi" );
+			return ( true );
 		}
 		binary.clear();
 	}
-	if ( it != ite )
-		this->pathInfo = STLUtils::vectorToString< StringVector >( it + 1, ite, "/" );
-	return ( it != ite );
+	this->routeChain.erase( this->routeChain.end() - 1 );
+	Log::Info( "docExt: " + this->docExt + " && document: " + this->document );
+	Log::Info( "routeChain: " + STLUtils::vectorToString< StringVector >( \
+		this->routeChain.begin(), this->routeChain.end(), "/" ) );
+	Log::Info( "Isn't a cgi" );
+	return ( false );
 }
 
 void	Request::parseRoute( void )
@@ -264,7 +272,7 @@ void	Request::parseRoute( void )
 	parseQueryStringFromRoute();
 	parseHostPortFromRoute();
 	this->routeChain = SplitString::split( this->route, "/" );
-	//if ( this->routeChain.size() > 0 && ( this->route.size() > 0 \
+	//if ( this->routeChain.size() > 0 && ( this->route.size() > 0 
 	//		&& this->route[ this->route.size() - 1 ] != '/' ) )
 	//{
 	//	doc = this->routeChain.end() - 1;
@@ -537,16 +545,16 @@ bool	Request::checkKeepAlive( void )
 	return ( con != NULL );
 }
 
-void	Request::checkUseCgi( void )
-{
-	std::string	binary;
-
-	this->useCgi = false;
-	if ( this->cgiDocExt.size() == 0 )
-		return ;
-	binary = this->svr->getCgiBinary( this->cgiDocExt, lc );
-	this->useCgi = ( binary.size() > 0 );
-}
+//void	Request::checkUseCgi( void )
+//{
+//	std::string	binary;
+//
+//	this->useCgi = false;
+//	if ( this->cgiDocExt.size() == 0 )
+//		return ;
+//	binary = this->svr->getCgiBinary( this->cgiDocExt, lc );
+//	this->useCgi = ( binary.size() > 0 );
+//}
 
 bool	Request::checkEmptyContent( size_t& size )
 {
@@ -875,6 +883,11 @@ std::string	Request::getUriRedir( void ) const
 size_t	Request::getOutputLength( void ) const
 {
 	return ( this->outputLength );
+}
+
+std::string	Request::getPathInfo( void ) const
+{
+	return ( this->pathInfo );
 }
 
 bool	Request::isReadyToSend( void ) const
