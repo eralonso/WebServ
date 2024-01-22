@@ -33,7 +33,7 @@ format_body()
 		BODY+="<h3>Current User: $userCookie</h3>$LINEEND";
 		BODY+="<button onclick=\"document.cookie = 'sessionId=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';  location.reload();\">LOGOUT</button>"$LINEEND;
 	else
-		BODY+="<form method=\"POST\" action=\"/cgi_src/bash_cgi/loginAction.sh\" style=\"display: flex; flex-direction: column; max-width:20em; margin: auto; padding: 1em; border: solid black 1px\">"$LINEEND;
+		BODY+="<form method=\"POST\" action=\"loginAction.sh\" style=\"display: flex; flex-direction: column; max-width:20em; margin: auto; padding: 1em; border: solid black 1px\">"$LINEEND;
 		BODY+="<h3>Login Form</h3>"$LINEEND;
 		BODY+="<div style=\"max-width:18em; margin: auto; padding: 1em;\">"$LINEEND;
 		BODY+="<label for=\"user\">user</label>"$LINEEND;
