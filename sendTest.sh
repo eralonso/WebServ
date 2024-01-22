@@ -35,7 +35,8 @@ function readQuestion()
 
 function sendRequest()
 {
-	curl -m 2 -v "$1:$2"
+	curl -v "$1:$2/dist/"
+	#curl -m 2 -v "$1:$2"
 }
 
 function doTest()
@@ -72,7 +73,7 @@ function launchTests()
 function waitBackgroundProccess()
 {
 	while [[ "$( ps aux | awk -v PROGRAM=$0 '{ if ( $12 == PROGRAM ) { print "y" } }' | wc -l )" -gt 2 ]]; do
-		sleep 0.0001;
+		sleep 0.001;
 		echo "Waiting..."
 	done
 }
