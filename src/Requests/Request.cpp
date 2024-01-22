@@ -202,12 +202,10 @@ void	Request::parseHostPortFromRoute( void )
 	{
 		this->routeHost = tokens[0];
 		size_t pos = tokens[1].find_first_of('/', 0);
-		if (pos != std::string::npos)
-		{
-			if (pos > 0)
-				this->routePort = tokens[1].substr(0, pos);
-			this->route = tokens[1].substr(pos, tokens[1].size() - pos);
-		}
+		this->routePort = tokens[1].substr(0, pos);
+		this->route = "/";
+		if ( pos != std::string::npos )
+			this->route = tokens[1].substr( pos );
 	}
 	if (httpDropped && tokensSize == 1 && tokens[0][0] != '/')
 	{
@@ -766,7 +764,7 @@ std::string Request::getPort( void ) const
 bool Request::getHostPort(std::string& host, std::string& port) const
 {
 	std::string defHost("127.0.0.1");
-	std::string defPort("80");
+	std::string defPort("8000");
 	if (this->routeHost.size() > 0 || this->routePort.size() > 0)
 	{
 		Log::Info("Request::getHostPort");
