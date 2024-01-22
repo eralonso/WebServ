@@ -17,10 +17,18 @@
 # include <sys/stat.h>
 # include <unistd.h>
 
+# include <fstream>
+# include <iostream>
+
 # include <Request.hpp>
 # include <Response.hpp>
 # include <CgiExecutor.hpp>
 # include <ActionMask.hpp>
+# include <CgiExecutor.hpp>
+# include <FolderLs.hpp>
+# include <MimeMap.hpp>
+# include <SplitString.hpp>
+# include <Defines.hpp>
 
 class Router
 {

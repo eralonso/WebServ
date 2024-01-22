@@ -13,7 +13,7 @@
 #include "Utils.hpp"
 #include "Response.hpp"
 
-Response::Response( void ): server( "OREGINX" ), isCgi( false ) {}
+Response::Response( void ): server( SERVER ), isCgi( false ) {}
 
 Response::~Response( void ) {}
 

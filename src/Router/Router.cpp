@@ -10,14 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fstream>
-#include <iostream>
-#include <unistd.h>
 #include <Router.hpp>
-#include <CgiExecutor.hpp>
-#include <FolderLs.hpp>
-#include <MimeMap.hpp>
-#include <SplitString.hpp>
 
 std::string	Router::methods[ METHODS_NB ] = { "GET", "POST", "PUT", "DELETE", "HEAD" };
 
@@ -40,7 +33,7 @@ Router&	Router::operator=( const Router& )
 
 int	Router::updateResponse( Response &res, Request &req )
 {
-	res.setServer( req.getHost() );
+	res.setServer( SERVER );
 	if ( req.getUseCgi() )
 		formatCgiResponse( res,req );
 	else
@@ -162,12 +155,12 @@ bool	Router::processRequestReceived( Request &req )
 std::string Router::determineContentType(Response& res, Request& req)
 {
 	(void)res;
-	if (req.getMethod() == "GET")
+	if ( req.getMethod() == "GET" || req.getMethod() == "HEAD" )
 	{
 		std::string contentType = MimeMap::getMime(req.getDocExt());
 		return (contentType);
 	}
-	return (std::string("text/html"));
+	return ( "text/html" );
 }
 
 Response	*Router::formatGenericResponse( Response& res, Request& req )

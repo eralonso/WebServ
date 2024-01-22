@@ -219,20 +219,59 @@ void	Request::parseHostPortFromRoute( void )
 	return ;
 }
 
+bool	Request::getExtensionForPath( std::string path, std::string& ext )
+{
+	std::string	pos;
+
+	pos = path.find_last_of( "." );
+	if ( pos == std::string::npos )
+		return ( false );
+	ext = path.substr( pos + 1 );	
+	return ( true );
+}
+
+bool	Request::checkCgiInRoute( void )
+{
+	std::string				ext;
+	std::string				binary;
+	StringVector::iterator	it;
+	StringVector::iterator	ite = this->routeChain.end();
+
+	if ( this->routeChain.size() == 0 )
+		return ( false );
+	for ( it = this->routeChain.begin(); it != ite; it++ )
+	{
+		if ( getExtensionForPath( *it, ext ) == true )
+			binary = this->svr->getCgiBinary( this->cgiDocExt, lc );
+		if ( binary.length() > 0 )
+		{
+			it++;
+			this->docExt = ext;
+			this->document = "/" + STLUtils::vectorToString< StringVector >( \
+				this->routeChain.begin(), it, "/" );
+			break ;
+		}
+		binary.clear();
+	}
+	if ( it != ite )
+		this->pathInfo = STLUtils::vectorToString< StringVector >( it + 1, ite, "/" );
+	return ( it != ite );
+}
+
 void	Request::parseRoute( void )
 {
 	StringVector::iterator	doc;
 	parseQueryStringFromRoute();
 	parseHostPortFromRoute();
 	this->routeChain = SplitString::split( this->route, "/" );
-	if ( this->routeChain.size() > 0 && ( this->route.size() > 0 \
-			&& this->route[ this->route.size() - 1 ] != '/' ) )
-	{
-		doc = this->routeChain.end() - 1;
-		this->document = *doc;
-		this->routeChain.erase( doc );
-		splitDocExt();
-	}
+	//if ( this->routeChain.size() > 0 && ( this->route.size() > 0 \
+	//		&& this->route[ this->route.size() - 1 ] != '/' ) )
+	//{
+	//	doc = this->routeChain.end() - 1;
+	//	this->document = *doc;
+	//	this->routeChain.erase( doc );
+	//	splitDocExt();
+	//}
 	if ( this->routeChain.size() == 0 && ( this->route.size() < 1 \
 			|| this->route[ 0 ] != '/' ) )
 	{
@@ -319,6 +358,7 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 		if (!updateServerConfig())
 			return ( setError( HTTP_BAD_REQUEST_CODE ) );
 		updateLocation();
+		this->useCgi = checkCgiInRoute();
 		maxBodySize = svr->getMaxBodySize(getRoute());
 		if (svr->getIsAllowedMethod( this->lc, this->method ) == false)
 			return ( setError( HTTP_NOT_ALLOWED_CODE ) );
@@ -502,9 +542,9 @@ void	Request::checkUseCgi( void )
 	std::string	binary;
 
 	this->useCgi = false;
-	if ( docExt.size() == 0 )
+	if ( this->cgiDocExt.size() == 0 )
 		return ;
-	binary = this->svr->getCgiBinary( docExt, lc );
+	binary = this->svr->getCgiBinary( this->cgiDocExt, lc );
 	this->useCgi = ( binary.size() > 0 );
 }
 

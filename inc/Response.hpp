@@ -17,6 +17,7 @@
 
 # include "Headers.hpp"
 # include "StatusCodes.hpp"
+# include "Defines.hpp"
 
 class Response
 {

@@ -20,6 +20,8 @@
 # define BUFFER_SIZE 3000
 # define MAX_CLIENTS 3000
 
+# define SERVER "OREGINX/1.0"
+
 # define SPOLLFD 0
 # define CPOLLFD 1
 

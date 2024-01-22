@@ -65,8 +65,9 @@ private:
 	std::string		protocol;
 	std::string		body;
 	std::string		document;
-	std::string		docExt;
 	std::string		uriRedir;
+	std::string		docExt;
+	std::string		pathInfo;
 	StringVector	routeChain;
 	Headers			headers;
 	const Server	*svr;
@@ -94,6 +95,8 @@ private:
 	bool	updateServerConfig( void );
 	void	updateLocation( void );
 	void	updateFilePaths( void );
+	bool	getExtensionForPath( std::string path, std::string& ext );
+	bool	checkCgiInRoute( void );
 
 public:
     Request( void );
