@@ -37,6 +37,7 @@ const Server	*ServerFinder::find( const Request& request )
 	if ( !cli )
 		return ( NULL );
 	request.getHostPort( host, port );
+	Log::Error( "Host: " + host + " && Port: " + port );
 	s = getStrongServerMatch( cli->getServers(), host, port );
 	if ( s == NULL )
 		s = getWeakServerMatch( cli->getServers(), host, port );

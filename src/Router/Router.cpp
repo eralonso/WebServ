@@ -373,12 +373,14 @@ int	Router::getFileToRead( Request& req, std::string& retFile )
 	if ( checkPathExist( req, path ) == false )
 		return ( ENOENT );
 	file = path;
-		Log::Info( "path to get directory: " + path );
+	Log::Info( "path to get directory: " + path );
 	if ( isDir( path ) == true && req.tryIndexFiles( file ) == false )
 	{
 		retFile = path;
 		return ( EISDIR );
 	}
+	if ( isValidDirectory( file ) == true )
+		return ( ENOENT );
 	if ( checkPathCanRead( req, file ) == false )
 		return ( EACCES );
 	retFile = file;
@@ -469,10 +471,7 @@ bool	Router::processDeleteRequest( Request& req )
 
 	path = req.getFilePathRead();
 	if ( checkPathExist( req, path ) == false )
-	{
-		req.setError(HTTP_NOT_FOUND_CODE);
 		return ( false );
-	}
 	file = path;
 	if ( isDir( path ) == true )
 		return (req.setError( HTTP_FORBIDDEN_CODE ));
