@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/17 16:00:12 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/23 17:37:59 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,20 +171,38 @@ int	Client::manageRecv( std::string recv )
 	Request		*req = NULL;
 
 	this->received += recv;
-	while ( cont && fail == false && getLine( line ) )
+	// while ( cont && fail == false && getLine( line ) )
+	// {
+	// 	req = findRecvRequest();
+	// 	if ( req != NULL )
+	// 		cont = req->processLine( line );
+	// 	else
+	// 	{
+	// 		req = Requests::appendRequest( this );
+	// 		if ( req != NULL )
+	// 			cont = req->processLine( line );
+	// 		else
+	// 			fail = true;
+	// 	}
+	// }
+	while (cont && fail == false)
 	{
 		req = findRecvRequest();
 		if ( req != NULL )
-			cont = req->processLine( line );
+			cont = req->processRecv();
 		else
 		{
 			req = Requests::appendRequest( this );
 			if ( req != NULL )
-				cont = req->processLine( line );
+				cont = req->processRecv();
 			else
 				fail = true;
 		}
+		if (! fail && req->isCompleteRecv())
+			cont = false;
 	}
+	
+
 	purgeUsedRecv();
 	if ( fail == true )
 	{

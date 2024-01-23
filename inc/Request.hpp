@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/18 18:12:38 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/23 17:10:09 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,8 @@ private:
 	bool	processLineOnFdBond( const std::string &line );
 	bool	processLineOnRecvdStart( const std::string &line );
 	bool	processLineOnRecvdReqLine( const std::string &line );
-	bool	processLineOnRecvdHeader( const std::string &line );
+	bool 	processOnReceivingBody(void);
+	bool 	processLineOnRecvdHeader(const std::string &line);
 	bool	processLineOnRecvdChunkSize( const std::string &line );
 	bool	processLineOnRecvdChunk( const std::string &line );
 	bool	processLineOnRecvdLastChunk( const std::string &line );
@@ -162,7 +163,8 @@ public:
 	void			setOutputLength( size_t size );
 	void			logStatus( void );
 	bool			processLine( const std::string& line );
-	bool			tryIndexFiles( std::string& file ) const;
+	bool 			processRecv( void );
+	bool 			tryIndexFiles(std::string &file) const;
 	void			setDefaultFavicon( void );
 	bool			findReturnUri( int& uriCode, std::string& uriRedir ) const;
 	std::string		getCookies(void) const;
