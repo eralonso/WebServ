@@ -388,27 +388,28 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 
 bool	Request::processOnReceivingBody( void )
 {
-	size_t	contentSize;
-	std::string	data;
+	size_t		contentSize;
 	size_t		got;
-	Header*	clHead = this->headers.firstWithKey( "Content-Length" );
+	ssize_t		take;
+	std::string	data;
+	Header		*clHead = this->headers.firstWithKey( "Content-Length" );
 
 	if ( clHead != NULL )
 	{
 		contentSize = SUtils::atol( clHead->getValue().c_str() );
-		if ( clHead != NULL )
-		{
-			contentSize = SUtils::atol( clHead->getValue().c_str() );
-			if (maxBodySize != 0 && contentSize > maxBodySize)
-				return ( setError( HTTP_BAD_REQUEST_CODE ) );
-			size_t take = contentSize - this->body.size();
-			got = this->client->getNChars(data, take);
-			this->body += data;
-			if ( this->body.size() >= contentSize )
-				this->status = RECVD_ALL;
-		}
+		if ( maxBodySize != 0 && contentSize > maxBodySize )
+			return ( setError( HTTP_BAD_REQUEST_CODE ) );
+		take = contentSize - this->body.size();
+		got = this->client->getNChars( data, take );
+		this->body += data;
+		if ( this->body.size() >= contentSize )
+			this->status = RECVD_ALL;
+		Log::Info( "contenSize: " + SUtils::longToString( contentSize ) );
+		Log::Info( "take: " + SUtils::longToString( take ) );
+		Log::Info( "body size: " + SUtils::longToString( this->body.length() ) );
+		Log::Info( "data size: " + SUtils::longToString( data.length() ) );
 	}
-	return ( this->isCompleteRecv() );
+	return ( !this->isCompleteRecv() );
 }
 
 bool	Request::processLineOnRecvdHeader( const std::string &line )
@@ -528,23 +529,28 @@ bool	Request::processLine( const std::string &line )
 bool	Request::processRecv( void )
 {
 	bool		cont = true;
-	std::string line;
+	std::string	line;
 
-	if (this->status == IDLE || this->client == NULL)
-		return false;
-
-	while (cont && !this->isCompleteRecv() && this->client->getPendingSize() > 0)
+	Log::Info( "On processRecv [ START ]" );
+	if ( this->status == IDLE || this->client == NULL )
+		return ( false );
+	while ( cont && !this->isCompleteRecv() && this->client->getPendingSize() > 0 )
 	{
-		if (this->status == RECVD_HEADER)
+		if ( this->status == RECVD_HEADER )
 		{
 			cont = processOnReceivingBody();
 		}
-		else if(!this->isCompleteRecv())
+		else if ( !this->isCompleteRecv() )
 		{
-			if (this->client->getLine(line))
-				cont = processLine(line);
+			if ( this->client->getLine( line ) )
+				cont = processLine( line );
 		}
+		Log::Error( "status [ " + SUtils::longToString( this->status ) + " ]" );
+		Log::Error( "cont [ " + std::string( cont == true ? "TRUE" : "FALSE" ) + " ]" );
+		Log::Error( "isCompleteRecv [ " \
+			+ std::string( this->isCompleteRecv() == true ? "TRUE" : "FALSE" ) + " ]" );
 	}
+	Log::Info( "On processRecv [ END ]" );
 	return ( !this->isCompleteRecv() );
 }
 

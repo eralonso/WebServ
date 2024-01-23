@@ -185,22 +185,37 @@ int	Client::manageRecv( std::string recv )
 	// 			fail = true;
 	// 	}
 	// }
-	while (cont && fail == false)
+
+	req = findRecvRequest();
+	if ( req == NULL )
 	{
-		req = findRecvRequest();
-		if ( req != NULL )
-			cont = req->processRecv();
-		else
-		{
-			req = Requests::appendRequest( this );
-			if ( req != NULL )
-				cont = req->processRecv();
-			else
-				fail = true;
-		}
-		if (! fail && req->isCompleteRecv())
+		req = Requests::appendRequest( this );
+		if ( req == NULL )
+			fail = true;
+	}
+	if ( !fail )
+	{
+		cont = req->processRecv();
+		if ( req->isCompleteRecv() )
 			cont = false;
 	}
+
+	//while (cont && fail == false)
+	//{
+	//	req = findRecvRequest();
+	//	if ( req != NULL )
+	//		cont = req->processRecv();
+	//	else
+	//	{
+	//		req = Requests::appendRequest( this );
+	//		if ( req != NULL )
+	//			cont = req->processRecv();
+	//		else
+	//			fail = true;
+	//	}
+	//	if (! fail && req->isCompleteRecv())
+	//		cont = false;
+	//}
 	
 
 	purgeUsedRecv();
