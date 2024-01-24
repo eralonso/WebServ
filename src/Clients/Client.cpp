@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/23 17:37:59 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/24 08:50:15 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,53 +171,22 @@ int	Client::manageRecv( std::string recv )
 	Request		*req = NULL;
 
 	this->received += recv;
-	// while ( cont && fail == false && getLine( line ) )
-	// {
-	// 	req = findRecvRequest();
-	// 	if ( req != NULL )
-	// 		cont = req->processLine( line );
-	// 	else
-	// 	{
-	// 		req = Requests::appendRequest( this );
-	// 		if ( req != NULL )
-	// 			cont = req->processLine( line );
-	// 		else
-	// 			fail = true;
-	// 	}
-	// }
-
-	req = findRecvRequest();
-	if ( req == NULL )
+	while ( cont && !fail && getPendingSize() > 0 )
 	{
-		req = Requests::appendRequest( this );
+		req = findRecvRequest();
 		if ( req == NULL )
-			fail = true;
+		{
+			req = Requests::appendRequest( this );
+			if ( req == NULL )
+				fail = true;
+		}
+		if ( !fail )
+		{
+			cont = req->processRecv();
+			if ( req->isCompleteRecv() )
+				cont = false;
+		}
 	}
-	if ( !fail )
-	{
-		cont = req->processRecv();
-		if ( req->isCompleteRecv() )
-			cont = false;
-	}
-
-	//while (cont && fail == false)
-	//{
-	//	req = findRecvRequest();
-	//	if ( req != NULL )
-	//		cont = req->processRecv();
-	//	else
-	//	{
-	//		req = Requests::appendRequest( this );
-	//		if ( req != NULL )
-	//			cont = req->processRecv();
-	//		else
-	//			fail = true;
-	//	}
-	//	if (! fail && req->isCompleteRecv())
-	//		cont = false;
-	//}
-	
-
 	purgeUsedRecv();
 	if ( fail == true )
 	{

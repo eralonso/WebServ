@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/23 17:31:41 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/24 09:00:30 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -404,10 +404,6 @@ bool	Request::processOnReceivingBody( void )
 		this->body += data;
 		if ( this->body.size() >= contentSize )
 			this->status = RECVD_ALL;
-		Log::Info( "contenSize: " + SUtils::longToString( contentSize ) );
-		Log::Info( "take: " + SUtils::longToString( take ) );
-		Log::Info( "body size: " + SUtils::longToString( this->body.length() ) );
-		Log::Info( "data size: " + SUtils::longToString( data.length() ) );
 	}
 	return ( !this->isCompleteRecv() );
 }
@@ -531,26 +527,17 @@ bool	Request::processRecv( void )
 	bool		cont = true;
 	std::string	line;
 
-	Log::Info( "On processRecv [ START ]" );
 	if ( this->status == IDLE || this->client == NULL )
 		return ( false );
 	while ( cont && !this->isCompleteRecv() && this->client->getPendingSize() > 0 )
 	{
 		if ( this->status == RECVD_HEADER )
-		{
 			cont = processOnReceivingBody();
-		}
-		else if ( !this->isCompleteRecv() )
-		{
-			if ( this->client->getLine( line ) )
-				cont = processLine( line );
-		}
-		Log::Error( "status [ " + SUtils::longToString( this->status ) + " ]" );
-		Log::Error( "cont [ " + std::string( cont == true ? "TRUE" : "FALSE" ) + " ]" );
-		Log::Error( "isCompleteRecv [ " \
-			+ std::string( this->isCompleteRecv() == true ? "TRUE" : "FALSE" ) + " ]" );
+		else if ( this->client->getLine( line ) )
+			cont = processLine( line );
+		else
+			return ( false );
 	}
-	Log::Info( "On processRecv [ END ]" );
 	return ( !this->isCompleteRecv() );
 }
 
