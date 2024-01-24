@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:07 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/19 17:51:47 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/24 13:00:12 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ private:
 	Headers			headers;
 	std::string		body;
 	bool			isCgi;
+	size_t			sendPos;
+	std::string		resString;
 public:
 	Response( void );
 	~Response( void );
@@ -46,6 +48,7 @@ public:
 	void	 		setBody( std::string content );
 	void			setBodyLength( size_t len );
 	void			setIsCgi(bool value);
+	size_t			increaseSendPos( size_t value );
 	void	 		appendHeader( Header header );
 	std::string		getServer( void ) const;
 	std::string		getProtocol( void ) const;
@@ -58,8 +61,11 @@ public:
 	Header*			getHeader( std::string key );
 	size_t			getContentLength( void ) const;
 	std::string		getBody( void ) const;
-	bool			getIsCgi() const;
+	bool			getIsCgi( void ) const;
+	size_t			getSendPos( void ) const;
+	const std::string&	getResString( void ) const;
 	std::string		toString( void ) const;
+	void			updateResString( void );
 };
 
 #endif

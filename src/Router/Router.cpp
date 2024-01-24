@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/24 10:33:03 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/24 11:21:00 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -412,6 +412,7 @@ bool	Router::processGetRequest( Request& req )
 		else if ( processDirectory( req, path, output ) == true )
 			req.setOutput( output );
 	}
+	Log::Info( "size output: " + SUtils::longToString( req.getOutput().length() ) );
 	return ( req.getError() >= 400 );
 }
 

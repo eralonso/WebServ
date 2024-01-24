@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/19 18:57:03 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/24 13:46:15 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,17 +84,24 @@ bool	Receptionist::serverShareAddr( ServersVector::iterator& begin, \
 	return ( false );
 }
 
-int	Receptionist::sendResponse( socket_t connected, std::string response )
+int	Receptionist::sendResponse( socket_t connected, Response *res )
 {
-	if ( send( connected, response.c_str(), response.size(), 0 ) < 0 )
+	size_t		threshold;
+	const char	*str;
+	size_t		size;
+
+	size = res->getResString().size() - res->getSendPos(); 
+	str = res->getResString().c_str();
+	threshold = size > BUFFER_SIZE ? BUFFER_SIZE : size;
+	if ( send( connected, str + res->getSendPos(), threshold, O_NONBLOCK ) < 0 )
 	{
 		Log::Error( "Failed to send response" );
-		throw std::logic_error( "Failed to send response" );
+		return ( 0 );
 	}
 	Log::Success( "Response sended [ " \
 			+ SUtils::longToString( connected ) \
 			+ " ]");
-	return ( 1 );
+	return ( res->increaseSendPos( threshold ) < res->getResString().length() );
 }
 
 int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
@@ -159,8 +166,7 @@ void	Receptionist::manageClientRead( socket_t clientFd, Client *cli )
 void	Receptionist::manageClientWrite( socket_t clientFd, Client *cli )
 {
 	cli->managePollout();
-	cli->allowPollWrite( false );
-	if ( cli->size() == 0 && cli->getPendingSize() == 0 )
+	if ( cli->size() == 0 && cli->getPendingSize() == 0 && !cli->getKeepAlive() )
 	{
 		polls.closePoll( clientFd );
 		eraseClient( clientFd );
@@ -184,10 +190,10 @@ void	Receptionist::manageClient( socket_t clientFd )
 			+ " ]: not found");
 		return ;
 	}
-	if ( clientPoll->revents & POLLIN )
-		manageClientRead( clientFd, cli );
-	else if ( clientPoll->revents & POLLOUT )
+	if ( clientPoll->revents & POLLOUT )
 		manageClientWrite( clientFd, cli );
+	else if ( clientPoll->revents & POLLIN )
+		manageClientRead( clientFd, cli );
 }
 
 int	Receptionist::mainLoop( void )

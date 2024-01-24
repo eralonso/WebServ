@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/24 08:50:15 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/24 13:46:45 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ Client::Client( void )
 	this->socket = -1;
 	this->polls = NULL;
 	this->servers = NULL;
+	this->res = NULL;
 	SUtils::memset( &this->addr, 0, sizeof( this->addr ) );
 }
 
@@ -40,10 +41,13 @@ Client::Client( socket_t pollsocket, WSPoll& polls, ServersVector& servers, \
 	this->polls = &polls;
 	this->servers = &servers;
 	this->addr = info;
+	this->res = NULL;
 }
 
 Client::~Client( void )
 {
+	if ( this->res != NULL )
+		delete this->res;
 }
 
 Client::Client( const Client& b ): Requests()
@@ -55,6 +59,7 @@ Client::Client( const Client& b ): Requests()
 	this->received = b.received;
 	this->servers = b.servers;
 	this->addr = b.addr;
+	this->res = b.res;
 }
 
 Client&	Client::operator=( const Client& b )
@@ -66,6 +71,7 @@ Client&	Client::operator=( const Client& b )
 		this->received = b.received;
 		this->servers = b.servers;
 		this->addr = b.addr;
+		this->res = b.res;
 	}
 	return ( *this );
 }
@@ -212,19 +218,33 @@ int	Client::manageCompleteRecv( void )
 int	Client::managePollout( void )
 {
 	Request		*req = NULL;
-	Response	*res = NULL;
 	int			count = 0;
 
+	if ( this->res != NULL )
+	{
+		if ( !sendResponse( this->res ) )
+		{
+			delete this->res;
+			this->res = NULL;
+			allowPollWrite( false );
+		}
+		return ( 1 );
+	}
 	while ( ( req = findReadyToSendRequest() ) )
 	{
-		res = Router::getResponse( req );
-		if ( res && sendResponse( res->toString() ) )
+		this->res = Router::getResponse( req );
+		if ( this->res )
 		{
-			count++;
-			Requests::eraseRequest();
-			delete res;
-			res = NULL;
+			this->res->updateResString();
+			if ( !sendResponse( this->res ) )
+			{
+				count++;
+				delete this->res;
+				this->res = NULL;
+				allowPollWrite( false );
+			}
 		}
+		Requests::eraseRequest();
 	}
 	return ( count );
 }
@@ -234,10 +254,10 @@ bool	Client::getKeepAlive( void ) const
 	return ( this->keepAlive );
 }
 
-int	Client::sendResponse( std::string resp )
+int	Client::sendResponse( Response *res )
 {
 	if ( this->socket >= 0 )
-		return ( Receptionist::sendResponse( this->socket, resp ) );
+		return ( Receptionist::sendResponse( this->socket, res ) );
 	return ( 0 );
 }
 

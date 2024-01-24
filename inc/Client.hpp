@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/22 12:01:04 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/24 12:52:27 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <WSPoll.hpp>
 # include <WSSignals.hpp>
 # include <Requests.hpp>
+# include <Response.hpp>
 # include <Request.hpp>
 # include <CgisMap.hpp>
 # include <TypesDefines.hpp>
@@ -35,6 +36,7 @@ private:
 	bool				keepAlive;
 	WSPoll				*polls;
 	struct sockaddr_in	addr;
+	Response			*res;
 public:
 	ServersVector	*servers;
 	// CgisMap	cgis;
@@ -57,7 +59,7 @@ public:
 	int			manageCompleteRecv( void );
 	int			managePollout( void );
 	bool		getKeepAlive( void ) const;
-	int			sendResponse( std::string resp );
+	int			sendResponse( Response *res );
 	bool		getLine( std::string& line );
 	size_t		getNChars( std::string& data, size_t n );
 	size_t		getPendingSize( void ) const;

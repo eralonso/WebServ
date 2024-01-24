@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/17 11:52:10 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/24 13:00:15 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Utils.hpp"
 #include "Response.hpp"
 
-Response::Response( void ): server( SERVER ), isCgi( false ) {}
+Response::Response( void ): server( SERVER ), isCgi( false ), sendPos( 0 ) {}
 
 Response::~Response( void ) {}
 
@@ -26,6 +26,7 @@ Response::Response( const Response& b )
 	this->body = b.body;
 	this->isCgi = b.isCgi;
 	this->server = b.server;
+	this->sendPos = b.sendPos;
 }
 
 Response&	Response::operator=( const Response& b )
@@ -39,6 +40,7 @@ Response&	Response::operator=( const Response& b )
 		this->body = b.body;	
 		this->isCgi = b.isCgi;
 		this->server = b.server;
+		this->sendPos = b.sendPos;
 	}
 	return ( *this );
 }
@@ -97,6 +99,12 @@ void	Response::setBodyLength( size_t len )
 void Response::setIsCgi(bool value)
 {
 	isCgi = value;
+}
+
+size_t Response::increaseSendPos(size_t value)
+{
+	this->sendPos += value;
+	return ( this->sendPos );
 }
 
 void Response::appendHeader(Header header)
@@ -173,6 +181,28 @@ std::string	Response::getBody( void ) const
 bool	Response::getIsCgi() const
 {
 	return (isCgi);
+}
+
+size_t	Response::getSendPos( void ) const
+{
+	return ( this->sendPos );
+}
+
+const std::string&	Response::getResString( void ) const
+{
+	return ( this->resString );
+}
+
+void	Response::updateResString( void )
+{
+	if (!isCgi)
+	{
+		this->resString = this->protocol + " " + SUtils::longToString( this->status );
+		this->resString += " " + getResult() + HEADER_SEP;
+		this->resString += this->headers.toString();
+		this->resString += HEADER_SEP;
+		this->resString += this->body;
+	}
 }
 
 std::string	Response::toString( void ) const
