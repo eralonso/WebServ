@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/24 13:00:15 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/25 09:58:05 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,7 +202,9 @@ void	Response::updateResString( void )
 		this->resString += this->headers.toString();
 		this->resString += HEADER_SEP;
 		this->resString += this->body;
+		return ;
 	}
+	this->resString = this->body;
 }
 
 std::string	Response::toString( void ) const

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/24 13:46:45 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/25 09:48:59 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,7 +230,7 @@ int	Client::managePollout( void )
 		}
 		return ( 1 );
 	}
-	while ( ( req = findReadyToSendRequest() ) )
+	if ( ( req = findReadyToSendRequest() ) )
 	{
 		this->res = Router::getResponse( req );
 		if ( this->res )
