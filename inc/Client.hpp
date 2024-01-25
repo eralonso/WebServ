@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/24 12:52:27 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/25 11:33:06 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ public:
 	std::string					getIpString( void ) const;
 	unsigned int				getIpNetworkOrder( void ) const;
 	unsigned int				getIpHostOrder( void ) const;
+	bool		isResponsePendingToSend( void ) const;
 };
 
 #endif

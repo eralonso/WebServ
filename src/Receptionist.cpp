@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/25 10:52:37 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/25 12:07:02 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ int	Receptionist::sendResponse( socket_t connected, Response *res )
 	ret = pos < res->getResString().size();
 	// if (!ret)
 	// {
-	// 	if ( send( connected, "\n", 1, O_NONBLOCK ) < 0 )
+	// 	if ( send( connected, "\004", 1, O_NONBLOCK ) < 0 )
 	// 	{
 	// 		Log::Error( "Failed to send response" );
 	// 		return ( 0 );
@@ -181,7 +181,8 @@ void	Receptionist::manageClientRead( socket_t clientFd, Client *cli )
 void	Receptionist::manageClientWrite( socket_t clientFd, Client *cli )
 {
 	cli->managePollout();
-	if ( cli->size() == 0 && cli->getPendingSize() == 0 && !cli->getKeepAlive() )
+	// if ( cli->size() == 0 && cli->getPendingSize() == 0 && !cli->getKeepAlive() )
+	if ( cli->size() == 0 && cli->getPendingSize() == 0 && !cli->isResponsePendingToSend() && !cli->getKeepAlive() )
 	{
 		polls.closePoll( clientFd );
 		eraseClient( clientFd );

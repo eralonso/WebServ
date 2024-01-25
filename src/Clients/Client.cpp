@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/25 09:48:59 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/25 11:35:37 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -340,4 +340,9 @@ bool	Client::checkPendingToSend( void )
 		return ( true );
 	}
 	return ( false );
+}
+
+bool	Client::isResponsePendingToSend( void ) const
+{
+	return (this->res != NULL);
 }
