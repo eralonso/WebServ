@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/18 18:25:46 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/25 13:14:54 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ char	**CgiExecutor::getEnvVarList( void )
 void	CgiExecutor::onChildProcess( void )
 {
 	//On child
+	Log::Error( "CgiExecutor::onChildProcess: -----------------");
 	getEnvVarList();
 	close( this->fdToChild[ FDOUT ] );
 	close( this->fdFromChild[ FDIN ] );
@@ -107,6 +108,7 @@ void	CgiExecutor::onChildProcess( void )
 			+ SUtils::longToString( errno ) );
 	close( this->fdToChild[ FDIN ] );
 	close( this->fdFromChild[ FDOUT ] );
+	Log::Error( "CgiExecutor::onChildProcess: about to execve");
 	execve( binary.c_str(), argv, childEnv );
 	Log::Error( "execve: Not found binary " + binary);
 	return; //exit(1) not allowed?
@@ -124,6 +126,8 @@ void	CgiExecutor::onParentProcess( pid_t childPid )
 	close( this->fdToChild[ FDOUT ] );
 	PendingCgiTask task( childPid, request, fdFromChild[ FDIN ] );
 	CgiExecutor::pendingTasks.appendTask( task );
+	Log::Error("CgiExecutor::onParentProcess pid " + SUtils::longToString( childPid ) \
+		+ " timestamp: " + SUtils::longToString( std::clock() ) );
 	attendPendingCgiTasks();
 }
 

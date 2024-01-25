@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/28 12:29:17 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/25 13:15:20 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ bool	PendingCgiTask::isTimeout( double toDuration, bool logInfo ) const
 
 	if ( logInfo )
 	{
+		Log::Error("Cgi Timeout: timestamp" + SUtils::longToString( now ) );
 		Log::Info("Cgi Timeout: " + SUtils::longToString( \
 			static_cast< long >( toDuration * 1000 ) ) + "ms" );
 	}
