@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/24 13:46:15 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/25 10:52:37 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,19 +89,34 @@ int	Receptionist::sendResponse( socket_t connected, Response *res )
 	size_t		threshold;
 	const char	*str;
 	size_t		size;
+	size_t		pos;
+	bool		ret;
 
-	size = res->getResString().size() - res->getSendPos(); 
+	pos =res->getSendPos();
+	size = res->getResString().size() - pos; 
 	str = res->getResString().c_str();
-	threshold = size > BUFFER_SIZE ? BUFFER_SIZE : size;
-	if ( send( connected, str + res->getSendPos(), threshold, O_NONBLOCK ) < 0 )
+	threshold = size > SEND_BUFFER_SIZE ? SEND_BUFFER_SIZE : size;
+	if ( send( connected, str + pos, threshold, O_NONBLOCK ) < 0 )
 	{
 		Log::Error( "Failed to send response" );
 		return ( 0 );
 	}
-	Log::Success( "Response sended [ " \
+	pos =res->increaseSendPos( threshold );
+	ret = pos < res->getResString().size();
+	// if (!ret)
+	// {
+	// 	if ( send( connected, "\n", 1, O_NONBLOCK ) < 0 )
+	// 	{
+	// 		Log::Error( "Failed to send response" );
+	// 		return ( 0 );
+	// 	}
+	// }
+	Log::Success( "Response sent " 
+			+ SUtils::longToString( threshold ) \
+			+ "bytes [ " \
 			+ SUtils::longToString( connected ) \
 			+ " ]");
-	return ( res->increaseSendPos( threshold ) < res->getResString().length() );
+	return ( ret );
 }
 
 int	Receptionist::readRequest( socket_t clientFd, std::string& readed )

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:10:16 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/14 16:11:49 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/25 10:45:56 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <string>
 
 # define BUFFER_SIZE 3000
+# define SEND_BUFFER_SIZE 1000
 # define MAX_CLIENTS 3000
 
 # define SERVER "OREGINX/1.0"
