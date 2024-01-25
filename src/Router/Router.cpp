@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/22 10:51:26 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/25 12:32:32 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,8 +278,12 @@ std::string	Router::readFile( std::string file )
 	fd.open( file.c_str() );
 	if ( fd.is_open() == false )
 		return ( "" );
-	while ( !std::getline( fd, buffer ).eof() )
+	while ( std::getline( fd, buffer ) )
+	{
 		storage += buffer + "\n";
+		buffer.clear();
+	}
+	storage += buffer;
 	fd.close();
 	return ( storage );
 }
