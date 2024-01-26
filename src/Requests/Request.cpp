@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/24 11:20:49 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/26 13:53:01 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -429,43 +429,47 @@ bool	Request::processLineOnRecvdHeader( const std::string &line )
 
 bool	Request::processLineOnRecvdChunkSize( const std::string &line )
 {
-	size_t len = line.length();
-
-	if ( this->chunkSize == 0 )
-	{
-		this->status = RECVD_LAST_CHUNK;
-		return ( true );
-	}	
-	if ( len == this->chunkSize )
-	{
-		this->body += line;
-		if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
-			return ( setError( HTTP_BAD_REQUEST_CODE ) );
-		this->status = RECVD_CHUNK;
-		return ( true );
-	}
-	if ( ( len == this->chunkSize + 1 ) && ( line[ len - 1 ] <= ' ' ) )
-	{
-		this->body += line.substr( 0, len - 1 );
-		if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
-			return ( setError( HTTP_BAD_REQUEST_CODE ) );
-		this->status = RECVD_CHUNK;
-		return ( true );
-	}
+	( void )line;
 	return ( true );
+	// size_t len = line.length();
+
+	// if ( this->chunkSize == 0 )
+	// {
+	// 	this->status = RECVD_LAST_CHUNK;
+	// 	return ( true );
+	// }	
+	// if ( len == this->chunkSize )
+	// {
+	// 	this->body += line;
+	// 	if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
+	// 		return ( setError( HTTP_BAD_REQUEST_CODE ) );
+	// 	this->status = RECVD_CHUNK;
+	// 	return ( true );
+	// }
+	// if ( ( len == this->chunkSize + 1 ) && ( line[ len - 1 ] <= ' ' ) )
+	// {
+	// 	this->body += line.substr( 0, len - 1 );
+	// 	if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
+	// 		return ( setError( HTTP_BAD_REQUEST_CODE ) );
+	// 	this->status = RECVD_CHUNK;
+	// 	return ( true );
+	// }
+	// return ( true );
 }
 
 bool	Request::processLineOnRecvdChunk( const std::string &line )
 {
 	size_t len = line.length();
 
+	Log::Error( "process chunked line" );
 	if ( ( ( len == 1 || ( len == 2 && line[ 1 ] <= ' ' ) ) && line[ 0 ] == '0' ) )
 	{
 		this->chunkSize = 0;
 		this->status = RECVD_LAST_CHUNK;
 		return ( true );
 	}
-	this->chunkSize = SUtils::atol( line.c_str() );
+	this->chunkSize = SUtils::atolhex( line.c_str() );
+	Log::Error( "chunk size: " + line );
 	if ( chunkSize > 0 )
 	{
 		this->status = RECVD_CHUNK_SIZE;
@@ -476,17 +480,42 @@ bool	Request::processLineOnRecvdChunk( const std::string &line )
 	return ( true );
 }
 
+bool	Request::processOnReceivingChunk( void )
+{
+	size_t		len = this->chunkSize;
+	std::string	chunk;
+	std::string	line;
+
+	Log::Info( "on receiving chunk" );
+	if ( this->client->getPendingSize() < this->chunkSize + 2 )
+		return ( false );
+	this->client->getNChars( chunk, len );
+	this->client->getLine( line );
+	// if ( this->client->getLine( line ) == false || line.length() > 1 \
+	// 	|| line[ 0 ] > ' ' )
+	// {
+	// 	Log::Error( "[" + line + "]" );
+	// 	return ( setError( HTTP_BAD_REQUEST_CODE ) );	
+	// }
+	this->body += chunk;
+	// if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
+	// 	return ( setError( HTTP_BAD_REQUEST_CODE ) );
+	this->status = RECVD_CHUNK;
+	return ( true );
+}
+
 bool	Request::processLineOnRecvdLastChunk( const std::string &line )
 {
 	size_t len = line.length();
 
+	Log::Info( "last chunk" );
 	if ( len == 0 || ( len == 1 && line[ 0 ] <= ' ' ) )
 	{
 		this->status = RECVD_ALL;
 		return ( true );
 	}
-	this->status = RECVD_ALL;
-	return ( true );
+	Log::Error( "[" + line + "]" );
+	return ( setError( HTTP_BAD_REQUEST_CODE ) );
 }
 
 bool	Request::processLine( const std::string &line )
@@ -533,6 +562,8 @@ bool	Request::processRecv( void )
 	{
 		if ( this->status == RECVD_HEADER )
 			cont = processOnReceivingBody();
+		else if ( this->status == RECVD_CHUNK_SIZE )
+			return ( processOnReceivingChunk() );
 		else if ( this->client->getLine( line ) )
 			cont = processLine( line );
 		else
@@ -564,7 +595,7 @@ bool	Request::checkProtocol( std::string protocol )
 
 bool	Request::checkChunked( void )
 {
-	Header	*teHead = this->headers.firstWithKey( "Transfer-Encode" );
+	Header	*teHead = this->headers.firstWithKey( "Transfer-Encoding" );
 	bool	isChunked = false;
 
 	if ( teHead != NULL && ( isChunked = ( teHead->getValue() == "chunked" ) ) )

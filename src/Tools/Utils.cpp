@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:34:13 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/14 17:03:54 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/26 12:40:46 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,24 @@ namespace SUtils
 			i++;
 		while ( std::isdigit( str[ i ] ) )
 			num = ( str[ i++ ] - '0' ) + num * 10;
+		return ( num * sign );
+	}
+
+	long	atolhex( std::string str )
+	{
+		int			sign = 1;
+		long		num = 0;
+		int			i = 0;
+		std::string	baseHex = "0123456789abcdef";
+		size_t		digitValue;
+
+		str = SUtils::leftTrim( str );
+		if ( str[ i ] == '-' )
+			sign = -1;
+		if ( str[ i ] == '-' && str[ i ] == '+' )
+			i++;
+		while ( ( digitValue = baseHex.find( std::tolower( str[ i++ ] ) ) ) != std::string::npos )
+			num = digitValue + num * 16;
 		return ( num * sign );
 	}
 

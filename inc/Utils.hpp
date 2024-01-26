@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:31:42 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/12 15:08:11 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/26 12:40:15 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ namespace SUtils
 	std::string		longToString( long int num );
 	int				atoi( std::string str );
 	long			atol( std::string str );
+	long			atolhex( std::string str );
 	void			memset( void *p, int c, size_t size );
 	int				strcmp( const char *s1, const char *s2 );
 	bool			isNum( std::string num );

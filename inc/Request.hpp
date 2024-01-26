@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/23 17:10:09 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/26 12:51:30 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ private:
 	bool	processLineOnRecvdChunkSize( const std::string &line );
 	bool	processLineOnRecvdChunk( const std::string &line );
 	bool	processLineOnRecvdLastChunk( const std::string &line );
+	bool	processOnReceivingChunk( void );
 	bool	checkProtocol( std::string protocol );
 	bool	checkChunked( void );
 	bool	checkKeepAlive( void );

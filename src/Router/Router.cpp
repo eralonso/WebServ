@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/26 11:13:40 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/26 11:43:22 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -442,9 +442,10 @@ bool	Router::processPostRequest( Request& req )
 	std::string bodyContent = req.getBody();
 	std::string	document = req.getDocument();
 	std::string path;
-	
-	if (bodyContent.size() == 0)
-		return (req.setError(HTTP_NO_CONTENT_CODE) );
+
+	Log::Info("POST ... ");	
+	// if (bodyContent.size() == 0)
+	// 	return (req.setError(HTTP_NO_CONTENT_CODE) );
 	if (!req.isDirectiveSet( "upload_store" ) || document.size() == 0)
 		return ( req.setError(HTTP_FORBIDDEN_CODE) );
 	path = req.getFilePathWrite();
@@ -461,12 +462,13 @@ bool	Router::processPutRequest( Request& req )
 	std::string	document = req.getDocument();
 	std::string path;
 	
-	if (bodyContent.size() == 0)
-		return (req.setError(HTTP_NO_CONTENT_CODE) );
+	Log::Info("PUT ... ");
+	// if (bodyContent.size() == 0)
+	// 	return (req.setError(HTTP_NO_CONTENT_CODE) );
 	if (!req.isDirectiveSet( "upload_store" ) || document.size() == 0)
 		return ( req.setError(HTTP_FORBIDDEN_CODE) );
 	path = req.getFilePathWrite();
-	Log::Info("Path to POST ... " + path);
+	Log::Info("Path to PUT ... " + path + "\nbody: " + bodyContent );
 	if (! writeFile(path, bodyContent))
 		return ( req.setError(HTTP_FORBIDDEN_CODE) );
 	return ( req.setError( HTTP_CREATED_CODE ) );

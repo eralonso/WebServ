@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/26 11:26:51 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/26 13:32:21 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ int	Receptionist::sendResponse( socket_t connected, Response *res )
 	size_t		pos;
 	bool		ret;
 
-	pos =res->getSendPos();
+	pos = res->getSendPos();
 	size = res->getResString().size() - pos; 
 	str = res->getResString().c_str();
 	threshold = size > SEND_BUFFER_SIZE ? SEND_BUFFER_SIZE : size;
@@ -115,6 +115,7 @@ int	Receptionist::sendResponse( socket_t connected, Response *res )
 			+ SUtils::longToString( threshold ) \
 			+ "bytes [ " \
 			+ SUtils::longToString( connected ) \
+			+ res->getResString() \
 			+ " ]");
 	return ( ret );
 }
@@ -167,12 +168,13 @@ void	Receptionist::manageClientRead( socket_t clientFd, Client *cli )
 		eraseClient( cli );
 		return ;
 	}
-	//Log::Info( "Readed " 
-	//		+ SUtils::longToString( amount ) 
-	//		+ " bytes from [ " 
-	//		+ SUtils::longToString( clientFd ) 
-	//		+ " ]: =>\n" 
-	//		+ SUtils::compactString(readed, 200, 80, 40 ) );
+	// Log::Info( "Readed " 
+	// 		+ SUtils::longToString( amount ) 
+	// 		+ " bytes from [ " 
+	// 		+ SUtils::longToString( clientFd ) 
+	// 		+ " ]: =>\n" 
+	// 		+  readed );
+			// + SUtils::compactString(readed, 200, 80, 40 ) );
 	cli->manageRecv( readed );
 	if ( cli->manageCompleteRecv() )
 		cli->allowPollWrite( true );
