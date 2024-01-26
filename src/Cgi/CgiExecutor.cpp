@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/25 13:14:54 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/26 16:14:03 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,12 +117,30 @@ void	CgiExecutor::onChildProcess( void )
 void	CgiExecutor::onParentProcess( pid_t childPid )
 {
 	std::string	body = request.getBody();
-	char		*reqBody = ( char * )body.c_str();
+	// char		*reqBody = ( char * )body.c_str();
 	size_t		reqBodySize = body.length();
+	size_t		i;
+	size_t		chunkSize = 1000;
 
+
+	Log::Info("CgiExecutor::onParentProcess start");
 	close( this->fdToChild[ FDIN ] );
 	close( this->fdFromChild[ FDOUT ] );
-	write( this->fdToChild[ FDOUT ], reqBody, reqBodySize );
+	i = 0;
+	while (i < reqBodySize)
+	{
+		if ((reqBodySize - i) < chunkSize)
+			chunkSize = reqBodySize - i;
+		std::string chunk = body.substr(i, chunkSize);
+		const char * chunkStr = chunk.c_str();
+		// Log::Info("Size: " + SUtils::longToString(chunkSize));
+		// write(1, chunkStr, chunkSize);
+		if ( write( this->fdToChild[ FDOUT ], chunkStr, chunkSize ) < 0 )
+			break ;
+		// Log::Info("fd: " + SUtils::longToString(this->fdToChild[ FDOUT ]));
+		i += chunkSize;
+	}
+	Log::Info("CgiExecutor::onParentProcess passed write");
 	close( this->fdToChild[ FDOUT ] );
 	PendingCgiTask task( childPid, request, fdFromChild[ FDIN ] );
 	CgiExecutor::pendingTasks.appendTask( task );

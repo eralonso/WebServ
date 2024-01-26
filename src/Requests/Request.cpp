@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/26 13:53:01 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/26 14:54:09 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -461,7 +461,7 @@ bool	Request::processLineOnRecvdChunk( const std::string &line )
 {
 	size_t len = line.length();
 
-	Log::Error( "process chunked line" );
+	// Log::Error( "process chunked line" );
 	if ( ( ( len == 1 || ( len == 2 && line[ 1 ] <= ' ' ) ) && line[ 0 ] == '0' ) )
 	{
 		this->chunkSize = 0;
@@ -469,13 +469,13 @@ bool	Request::processLineOnRecvdChunk( const std::string &line )
 		return ( true );
 	}
 	this->chunkSize = SUtils::atolhex( line.c_str() );
-	Log::Error( "chunk size: " + line );
+	// Log::Error( "chunk size: " + line );
 	if ( chunkSize > 0 )
 	{
 		this->status = RECVD_CHUNK_SIZE;
 		return ( true );
 	}
-	Log::Info( "Received 0 value that indicates last chunk" );
+	// Log::Info( "Received 0 value that indicates last chunk" );
 	this->status = RECVD_LAST_CHUNK;
 	return ( true );
 }
@@ -486,7 +486,7 @@ bool	Request::processOnReceivingChunk( void )
 	std::string	chunk;
 	std::string	line;
 
-	Log::Info( "on receiving chunk" );
+	// Log::Info( "on receiving chunk" );
 	if ( this->client->getPendingSize() < this->chunkSize + 2 )
 		return ( false );
 	this->client->getNChars( chunk, len );
@@ -508,7 +508,7 @@ bool	Request::processLineOnRecvdLastChunk( const std::string &line )
 {
 	size_t len = line.length();
 
-	Log::Info( "last chunk" );
+	// Log::Info( "last chunk" );
 	if ( len == 0 || ( len == 1 && line[ 0 ] <= ' ' ) )
 	{
 		this->status = RECVD_ALL;

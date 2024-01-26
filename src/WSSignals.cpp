@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:04:00 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/26 11:03:44 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/26 16:03:59 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,4 +29,5 @@ void	WSSignals::signalHandler( void )
 {
 	signal( SIGINT, sighandler );
 	signal( SIGQUIT, sighandler );
+	signal( SIGPIPE, SIG_IGN );
 }

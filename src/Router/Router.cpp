@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/26 11:43:22 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/26 17:17:49 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,9 +89,13 @@ bool	Router::processCgi( Request& req )
 		cgiExe.pushEnvVar("SERVER_PORT", port);
 		cgiExe.pushEnvVar("REQUEST_METHOD", req.getMethod());
 		// cgiExe.pushEnvVar(std::string("FILEPATH_INFO"), req.getRouteChaineString());
-		cgiExe.pushEnvVar("PATH_INFO", req.getPathInfo());
-		cgiExe.pushEnvVar("PATH_TRANSLATED", req.getFilePathRead());
-		cgiExe.pushEnvVar(std::string("SCRIPT_NAME"), req.getRoute());
+		// cgiExe.pushEnvVar("PATH_INFO", req.getRoute());
+		cgiExe.pushEnvVar("PATH_INFO", "../" );
+		// Log::Error( "get route: " + req.getRoute() );
+		// cgiExe.pushEnvVar("PATH_INFO", "../cgi_src/mainTest.tst" );
+		// cgiExe.pushEnvVar("PATH_TRANSLATED", "../" + req.getFilePathRead());
+		cgiExe.pushEnvVar("SCRIPT_NAME", req.getFilePathRead());
+		// cgiExe.pushEnvVar("SCRIPT_FILENAME", "../" + req.getFilePathRead());
 		cgiExe.pushEnvVar("QUERY_STRING", req.getQuery());
 		Client *cli = req.getClient();
 		if (cli)
@@ -468,7 +472,8 @@ bool	Router::processPutRequest( Request& req )
 	if (!req.isDirectiveSet( "upload_store" ) || document.size() == 0)
 		return ( req.setError(HTTP_FORBIDDEN_CODE) );
 	path = req.getFilePathWrite();
-	Log::Info("Path to PUT ... " + path + "\nbody: " + bodyContent );
+	// Log::Info("Path to PUT ... " + path + "\nbody: " + bodyContent );
+	Log::Info("Path to PUT ... " + path);
 	if (! writeFile(path, bodyContent))
 		return ( req.setError(HTTP_FORBIDDEN_CODE) );
 	return ( req.setError( HTTP_CREATED_CODE ) );
