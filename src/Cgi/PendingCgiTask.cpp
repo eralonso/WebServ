@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/25 13:15:20 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/26 11:24:53 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,22 +70,22 @@ bool	PendingCgiTask::isMarkedToDelete( void ) const
 	return ( this->markedToDelete );
 }
 
-bool	PendingCgiTask::isTimeout( double toDuration, bool logInfo ) const
+bool	PendingCgiTask::isTimeout( std::clock_t toDuration, bool logInfo ) const
 {
 	std::clock_t	now = std::clock();
 	std::clock_t	duration;
 
 	if ( logInfo )
 	{
-		Log::Error("Cgi Timeout: timestamp" + SUtils::longToString( now ) );
-		Log::Info("Cgi Timeout: " + SUtils::longToString( \
-			static_cast< long >( toDuration * 1000 ) ) + "ms" );
+		Log::Error("Cgi Timeout: now" + SUtils::longToString( now ) );
+		Log::Error("Cgi Timeout: timestamp" + SUtils::longToString( this->timestamp ) );
+		Log::Info("Cgi Timeout: " + SUtils::longToString( toDuration ) + "ms" );
 	}
 	duration = now - this->timestamp;
 	if ( logInfo )
 		Log::Info( "exceeded at duration: " \
 			+ SUtils::longToString( duration ) + "ms" );
-	return ( duration > static_cast< std::clock_t >( toDuration * 1000 ) );
+	return ( duration > toDuration * CLOCKS_PER_SEC );
 }
 
 int	PendingCgiTask::getFd( void ) const

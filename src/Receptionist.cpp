@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/25 12:07:02 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/26 11:26:51 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ int	Receptionist::sendResponse( socket_t connected, Response *res )
 		Log::Error( "Failed to send response" );
 		return ( 0 );
 	}
-	pos =res->increaseSendPos( threshold );
+	pos = res->increaseSendPos( threshold );
 	ret = pos < res->getResString().size();
 	// if (!ret)
 	// {

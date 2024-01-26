@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:30:14 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/19 18:01:53 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/26 11:18:48 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ public:
 	Request&		getRequest( void ) const;
 	clock_t			getTimestamp( void ) const;
 	bool			isMarkedToDelete() const;
-	bool			isTimeout( double toDuration , bool logInfo) const;
+	bool			isTimeout( std::clock_t toDuration , bool logInfo) const;
 	int				getFd( void ) const;
 	std::string		getTaskOutput( void );
 	void			applyTaskOutputToReq( void );
