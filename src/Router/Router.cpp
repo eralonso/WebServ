@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/24 11:21:00 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/26 10:17:16 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -407,9 +407,9 @@ bool	Router::processGetRequest( Request& req )
 	}
 	else if ( error == EISDIR )
 	{
-		if ( isValidDirectory( path ) == false )
-			req.setError( HTTP_NOT_FOUND_CODE );
-		else if ( processDirectory( req, path, output ) == true )
+		// if ( isValidDirectory( path ) == false )
+		// 	req.setError( HTTP_NOT_FOUND_CODE );
+		if ( processDirectory( req, path, output ) == true )
 			req.setOutput( output );
 	}
 	Log::Info( "size output: " + SUtils::longToString( req.getOutput().length() ) );
@@ -428,9 +428,9 @@ bool	Router::processHeadRequest( Request& req )
 		req.setOutputLength( info.st_size );
 	else if ( error == EISDIR )
 	{
-		if ( isValidDirectory( path ) == false )
-			req.setError( HTTP_NOT_FOUND_CODE );
-		else if ( processDirectory( req, path, output ) == true )
+		// if ( isValidDirectory( path ) == false )
+		// 	req.setError( HTTP_NOT_FOUND_CODE );
+		if ( processDirectory( req, path, output ) == true )
 			req.setOutputLength( output.length() );
 	}
 	return ( req.getError() >= 400 );
