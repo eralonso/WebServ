@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:04:00 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/26 16:03:59 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/29 17:03:20 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,16 @@ WSSignals& WSSignals::operator=( const WSSignals& ) { return ( *this ); }
 
 bool	WSSignals::isSig = false;
 
-void	WSSignals::sighandler( int )
+void	WSSignals::sighandler( int sig )
 {
-	Log::Info( "Signal detected" );
-	WSSignals::isSig = true;
+	Log::Info( "Signal detected: " + SUtils::longToString( sig ) );
+	if ( sig == SIGINT || sig == SIGQUIT )
+		WSSignals::isSig = true;
 }
 
 void	WSSignals::signalHandler( void )
 {
 	signal( SIGINT, sighandler );
 	signal( SIGQUIT, sighandler );
-	signal( SIGPIPE, SIG_IGN );
+	signal( SIGPIPE, sighandler );
 }

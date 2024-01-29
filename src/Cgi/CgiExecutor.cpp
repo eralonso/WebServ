@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/26 16:14:03 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/29 17:02:36 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,9 @@ char	**CgiExecutor::getEnvVarList( void )
 void	CgiExecutor::onChildProcess( void )
 {
 	//On child
+	signal( SIGINT, SIG_DFL );
+	signal( SIGQUIT, SIG_DFL );
+	signal( SIGPIPE, SIG_DFL );
 	Log::Error( "CgiExecutor::onChildProcess: -----------------");
 	getEnvVarList();
 	close( this->fdToChild[ FDOUT ] );
@@ -178,6 +181,10 @@ int	CgiExecutor::execute( void )
 		onFailToChildPipeOpen();
 	if ( pipe( this->fdFromChild ) )
 		onFailFromChildPipeOpen();
+	fcntl(this->fdFromChild[ FDIN ], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
+	fcntl(this->fdFromChild[ FDOUT ], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
+	fcntl(this->fdToChild[ FDIN ], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
+	fcntl(this->fdToChild[ FDOUT ], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
 	pid = fork();
 	if ( pid < 0 )
 		onFailFork();

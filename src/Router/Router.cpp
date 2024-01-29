@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/26 17:17:49 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/29 17:04:51 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,12 +90,12 @@ bool	Router::processCgi( Request& req )
 		cgiExe.pushEnvVar("REQUEST_METHOD", req.getMethod());
 		// cgiExe.pushEnvVar(std::string("FILEPATH_INFO"), req.getRouteChaineString());
 		// cgiExe.pushEnvVar("PATH_INFO", req.getRoute());
-		cgiExe.pushEnvVar("PATH_INFO", "../" );
+		cgiExe.pushEnvVar("PATH_INFO", req.getPathInfo() );
 		// Log::Error( "get route: " + req.getRoute() );
 		// cgiExe.pushEnvVar("PATH_INFO", "../cgi_src/mainTest.tst" );
 		// cgiExe.pushEnvVar("PATH_TRANSLATED", "../" + req.getFilePathRead());
-		cgiExe.pushEnvVar("SCRIPT_NAME", req.getFilePathRead());
-		// cgiExe.pushEnvVar("SCRIPT_FILENAME", "../" + req.getFilePathRead());
+		cgiExe.pushEnvVar("SCRIPT_NAME", req.getRoute());
+		cgiExe.pushEnvVar("SCRIPT_FILENAME", req.getFilePathRead());
 		cgiExe.pushEnvVar("QUERY_STRING", req.getQuery());
 		Client *cli = req.getClient();
 		if (cli)
