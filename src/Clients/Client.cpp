@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/26 13:26:43 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/29 17:21:35 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,35 +218,21 @@ int	Client::manageCompleteRecv( void )
 int	Client::managePollout( void )
 {
 	Request		*req = NULL;
-	int			count = 0;
+	int			resSendStatus = 0;
 
-	if ( this->res != NULL )
-	{
-		if ( !sendResponse( this->res ) )
-		{
-			delete this->res;
-			this->res = NULL;
-			allowPollWrite( false );
-		}
-		return ( 1 );
-	}
-	if ( ( req = findReadyToSendRequest() ) )
+	if ( this->res )
+		resSendStatus = sendResponse( this->res );		
+	else if ( ( req = findReadyToSendRequest() ) )
 	{
 		this->res = Router::getResponse( req );
 		if ( this->res )
 		{
 			this->res->updateResString();
-			if ( !sendResponse( this->res ) )
-			{
-				count++;
-				delete this->res;
-				this->res = NULL;
-				allowPollWrite( false );
-			}
+			resSendStatus = sendResponse( this->res );
 		}
 		Requests::eraseRequest();
 	}
-	return ( count );
+	return ( resSendStatus );
 }
 
 bool	Client::getKeepAlive( void ) const
@@ -256,9 +242,19 @@ bool	Client::getKeepAlive( void ) const
 
 int	Client::sendResponse( Response *res )
 {
+	int	resSendStatus = 0;
+
 	if ( this->socket >= 0 )
-		return ( Receptionist::sendResponse( this->socket, res ) );
-	return ( 0 );
+	{
+		resSendStatus = Receptionist::sendResponse( this->socket, res );
+		if ( resSendStatus == 0 || resSendStatus == 2 )
+		{
+			delete this->res;
+			this->res = NULL;
+			allowPollWrite( false );
+		}
+	}
+	return ( resSendStatus );
 }
 
 bool	Client::getLine( std::string& line )

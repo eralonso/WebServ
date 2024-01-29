@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/26 14:54:09 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/29 17:30:34 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,16 +251,16 @@ bool	Request::checkCgiInRoute( void )
 			this->route = "/" + STLUtils::vectorToString< StringVector >( \
 					this->routeChain.begin(), it + 1, "/" );
 			this->routeChain.erase( it, ite );
-			Log::Info( "Is a cgi" );
+			// Log::Info( "Is a cgi" );
 			return ( true );
 		}
 		binary.clear();
 	}
 	this->routeChain.erase( this->routeChain.end() - 1 );
-	Log::Info( "docExt: " + this->docExt + " && document: " + this->document );
-	Log::Info( "routeChain: " + STLUtils::vectorToString< StringVector >( \
-		this->routeChain.begin(), this->routeChain.end(), "/" ) );
-	Log::Info( "Isn't a cgi" );
+	// Log::Info( "docExt: " + this->docExt + " && document: " + this->document );
+	// Log::Info( "routeChain: " + STLUtils::vectorToString< StringVector >( \
+	// 	this->routeChain.begin(), this->routeChain.end(), "/" ) );
+	// Log::Info( "Isn't a cgi" );
 	return ( false );
 }
 
@@ -666,7 +666,7 @@ void	Request::updateLocation( void )
 	//std::string	routeWithoutFile = getRouteChaineString();
 	std::string	routeWithoutFile = getRoute();
 
-	Log::Error( "location string: " + routeWithoutFile );
+	// Log::Error( "location string: " + routeWithoutFile );
 	if ( this->svr != NULL )
 		this->lc = this->svr->getLocationAtPath( routeWithoutFile );
 }
@@ -687,8 +687,8 @@ void	Request::updateFilePaths( void )
 	// }
 	this->filePathWrite = svr->getFinalUploadPath( routeWithoutFile, this->lc );
 	this->filePathRead = svr->getFinalPath( routeWithoutFile, this->lc );
-	Log::Success( "filePathRead == " + this->filePathRead );
-	Log::Success( "filePathWrite == " + this->filePathWrite );
+	// Log::Success( "filePathRead == " + this->filePathRead );
+	// Log::Success( "filePathWrite == " + this->filePathWrite );
 }
 
 void Request::setDefaultFavicon(void)

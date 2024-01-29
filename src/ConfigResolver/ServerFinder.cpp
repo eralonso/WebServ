@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/20 18:00:36 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/24 12:27:25 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/29 17:28:40 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ const Server	*ServerFinder::find( const Request& request )
 	if ( !cli )
 		return ( NULL );
 	request.getHostPort( host, port );
-	Log::Error( "Host: " + host + " && Port: " + port );
+	// Log::Error( "Host: " + host + " && Port: " + port );
 	s = getStrongServerMatch( cli->getServers(), host, port );
 	if ( s == NULL )
 		s = getWeakServerMatch( cli->getServers(), host, port );

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/26 16:43:02 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/29 17:25:04 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,21 +103,13 @@ int	Receptionist::sendResponse( socket_t connected, Response *res )
 	}
 	pos = res->increaseSendPos( threshold );
 	ret = pos < res->getResString().size();
-	// if (!ret)
-	// {
-	// 	if ( send( connected, "\004", 1, O_NONBLOCK ) < 0 )
-	// 	{
-	// 		Log::Error( "Failed to send response" );
-	// 		return ( 0 );
-	// 	}
-	// }
-	Log::Success( "Response sent " 
-			+ SUtils::longToString( threshold ) \
-			+ "bytes [ " \
-			+ SUtils::longToString( connected ) \
-			+ res->getResString() \
-			+ " ]");
-	return ( ret );
+	// Log::Success( "Response sent " 
+	// 		+ SUtils::longToString( threshold ) \
+	// 		+ "bytes [ " \
+	// 		+ SUtils::longToString( connected ) \
+	// 		+ res->getResString() \
+	// 		+ " ]");
+	return ( ret ? 2 : 1 );
 }
 
 int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
@@ -182,9 +174,9 @@ void	Receptionist::manageClientRead( socket_t clientFd, Client *cli )
 
 void	Receptionist::manageClientWrite( socket_t clientFd, Client *cli )
 {
-	cli->managePollout();
 	// if ( cli->size() == 0 && cli->getPendingSize() == 0 && !cli->getKeepAlive() )
-	if ( cli->size() == 0 && cli->getPendingSize() == 0 && !cli->isResponsePendingToSend() && !cli->getKeepAlive() )
+	if ( !cli->managePollout() || ( cli->size() == 0 && cli->getPendingSize() == 0 \
+		&& !cli->isResponsePendingToSend() && !cli->getKeepAlive() ) )
 	{
 		polls.closePoll( clientFd );
 		eraseClient( clientFd );
