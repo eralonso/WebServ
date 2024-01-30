@@ -1,6 +1,6 @@
 import sys
 import os
-sys.stderr.write("Executing python start->\n")
+# sys.stderr.write("Executing python start->\n")
 
 def getBody():
 	env = ""
@@ -52,6 +52,6 @@ acum += "Location: "+ os.environ["SERVER_NAME"] +":" + os.environ["SERVER_PORT"]
 acum += "\r\n"
 acum += body
 sys.stdout.write(acum)
-sys.stderr.write("Written to webserv: ")
-sys.stderr.write(acum)
-sys.stderr.write("Executing python finished-<\n")
+# sys.stderr.write("Written to webserv: ")
+# sys.stderr.write(acum)
+# sys.stderr.write("Executing python finished-<\n")

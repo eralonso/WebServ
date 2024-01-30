@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/29 17:21:35 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/30 10:58:57 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,7 @@ int	Client::manageCompleteRecv( void )
 int	Client::managePollout( void )
 {
 	Request		*req = NULL;
-	int			resSendStatus = 0;
+	int			resSendStatus = 1;
 
 	if ( this->res )
 		resSendStatus = sendResponse( this->res );		

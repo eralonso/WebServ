@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/30 10:05:58 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/30 11:04:15 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ int	Receptionist::sendResponse( socket_t connected, Response *res )
 		Log::Error( "Failed to send response" );
 		return ( 0 );
 	}
+	// Log::Info( "SendResponse[" + res->getResString() + "]" );
 	pos = res->increaseSendPos( threshold );
 	if ( pos >= res->getResString().size() )
 		return ( 2 );

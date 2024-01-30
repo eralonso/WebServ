@@ -1,6 +1,6 @@
 import sys
 import os
-sys.stderr.write("Executing python start->\n")
+# sys.stderr.write("Executing python start->\n")
 
 def getBody():
 	env = ""
@@ -21,9 +21,9 @@ def getBody():
 
 value = sys.stdin.readline()
 acum = ""
-sys.stderr.write("Read from webserv: ")
-sys.stderr.write(value)
-sys.stderr.write("\n")
+# sys.stderr.write("Read from webserv: ")
+# sys.stderr.write(value)
+# sys.stderr.write("\n")
 if (os.environ["REQUEST_METHOD"] == "POST"):
 	acum = ""
 	body = getBody()
@@ -47,6 +47,6 @@ else:
 	# acum += body
 
 sys.stdout.write(acum)
-sys.stderr.write("Written to webserv: ")
-sys.stderr.write(acum)
-sys.stderr.write("Executing python finished-<\n")
+# sys.stderr.write("Written to webserv: ")
+# sys.stderr.write(acum)
+# sys.stderr.write("Executing python finished-<\n")

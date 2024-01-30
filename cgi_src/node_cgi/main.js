@@ -58,7 +58,7 @@ function getBody()
 	}
 	else
 	{
-		evalBody += "<form method=\"POST\" action=\"/cgi_src/cgi_node/loginAction.js\" style=\"display: flex; flex-direction: column; max-width:20em; margin: auto; padding: 1em; border: solid black 1px\">\r\n";
+		evalBody += "<form method=\"POST\" action=\"/cgi_src/node_cgi/loginAction.js\" style=\"display: flex; flex-direction: column; max-width:20em; margin: auto; padding: 1em; border: solid black 1px\">\r\n";
 		evalBody += "<h3>Login Form</h3>\r\n";
 		evalBody += "<div style=\"max-width:18em; margin: auto; padding: 1em;\">\r\n";
 		evalBody += "<label for=\"user\">user</label>\r\n";
@@ -77,12 +77,12 @@ function getBody()
 
 async function main()
 {
-	console.error("Start NodeJS script -->")
+	// console.error("Start NodeJS script -->")
 	let body = getBody();
 	let value = await readFromStdin();
-	console.error("Read from webserv: ");
-	console.error(value);
-	console.error("\n");
+	// console.error("Read from webserv: ");
+	// console.error(value);
+	// console.error("\n");
 	
 	let acum = ""
 	acum += ("Content-Type: text/html\r\n");
@@ -91,9 +91,9 @@ async function main()
 	acum += body;
 	
 	console.log(acum);
-	console.error("Written to webserv: ");
-	console.error(acum);
-	console.error("Finish NodeJS script <--")
+	// console.error("Written to webserv: ");
+	// console.error(acum);
+	// console.error("Finish NodeJS script <--")
 }
 
 main();

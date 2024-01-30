@@ -1,4 +1,4 @@
-echo "Start BASH script -->" 1>&2;
+# echo "Start BASH script -->" 1>&2;
 LINEEND=$'\r\n';
 
 format_env ()
@@ -23,9 +23,9 @@ format_body()
 }
 
 read -d $'\04' VALUE
-echo -e "Read from webserv: " 1>&2;
-echo -e "$VALUE" 1>&2;
-echo -e "$LINEEND" 1>&2;
+# echo -e "Read from webserv: " 1>&2;
+# echo -e "$VALUE" 1>&2;
+# echo -e "$LINEEND" 1>&2;
 if [ "$REQUEST_METHOD" = "POST" ]; then
 	ACUM="Status: 200 OK "$LINEEND;
 	ACUM+="Content-Type: text/html; charset=utf-8"$LINEEND;
@@ -42,6 +42,6 @@ else
 	ACUM+=$BODY;
 fi
 echo -e "$ACUM";
-echo -e "Written to server..." 1>&2;
-echo -e "$ACUM" 1>&2;
-echo "Finish BASH script <--" 1>&2;
+# echo -e "Written to server..." 1>&2;
+# echo -e "$ACUM" 1>&2;
+# echo "Finish BASH script <--" 1>&2;

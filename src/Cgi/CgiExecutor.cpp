@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CgiExecutor.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/29 17:02:36 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/30 11:26:02 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ void	CgiExecutor::onChildProcess( void )
 	signal( SIGINT, SIG_DFL );
 	signal( SIGQUIT, SIG_DFL );
 	signal( SIGPIPE, SIG_DFL );
-	Log::Error( "CgiExecutor::onChildProcess: -----------------");
+	// Log::Error( "CgiExecutor::onChildProcess: -----------------");
 	getEnvVarList();
 	close( this->fdToChild[ FDOUT ] );
 	close( this->fdFromChild[ FDIN ] );
@@ -111,7 +111,7 @@ void	CgiExecutor::onChildProcess( void )
 			+ SUtils::longToString( errno ) );
 	close( this->fdToChild[ FDIN ] );
 	close( this->fdFromChild[ FDOUT ] );
-	Log::Error( "CgiExecutor::onChildProcess: about to execve");
+	// Log::Error( "CgiExecutor::onChildProcess: about to execve");
 	execve( binary.c_str(), argv, childEnv );
 	Log::Error( "execve: Not found binary " + binary);
 	return; //exit(1) not allowed?
@@ -126,7 +126,7 @@ void	CgiExecutor::onParentProcess( pid_t childPid )
 	size_t		chunkSize = 1000;
 
 
-	Log::Info("CgiExecutor::onParentProcess start");
+	// Log::Info("CgiExecutor::onParentProcess start");
 	close( this->fdToChild[ FDIN ] );
 	close( this->fdFromChild[ FDOUT ] );
 	i = 0;
@@ -143,12 +143,12 @@ void	CgiExecutor::onParentProcess( pid_t childPid )
 		// Log::Info("fd: " + SUtils::longToString(this->fdToChild[ FDOUT ]));
 		i += chunkSize;
 	}
-	Log::Info("CgiExecutor::onParentProcess passed write");
+	// Log::Info("CgiExecutor::onParentProcess passed write");
 	close( this->fdToChild[ FDOUT ] );
 	PendingCgiTask task( childPid, request, fdFromChild[ FDIN ] );
 	CgiExecutor::pendingTasks.appendTask( task );
-	Log::Error("CgiExecutor::onParentProcess pid " + SUtils::longToString( childPid ) \
-		+ " timestamp: " + SUtils::longToString( std::clock() ) );
+	// Log::Error("CgiExecutor::onParentProcess pid " + SUtils::longToString( childPid )
+	// 	+ " timestamp: " + SUtils::longToString( std::clock() ) );
 	attendPendingCgiTasks();
 }
 
@@ -264,7 +264,7 @@ void	CgiExecutor::checkCompletedTasks( void )
 
 	while ( ( pTask = CgiExecutor::getCompletedTask() ) )
 	{
-		Log::Info( "Cgi Task completed" );
+		// Log::Info( "Cgi Task completed" );
 		req = &pTask->getRequest();
 		pTask->applyTaskOutputToReq();
 		CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
@@ -285,8 +285,8 @@ void	CgiExecutor::checkTimeoutedTasks( void )
 	{
 		Request& req = pTask->getRequest();
 		pTask->isTimeout( CGI_TO, true );
-		Log::Error( "Timeout of Req: " + SUtils::longToString( req.getId() ) \
-			+ " process id: " + SUtils::longToString( pTask->getPid() ) );
+		// Log::Error( "Timeout of Req: " + SUtils::longToString( req.getId() )
+		// 	+ " process id: " + SUtils::longToString( pTask->getPid() ) );
 		pTask->killPendingTask();
 		CgiExecutor::pendingTasks.eraseTask( pTask->getPid() );
 		req.setError( HTTP_GATEWAY_TIMEOUT_CODE );

@@ -51,17 +51,17 @@ function getBody()
 
 async function main()
 {
-	console.error("Start NodeJS script -->");
+	// console.error("Start NodeJS script -->");
 	let value = await readFromStdin();
-	console.error("Read from webserv: ");
-	console.error(value);
-	console.error("\n");
+	// console.error("Read from webserv: ");
+	// console.error(value);
+	// console.error("\n");
 	let acum = ""
 	if (process.env["REQUEST_METHOD"] == "POST")
 	{
 		acum += "Content-Type: text/html; charset=utf-8\r\n";
 		acum += "Status: 200 OK\r\n";
-		acum += "Location: " + process.env["SERVER_NAME"] + ":" + process.env["SERVER_PORT"] + "/cgi_src/cgi_node/main.js\r\n";
+		acum += "Location: " + process.env["SERVER_NAME"] + ":" + process.env["SERVER_PORT"] + "/cgi_src/node_cgi/main.js\r\n";
 		acum += "Set-Cookie: sessionId=nodejs["+ value +"]; Path=/; Max-Age=2592000\r\n";
 		acum += "\r\n";
 		acum += getBody();
@@ -74,9 +74,9 @@ async function main()
 		// acum += getBody();
 	}
 	console.log(acum);
-	console.error("Written to webserv: ");
-	console.error(acum);
-	console.error("Finish NodeJS script <--"); 
+	// console.error("Written to webserv: ");
+	// console.error(acum);
+	// console.error("Finish NodeJS script <--"); 
 
 }
 

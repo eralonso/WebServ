@@ -1,7 +1,7 @@
 
 import sys
 import os
-sys.stderr.write("Executing python start->\n")
+# sys.stderr.write("Executing python start->\n")
 
 def getBody():
 	env = ""
@@ -45,9 +45,9 @@ def getBody():
 
 value = sys.stdin.readline()
 acum = ""
-sys.stderr.write("Read from webserv: ")
-sys.stderr.write(value)
-sys.stderr.write("\n")
+# sys.stderr.write("Read from webserv: ")
+# sys.stderr.write(value)
+# sys.stderr.write("\n")
 for i in range(20000000):
 	cat = str(i)
 
@@ -58,7 +58,7 @@ acum += "Location: "+ os.environ["SERVER_NAME"] +":" + os.environ["SERVER_PORT"]
 acum += "\r\n"
 acum += getBody()
 sys.stdout.write(acum)
-sys.stderr.write("Written to webserv: ")
-sys.stderr.write(acum)
-sys.stderr.write("Executing python finished-<\n")
+# sys.stderr.write("Written to webserv: ")
+# sys.stderr.write(acum)
+# sys.stderr.write("Executing python finished-<\n")
 

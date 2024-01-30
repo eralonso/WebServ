@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PendingCgiTask.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/26 11:24:53 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/30 11:29:11 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ PendingCgiTask::PendingCgiTask( pid_t pid, Request& request, int fd ): \
 									fd( fd ), markedToDelete( false )
 {
 	this->timestamp = std::clock();
-	Log::Info("Task pid " + SUtils::longToString( pid ) \
-		+ " time: " + SUtils::longToString( this->timestamp ) );
+	// Log::Info("Task pid " + SUtils::longToString( pid )
+	// 	+ " time: " + SUtils::longToString( this->timestamp ) );
 }
 
 PendingCgiTask::PendingCgiTask( const PendingCgiTask &b ): \
@@ -120,6 +120,7 @@ void	PendingCgiTask::applyTaskOutputToReq( void )
 	std::string	resBody;
 	int			bytes_read = read( this->fd, buf, BUFFER_SIZE );
 
+	// Log::Success( "apply task output read" );
 	while ( bytes_read == BUFFER_SIZE )
 	{
 		buf[ bytes_read ] = 0;

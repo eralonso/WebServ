@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:31 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/03 16:59:48 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/30 11:29:46 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,12 @@ int PendingCgiTasks::eraseTask( pid_t pid )
 
 	if ( pid <= 0 && this->size() == 1 )
 	{
-		Log::Info( "ClearMap PendingCgiTasks" );
+		// Log::Info( "ClearMap PendingCgiTasks" );
 		this->clear();
 		return ( 1 );
 	}
-	Log::Info( "Erasing PendingCgiTask with pid: " \
-				+ SUtils::longToString( pid ) );
+	// Log::Info( "Erasing PendingCgiTask with pid: "
+	// + SUtils::longToString( pid ) );
 	tot = this->erase( pid );
 	return ( tot > 0 );
 }

@@ -51,12 +51,12 @@ function getBody()
 
 async function main()
 {
-	console.error("Start NodeJS script -->");
+	// console.error("Start NodeJS script -->");
 	let body = getBody();
 	let value = await readFromStdin();
-	console.error("Read from webserv: ");
-	console.error(value);
-	console.error("\n");
+	// console.error("Read from webserv: ");
+	// console.error(value);
+	// console.error("\n");
 	let acum = ""
 	if (process.env["REQUEST_METHOD"] == "POST")
 	{
@@ -80,9 +80,9 @@ async function main()
 		// acum += body;
 	}
 	console.log(acum);
-	console.error("Written to webserv: ");
-	console.error(acum);
-	console.error("Finish NodeJS script <--"); 
+	// console.error("Written to webserv: ");
+	// console.error(acum);
+	// console.error("Finish NodeJS script <--"); 
 
 }
 

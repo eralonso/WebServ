@@ -1,4 +1,4 @@
-echo "Start BASH script -->" 1>&2;
+# echo "Start BASH script -->" 1>&2;
 LINEEND=$'\r\n';
 
 format_env_line()
@@ -58,6 +58,6 @@ ACUM+="Content-Length: "${#BODY}$LINEEND;
 ACUM+=$LINEEND;
 ACUM+=$BODY;
 echo -e "$ACUM";
-echo -e "Written to server..." 1>&2;
-echo -e "$ACUM" 1>&2;
-echo "Finish BASH script <--" 1>&2;
+# echo -e "Written to server..." 1>&2;
+# echo -e "$ACUM" 1>&2;
+# echo "Finish BASH script <--" 1>&2;
