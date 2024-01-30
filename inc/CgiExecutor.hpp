@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CgiExecutor.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:34 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/29 17:02:07 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/30 16:16:25 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,6 @@
 class CgiExecutor
 {
 private:
-	std::runtime_error		exceptBinNotAccess;
-	std::runtime_error		exceptScriptNotAccess;
-	std::runtime_error		exceptOther;
 	static PendingCgiTasks	pendingTasks;
 	std::string				binary;
 	std::string				argument;
@@ -49,6 +46,8 @@ private:
 	int						fdFromChild[ 2 ];
 	char					*argv[ 3 ];
 	char					**childEnv;
+	CgiExecutor( const CgiExecutor& b);
+	CgiExecutor& operator=( const CgiExecutor& );
 	static std::string		getChildOutput(PendingCgiTask *task);
 	void					onFailFork(void);
 	void					onFailToChildPipeOpen(void);

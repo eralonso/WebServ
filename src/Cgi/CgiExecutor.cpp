@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/30 11:26:02 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/30 16:20:38 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,7 @@
 
 PendingCgiTasks	CgiExecutor::pendingTasks;
 
-CgiExecutor::CgiExecutor( Request& request ):
-	exceptBinNotAccess ("Binary not accessible"),
-	exceptScriptNotAccess ("Script not accessible"),
-	exceptOther ("Creation either fork or pipe failed"),
-	request( request )
+CgiExecutor::CgiExecutor( Request& request ): request( request )
 {
 	this->binary = request.getCgiBinary( request.getDocExt() );
 	this->argument = request.getFilePathRead();
@@ -32,13 +28,11 @@ CgiExecutor::CgiExecutor( Request& request ):
 	// Log::Info( "Route chain: " + request.getRouteChaineString() );
 	if (!checkFileReadable(this->argument))
 	{
-		Log::Error("Either not found or not readable: " + this->argument);
-		throw exceptScriptNotAccess;
+		throw std::runtime_error("Either not found or not readable: " + this->argument);
 	}
 	if (!checkFileExecutable(this->binary))
 	{
-		Log::Error("Either not found or not executable: " + this->binary);
-		throw exceptBinNotAccess;
+		throw std::runtime_error("Either not found or not executable: " + this->binary);
 	}
 	argv[0] = (char *)this->binary.c_str();
 	argv[1] = (char *)this->argument.c_str();
@@ -53,27 +47,36 @@ CgiExecutor::~CgiExecutor( void )
 		delete [] childEnv;
 }
 
+CgiExecutor::CgiExecutor(const CgiExecutor & b): request( b.request )
+{
+	
+}
+
+CgiExecutor& CgiExecutor::operator=( const CgiExecutor& )
+{
+	return (*this); 	
+}
+
+
 void	CgiExecutor::onFailFork( void )
 {
-	Log::Error( "fork: failed create child process" );
 	close( this->fdToChild[ FDIN ] );
 	close( this->fdToChild[ FDOUT ] );
 	close( this->fdFromChild[ FDIN ] );
 	close( this->fdFromChild[ FDOUT ] );
-	throw exceptOther;
+	throw std::runtime_error("fork: failed create child process");
 }
 
 void	CgiExecutor::onFailToChildPipeOpen( void )
 {
-	Log::Error( "pipe: failed to open pipe to child" );
-		throw exceptOther;
+	throw std::runtime_error("pipe: failed to open pipe to write to child");
 }
 
 void	CgiExecutor::onFailFromChildPipeOpen( void )
 {
 	close( this->fdToChild[ FDIN ] );
 	close( this->fdToChild[ FDOUT ] );
-	throw exceptOther;
+	throw std::runtime_error("pipe: failed to open pipe to read from child");
 }
 
 char	**CgiExecutor::getEnvVarList( void )

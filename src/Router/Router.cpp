@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Router.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/29 17:30:16 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/30 16:28:29 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,9 +123,10 @@ bool	Router::processCgi( Request& req )
 	}
 	catch ( const std::exception& e )
 	{
-		Log::Error ( "When trying to execute CGI" );
 		Log::Error ( e.what() );
 		req.setError( HTTP_INTERNAL_SERVER_ERROR_CODE );
+		checkErrorRedir( req.getError(), req );
+		checkErrorBody( req, req.getError() );
 		req.setReadyToSend();
 	}
 	// Once finished CgiTaskPending will send event to change request state to ready to send
