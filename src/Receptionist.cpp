@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Receptionist.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/29 17:25:04 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/30 10:05:58 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,8 +102,8 @@ int	Receptionist::sendResponse( socket_t connected, Response *res )
 	}
 	pos = res->increaseSendPos( threshold );
 	if ( pos >= res->getResString().size() )
-		return ( 1 );
-	return ( 2 );
+		return ( 2 );
+	return ( 1 );
 }
 
 int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
