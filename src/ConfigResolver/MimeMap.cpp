@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/03 10:09:12 by codespace         #+#    #+#             */
-/*   Updated: 2024/01/03 12:41:56 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/30 17:12:31 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 const MimeMap::t_dict	MimeMap::dict[ MIME_NB ] = 
 {
-	{ "", "text/html" },
+	{ "", "text/plain" },
 	{ "html", "text/html" },
 	{ "htm", "text/html"  },
 	{ "txt", "text/plain" },

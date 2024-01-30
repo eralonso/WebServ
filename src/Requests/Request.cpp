@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/29 17:30:34 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/30 17:16:41 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -658,11 +658,24 @@ void Request::setDefaultFavicon(void)
 	updateFilePaths();
 }
 
-bool	Request::tryIndexFiles( std::string& file ) const
+bool	Request::tryIndexFiles( std::string& file )
 {
+	bool		found;
+	size_t		pos;
+
+	found = false;
 	if ( this->svr != NULL )
-		return ( this->svr->tryIndexFiles( file, this->filePathRead, this->lc ) );
-	return ( false );
+		found = this->svr->tryIndexFiles( file, this->filePathRead, this->lc );
+	if ( found )
+	{
+		getExtensionForPath( file, this->docExt );
+		pos = file.find_last_of( "/" );
+		if ( pos != std::string::npos )
+			this->document = file.substr( pos );
+		else
+			this->document = file;
+	}
+	return ( found );
 }
 
 bool	Request::findReturnUri( int& uriCode, std::string& uriRedirection ) const
@@ -1030,6 +1043,11 @@ void	Request::setRedirection( std::string uri, int code )
 void	Request::setOutputLength( size_t size )
 {
 	this->outputLength = size;
+}
+
+void	Request::setDocExt( std::string ext )
+{
+	this->docExt = ext;
 }
 
 void	Request::logStatus( void )

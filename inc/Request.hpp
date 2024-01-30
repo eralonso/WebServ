@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/26 12:51:30 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/30 17:15:19 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,10 +162,11 @@ public:
 	void			setUriRedir( std::string uriRedirection );
 	void			setRedirection( std::string uri, int code );
 	void			setOutputLength( size_t size );
+	void			setDocExt( std::string ext );
 	void			logStatus( void );
 	bool			processLine( const std::string& line );
 	bool 			processRecv( void );
-	bool 			tryIndexFiles(std::string &file) const;
+	bool 			tryIndexFiles(std::string &file);
 	void			setDefaultFavicon( void );
 	bool			findReturnUri( int& uriCode, std::string& uriRedir ) const;
 	std::string		getCookies(void) const;

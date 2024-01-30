@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/30 16:28:29 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/30 17:14:45 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,7 +165,7 @@ std::string Router::determineContentType(Response& res, Request& req)
 		std::string contentType = MimeMap::getMime(req.getDocExt());
 		return (contentType);
 	}
-	return ( "text/html" );
+	return ( "text/plain" );
 }
 
 Response	*Router::formatGenericResponse( Response& res, Request& req )
@@ -409,7 +409,10 @@ bool	Router::processGetRequest( Request& req )
 		if ( isValidDirectory( path ) == false )
 			req.setError( HTTP_NOT_FOUND_CODE );
 		else if ( processDirectory( req, path, output ) == true )
+		{
 			req.setOutput( output );
+			req.setDocExt( "html" );
+		}
 	}
 	return ( req.getError() >= 400 );
 }
@@ -429,7 +432,10 @@ bool	Router::processHeadRequest( Request& req )
 		if ( isValidDirectory( path ) == false )
 			req.setError( HTTP_NOT_FOUND_CODE );
 		else if ( processDirectory( req, path, output ) == true )
+		{	
 			req.setOutputLength( output.length() );
+			req.setDocExt( "html" );
+		}
 	}
 	return ( req.getError() >= 400 );
 }

@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:55:51 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/12 16:28:09 by codespace        ###   ########.fr       */
+/*   Updated: 2024/01/30 16:46:51 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 Directives::Directives( void ): _port( 8000 ), \
 								_host( "0.0.0.0" ), \
 								_clientMaxBodySize( 1 << 20 ), \
+								_autoindex( false ), \
 								_locations( Location::locationCompare ), \
 								_isEmpty( true )
 {

@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/02 12:56:54 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/15 11:42:48 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/30 16:52:22 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,7 @@ bool	Location::isAutoindexAllow( void ) const
 {
 	if ( isSet( "autoindex" ) == true )
 		return ( this->_directives->getAutoindex() );
-	return ( true );
+	return ( false );
 }
 
 bool	Location::tryIndexFiles( std::string& file, std::string path ) const

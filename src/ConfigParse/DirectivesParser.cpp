@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:41:41 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/16 15:45:32 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/01/30 16:53:03 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ Directives	*DirectivesParser::parseDirectives( std::string content, \
 			throw std::logic_error( e.what() );
 		}
 	}
-	//d->print();
+	// d->print();
 	return ( d );
 }
 

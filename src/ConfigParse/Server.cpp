@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/18 17:32:37 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/01/30 16:51:31 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -294,7 +294,7 @@ bool	Server::isAutoindexAllow( const Location *lc ) const
 		return ( lc->isAutoindexAllow() );
 	else if ( isSet( "autoindex" ) == true )
 		return ( this->_directives->getAutoindex() );
-	return ( true );
+	return ( false );
 }
 
 bool	Server::tryIndexFiles( std::string& file, std::string path, \
