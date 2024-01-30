@@ -6,7 +6,7 @@
 #    By: codespace <codespace@student.42.fr>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/22 10:08:41 by eralonso          #+#    #+#              #
-#    Updated: 2024/01/03 11:09:21 by codespace        ###   ########.fr        #
+#    Updated: 2024/01/30 10:24:41 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -104,12 +104,7 @@ vpath %.d $(DEP_ROOT)
 #<-------------------------------->FUNCTIONS<-------------------------------->#
 
 define msg_creating
-	printf "\r$(3)$(1): $(YELLOW)$(2).$(DEF_COLOR)                                                                 \r"
-	sleep 0.01
-	printf "\r$(3)$(1): $(YELLOW)$(2)..$(DEF_COLOR)                                                                \r"
-	sleep 0.01
 	printf "\r$(3)$(1): $(YELLOW)$(2)...$(DEF_COLOR)                                                               \r"
-	sleep 0.01
 endef
 
 create_dir = $(shell $(MKD) $(1))

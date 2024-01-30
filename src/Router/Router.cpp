@@ -332,7 +332,6 @@ bool	Router::isValidDirectory( std::string dir )
 bool	Router::processDirectory( Request& req, std::string path, \
 									std::string& output )
 {
-	// Log::Info( "path to get directory: " + path );
 	if ( req.isAutoindexAllow() == true \
 		&& FolderLs::getLs( output, path, req.getRoute() ) == LsEntry::NONE )
 		req.setError( HTTP_OK_CODE );
@@ -381,7 +380,6 @@ int	Router::getFileToRead( Request& req, std::string& retFile )
 	if ( checkPathExist( req, path ) == false )
 		return ( ENOENT );
 	file = path;
-	// Log::Info( "path to get directory: " + path );
 	if ( isDir( path ) == true && req.tryIndexFiles( file ) == false )
 	{
 		retFile = path;
@@ -402,13 +400,9 @@ bool	Router::processGetRequest( Request& req )
 	std::string	output;
 	int			error;
 
-	// Log::Info( "path to get file: " + req.getFilePathRead() );
 	error = getFileToRead( req, path );
 	if ( error == EXIT_SUCCESS )
-	{
-		// Log::Info( "path to get file: " + path );
 		req.setOutput( readFile( path ) );
-	}
 	else if ( error == EISDIR )
 	{
 		if ( isValidDirectory( path ) == false )
@@ -416,7 +410,6 @@ bool	Router::processGetRequest( Request& req )
 		else if ( processDirectory( req, path, output ) == true )
 			req.setOutput( output );
 	}
-	// Log::Info( "size output: " + SUtils::longToString( req.getOutput().length() ) );
 	return ( req.getError() >= 400 );
 }
 
@@ -447,15 +440,13 @@ bool	Router::processPostRequest( Request& req )
 	std::string	document = req.getDocument();
 	std::string path;
 
-	// Log::Info("POST ... ");	
-	// if (bodyContent.size() == 0)
-	// 	return (req.setError(HTTP_NO_CONTENT_CODE) );
-	if (!req.isDirectiveSet( "upload_store" ) || document.size() == 0)
-		return ( req.setError(HTTP_FORBIDDEN_CODE) );
+	if ( !req.isDirectiveSet( "upload_store" ) || document.size() == 0 )
+		return ( req.setError( HTTP_FORBIDDEN_CODE ) );
 	path = req.getFilePathWrite();
-	// Log::Info("Path to POST ... " + path);
-	if (! writeFile(path, bodyContent))
-		return ( req.setError(HTTP_FORBIDDEN_CODE) );
+	if ( isDir( path ) )
+		return ( req.setError( HTTP_CONFLICT_CODE ) );
+	if ( !writeFile( path, bodyContent ) )
+		return ( req.setError( HTTP_FORBIDDEN_CODE ) );
 	return ( req.setError( HTTP_CREATED_CODE ) );
 }
 
@@ -466,16 +457,13 @@ bool	Router::processPutRequest( Request& req )
 	std::string	document = req.getDocument();
 	std::string path;
 	
-	// Log::Info("PUT ... ");
-	// if (bodyContent.size() == 0)
-	// 	return (req.setError(HTTP_NO_CONTENT_CODE) );
-	if (!req.isDirectiveSet( "upload_store" ) || document.size() == 0)
-		return ( req.setError(HTTP_FORBIDDEN_CODE) );
+	if ( !req.isDirectiveSet( "upload_store" ) || document.size() == 0 )
+		return ( req.setError( HTTP_FORBIDDEN_CODE ) );
 	path = req.getFilePathWrite();
-	// Log::Info("Path to PUT ... " + path + "\nbody: " + bodyContent );
-	// Log::Info("Path to PUT ... " + path);
-	if (! writeFile(path, bodyContent))
-		return ( req.setError(HTTP_FORBIDDEN_CODE) );
+	if ( isDir( path ) )
+		return ( req.setError( HTTP_CONFLICT_CODE ) );
+	if ( !writeFile( path, bodyContent ) )
+		return ( req.setError( HTTP_FORBIDDEN_CODE ) );
 	return ( req.setError( HTTP_CREATED_CODE ) );
 }
 

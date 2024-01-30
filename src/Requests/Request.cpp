@@ -251,16 +251,11 @@ bool	Request::checkCgiInRoute( void )
 			this->route = "/" + STLUtils::vectorToString< StringVector >( \
 					this->routeChain.begin(), it + 1, "/" );
 			this->routeChain.erase( it, ite );
-			// Log::Info( "Is a cgi" );
 			return ( true );
 		}
 		binary.clear();
 	}
 	this->routeChain.erase( this->routeChain.end() - 1 );
-	// Log::Info( "docExt: " + this->docExt + " && document: " + this->document );
-	// Log::Info( "routeChain: " + STLUtils::vectorToString< StringVector >( \
-	// 	this->routeChain.begin(), this->routeChain.end(), "/" ) );
-	// Log::Info( "Isn't a cgi" );
 	return ( false );
 }
 
@@ -270,25 +265,12 @@ void	Request::parseRoute( void )
 	parseQueryStringFromRoute();
 	parseHostPortFromRoute();
 	this->routeChain = SplitString::split( this->route, "/" );
-	//if ( this->routeChain.size() > 0 && ( this->route.size() > 0 
-	//		&& this->route[ this->route.size() - 1 ] != '/' ) )
-	//{
-	//	doc = this->routeChain.end() - 1;
-	//	this->document = *doc;
-	//	this->routeChain.erase( doc );
-	//	splitDocExt();
-	//}
 	if ( this->routeChain.size() == 0 && ( this->route.size() < 1 \
 			|| this->route[ 0 ] != '/' ) )
 	{
 		Log::Error( "routeChain is empty" );
 		setError(HTTP_BAD_REQUEST_CODE);
 	}
-	// Log::Info( "Host: " + routeHost);
-	// Log::Info( "Port: " + routePort);
-	// Log::Info( "Route Chaine: " + getRouteChaineString() );
-	// Log::Info( "Document: " + getDocument() );
-	// Log::Info( "Extension: " + getDocExt() );
 }
 
 void	Request::parseFirstLine( const std::string &line )
@@ -389,7 +371,6 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 bool	Request::processOnReceivingBody( void )
 {
 	size_t		contentSize;
-	size_t		got;
 	ssize_t		take;
 	std::string	data;
 	Header		*clHead = this->headers.firstWithKey( "Content-Length" );
@@ -400,7 +381,7 @@ bool	Request::processOnReceivingBody( void )
 		if ( maxBodySize != 0 && contentSize > maxBodySize )
 			return ( setError( HTTP_BAD_REQUEST_CODE ) );
 		take = contentSize - this->body.size();
-		got = this->client->getNChars( data, take );
+		this->client->getNChars( data, take );
 		this->body += data;
 		if ( this->body.size() >= contentSize )
 			this->status = RECVD_ALL;
@@ -431,37 +412,38 @@ bool	Request::processLineOnRecvdChunkSize( const std::string &line )
 {
 	( void )line;
 	return ( true );
-	// size_t len = line.length();
+	/*
+	 size_t len = line.length();
 
-	// if ( this->chunkSize == 0 )
-	// {
-	// 	this->status = RECVD_LAST_CHUNK;
-	// 	return ( true );
-	// }	
-	// if ( len == this->chunkSize )
-	// {
-	// 	this->body += line;
-	// 	if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
-	// 		return ( setError( HTTP_BAD_REQUEST_CODE ) );
-	// 	this->status = RECVD_CHUNK;
-	// 	return ( true );
-	// }
-	// if ( ( len == this->chunkSize + 1 ) && ( line[ len - 1 ] <= ' ' ) )
-	// {
-	// 	this->body += line.substr( 0, len - 1 );
-	// 	if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
-	// 		return ( setError( HTTP_BAD_REQUEST_CODE ) );
-	// 	this->status = RECVD_CHUNK;
-	// 	return ( true );
-	// }
-	// return ( true );
+	 if ( this->chunkSize == 0 )
+	 {
+	 	this->status = RECVD_LAST_CHUNK;
+	 	return ( true );
+	 }	
+	 if ( len == this->chunkSize )
+	 {
+	 	this->body += line;
+	 	if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
+	 		return ( setError( HTTP_BAD_REQUEST_CODE ) );
+	 	this->status = RECVD_CHUNK;
+	 	return ( true );
+	 }
+	 if ( ( len == this->chunkSize + 1 ) && ( line[ len - 1 ] <= ' ' ) )
+	 {
+	 	this->body += line.substr( 0, len - 1 );
+	 	if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
+	 		return ( setError( HTTP_BAD_REQUEST_CODE ) );
+	 	this->status = RECVD_CHUNK;
+	 	return ( true );
+	 }
+	 return ( true );
+	*/
 }
 
 bool	Request::processLineOnRecvdChunk( const std::string &line )
 {
 	size_t len = line.length();
 
-	// Log::Error( "process chunked line" );
 	if ( ( ( len == 1 || ( len == 2 && line[ 1 ] <= ' ' ) ) && line[ 0 ] == '0' ) )
 	{
 		this->chunkSize = 0;
@@ -469,13 +451,11 @@ bool	Request::processLineOnRecvdChunk( const std::string &line )
 		return ( true );
 	}
 	this->chunkSize = SUtils::atolhex( line.c_str() );
-	// Log::Error( "chunk size: " + line );
 	if ( chunkSize > 0 )
 	{
 		this->status = RECVD_CHUNK_SIZE;
 		return ( true );
 	}
-	// Log::Info( "Received 0 value that indicates last chunk" );
 	this->status = RECVD_LAST_CHUNK;
 	return ( true );
 }
@@ -486,20 +466,11 @@ bool	Request::processOnReceivingChunk( void )
 	std::string	chunk;
 	std::string	line;
 
-	// Log::Info( "on receiving chunk" );
 	if ( this->client->getPendingSize() < this->chunkSize + 2 )
 		return ( false );
 	this->client->getNChars( chunk, len );
 	this->client->getLine( line );
-	// if ( this->client->getLine( line ) == false || line.length() > 1 \
-	// 	|| line[ 0 ] > ' ' )
-	// {
-	// 	Log::Error( "[" + line + "]" );
-	// 	return ( setError( HTTP_BAD_REQUEST_CODE ) );	
-	// }
 	this->body += chunk;
-	// if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
-	// 	return ( setError( HTTP_BAD_REQUEST_CODE ) );
 	this->status = RECVD_CHUNK;
 	return ( true );
 }
@@ -508,7 +479,6 @@ bool	Request::processLineOnRecvdLastChunk( const std::string &line )
 {
 	size_t len = line.length();
 
-	// Log::Info( "last chunk" );
 	if ( len == 0 || ( len == 1 && line[ 0 ] <= ' ' ) )
 	{
 		this->status = RECVD_ALL;
@@ -615,17 +585,6 @@ bool	Request::checkKeepAlive( void )
 		this->client->setKeepAlive( false );
 	return ( con != NULL );
 }
-
-//void	Request::checkUseCgi( void )
-//{
-//	std::string	binary;
-//
-//	this->useCgi = false;
-//	if ( this->cgiDocExt.size() == 0 )
-//		return ;
-//	binary = this->svr->getCgiBinary( this->cgiDocExt, lc );
-//	this->useCgi = ( binary.size() > 0 );
-//}
 
 bool	Request::checkEmptyContent( size_t& size )
 {

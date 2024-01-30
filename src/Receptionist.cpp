@@ -90,7 +90,6 @@ int	Receptionist::sendResponse( socket_t connected, Response *res )
 	const char	*str;
 	size_t		size;
 	size_t		pos;
-	bool		ret;
 
 	pos = res->getSendPos();
 	size = res->getResString().size() - pos; 
@@ -102,14 +101,9 @@ int	Receptionist::sendResponse( socket_t connected, Response *res )
 		return ( 0 );
 	}
 	pos = res->increaseSendPos( threshold );
-	ret = pos < res->getResString().size();
-	// Log::Success( "Response sent " 
-	// 		+ SUtils::longToString( threshold ) \
-	// 		+ "bytes [ " \
-	// 		+ SUtils::longToString( connected ) \
-	// 		+ res->getResString() \
-	// 		+ " ]");
-	return ( ret ? 2 : 1 );
+	if ( pos >= res->getResString().size() )
+		return ( 1 );
+	return ( 2 );
 }
 
 int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
