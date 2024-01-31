@@ -107,7 +107,7 @@ socket_t	Sockets::acceptConnection( socket_t fd, struct sockaddr_in& addr )
 		Log::Error( "Failed to accept incoming connection" );
 		return ( -1 );
 	}
-	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
+	fcntl( connected, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
 	Log::Success( "Connection accepted [ " \
 			+ SUtils::longToString( connected ) \
 			+ " ]" );

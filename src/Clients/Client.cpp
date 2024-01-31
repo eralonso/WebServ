@@ -218,7 +218,7 @@ int	Client::manageCompleteRecv( void )
 int	Client::managePollout( void )
 {
 	Request		*req = NULL;
-	int			resSendStatus = 1;
+	int			resSendStatus = Client::SENDING;
 
 	if ( this->res )
 		resSendStatus = sendResponse( this->res );		
@@ -232,6 +232,8 @@ int	Client::managePollout( void )
 		}
 		Requests::eraseRequest();
 	}
+	if ( resSendStatus == Client::SENT )
+		Log::Success( "Response sent [ " + SUtils::longToString( this->socket ) + " ]" );
 	return ( resSendStatus );
 }
 
@@ -242,12 +244,12 @@ bool	Client::getKeepAlive( void ) const
 
 int	Client::sendResponse( Response *res )
 {
-	int	resSendStatus = 0;
+	int	resSendStatus = Client::ERROR;
 
 	if ( this->socket >= 0 )
 	{
 		resSendStatus = Receptionist::sendResponse( this->socket, res );
-		if ( resSendStatus == 0 || resSendStatus == 2 )
+		if ( resSendStatus == Client::ERROR || resSendStatus == Client::SENT )
 		{
 			delete this->res;
 			this->res = NULL;

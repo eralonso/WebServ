@@ -19,7 +19,7 @@
 
 # define BUFFER_SIZE 3000
 # define SEND_BUFFER_SIZE 1000
-# define MAX_CLIENTS 3000
+# define MAX_CLIENTS 1000
 
 # define SERVER "OREGINX/1.0"
 

@@ -263,7 +263,13 @@ void	WSPoll::compressPolls( unsigned int start )
 //Wait a fd to become ready to perform I/O
 int	WSPoll::wait( int timeout )
 {
-	return ( checkPollReturn( poll( this->_polls, this->_size, timeout ) ) );
+	int	ret;
+
+	Log::Info( "size of polls list:" + SUtils::longToString( this->_size ) );
+	Log::Info( "Server events: " + SUtils::longToString( this->_polls[ 0 ].events ) );
+	ret = checkPollReturn( poll( this->_polls, this->_size, timeout ) );
+	Log::Error( "Server revents: " + SUtils::longToString( this->_polls[ 0 ].revents ) );
+	return ( ret );
 	// if ( checkPollReturn( poll( this->_polls, this->_size, timeout ) ) < 0 )
 	// 	return ( -1 );
 	// return ( 0 );
@@ -290,7 +296,10 @@ socket_t	WSPoll::getPerformClient( void )
 		if ( this->_polls[ i ].revents & ( POLLIN | POLLOUT ) )
 			return ( this->_polls[ i ].fd );
 		else if ( this->_polls[ i ].revents != 0 )
+		{
+			Log::Error( "Detected bad revent " + SUtils::longToString( this->_polls[ i ].revents ) );
 			closePoll( i );
+		}
 	}
 	return ( 0 );
 }

@@ -38,8 +38,13 @@ private:
 	struct sockaddr_in	addr;
 	Response			*res;
 public:
+	typedef enum e_sendStatus
+	{
+		ERROR,
+		SENDING,
+		SENT
+	} t_sendStatus;
 	ServersVector	*servers;
-	// CgisMap	cgis;
 public:
 	Client( void );
 	Client( socket_t pollsocket, WSPoll& polls, \
@@ -63,7 +68,6 @@ public:
 	bool		getLine( std::string& line );
 	size_t		getNChars( std::string& data, size_t n );
 	size_t		getPendingSize( void ) const;
-	// int 		setDummyRecv();
 	bool		setKeepAlive( bool value );
 	size_t		purgeUsedRecv( void );
 	void		allowPollWrite( bool value );

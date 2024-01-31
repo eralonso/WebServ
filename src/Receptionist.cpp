@@ -16,11 +16,11 @@
 Receptionist::Receptionist( ServersVector& servers ): Clients(), \
 													polls( MAX_CLIENTS ), \
 													_servers( servers ), \
-													timeout( 10 )
+													timeout( 1 )
 {
 	socket_t				serverFd;
 	Directives				*d = NULL;
-	int						backlog = 10;
+	int						backlog = 100;
 	ServersVector::iterator	itb = this->_servers.begin();
 	ServersVector::iterator	it = itb;
 	struct sockaddr_in		info;
@@ -34,7 +34,8 @@ Receptionist::Receptionist( ServersVector& servers ): Clients(), \
 			{
 				serverFd = Sockets::createPassiveSocket( d->getHost(), \
 								d->getPort(), backlog, info );
-				this->polls.addPollfd( serverFd, POLLIN, 0, SPOLLFD );
+				this->polls.addPollfd( serverFd, POLLIN | POLLPRI | \
+									POLLRDNORM | POLLRDBAND, 0, SPOLLFD );
 			}
 			it->setAddr( info );
 			it++;
@@ -89,22 +90,23 @@ int	Receptionist::sendResponse( socket_t connected, Response *res )
 	size_t		threshold;
 	const char	*str;
 	size_t		size;
+	int			ret;
 	size_t		pos;
 
 	pos = res->getSendPos();
 	size = res->getResString().size() - pos; 
 	str = res->getResString().c_str();
 	threshold = size > SEND_BUFFER_SIZE ? SEND_BUFFER_SIZE : size;
-	if ( send( connected, str + pos, threshold, O_NONBLOCK ) < 0 )
+	if ( ( ret = send( connected, str + pos, threshold, MSG_DONTWAIT ) < 0 ) )
 	{
-		Log::Error( "Failed to send response" );
-		return ( 0 );
+		Log::Error( "Failed to send response with code: " + SUtils::longToString( ret ) );
+		return ( Client::ERROR );
 	}
 	// Log::Info( "SendResponse[" + res->getResString() + "]" );
 	pos = res->increaseSendPos( threshold );
 	if ( pos >= res->getResString().size() )
-		return ( 2 );
-	return ( 1 );
+		return ( Client::SENT );
+	return ( Client::SENDING );
 }
 
 int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
@@ -112,7 +114,9 @@ int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
 	char	buffer[ BUFFER_SIZE + 1 ];
 	ssize_t	amount;
 
-	amount = recv( clientFd, buffer, BUFFER_SIZE, 0 );
+	amount = recv( clientFd, buffer, BUFFER_SIZE, MSG_DONTWAIT );
+	Log::Info( "amount: " + SUtils::longToString( amount ) );
+	Log::Info( "recv errno: " + SUtils::longToString( errno ) );
 	if ( amount < 0 )
 		return ( -1 );
 	readed += std::string(buffer, amount);
@@ -147,8 +151,9 @@ void	Receptionist::manageClientRead( socket_t clientFd, Client *cli )
 	int			amount;
 
 	amount = readRequest( clientFd, readed );
-	if ( amount < 0 || ( amount == 0 \
-		&& CgiExecutor::findClientPendingPid( cli ) == 0 ) )
+	//if ( amount < 0 || ( amount == 0 
+	//	&& CgiExecutor::findClientPendingPid( cli ) == 0 ) )
+	if ( amount < 0 )
 	{
 		// Read Failed or finish to read and not pending of timeout
 		polls.closePoll( clientFd );
@@ -212,15 +217,13 @@ int	Receptionist::mainLoop( void )
 		waitRes = polls.wait( timeout );
 		if ( waitRes < 0 )
 			return ( 1 );
-		CgiExecutor::attendPendingCgiTasks();
+		//CgiExecutor::attendPendingCgiTasks();
 		if ( waitRes == 0 )
 			continue ;
+		Log::Info( "VUELTITA" );
 		serverFd = polls.isNewClient();
 		if ( serverFd > 0 )
-		{
-			if ( addNewClient( serverFd ) < 0 )
-				return ( 1 );
-		}
+			addNewClient( serverFd );
 		else
 		{
 			clientFd = polls.getPerformClient();

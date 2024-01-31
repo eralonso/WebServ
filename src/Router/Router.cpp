@@ -277,19 +277,17 @@ bool	Router::isFile( std::string path ) { return ( checkStatMode( path, S_IFREG 
 std::string	Router::readFile( std::string file )
 {
 	std::string		storage;
-	std::string		buffer;
-	std::ifstream	fd;
+	char			buffer[ BUFFER_SIZE + 1 ];
+	int				readBytes;
+	int				fd;
 
-	fd.open( file.c_str() );
-	if ( fd.is_open() == false )
+	fd = open( file.c_str(), O_RDONLY | O_NONBLOCK );
+	if ( fd < 0 )
 		return ( "" );
-	while ( std::getline( fd, buffer ) )
-	{
-		storage += buffer + "\n";
-		buffer.clear();
-	}
-	storage += buffer;
-	fd.close();
+	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
+	while ( ( readBytes = read( fd, buffer, BUFFER_SIZE ) ) > 0 )
+		storage += std::string( buffer, readBytes );
+	close( fd );
 	return ( storage );
 }
 
@@ -297,7 +295,7 @@ bool	Router::writeFile( std::string file, std::string content )
 {
 	std::ofstream	outfile;
 
-	outfile.open(file.c_str(), std::ios::out | std::ios::trunc); 	
+	outfile.open(file.c_str(), std::ios::out | std::ios::trunc);
 	if (!outfile.is_open())
 		return ( false );
 	outfile.write(content.c_str(), content.size());
@@ -369,7 +367,10 @@ void 	Router::checkErrorRedir( int errorStatus, Request& req )
 void	Router::checkErrorBody( Request& req, int errorStatus )
 {
 	if ( errorStatus >= MIN_ERROR_CODE )
+	{
 		req.setOutput( getDefaultErrorPage( errorStatus ) );
+		req.setDocExt( "html" );
+	}
 }
 
 int	Router::getFileToRead( Request& req, std::string& retFile )
