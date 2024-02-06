@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/06 13:53:48 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/02/06 18:32:41 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # include <unistd.h>
 
 # include <string>
-# include <queue>
 
 # include <Sockets.hpp>
 # include <WSSignals.hpp>
@@ -49,17 +48,17 @@ public:
 		SENDING,
 		SENT
 	} t_sendStatus;
-	ServersVector	*servers;
+	const ServersVector	*servers;
 public:
 	Client( void );
-	Client( Events *bEvs );
-	Client( socket_t pollsocket, EventsTarget *bEvs, \
-				ServersVector& servers, struct sockaddr_in& info );
+	Client( socket_t socket, Events *bEvs, \
+				const ServersVector *servers, struct sockaddr_in& info, \
+				Receptionist *recp );
 	virtual ~Client( void );
 	Client( const Client& b );
 	Client&	operator=( const Client& b );
 public:
-	int							bindClientPoll( socket_t pollsocket );
+	int							bindClientPoll( socket_t socket );
 	socket_t					getClientSocket( void ) const;
 	size_t						getId( void ) const;
 	void						LogId( void ) const;
@@ -86,17 +85,27 @@ public:
 	int							getFileFd( void ) const;
 	int							getPipeCgiWrite( void ) const;
 	int							getPipeCgiRead( void ) const;
+	socket_t					getSocket( void ) const;
 	bool						isResponsePendingToSend( void ) const;
 	void						setFileFd( int fd );
 	void						setPipeCgiWrite( int fd );
 	void						setPipeCgiRead( int fd );
 	int							setEventReadSocket( void );
+	int							setEventWriteSocket( void );
 	int							setEventProc( int pipeRead, int pipeWrite, int pid );
 	int							setEventReadFile( int fd );
 	int							setEventWriteFile( int fd );
+	int							enableEventReadSocket( bool enable );
+	int							enableEventWriteSocket( bool enable );
+	int							onEventReadSocket( Event& tevent );
+	int							onEventReadFile( Event& tevent );
+	int							onEventReadPipe( Event& tevent );
+	int							onEventWriteSocket( Event& tevent );
+	int							onEventWriteFile( Event& tevent );
+	int							onEventWritePipe( Event& tevent );
 	int							onEventRead( Event& tevent );
 	int							onEventWrite( Event& tevent );
-	int							onEvent( void );
+	int							onEvent( Event& tevent );
 };
 
 #endif

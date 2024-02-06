@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/18 16:08:04 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/06 16:51:05 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,23 +46,24 @@ private:
 	Router( const Router& );
 	Router&	operator=( const Router& );
 public:
-	static int updateResponse(Response& res, Request& req);
-	static Response* getResponse(Request *req);
-	static std::string getRequestEmbed(Request& req);
-	static Response* formatErrorResponse(Response& res, int error);
-	static Response* formatGenericResponse(Response& res, Request& req);
-    static bool 	parseCgiHeaderLine(Response &res, Request &req, const std::string &line);
-    static bool 	parseCgiHeaders(Response &res, Request &req, const std::string &cgiOut);
-    static bool 	parseCgiOutput(Response &res, Request &req);
-    static Response *formatCgiResponse(Response &res, Request &req);
+	static int			updateResponse(Response& res, Request& req);
+	static Response* 	getResponse(Request *req);
+	static std::string 	getRequestEmbed(Request& req);
+	static Response* 	formatErrorResponse(Response& res, int error);
+	static Response* 	formatGenericResponse(Response& res, Request& req);
+    static bool 		parseCgiHeaderLine(Response &res, Request &req, const std::string &line);
+    static bool 		parseCgiHeaders(Response &res, Request &req, const std::string &cgiOut);
+    static bool 		parseCgiOutput(Response &res, Request &req);
+    static Response 	*formatCgiResponse(Response &res, Request &req);
+	static bool			processRequestHeaderReceived( Request &req );
 	static bool 		processRequestReceived(Request &req);
 	static std::string 	determineContentType(Response &res, Request &req);
 	static bool			processCgi( Request& req );
 	static bool			checkStatMode( std::string path, unsigned int mode );
 	static bool			isDir( std::string path );
 	static bool			isFile( std::string path );
-	static std::string	readFile( std::string file );
-    static bool			writeFile(std::string file, std::string content);
+	// static std::string	readFile( std::string file );
+    // static bool			writeFile(std::string file, std::string content);
     static bool 		checkPathExist(Request &req, std::string path);
     static bool			checkPathCanRead( Request& req, std::string path );
 	static bool			processDirectory( Request& req, std::string path, \
@@ -73,6 +74,8 @@ public:
 	static void 		checkErrorRedir( int errorStatus, Request& req );
 	static void			checkErrorBody( Request& req, int errorStatus );
 	static bool			isValidDirectory( std::string dir );
+	static int			openReadFile( std::string file );
+	static int			openWriteFile( std::string file );
 };
 
 #endif

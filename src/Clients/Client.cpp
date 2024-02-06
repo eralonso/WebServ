@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/06 13:53:21 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/02/06 18:46:06 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "Client.hpp"
 #include "Response.hpp"
 #include "Receptionist.hpp"
-#include "Client.hpp"
 #include "Router.hpp"
 
 size_t	Client::id_counter = 0;
 
-Client::Client( void )
+Client::Client( void ): EventsTarget( NULL )
 {
 	this->id = Client::id_counter;
 	Client::id_counter++;
@@ -33,8 +33,8 @@ Client::Client( void )
 	SUtils::memset( &this->addr, 0, sizeof( this->addr ) );
 }
 
-Client::Client( socket_t socket, Events *bEvs, ServersVector& servers, \
-	   				struct sockaddr_in& info, Receptionist *recp )
+Client::Client( socket_t socket, Events *bEvs, const ServersVector *servers, \
+	   				struct sockaddr_in& info, Receptionist *recp ): EventsTarget( bEvs )
 {
 	this->id = Client::id_counter;
 	Client::id_counter++;
@@ -45,7 +45,7 @@ Client::Client( socket_t socket, Events *bEvs, ServersVector& servers, \
 	this->pipeCgiWrite = -1;
 	this->pipeCgiRead = -1;
 	this->evs = bEvs;
-	this->servers = &servers;
+	this->servers = servers;
 	this->addr = info;
 	this->res = NULL;
 	this->receptionist = recp;
@@ -61,7 +61,7 @@ Client::~Client( void )
 	close( this->pipeCgiWrite );
 }
 
-Client::Client( const Client& b ): Requests()
+Client::Client( const Client& b ): Requests(), EventsTarget( b.evs )
 {
 	this->id = Client::id_counter;
 	Client::id_counter++;
@@ -74,7 +74,7 @@ Client::Client( const Client& b ): Requests()
 	this->servers = b.servers;
 	this->addr = b.addr;
 	this->res = b.res;
-	this->receptionist = b.recp;
+	this->receptionist = b.receptionist;
 }
 
 Client&	Client::operator=( const Client& b )
@@ -90,7 +90,7 @@ Client&	Client::operator=( const Client& b )
 		this->servers = b.servers;
 		this->addr = b.addr;
 		this->res = b.res;
-		this->receptionist = b.recp;
+		this->receptionist = b.receptionist;
 	}
 	return ( *this );
 }
@@ -272,7 +272,7 @@ int	Client::sendResponse( Response *res )
 		{
 			delete this->res;
 			this->res = NULL;
-			allowPollWrite( false );
+			// allowPollWrite( false );
 		}
 	}
 	return ( resSendStatus );
@@ -341,39 +341,39 @@ size_t	Client::purgeUsedRecv( void )
 	return ( pendSize );
 }
 
-void	Client::allowPollWrite( bool value )
-{
-	struct pollfd	*clientPoll = NULL;
+// void	Client::allowPollWrite( bool value )
+// {
+// 	struct pollfd	*clientPoll = NULL;
 
-	if ( this->polls != NULL )
-	{
-		try
-		{
-			clientPoll = &( polls->operator[]( socket ) );
-		}
-		catch ( std::out_of_range& e )
-		{ 
-			Log::Info( "ClientPoll for [ " \
-				+ SUtils::longToString( this->socket ) \
-				+ " ]: not found" );
-			return ;
-		}
-		if ( value )
-			clientPoll->events = POLLOUT;
-		else 
-			clientPoll->events = POLLIN;
-	}
-	else
-		Log::Error( "Polls not found on Client " \
-			+ SUtils::longToString( this->id ) );
-}
+// 	if ( this->polls != NULL )
+// 	{
+// 		try
+// 		{
+// 			clientPoll = &( polls->operator[]( socket ) );
+// 		}
+// 		catch ( std::out_of_range& e )
+// 		{ 
+// 			Log::Info( "ClientPoll for [ " \
+// 				+ SUtils::longToString( this->socket ) \
+// 				+ " ]: not found" );
+// 			return ;
+// 		}
+// 		if ( value )
+// 			clientPoll->events = POLLOUT;
+// 		else 
+// 			clientPoll->events = POLLIN;
+// 	}
+// 	else
+// 		Log::Error( "Polls not found on Client " \
+// 			+ SUtils::longToString( this->id ) );
+// }
 
 bool	Client::checkPendingToSend( void )
 {
 	LogId();
 	if ( Requests::checkPendingToSend() )
 	{
-		allowPollWrite( true );
+		// allowPollWrite( true );
 		return ( true );
 	}
 	return ( false );
@@ -405,6 +405,12 @@ int	Client::setEventReadSocket( void )
 		return ( this->evs->setEventRead( this, this->socket ) );
 	return ( 0 );
 }
+int	Client::setEventWriteSocket( void )
+{
+	if ( this->evs )
+		return ( this->evs->setEventWrite( this, this->socket ) );
+	return ( 0 );
+}
 
 int	Client::setEventProc( int pipeRead, int pipeWrite, int pid )
 {
@@ -412,10 +418,14 @@ int	Client::setEventProc( int pipeRead, int pipeWrite, int pid )
 	this->pipeCgiWrite = pipeWrite;
 	if ( this->evs )
 	{
-		this->evs->setEventProcExit( this, pid, CGI_TO );
-		this->evs->setEventRead( this, pipeRead );
-		this->evs->setEventWrite( this, pipeWrite );
+		if ( this->evs->setEventProcExit( this, pid, CGI_TO ) )
+			return ( -1 );
+		if ( this->evs->setEventRead( this, pipeRead ) )
+			return ( -1 );
+		if ( this->evs->setEventWrite( this, pipeWrite ) )
+			return ( -1 );
 	}
+	return ( 0 );
 }
 
 int	Client::setEventReadFile( int fd )
@@ -431,6 +441,20 @@ int	Client::setEventWriteFile( int fd )
 	this->fileFd = fd;
 	if ( this->evs )
 		return ( this->evs->setEventWrite( this, fd ) );
+	return ( 0 );
+}
+
+int	Client::enableEventReadSocket( bool enable )
+{
+	if ( this->evs )
+		return ( this->evs->enableEventRead( this, this->socket, enable ) );
+	return ( 0 );
+}
+
+int	Client::enableEventWriteSocket( bool enable )
+{
+	if ( this->evs )
+		return ( this->evs->enableEventWrite( this, this->socket, enable ) );
 	return ( 0 );
 }
 
@@ -451,52 +475,67 @@ int	Client::onEventReadSocket( Event& tevent )
 		return ( -1 );
 	}
 	manageRecv( readed );
-	if ( cli->manageCompleteRecv() )
-		allowPollWrite( true );
+	// if ( manageCompleteRecv() )
+	// 	allowPollWrite( true );
+	return ( 0 );
+}
+
+int	Client::onEventReadFile( Event& tevent )
+{
+	( void )tevent;
+	return ( 1 );
+}
+
+int	Client::onEventReadPipe( Event& tevent )
+{
+	( void )tevent;
+	return ( 1 );
+}
+
+int	Client::onEventWriteSocket( Event& tevent )
+{
+	( void )tevent;
+	return ( 1 );
+}
+
+int	Client::onEventWriteFile( Event& tevent )
+{
+	( void )tevent;
+	return ( 1 );
+}
+
+int	Client::onEventWritePipe( Event& tevent )
+{
+	( void )tevent;
+	return ( 1 );
 }
 
 int	Client::onEventRead( Event& tevent )
 {
-	int	ret;
+	int	ident;
 
-	switch ( tevent.ident )
-	{
-		case this->socket:
-			ret = onEventReadSocket( tevent );
-			break ;
-		case this->fileFd:
-			ret = onEventReadFile( tevent );
-			break ;
-		case this->pipeCgiRead:
-			ret = onEventReadCgi( tevent );
-			break ;
-		default:
-			ret = 0;
-			break ;
-	}
-	return ( ret );
+	ident = tevent.ident;
+	if ( this->socket == ident )
+		return ( onEventReadSocket( tevent ) );
+	if ( this->fileFd == ident )
+		return ( onEventReadFile( tevent ) );
+	if ( this->pipeCgiRead == ident )
+		return ( onEventReadPipe( tevent ) );
+	return ( 0 );
 }
 
 int	Client::onEventWrite( Event& tevent )
 {
-	int	ret;
+	int	ident;
 
-	switch ( tevent.ident )
-	{
-		case this->socket:
-			ret = onEventWriteSocket( tevent );
-			break ;
-		case this->fileFd:
-			ret = onEventWriteFile( tevent );
-			break ;
-		case this->pipeCgiWrite:
-			ret = onEventWriteCgi( tevent );
-			break ;
-		default:
-			ret = 0;
-			break ;
-	}
-	return ( ret );
+	ident = tevent.ident;
+	if ( this->socket == ident )
+		return ( onEventWriteSocket( tevent ) );
+	if ( this->fileFd == ident )
+		return ( onEventWriteFile( tevent ) );
+	if ( this->pipeCgiWrite == ident )
+		return ( onEventWritePipe( tevent ) );
+	return ( 0 );
 }
 
 int	Client::onEvent( Event& tevent )

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/30 17:16:41 by codespace        ###   ########.fr       */
+/*   Updated: 2024/02/06 17:36:49 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -362,6 +362,7 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 		}
 		if (maxBodySize != 0 && contentSize > maxBodySize)
 			return ( setError( HTTP_BAD_REQUEST_CODE ) );
+		Router::processRequestHeaderReceived( *this );
 		return ( true );
 	}
 	parseHeader( line );

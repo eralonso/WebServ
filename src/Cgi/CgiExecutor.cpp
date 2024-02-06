@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CgiExecutor.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/06 13:23:17 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/02/06 18:39:39 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -285,8 +285,8 @@ void	CgiExecutor::checkCompletedTasks( void )
 		cli = req->getClient();
 		req->setError( HTTP_OK_CODE );
 		req->setReadyToSend();
-		if ( cli != NULL )
-			cli->allowPollWrite( true );
+		// if ( cli != NULL )
+		// 	cli->allowPollWrite( true );
 	}
 }
 
@@ -308,8 +308,8 @@ void	CgiExecutor::checkTimeoutedTasks( void )
 		Router::checkErrorBody( req, req.getError() );
 		req.setReadyToSend();
 		cli = req.getClient();		
-		if ( cli != NULL )
-			cli->allowPollWrite( true );
+		// if ( cli != NULL )
+		// 	cli->allowPollWrite( true );
 	}
 }
 

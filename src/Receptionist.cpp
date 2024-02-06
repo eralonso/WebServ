@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Receptionist.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/06 10:22:55 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/02/06 18:16:27 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ Receptionist::Receptionist( ServersVector& servers ): Clients(), \
 													_servers( servers ), \
 													timeout( 1 )
 {
-	if ( evs.is_create() == false )
+	if ( evs.isCreate() == false )
 		throw std::runtime_error( "Cant't create a kqueue" );
 	setupServers();
 }
@@ -92,7 +92,7 @@ bool	Receptionist::serverShareAddr( ServersVector::iterator& begin, \
 	return ( false );
 }
 
-ServersVector&	getServers( const ) const
+const ServersVector&	Receptionist::getServers( void ) const
 {
 	return ( this->_servers );
 }
@@ -135,22 +135,22 @@ int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
 	return ( amount );
 }
 
-int	Receptionist::addNewClient( socket_t serverFd )
-{
-	socket_t			clientFd;
-	struct sockaddr_in	info;
+// int	Receptionist::addNewClient( socket_t serverFd )
+// {
+// 	socket_t			clientFd;
+// 	struct sockaddr_in	info;
 	
-	clientFd = Sockets::acceptConnection( serverFd, info );
-	if ( clientFd < 0 )
-		return ( -1 );
-	if ( !Clients::newClient( clientFd, &this->evs, _servers, info ) )
-	{
-		Log::Error( "Failed to append Request" );
-		close( clientFd );
-		return ( -1 );
-	}
-	return ( 1 );
-}
+// 	clientFd = Sockets::acceptConnection( serverFd, info );
+// 	if ( clientFd < 0 )
+// 		return ( -1 );
+// 	if ( !Clients::newClient( clientFd, &this->evs, _servers, info ) )
+// 	{
+// 		Log::Error( "Failed to append Request" );
+// 		close( clientFd );
+// 		return ( -1 );
+// 	}
+// 	return ( 1 );
+// }
 
 //int	Receptionist::addNewClient( socket_t serverFd )
 //{
@@ -174,43 +174,43 @@ int	Receptionist::addNewClient( socket_t serverFd )
 //	return ( 1 );
 //}
 
-void	Receptionist::manageClientRead( socket_t clientFd, Client *cli )
-{
-	std::string	readed;
-	int			amount;
+// void	Receptionist::manageClientRead( socket_t clientFd, Client *cli )
+// {
+// 	std::string	readed;
+// 	int			amount;
 
-	amount = readRequest( clientFd, readed );
-	//if ( amount < 0 || ( amount == 0 
-	//	&& CgiExecutor::findClientPendingPid( cli ) == 0 ) )
-	if ( amount < 0 )
-	{
-		// Read Failed or finish to read and not pending of timeout
-		cli->closeSocket();
-		eraseClient( cli );
-		return ;
-	}
-	// Log::Info( "Readed " 
-	// 		+ SUtils::longToString( amount ) 
-	// 		+ " bytes from [ " 
-	// 		+ SUtils::longToString( clientFd ) 
-	// 		+ " ]: =>\n" 
-	// 		+  readed );
-			// + SUtils::compactString(readed, 200, 80, 40 ) );
-	cli->manageRecv( readed );
-	if ( cli->manageCompleteRecv() )
-		cli->allowPollWrite( true );
-}
+// 	amount = readRequest( clientFd, readed );
+// 	//if ( amount < 0 || ( amount == 0 
+// 	//	&& CgiExecutor::findClientPendingPid( cli ) == 0 ) )
+// 	if ( amount < 0 )
+// 	{
+// 		// Read Failed or finish to read and not pending of timeout
+// 		cli->closeSocket();
+// 		eraseClient( cli );
+// 		return ;
+// 	}
+// 	// Log::Info( "Readed " 
+// 	// 		+ SUtils::longToString( amount ) 
+// 	// 		+ " bytes from [ " 
+// 	// 		+ SUtils::longToString( clientFd ) 
+// 	// 		+ " ]: =>\n" 
+// 	// 		+  readed );
+// 			// + SUtils::compactString(readed, 200, 80, 40 ) );
+// 	cli->manageRecv( readed );
+// 	if ( cli->manageCompleteRecv() )
+// 		cli->allowPollWrite( true );
+// }
 
-void	Receptionist::manageClientWrite( socket_t clientFd, Client *cli )
-{
-	// if ( cli->size() == 0 && cli->getPendingSize() == 0 && !cli->getKeepAlive() )
-	if ( !cli->managePollout() || ( cli->size() == 0 && cli->getPendingSize() == 0 \
-		&& !cli->isResponsePendingToSend() && !cli->getKeepAlive() ) )
-	{
-		polls.closePoll( clientFd );
-		eraseClient( clientFd );
-	}
-}
+// void	Receptionist::manageClientWrite( socket_t clientFd, Client *cli )
+// {
+// 	// if ( cli->size() == 0 && cli->getPendingSize() == 0 && !cli->getKeepAlive() )
+// 	if ( !cli->managePollout() || ( cli->size() == 0 && cli->getPendingSize() == 0 \
+// 		&& !cli->isResponsePendingToSend() && !cli->getKeepAlive() ) )
+// 	{
+// 		polls.closePoll( clientFd );
+// 		eraseClient( clientFd );
+// 	}
+// }
 
 //void	Receptionist::manageClient( socket_t clientFd )
 //{
@@ -237,13 +237,7 @@ void	Receptionist::manageClientWrite( socket_t clientFd, Client *cli )
 
 int	Receptionist::mainLoop( void )
 {
-	while ( WSSignals::isSig == false )
-	{
-		waitRes = this->evs.loopEvents();
-		if ( waitRes < 0 )
-			return ( 1 );
-	}
-	return ( WSSignals::isSig );
+	return ( this->evs.loopEvents() );
 }
 
 //int	Receptionist::mainLoop( void )

@@ -20,9 +20,11 @@
 # include <ConfigUtils.hpp>
 # include <ConfigApply.hpp>
 # include <EventsTarget.hpp>
+# include <Sockets.hpp>
 
 # define SERVER_SIZE_DIRECTIVES 11
 
+class Receptionist;
 class Directives;
 
 class Server: public EventsTarget
@@ -53,6 +55,7 @@ public:
 	unsigned int				getIpNetworkOrder( void ) const;
 	unsigned int				getIpHostOrder( void ) const;
 	std::string					getHost( void ) const;
+	int							getPort( void ) const;
 	socket_t					getSocketFd( void ) const;
 	bool						isSet( std::string directive ) const;
 	bool						strongServerMatch( std::string host, \
@@ -87,6 +90,9 @@ public:
 	bool						findReturnUri( int& uriCode, \
 									std::string& uriRedirection, \
 									const Location *lc ) const;
+	void						setEvents( Events *bEvs );
+	int							setEventRead( void );
+	int							onNewClient( void );
 	int							onEvent( Event &tevent );
 };
 

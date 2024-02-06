@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Clients.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:50 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/06 13:52:27 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/02/06 18:29:58 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ Clients&	Clients::operator=( const Clients& c )
 }
 
 Client	*Clients::newClient( socket_t socket, Events *bEvs, \
-							ServersVector& servers, struct sockaddr_in& info, \
+							const ServersVector *servers, struct sockaddr_in& info, \
 	   						Receptionist *recp )
 {
 	Client	*cli = new Client( socket, bEvs, servers, info, recp );

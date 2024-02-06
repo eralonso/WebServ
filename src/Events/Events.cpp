@@ -18,9 +18,6 @@
 Events::Events( void )
 {
 	this->kq = kqueue();
-	this->succesCreate = true;
-	if ( kq == -1 )
-		this->succesCreate = false;
 }
 
 Events::~Events( void )
@@ -28,9 +25,9 @@ Events::~Events( void )
 	close( this->kq );
 }
 
-bool	Events::is_create( void ) const
+bool	Events::isCreate( void ) const
 {
-	return ( this->successCreate );
+	return ( kq != -1 );
 }
 
 int	Events::setEventFileSaved( EventsTarget* et, int fd )
@@ -96,13 +93,37 @@ int	Events::setEventProcExit( EventsTarget* et, pid_t pid, long timeout )
 	return ( ret );
 }
 
+int		Events::enableEventRead( EventsTarget* et, int fd, bool enable )
+{
+	int				ret;
+	struct kevent	readEvent;
+
+	EV_SET(&readEvent, fd, EVFILT_READ, EV_ADD | EV_EOF | ( enable ? EV_ENABLE : EV_DISABLE ), 0, 0, et);
+	ret = kevent(kq, &readEvent, 1, NULL, 0, NULL);
+	if (ret == -1)
+		Log::Error( "kevent Read register" );
+	return 0;
+}
+
+int		Events::enableEventWrite( EventsTarget* et, int fd, bool enable )
+{
+	int				ret;
+	struct kevent	writeEvent;
+
+	EV_SET(&writeEvent, fd, EVFILT_WRITE, EV_ADD | EV_EOF | ( enable ? EV_ENABLE : EV_DISABLE ), 0, 0, et);
+	ret = kevent(kq, &writeEvent, 1, NULL, 0, NULL);
+	if (ret == -1)
+		Log::Error( "kevent Write register" );
+	return 0;
+}
+
 int	Events::loopEvents( void )
 {
 	int				ret = 0;
 	Event			tevent;
 	EventsTarget	*et = NULL;
 
-	while ( ret > 0 )
+	while ( ret > 0 && WSSignals::isSig == false )
 	{
 		ret = kevent( kq, NULL, 0, &tevent, 1, NULL );
 		if (ret > 0)
@@ -118,5 +139,5 @@ int	Events::loopEvents( void )
 				et->onEvent( tevent );
 		}
 	}
-	return ( ret );
+	return ( ret < 0 );
 }

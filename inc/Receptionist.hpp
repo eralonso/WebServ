@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:43:42 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/06 10:22:03 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/02/06 18:17:28 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,11 @@ public:
 	int				mainLoop( void );
 	static int		sendResponse( socket_t connected, Response *res );
 	static int		readRequest( socket_t clientFd, std::string& readed );
-	int				addNewClient( socket_t serverFd );
-	void			manageClient( socket_t clientFd );
-	void			manageClientRead( socket_t clientFd, Client *cli );
-	void			manageClientWrite( socket_t clientFd, Client *cli );
-	ServersVector&	getServers( const ) const;
+	// int				addNewClient( socket_t serverFd );
+	// void			manageClient( socket_t clientFd );
+	// void			manageClientRead( socket_t clientFd, Client *cli );
+	// void			manageClientWrite( socket_t clientFd, Client *cli );
+	const ServersVector&	getServers( void ) const;
 };
 
 #endif

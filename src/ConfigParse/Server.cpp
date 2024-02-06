@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2024/02/06 10:36:28 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/02/06 18:35:52 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ Server::Server( const Server& s ): EventsTarget( s.evs )
 	if ( s._directives != NULL )
 	{
 		this->_directives = new Directives( *s._directives );
-		this->_socketFd = s.socketFd;
+		this->_socketFd = s._socketFd;
 		this->receptionist = s.receptionist;
 	}
 }
@@ -359,13 +359,13 @@ int	Server::onNewClient( void )
 	clientFd = Sockets::acceptConnection( this->_socketFd, info );
 	if ( clientFd < 0 )
 		return ( -1 );
-	if ( !this->receptionist->newClient( clientFd, this->evs, \
-			this->receptionist->getServers(), info, this->receptionist ) )
-	{
-		Log::Error( "Failed to append Request" );
-		close( clientFd );
-		return ( -1 );
-	}
+	// if ( !this->receptionist->newClient( clientFd, this->evs, \
+	// 		&this->receptionist->getServers(), info, this->receptionist ) )
+	// {
+	// 	Log::Error( "Failed to append Request" );
+	// 	close( clientFd );
+	// 	return ( -1 );
+	// }
 	return ( 1 );
 }
 
@@ -373,4 +373,5 @@ int	Server::onEvent( Event &tevent )
 {
 	if ( tevent.filter & EVFILT_READ )
 		return ( onNewClient() );
+	return ( 0 );
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Router.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/06 13:50:09 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/02/06 18:26:41 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,7 @@ bool	Router::processRequestHeaderReceived( Request &req )
 {
 	int			i = 0;
 	std::string	requestMethod = req.getMethod();
+	int			error = 0;
 
 	checkRedir( req );
 	if ( req.getError() < MIN_ERROR_CODE )
@@ -146,10 +147,12 @@ bool	Router::processRequestHeaderReceived( Request &req )
 		while ( i < METHODS_NB && Router::methods[ i ] != requestMethod )
 			i++;
 		if ( i < METHODS_NB )
-			Router::process[ i ]( req );
+			error = Router::process[ i ]( req );
 		else
 			req.setError( HTTP_NOT_ALLOWED_CODE );
 	}
+	checkErrorRedir( req.getError(), req );
+	checkErrorBody( req, req.getError() );
 	return ( true );
 }
 
@@ -181,7 +184,6 @@ bool	Router::processRequestReceived( Request &req )
 	checkRedir( req );
 	if ( req.getError() < MIN_ERROR_CODE )
 	{
-		//req.checkUseCgi();
 		if ( req.getUseCgi() )
 			return ( processCgi( req ) );
 		while ( i < METHODS_NB && Router::methods[ i ] != requestMethod )
@@ -336,34 +338,34 @@ int	Router::openWriteFile( std::string file )
 	return ( fd );
 }
 
-std::string	Router::readFile( std::string file )
-{
-	std::string		storage;
-	char			buffer[ BUFFER_SIZE + 1 ];
-	int				readBytes;
-	int				fd;
+// std::string	Router::readFile( std::string file )
+// {
+// 	std::string		storage;
+// 	char			buffer[ BUFFER_SIZE + 1 ];
+// 	int				readBytes;
+// 	int				fd;
 
-	fd = open( file.c_str(), O_RDONLY | O_NONBLOCK );
-	if ( fd < 0 )
-		return ( "" );
-	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
-	while ( ( readBytes = read( fd, buffer, BUFFER_SIZE ) ) > 0 )
-		storage += std::string( buffer, readBytes );
-	close( fd );
-	return ( storage );
-}
+// 	fd = open( file.c_str(), O_RDONLY | O_NONBLOCK );
+// 	if ( fd < 0 )
+// 		return ( "" );
+// 	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
+// 	while ( ( readBytes = read( fd, buffer, BUFFER_SIZE ) ) > 0 )
+// 		storage += std::string( buffer, readBytes );
+// 	close( fd );
+// 	return ( storage );
+// }
 
-bool	Router::writeFile( std::string file, std::string content )
-{
-	std::ofstream	outfile;
+// bool	Router::writeFile( std::string file, std::string content )
+// {
+// 	std::ofstream	outfile;
 
-	outfile.open(file.c_str(), std::ios::out | std::ios::trunc);
-	if (!outfile.is_open())
-		return ( false );
-	outfile.write(content.c_str(), content.size());
-	outfile.close();
-	return (true);
-}
+// 	outfile.open(file.c_str(), std::ios::out | std::ios::trunc);
+// 	if (!outfile.is_open())
+// 		return ( false );
+// 	outfile.write(content.c_str(), content.size());
+// 	outfile.close();
+// 	return (true);
+// }
 
 bool	Router::checkPathExist( Request& req, std::string path )
 {
@@ -466,13 +468,13 @@ bool	Router::processGetRequest( Request& req )
 	int			fd;
 	Client		*cli;
 
-	cli = this->request.getClient();
+	cli = req.getClient();
 	error = getFileToRead( req, path );
 	if ( error == EXIT_SUCCESS )
 	{
-		fd = openFile( path );
+		fd = openReadFile( path );
 		if ( cli )
-			cli->setEventFileRead( fd );
+			cli->setEventReadFile( fd );
 	}
 	else if ( error == EISDIR )
 	{
@@ -483,6 +485,8 @@ bool	Router::processGetRequest( Request& req )
 			req.setOutput( output );
 			req.setDocExt( "html" );
 		}
+		if ( cli )
+			cli->setEventWriteSocket();
 	}
 	return ( req.getError() >= 400 );
 }
@@ -493,7 +497,9 @@ bool	Router::processHeadRequest( Request& req )
 	std::string	output;
 	int			error;
 	struct stat	info;
+	Client		*cli;
 
+	cli = req.getClient();
 	error = getFileToRead( req, path );
 	if ( error == EXIT_SUCCESS && !stat( path.c_str(), &info ) )
 		req.setOutputLength( info.st_size );
@@ -507,6 +513,8 @@ bool	Router::processHeadRequest( Request& req )
 			req.setDocExt( "html" );
 		}
 	}
+	if ( cli )
+		cli->enableEventWriteSocket( true );
 	return ( req.getError() >= 400 );
 }
 
@@ -516,16 +524,24 @@ bool	Router::processPostRequest( Request& req )
 	std::string bodyContent = req.getBody();
 	std::string	document = req.getDocument();
 	std::string path;
+	Client		*cli;
+	int			fd;
 
+	cli = req.getClient();
 	if ( !req.isDirectiveSet( "upload_store" ) || document.size() == 0 )
 		return ( req.setError( HTTP_FORBIDDEN_CODE ) );
 	path = req.getFilePathWrite();
 	if ( isDir( path ) )
 		return ( req.setError( HTTP_CONFLICT_CODE ) );
-	if ( !writeFile( path, bodyContent ) )
+	fd = openWriteFile( path );
+	if ( fd < 0 )
 		return ( req.setError( HTTP_FORBIDDEN_CODE ) );
+	if ( cli )
+		cli->setEventWriteFile( fd );
 	return ( req.setError( HTTP_CREATED_CODE ) );
 }
+	// if ( !writeFile( path, bodyContent ) )
+	// 	return ( req.setError( HTTP_FORBIDDEN_CODE ) );
 
 bool	Router::processPutRequest( Request& req )
 {
@@ -539,8 +555,8 @@ bool	Router::processPutRequest( Request& req )
 	path = req.getFilePathWrite();
 	if ( isDir( path ) )
 		return ( req.setError( HTTP_CONFLICT_CODE ) );
-	if ( !writeFile( path, bodyContent ) )
-		return ( req.setError( HTTP_FORBIDDEN_CODE ) );
+	// if ( !writeFile( path, bodyContent ) )
+	// 	return ( req.setError( HTTP_FORBIDDEN_CODE ) );
 	return ( req.setError( HTTP_CREATED_CODE ) );
 }
 
