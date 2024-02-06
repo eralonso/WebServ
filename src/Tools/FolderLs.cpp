@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 11:47:54 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/18 17:31:38 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/06 13:54:47 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,8 +189,8 @@ FolderLs::t_error	FolderLs::getLs(std::string& res, \
 										const std::string& path, \
 										const std::string& route)
 {
-	struct dirent		*pDirent;
-	DIR					*pDir;
+	struct dirent	*pDirent;
+	DIR				*pDir;
 	DirSet			dirMap;
 
 	pDir = opendir (path.c_str());

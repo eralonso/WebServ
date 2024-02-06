@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:50 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/17 16:00:52 by codespace        ###   ########.fr       */
+/*   Updated: 2024/02/06 13:52:27 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,29 @@ Clients&	Clients::operator=( const Clients& c )
 	return ( *this );
 }
 
-Client	*Clients::newClient( socket_t socket, WSPoll& polls, \
-							ServersVector& servers, struct sockaddr_in& info )
+Client	*Clients::newClient( socket_t socket, Events *bEvs, \
+							ServersVector& servers, struct sockaddr_in& info, \
+	   						Receptionist *recp )
 {
-	Client	*cli = new Client( socket, polls, servers, info );
+	Client	*cli = new Client( socket, bEvs, servers, info, recp );
 
 	if ( !cli )
 		return ( NULL );
 	this->insert( std::pair< socket_t, Client * >( socket, cli ) );
+	cli->setEventReadSocket();
 	return ( cli );
 }
+
+//Client	*Clients::newClient( socket_t socket, WSPoll& polls, \
+//							ServersVector& servers, struct sockaddr_in& info )
+//{
+//	Client	*cli = new Client( socket, polls, servers, info );
+//
+//	if ( !cli )
+//		return ( NULL );
+//	this->insert( std::pair< socket_t, Client * >( socket, cli ) );
+//	return ( cli );
+//}
 
 size_t	Clients::eraseClient( Client *cli )
 {

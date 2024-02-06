@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:40:55 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/24 17:36:26 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/02/06 10:15:30 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,23 +17,26 @@
 
 # include <TypesDefines.hpp>
 # include <Directives.hpp>
-// # include <Client.hpp>
 # include <ConfigUtils.hpp>
 # include <ConfigApply.hpp>
+# include <EventsTarget.hpp>
 
 # define SERVER_SIZE_DIRECTIVES 11
 
 class Directives;
 
-class Server
+class Server: public EventsTarget
 {
 	//Friends
 	friend class DirectivesParser;
 private:
 	Directives			*_directives;
 	struct sockaddr_in	addr;
+	socket_t			_socketFd;
+	Receptionist		*receptionist;
 public:
 	Server( void );
+	Server( Events *bEvs );
 	Server( const Server& s );
 	~Server( void );
 	Server&	operator=( const Server& s );
@@ -43,12 +46,14 @@ public:
 	static StringVector	allowedDirectives;
 public:
 	void						setAddr( const struct sockaddr_in& info );
+	void						setSocketFd( socket_t fd );
+	void						setReceptionist( Receptionist *recp );
 	const struct sockaddr_in&	getAddr( void ) const;
 	std::string					getIpString( void ) const;
 	unsigned int				getIpNetworkOrder( void ) const;
 	unsigned int				getIpHostOrder( void ) const;
 	std::string					getHost( void ) const;
-	int							getPort( void ) const;
+	socket_t					getSocketFd( void ) const;
 	bool						isSet( std::string directive ) const;
 	bool						strongServerMatch( std::string host, \
 									std::string port, unsigned int ip ) const;
@@ -82,6 +87,7 @@ public:
 	bool						findReturnUri( int& uriCode, \
 									std::string& uriRedirection, \
 									const Location *lc ) const;
+	int							onEvent( Event &tevent );
 };
 
 #endif

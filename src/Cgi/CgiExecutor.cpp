@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/30 16:20:38 by codespace        ###   ########.fr       */
+/*   Updated: 2024/02/06 13:23:17 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,38 +122,49 @@ void	CgiExecutor::onChildProcess( void )
 
 void	CgiExecutor::onParentProcess( pid_t childPid )
 {
-	std::string	body = request.getBody();
-	// char		*reqBody = ( char * )body.c_str();
-	size_t		reqBodySize = body.length();
-	size_t		i;
-	size_t		chunkSize = 1000;
+	Client	*cli;
 
-
-	// Log::Info("CgiExecutor::onParentProcess start");
 	close( this->fdToChild[ FDIN ] );
 	close( this->fdFromChild[ FDOUT ] );
-	i = 0;
-	while (i < reqBodySize)
-	{
-		if ((reqBodySize - i) < chunkSize)
-			chunkSize = reqBodySize - i;
-		std::string chunk = body.substr(i, chunkSize);
-		const char * chunkStr = chunk.c_str();
-		// Log::Info("Size: " + SUtils::longToString(chunkSize));
-		// write(1, chunkStr, chunkSize);
-		if ( write( this->fdToChild[ FDOUT ], chunkStr, chunkSize ) < 0 )
-			break ;
-		// Log::Info("fd: " + SUtils::longToString(this->fdToChild[ FDOUT ]));
-		i += chunkSize;
-	}
-	// Log::Info("CgiExecutor::onParentProcess passed write");
-	close( this->fdToChild[ FDOUT ] );
-	PendingCgiTask task( childPid, request, fdFromChild[ FDIN ] );
-	CgiExecutor::pendingTasks.appendTask( task );
-	// Log::Error("CgiExecutor::onParentProcess pid " + SUtils::longToString( childPid )
-	// 	+ " timestamp: " + SUtils::longToString( std::clock() ) );
-	attendPendingCgiTasks();
+	cli = this->request.getClient();
+	if ( cli )
+		cli->setEventProc( this->fdFromChild[ FDIN ], this->fdToChild[ FDOUT ], childPid );
 }
+
+//void	CgiExecutor::onParentProcess( pid_t childPid )
+//{
+//	std::string	body = request.getBody();
+//	// char		*reqBody = ( char * )body.c_str();
+//	size_t		reqBodySize = body.length();
+//	size_t		i;
+//	size_t		chunkSize = 1000;
+//
+//
+//	// Log::Info("CgiExecutor::onParentProcess start");
+//	close( this->fdToChild[ FDIN ] );
+//	close( this->fdFromChild[ FDOUT ] );
+//	i = 0;
+//	while (i < reqBodySize)
+//	{
+//		if ((reqBodySize - i) < chunkSize)
+//			chunkSize = reqBodySize - i;
+//		std::string chunk = body.substr(i, chunkSize);
+//		const char * chunkStr = chunk.c_str();
+//		// Log::Info("Size: " + SUtils::longToString(chunkSize));
+//		// write(1, chunkStr, chunkSize);
+//		if ( write( this->fdToChild[ FDOUT ], chunkStr, chunkSize ) < 0 )
+//			break ;
+//		// Log::Info("fd: " + SUtils::longToString(this->fdToChild[ FDOUT ]));
+//		i += chunkSize;
+//	}
+//	// Log::Info("CgiExecutor::onParentProcess passed write");
+//	close( this->fdToChild[ FDOUT ] );
+//	PendingCgiTask task( childPid, request, fdFromChild[ FDIN ] );
+//	CgiExecutor::pendingTasks.appendTask( task );
+//	// Log::Error("CgiExecutor::onParentProcess pid " + SUtils::longToString( childPid )
+//	// 	+ " timestamp: " + SUtils::longToString( std::clock() ) );
+//	attendPendingCgiTasks();
+//}
 
 bool CgiExecutor::checkFileExecutable(std::string file)
 {

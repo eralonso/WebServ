@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:43:42 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/24 12:49:58 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/06 10:22:03 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,12 @@
 # include "CgiExecutor.hpp"
 # include <Directives.hpp>
 
+# define BACKLOG 200
+
 class Receptionist: public Clients
 {
 private:
-	WSPoll			polls;
+	Events			evs;
 	ServersVector	_servers;
 	int				timeout;
 public:
@@ -38,9 +40,11 @@ public:
 	~Receptionist( void );
 	Receptionist( const Receptionist& b );
 	Receptionist& 	operator=( const Receptionist& b );
+	void			setupServers( void );
 	bool			serverShareAddr( ServersVector::iterator& begin, \
 											ServersVector::iterator& curr, \
-											struct sockaddr_in& info );
+											struct sockaddr_in& info, \
+		   									socket_t& serverFd );
 	int				mainLoop( void );
 	static int		sendResponse( socket_t connected, Response *res );
 	static int		readRequest( socket_t clientFd, std::string& readed );
@@ -48,6 +52,7 @@ public:
 	void			manageClient( socket_t clientFd );
 	void			manageClientRead( socket_t clientFd, Client *cli );
 	void			manageClientWrite( socket_t clientFd, Client *cli );
+	ServersVector&	getServers( const ) const;
 };
 
 #endif

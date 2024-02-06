@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/30 10:58:57 by codespace        ###   ########.fr       */
+/*   Updated: 2024/02/06 13:53:21 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,30 +24,41 @@ Client::Client( void )
 	this->keepAlive = false;
 	this->pending = 0;
 	this->socket = -1;
-	this->polls = NULL;
+	this->fileFd = -1;
+	this->pipeCgiWrite = -1;
+	this->pipeCgiRead = -1;
 	this->servers = NULL;
 	this->res = NULL;
+	this->receptionist = NULL;
 	SUtils::memset( &this->addr, 0, sizeof( this->addr ) );
 }
 
-Client::Client( socket_t pollsocket, WSPoll& polls, ServersVector& servers, \
-	   				struct sockaddr_in& info )
+Client::Client( socket_t socket, Events *bEvs, ServersVector& servers, \
+	   				struct sockaddr_in& info, Receptionist *recp )
 {
 	this->id = Client::id_counter;
 	Client::id_counter++;
 	this->keepAlive = false;
 	this->pending = 0;
-	this->socket = pollsocket;
-	this->polls = &polls;
+	this->socket = socket;
+	this->fileFd = -1;
+	this->pipeCgiWrite = -1;
+	this->pipeCgiRead = -1;
+	this->evs = bEvs;
 	this->servers = &servers;
 	this->addr = info;
 	this->res = NULL;
+	this->receptionist = recp;
 }
 
 Client::~Client( void )
 {
 	if ( this->res != NULL )
 		delete this->res;
+	close( this->socket );
+	close( this->fileFd );
+	close( this->pipeCgiRead );
+	close( this->pipeCgiWrite );
 }
 
 Client::Client( const Client& b ): Requests()
@@ -55,11 +66,15 @@ Client::Client( const Client& b ): Requests()
 	this->id = Client::id_counter;
 	Client::id_counter++;
 	this->socket = b.socket;
+	this->fileFd = b.fileFd;
+	this->pipeCgiWrite = b.pipeCgiWrite;
+	this->pipeCgiRead = b.pipeCgiRead;
 	this->pending = b.pending;
 	this->received = b.received;
 	this->servers = b.servers;
 	this->addr = b.addr;
 	this->res = b.res;
+	this->receptionist = b.recp;
 }
 
 Client&	Client::operator=( const Client& b )
@@ -67,18 +82,22 @@ Client&	Client::operator=( const Client& b )
 	if ( this != &b )
 	{
 		this->socket = b.socket;
+		this->fileFd = b.fileFd;
+		this->pipeCgiWrite = b.pipeCgiWrite;
+		this->pipeCgiRead = b.pipeCgiRead;
 		this->pending = b.pending;
 		this->received = b.received;
 		this->servers = b.servers;
 		this->addr = b.addr;
 		this->res = b.res;
+		this->receptionist = b.recp;
 	}
 	return ( *this );
 }
 
-int Client::bindClientPoll( socket_t pollsocket )
+int Client::bindClientPoll( socket_t socket )
 {
-	this->socket = pollsocket;
+	this->socket = socket;
 	return ( 0 );
 }
 
@@ -286,6 +305,26 @@ size_t	Client::getPendingSize( void ) const
 	return ( this->received.size() - this->pending );
 }
 
+int	Client::getFileFd( void ) const
+{
+	return ( this->fileFd );
+}
+
+int	Client::getPipeCgiWrite( void ) const
+{
+	return ( this->pipeCgiWrite );
+}
+
+int	Client::getPipeCgiRead( void ) const
+{
+	return ( this->pipeCgiRead );
+}
+
+socket_t	Client::getSocket( void ) const
+{
+	return ( this->socket );
+}
+
 bool	Client::setKeepAlive( bool value )
 {
 	this->keepAlive = value;
@@ -343,4 +382,128 @@ bool	Client::checkPendingToSend( void )
 bool	Client::isResponsePendingToSend( void ) const
 {
 	return (this->res != NULL);
+}
+
+void	Client::setFileFd( int fd )
+{
+	this->fileFd = fd;
+}
+
+void	Client::setPipeCgiWrite( int fd )
+{
+	this->pipeCgiWrite = fd;
+}
+
+void	Client::setPipeCgiRead( int fd )
+{
+	this->pipeCgiRead = fd;
+}
+
+int	Client::setEventReadSocket( void )
+{
+	if ( this->evs )
+		return ( this->evs->setEventRead( this, this->socket ) );
+	return ( 0 );
+}
+
+int	Client::setEventProc( int pipeRead, int pipeWrite, int pid )
+{
+	this->pipeCgiRead = pipeRead;
+	this->pipeCgiWrite = pipeWrite;
+	if ( this->evs )
+	{
+		this->evs->setEventProcExit( this, pid, CGI_TO );
+		this->evs->setEventRead( this, pipeRead );
+		this->evs->setEventWrite( this, pipeWrite );
+	}
+}
+
+int	Client::setEventReadFile( int fd )
+{
+	this->fileFd = fd;
+	if ( this->evs )
+		return ( this->evs->setEventRead( this, fd ) );
+	return ( 0 );
+}
+
+int	Client::setEventWriteFile( int fd )
+{
+	this->fileFd = fd;
+	if ( this->evs )
+		return ( this->evs->setEventWrite( this, fd ) );
+	return ( 0 );
+}
+
+int	Client::onEventReadSocket( Event& tevent )
+{
+	std::string	readed;
+	int			amount;
+
+	if ( tevent.flags & EV_EOF )
+	{
+		this->receptionist->eraseClient( this );
+		return ( 0 );
+	}
+	amount = Receptionist::readRequest( tevent.ident, readed );
+	if ( amount < 0 )
+	{
+		this->receptionist->eraseClient( this );
+		return ( -1 );
+	}
+	manageRecv( readed );
+	if ( cli->manageCompleteRecv() )
+		allowPollWrite( true );
+}
+
+int	Client::onEventRead( Event& tevent )
+{
+	int	ret;
+
+	switch ( tevent.ident )
+	{
+		case this->socket:
+			ret = onEventReadSocket( tevent );
+			break ;
+		case this->fileFd:
+			ret = onEventReadFile( tevent );
+			break ;
+		case this->pipeCgiRead:
+			ret = onEventReadCgi( tevent );
+			break ;
+		default:
+			ret = 0;
+			break ;
+	}
+	return ( ret );
+}
+
+int	Client::onEventWrite( Event& tevent )
+{
+	int	ret;
+
+	switch ( tevent.ident )
+	{
+		case this->socket:
+			ret = onEventWriteSocket( tevent );
+			break ;
+		case this->fileFd:
+			ret = onEventWriteFile( tevent );
+			break ;
+		case this->pipeCgiWrite:
+			ret = onEventWriteCgi( tevent );
+			break ;
+		default:
+			ret = 0;
+			break ;
+	}
+	return ( ret );
+}
+
+int	Client::onEvent( Event& tevent )
+{
+	if ( tevent.filter & EVFILT_READ )
+		return ( onEventRead( tevent ) );
+	else if ( tevent.filter & EVFILT_WRITE )
+		return ( onEventWrite( tevent ) );
+	return ( 0 );
 }

@@ -6,19 +6,24 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/30 16:51:31 by codespace        ###   ########.fr       */
+/*   Updated: 2024/02/06 10:36:28 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Server.hpp>
 
-Server::Server( void ): _directives( NULL ) {}
+Server::Server( void ): EventsTarget( NULL ), _directives( NULL ), \
+							_socketFd( 0 ), receptionist( NULL ) {}
 
-Server::Server( const Server& s )
+Server::Server( const Server& s ): EventsTarget( s.evs )
 {
 	this->_directives = NULL;
 	if ( s._directives != NULL )
+	{
 		this->_directives = new Directives( *s._directives );
+		this->_socketFd = s.socketFd;
+		this->receptionist = s.receptionist;
+	}
 }
 
 Server::~Server( void )
@@ -36,16 +41,40 @@ Server&	Server::operator=( const Server& s )
 		this->_directives = NULL;
 		if ( s._directives != NULL )
 			this->_directives = new Directives( *s._directives );
+		this->_socketFd = s._socketFd;
+		this->receptionist = s.receptionist;
 	}
 	return ( *this );
 }
-
-Directives	*Server::getDirectives( void ) const { return ( this->_directives ); }
 
 void	Server::setAddr( const struct sockaddr_in& info )
 {
 	this->addr = info;
 }
+
+void	Server::setSocketFd( socket_t fd )
+{
+	this->_socketFd = fd;
+}
+
+void	Server::setReceptionist( Receptionist *recp )
+{
+	this->receptionist = recp;
+}
+
+void	Server::setEvents( Events *bEvs )
+{
+	this->evs = bEvs;
+}
+
+int	Server::setEventRead( void )
+{
+	if ( this->evs )
+		return ( this->evs->setEventRead( this, this->_socketFd ) );
+	return ( 0 );
+}
+
+Directives	*Server::getDirectives( void ) const { return ( this->_directives ); }
 
 const struct sockaddr_in&	Server::getAddr( void ) const
 {
@@ -75,10 +104,14 @@ std::string	Server::getHost( void ) const
 }
 
 int	Server::getPort( void ) const
-{
-	if ( this->_directives == NULL )
+{ if ( this->_directives == NULL )
 		return ( -1 );
 	return ( this->_directives->getPort() );
+}
+
+socket_t	Server::getSocketFd( void ) const
+{
+	return ( this->_socketFd );
 }
 
 bool	Server::isSet( std::string directive ) const
@@ -315,4 +348,29 @@ bool	Server::findReturnUri( int& uriCode, std::string& uriRedirection, \
 	else if ( lc != NULL && lc->isSet( "return" ) == true )
 		return ( lc->findReturnUri( uriCode, uriRedirection ) );
 	return ( false );
+}
+
+int	Server::onNewClient( void )
+{
+
+	socket_t			clientFd;
+	struct sockaddr_in	info;
+	
+	clientFd = Sockets::acceptConnection( this->_socketFd, info );
+	if ( clientFd < 0 )
+		return ( -1 );
+	if ( !this->receptionist->newClient( clientFd, this->evs, \
+			this->receptionist->getServers(), info, this->receptionist ) )
+	{
+		Log::Error( "Failed to append Request" );
+		close( clientFd );
+		return ( -1 );
+	}
+	return ( 1 );
+}
+
+int	Server::onEvent( Event &tevent )
+{
+	if ( tevent.filter & EVFILT_READ )
+		return ( onNewClient() );
 }

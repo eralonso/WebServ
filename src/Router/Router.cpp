@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/30 17:14:45 by codespace        ###   ########.fr       */
+/*   Updated: 2024/02/06 13:50:09 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,46 @@ bool	Router::processCgi( Request& req )
 	// Once finished CgiTaskPending will send event to change request state to ready to send
 	return ( true );
 }
+
+bool	Router::processRequestHeaderReceived( Request &req )
+{
+	int			i = 0;
+	std::string	requestMethod = req.getMethod();
+
+	checkRedir( req );
+	if ( req.getError() < MIN_ERROR_CODE )
+	{
+		if ( req.getUseCgi() )
+			return ( processCgi( req ) );
+		while ( i < METHODS_NB && Router::methods[ i ] != requestMethod )
+			i++;
+		if ( i < METHODS_NB )
+			Router::process[ i ]( req );
+		else
+			req.setError( HTTP_NOT_ALLOWED_CODE );
+	}
+	return ( true );
+}
+
+//bool	Router::processRequestReceived( Request &req )
+//{
+//	int			i = 0;
+//	std::string	requestMethod = req.getMethod();
+//
+//	checkRedir( req );
+//	if ( req.getError() < MIN_ERROR_CODE )
+//	{
+//		if ( req.getUseCgi() )
+//			return ( processCgi( req ) );
+//		while ( i < METHODS_NB && Router::methods[ i ] != requestMethod )
+//			i++;
+//		if ( i < METHODS_NB )
+//			Router::process[ i ]( req );
+//		else
+//			req.setError( HTTP_NOT_ALLOWED_CODE );
+//	}
+//	return ( true );
+//}
 
 bool	Router::processRequestReceived( Request &req )
 {
@@ -274,6 +314,28 @@ bool	Router::isDir( std::string path ) { return ( checkStatMode( path, S_IFDIR )
 
 bool	Router::isFile( std::string path ) { return ( checkStatMode( path, S_IFREG ) ); }
 
+int	Router::openReadFile( std::string file )
+{
+	int	fd;
+
+	fd = open( file.c_str(), O_RDONLY | O_NONBLOCK );
+	if ( fd < 0 )
+		return ( fd );
+	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
+	return ( fd );
+}
+
+int	Router::openWriteFile( std::string file )
+{
+	int	fd;
+
+	fd = open( file.c_str(), O_WRONLY | O_TRUNC | O_NONBLOCK );
+	if ( fd < 0 )
+		return ( fd );
+	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
+	return ( fd );
+}
+
 std::string	Router::readFile( std::string file )
 {
 	std::string		storage;
@@ -401,10 +463,17 @@ bool	Router::processGetRequest( Request& req )
 	std::string	path;
 	std::string	output;
 	int			error;
+	int			fd;
+	Client		*cli;
 
+	cli = this->request.getClient();
 	error = getFileToRead( req, path );
 	if ( error == EXIT_SUCCESS )
-		req.setOutput( readFile( path ) );
+	{
+		fd = openFile( path );
+		if ( cli )
+			cli->setEventFileRead( fd );
+	}
 	else if ( error == EISDIR )
 	{
 		if ( isValidDirectory( path ) == false )

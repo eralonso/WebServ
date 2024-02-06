@@ -6,7 +6,7 @@
 #    By: codespace <codespace@student.42.fr>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/22 10:08:41 by eralonso          #+#    #+#              #
-#    Updated: 2024/01/30 10:24:41 by eralonso         ###   ########.fr        #
+#    Updated: 2024/02/06 08:33:11 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,7 +51,7 @@ HEADERS		:=	$(INC_ROOT)
 
 #<---------------------------------->DIRS<----------------------------------->#
 SRC_DIRS	:=	./:Tools/:ConfigParse/:Clients/:Headers/:Requests/:Response/\
-					:Cgi/:Router/:ConfigResolver/
+				:Cgi/:Router/:ConfigResolver/:Events
 SRC_DIRS	:=	$(subst :,$(SPACE),$(SRC_DIRS))
 SRC_DIRS	:=	$(addprefix $(SRC_ROOT),$(SRC_DIRS))
 SRC_DIRS	:=	$(subst $(SPACE),:,$(SRC_DIRS))

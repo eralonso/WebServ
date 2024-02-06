@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/30 11:04:15 by codespace        ###   ########.fr       */
+/*   Updated: 2024/02/06 10:22:55 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,36 @@
 #include <Response.hpp>
 
 Receptionist::Receptionist( ServersVector& servers ): Clients(), \
-													polls( MAX_CLIENTS ), \
 													_servers( servers ), \
 													timeout( 1 )
 {
+	if ( evs.is_create() == false )
+		throw std::runtime_error( "Cant't create a kqueue" );
+	setupServers();
+}
+
+Receptionist::~Receptionist( void )
+{
+}
+
+Receptionist::Receptionist( const Receptionist& b ): Clients(), \
+													_servers( b._servers ), \
+													timeout( b.timeout ) {}
+
+Receptionist& 	Receptionist::operator=( const Receptionist& b )
+{
+	if ( this != &b )
+	{
+		this->_servers = b._servers;
+		this->timeout = b.timeout;
+	}
+	return ( *this );
+}
+
+void	Receptionist::setupServers( void )
+{
 	socket_t				serverFd;
 	Directives				*d = NULL;
-	int						backlog = 100;
 	ServersVector::iterator	itb = this->_servers.begin();
 	ServersVector::iterator	it = itb;
 	struct sockaddr_in		info;
@@ -30,14 +53,16 @@ Receptionist::Receptionist( ServersVector& servers ): Clients(), \
 		d = it->getDirectives();
 		if ( d != NULL && d->isEmpty() == false )
 		{
-			if ( serverShareAddr( itb, it, info ) == false )
+			if ( serverShareAddr( itb, it, info, serverFd ) == false )
 			{
 				serverFd = Sockets::createPassiveSocket( d->getHost(), \
-								d->getPort(), backlog, info );
-				this->polls.addPollfd( serverFd, POLLIN | POLLPRI | \
-									POLLRDNORM | POLLRDBAND, 0, SPOLLFD );
+								d->getPort(), BACKLOG, info );
 			}
 			it->setAddr( info );
+			it->setSocketFd( serverFd );
+			it->setReceptionist( this );
+			it->setEvents( &this->evs );
+			it->setEventRead();
 			it++;
 		}
 		else
@@ -45,29 +70,10 @@ Receptionist::Receptionist( ServersVector& servers ): Clients(), \
 	}
 }
 
-Receptionist::~Receptionist( void )
-{
-}
-
-Receptionist::Receptionist( const Receptionist& b ): Clients(), \
-													polls( b.polls ), \
-													_servers( b._servers ), \
-													timeout( b.timeout ) {}
-
-Receptionist& 	Receptionist::operator=( const Receptionist& b )
-{
-	if ( this != &b )
-	{
-		this->polls = b.polls;
-		this->_servers = b._servers;
-		this->timeout = b.timeout;
-	}
-	return ( *this );
-}
-
 bool	Receptionist::serverShareAddr( ServersVector::iterator& begin, \
 										ServersVector::iterator& curr, \
-										struct sockaddr_in& info )
+										struct sockaddr_in& info, \
+	   									socket_t& serverFd )
 {
 	struct sockaddr_in	addr;
 	unsigned int		ip;
@@ -79,10 +85,16 @@ bool	Receptionist::serverShareAddr( ServersVector::iterator& begin, \
 		if ( it->getPort() == curr->getPort() && it->getIpNetworkOrder() == ip )
 		{
 			info = it->getAddr();
+			serverFd = it->getSocketFd();
 			return ( true );
 		}
 	}
 	return ( false );
+}
+
+ServersVector&	getServers( const ) const
+{
+	return ( this->_servers );
 }
 
 int	Receptionist::sendResponse( socket_t connected, Response *res )
@@ -131,12 +143,7 @@ int	Receptionist::addNewClient( socket_t serverFd )
 	clientFd = Sockets::acceptConnection( serverFd, info );
 	if ( clientFd < 0 )
 		return ( -1 );
-	if ( polls.addPollfd( clientFd, POLLIN, 0, CPOLLFD ) == false )
-	{
-		Log::Error( "Too many clients trying to connect to server" );
-		close( clientFd );
-	}
-	else if ( !Clients::newClient( clientFd, polls, _servers, info ) )
+	if ( !Clients::newClient( clientFd, &this->evs, _servers, info ) )
 	{
 		Log::Error( "Failed to append Request" );
 		close( clientFd );
@@ -144,6 +151,28 @@ int	Receptionist::addNewClient( socket_t serverFd )
 	}
 	return ( 1 );
 }
+
+//int	Receptionist::addNewClient( socket_t serverFd )
+//{
+//	socket_t			clientFd;
+//	struct sockaddr_in	info;
+//	
+//	clientFd = Sockets::acceptConnection( serverFd, info );
+//	if ( clientFd < 0 )
+//		return ( -1 );
+//	if ( polls.addPollfd( clientFd, POLLIN, 0, CPOLLFD ) == false )
+//	{
+//		Log::Error( "Too many clients trying to connect to server" );
+//		close( clientFd );
+//	}
+//	else if ( !Clients::newClient( clientFd, polls, _servers, info ) )
+//	{
+//		Log::Error( "Failed to append Request" );
+//		close( clientFd );
+//		return ( -1 );
+//	}
+//	return ( 1 );
+//}
 
 void	Receptionist::manageClientRead( socket_t clientFd, Client *cli )
 {
@@ -156,7 +185,7 @@ void	Receptionist::manageClientRead( socket_t clientFd, Client *cli )
 	if ( amount < 0 )
 	{
 		// Read Failed or finish to read and not pending of timeout
-		polls.closePoll( clientFd );
+		cli->closeSocket();
 		eraseClient( cli );
 		return ;
 	}
@@ -183,53 +212,64 @@ void	Receptionist::manageClientWrite( socket_t clientFd, Client *cli )
 	}
 }
 
-void	Receptionist::manageClient( socket_t clientFd )
-{
-	struct pollfd	*clientPoll = NULL;
-	Client			*cli = NULL;
-
-	try
-	{
-		clientPoll = &( polls[ clientFd ] );
-		cli = this->at( clientFd );
-	}
-	catch ( std::out_of_range& e )
-	{ 
-		Log::Error( "Client for [ " \
-			+ SUtils::longToString( clientFd ) \
-			+ " ]: not found");
-		return ;
-	}
-	if ( clientPoll->revents & POLLOUT )
-		manageClientWrite( clientFd, cli );
-	else if ( clientPoll->revents & POLLIN )
-		manageClientRead( clientFd, cli );
-}
+//void	Receptionist::manageClient( socket_t clientFd )
+//{
+//	struct pollfd	*clientPoll = NULL;
+//	Client			*cli = NULL;
+//
+//	try
+//	{
+//		clientPoll = &( polls[ clientFd ] );
+//		cli = this->at( clientFd );
+//	}
+//	catch ( std::out_of_range& e )
+//	{ 
+//		Log::Error( "Client for [ " \
+//			+ SUtils::longToString( clientFd ) \
+//			+ " ]: not found");
+//		return ;
+//	}
+//	if ( clientPoll->revents & POLLOUT )
+//		manageClientWrite( clientFd, cli );
+//	else if ( clientPoll->revents & POLLIN )
+//		manageClientRead( clientFd, cli );
+//}
 
 int	Receptionist::mainLoop( void )
 {
-	socket_t	serverFd;
-	socket_t	clientFd;
-	int			waitRes = 1;
-
 	while ( WSSignals::isSig == false )
 	{
-		waitRes = polls.wait( timeout );
+		waitRes = this->evs.loopEvents();
 		if ( waitRes < 0 )
 			return ( 1 );
-		//CgiExecutor::attendPendingCgiTasks();
-		if ( waitRes == 0 )
-			continue ;
-		Log::Info( "VUELTITA" );
-		serverFd = polls.isNewClient();
-		if ( serverFd > 0 )
-			addNewClient( serverFd );
-		else
-		{
-			clientFd = polls.getPerformClient();
-			if ( clientFd > 0 )
-				manageClient( clientFd );
-		}
 	}
 	return ( WSSignals::isSig );
 }
+
+//int	Receptionist::mainLoop( void )
+//{
+//	socket_t	serverFd;
+//	socket_t	clientFd;
+//	int			waitRes = 1;
+//
+//	while ( WSSignals::isSig == false )
+//	{
+//		waitRes = polls.wait( timeout );
+//		if ( waitRes < 0 )
+//			return ( 1 );
+//		//CgiExecutor::attendPendingCgiTasks();
+//		if ( waitRes == 0 )
+//			continue ;
+//		Log::Info( "VUELTITA" );
+//		serverFd = polls.isNewClient();
+//		if ( serverFd > 0 )
+//			addNewClient( serverFd );
+//		else
+//		{
+//			clientFd = polls.getPerformClient();
+//			if ( clientFd > 0 )
+//				manageClient( clientFd );
+//		}
+//	}
+//	return ( WSSignals::isSig );
+//}
