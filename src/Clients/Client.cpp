@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/06 18:46:06 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/07 09:47:15 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -482,7 +482,19 @@ int	Client::onEventReadSocket( Event& tevent )
 
 int	Client::onEventReadFile( Event& tevent )
 {
-	( void )tevent;
+	char buffer[5000000];
+	size_t amountToRead = 5000000;
+	size_t actualRead;
+
+	if (amountToRead > (size_t)tevent.data)
+		amountToRead = (size_t)tevent.data;
+	actualRead = read(tevent.ident, buffer, amountToRead);
+	std::string content(buffer, actualRead);
+	this->transferQueue += content;
+	printf("EVFILT_READ event called id: '%ld' filt: '%hd' data:'%ld' actual read: '%p'\n", 
+		tevent.ident, tevent.filter, tevent.data, content.c_str());
+	if (tevent.flags & EV_EOF)
+		printf("READ reached EOF\n");
 	return ( 1 );
 }
 

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/06 18:32:41 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/07 09:53:44 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,14 @@ private:
 	int					fileFd;
 	int					pipeCgiWrite;
 	int					pipeCgiRead;
+	std::string			readFromFile;
+	size_t				readFromFileRemain;
+	std::string			readFromFile;
+	std::string			writeToFile;
+	bool				writeToFileEnd;
+	std::string			readFromPipe;
+	size_t				readFromPipeRemain;
+	std::string			readFromPipe;
 public:
 	typedef enum e_sendStatus
 	{
