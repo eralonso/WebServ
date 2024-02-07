@@ -117,6 +117,31 @@ int		Events::enableEventWrite( EventsTarget* et, int fd, bool enable )
 	return 0;
 }
 
+int		Events::deleteEventProcExit( EventsTarget* et, pid_t pid )
+{
+	int				ret;
+	struct kevent	procEvent;
+
+	EV_SET(&procEvent, pid, EVFILT_PROC, EV_DELETE, NOTE_EXIT, 0, et);
+	ret = kevent(kq, &procEvent, 1, NULL, 0, NULL);
+	if (ret == -1)
+		Log::Error( "kevent Processs Exit unregister" );
+	return 0;
+}
+
+int		Events::deleteEventProcTimeout( EventsTarget* et, pid_t pid )
+{
+	int				ret;
+	struct kevent	procEvent;
+
+	EV_SET(&procEvent, pid, EVFILT_TIMER, EV_DELETE, \
+		NOTE_SECONDS, 0, et);
+	ret = kevent(kq, &procEvent, 1, NULL, 0, NULL);
+	if (ret == -1)
+		Log::Error( "kevent Processs Timeout unregister" );
+	return 0;
+}
+
 int	Events::loopEvents( void )
 {
 	int				ret = 0;

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 11:47:49 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/06 17:08:18 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/07 14:56:14 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ public:
 	int		setEventProcExit( EventsTarget *et, pid_t pid, long timeout );
 	int		enableEventRead( EventsTarget* et, int fd, bool enable );
 	int		enableEventWrite( EventsTarget *et, int fd, bool enable );
+	int		deleteEventProcExit( EventsTarget* et, pid_t pid );
+	int		deleteEventProcTimeout( EventsTarget* et, pid_t pid );
 	int		loopEvents( void );
 };
 

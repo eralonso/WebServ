@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 13:12:55 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/07 15:08:33 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -473,6 +473,38 @@ int	Client::enableEventWriteSocket( bool enable )
 	return ( 0 );
 }
 
+int	Client::deleteEventProcExit( pid_t pid )
+{
+	if ( this->evs )
+		return ( this->evs->deleteEventProcExit(this, pid));
+	return ( 0 );
+}
+
+int	Client::deleteEventProcTimeout( pid_t pid )
+{
+	if ( this->evs )
+		return ( this->evs->deleteEventProcTimeout(this, pid));
+	return ( 0 );
+}
+
+int	Client::onEventProcExit( Event& tevent )
+{
+
+	this->deleteEventProcTimeout(tevent.ident);
+	this->cgiTimeout = false;
+	this->cgiFinished = true;
+	return (0);
+}
+
+int	Client::onEventProcTimeout( Event& tevent )
+{
+	this->deleteEventProcExit(tevent.ident);
+	//TODO setError to Request, Response shoud update in accordance
+	this->cgiTimeout = true;
+	this->cgiFinished = true;
+	return (0);
+}
+
 int	Client::onEventReadSocket( Event& tevent )
 {
 	std::string	readed;
@@ -626,5 +658,9 @@ int	Client::onEvent( Event& tevent )
 		return ( onEventRead( tevent ) );
 	else if ( tevent.filter & EVFILT_WRITE )
 		return ( onEventWrite( tevent ) );
+	else if ( tevent.filter & EVFILT_PROC )
+		return ( onEventProcExit( tevent ) );
+	else if ( tevent.filter & EVFILT_TIMER )
+		return ( onEventProcTimeout( tevent ) );
 	return ( 0 );
 }

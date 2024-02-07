@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 12:27:24 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/07 15:05:52 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ private:
 	size_t				requestBodyRemain;
 	size_t				responseBodyRemain;
 	bool				cgiFinished;
+	bool				cgiTimeout;
 	bool				responseSent;
 	bool				readEOF;
 	bool				writeEOF;
@@ -106,6 +107,10 @@ public:
 	int							setEventWriteFile( int fd );
 	int							enableEventReadSocket( bool enable );
 	int							enableEventWriteSocket( bool enable );
+	int							deleteEventProcExit( pid_t pid );
+	int							deleteEventProcTimeout( pid_t pid );
+	int							onEventProcExit( Event& tevent );
+	int							onEventProcTimeout( Event& tevent );
 	int							onEventReadSocket( Event& tevent );
 	int							onEventReadFile( Event& tevent );
 	int							onEventReadPipe( Event& tevent );
