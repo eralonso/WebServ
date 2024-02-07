@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 09:47:15 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/07 11:52:27 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ Client::Client( void ): EventsTarget( NULL )
 	this->servers = NULL;
 	this->res = NULL;
 	this->receptionist = NULL;
+	this->responseSent = false;
 	SUtils::memset( &this->addr, 0, sizeof( this->addr ) );
 }
 
@@ -49,6 +50,7 @@ Client::Client( socket_t socket, Events *bEvs, const ServersVector *servers, \
 	this->addr = info;
 	this->res = NULL;
 	this->receptionist = recp;
+	this->responseSent = false;
 }
 
 Client::~Client( void )
@@ -75,6 +77,7 @@ Client::Client( const Client& b ): Requests(), EventsTarget( b.evs )
 	this->addr = b.addr;
 	this->res = b.res;
 	this->receptionist = b.receptionist;
+	this->responseSent = b.responseSent;
 }
 
 Client&	Client::operator=( const Client& b )
@@ -91,6 +94,7 @@ Client&	Client::operator=( const Client& b )
 		this->addr = b.addr;
 		this->res = b.res;
 		this->receptionist = b.receptionist;
+		this->responseSent = b.responseSent;
 	}
 	return ( *this );
 }
@@ -99,6 +103,17 @@ int Client::bindClientPoll( socket_t socket )
 {
 	this->socket = socket;
 	return ( 0 );
+}
+
+void	Client::createNewResponse( void )
+{
+	if ( !this->res )
+		this->res = new Response;
+}
+
+bool	Client::isResponseSent( void ) const
+{
+	return ( this->responseSent );
 }
 
 socket_t	Client::getClientSocket( void ) const
@@ -475,22 +490,23 @@ int	Client::onEventReadSocket( Event& tevent )
 		return ( -1 );
 	}
 	manageRecv( readed );
-	// if ( manageCompleteRecv() )
-	// 	allowPollWrite( true );
+	if ( manageCompleteRecv() && !isResponseSent() )
+		enableEventReadSocket( false );
 	return ( 0 );
 }
 
 int	Client::onEventReadFile( Event& tevent )
 {
-	char buffer[5000000];
-	size_t amountToRead = 5000000;
-	size_t actualRead;
+	char	buffer[ BUFFER_SIZE ];
+	size_t	amountToRead = BUFFER_SIZE;
+	size_t	actualRead;
 
+	createNewResponse();
 	if (amountToRead > (size_t)tevent.data)
 		amountToRead = (size_t)tevent.data;
 	actualRead = read(tevent.ident, buffer, amountToRead);
 	std::string content(buffer, actualRead);
-	this->transferQueue += content;
+	this-> += content;
 	printf("EVFILT_READ event called id: '%ld' filt: '%hd' data:'%ld' actual read: '%p'\n", 
 		tevent.ident, tevent.filter, tevent.data, content.c_str());
 	if (tevent.flags & EV_EOF)

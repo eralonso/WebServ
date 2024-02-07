@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/06 18:26:41 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/07 11:12:59 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ bool	Router::processCgi( Request& req )
 		cgiExe.pushEnvVar("HTTP_COOKIE", req.getCookies());
 		if (req.getBody().size() > 0)
 			cgiExe.pushEnvVar("CONTENT_TYPE", req.getHeaderWithKey("Content-Type"));
-		cgiExe.pushEnvVar("CONTENT_LENGTH", SUtils::longToString(req.getBody().size()));
+		//cgiExe.pushEnvVar("CONTENT_LENGTH", SUtils::longToString(req.getBody().size()));
 		cgiExe.pushEnvVar("HTTP_ACCEPT", req.getHeaderWithKey("Accept"));
 		cgiExe.pushEnvVar("USER_AGENT", req.getHeaderWithKey("User-Agent"));
 		cgiExe.execute();
@@ -138,7 +138,11 @@ bool	Router::processRequestHeaderReceived( Request &req )
 	int			i = 0;
 	std::string	requestMethod = req.getMethod();
 	int			error = 0;
+	Client		*cli;
 
+	cli = req.getClient();
+	if ( cli )
+		cli->createNewResponse();
 	checkRedir( req );
 	if ( req.getError() < MIN_ERROR_CODE )
 	{

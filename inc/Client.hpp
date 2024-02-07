@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 09:53:44 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/07 11:28:03 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,14 +41,10 @@ private:
 	int					fileFd;
 	int					pipeCgiWrite;
 	int					pipeCgiRead;
-	std::string			readFromFile;
-	size_t				readFromFileRemain;
-	std::string			readFromFile;
-	std::string			writeToFile;
-	bool				writeToFileEnd;
-	std::string			readFromPipe;
-	size_t				readFromPipeRemain;
-	std::string			readFromPipe;
+	size_t				requestBodyRemain;
+	size_t				responseBodyRemain;
+	bool				cgiFinished;
+	bool				responseSent;
 public:
 	typedef enum e_sendStatus
 	{
@@ -67,6 +63,8 @@ public:
 	Client&	operator=( const Client& b );
 public:
 	int							bindClientPoll( socket_t socket );
+	void						createNewClient( void );
+	bool						isResponseSent( void ) const;
 	socket_t					getClientSocket( void ) const;
 	size_t						getId( void ) const;
 	void						LogId( void ) const;
@@ -85,6 +83,7 @@ public:
 	size_t						purgeUsedRecv( void );
 	void						allowPollWrite( bool value );
 	bool						checkPendingToSend( void );
+	void						createNewResponse( void );
 	const ServersVector&		getServers( void ) const;
 	const struct sockaddr_in&	getAddr( void ) const;
 	std::string					getIpString( void ) const;
