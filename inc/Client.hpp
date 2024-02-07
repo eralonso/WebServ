@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 15:05:52 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/07 15:19:37 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ private:
 	size_t				responseBodyRemain;
 	bool				cgiFinished;
 	bool				cgiTimeout;
+	bool				responseHeaderSent;
 	bool				responseSent;
 	bool				readEOF;
 	bool				writeEOF;
@@ -66,7 +67,6 @@ public:
 	Client&	operator=( const Client& b );
 public:
 	int							bindClientPoll( socket_t socket );
-	void						createNewClient( void );
 	bool						isResponseSent( void ) const;
 	socket_t					getClientSocket( void ) const;
 	size_t						getId( void ) const;
@@ -84,7 +84,6 @@ public:
 	size_t						getPendingSize( void ) const;
 	bool						setKeepAlive( bool value );
 	size_t						purgeUsedRecv( void );
-	void						allowPollWrite( bool value );
 	bool						checkPendingToSend( void );
 	void						createNewResponse( void );
 	const ServersVector&		getServers( void ) const;

@@ -6,18 +6,19 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:53:27 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/17 12:32:15 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/02/07 16:12:51 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _REQUESTS_HPP_
 # define _REQUESTS_HPP_
 
-# include <poll.h>
-# include <vector>
+# include <queue>
 # include <Request.hpp>
 
-class Requests: public std::vector< Request * >
+typedef std::queue< Request * >	RequestQueue;
+
+class Requests: public RequestQueue
 {
 private:
 public:
@@ -28,6 +29,7 @@ public:
 	Request		*appendRequest( Client *cli );
 	int			eraseRequest( void );
 	bool		checkPendingToSend( void );
+	Request*	getPending( void );
 };
 
 #endif

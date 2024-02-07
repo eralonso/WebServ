@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 12:42:41 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/07 17:10:22 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ public:
 	bool 			getHostPort(std::string &host, std::string &port) const;
 	std::string		getHeaderWithKey(const std::string &key);
 	size_t 			getBodyLength( void ) const;
-	std::string		getBody( void ) const;
+	const std::string&	getBody( void ) const;
 	std::string		getBodyHead( size_t size ) const;
 	size_t			getId( void ) const;
 	std::string		getFilePathWrite( void ) const;

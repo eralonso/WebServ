@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:58:31 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/17 14:14:39 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/02/07 16:16:05 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,12 @@ Requests::~Requests( void )
 		eraseRequest();
 }
 
-Requests::Requests( const Requests& b ): std::vector< Request* >( b ) {}
+Requests::Requests( const Requests& b ): RequestQueue( b ) {}
 
 Requests&	Requests::operator=( const Requests& b )
 {
 	if ( this != &b )
-		std::vector< Request* >::operator=( b );
+		RequestQueue::operator=( b );
 	return ( *this );
 }
 
@@ -36,22 +36,20 @@ Request	*Requests::appendRequest( Client *cli )
 
 	if ( !req )
 		return ( NULL );
-	this->push_back( req );
+	this->push( req );
 	return ( req );
 }
 
 int	Requests::eraseRequest( void )
 {
-	Requests::iterator	ite;
 	Request				*req = NULL;
 
 	if ( this->size() > 0 )
 	{
-		ite = this->end() - 1;
-		req = *ite;
+		req = this->front();
 		if ( req != NULL )
 		{
-			this->erase( ite );
+			this->pop();
 			delete req;
 			return ( 1 );
 		}
@@ -66,7 +64,7 @@ bool	Requests::checkPendingToSend( void )
 
 	if ( pos > 0 )
 	{
-		r = this->operator[]( pos - 1 );
+		r = this->front();
 		if ( r->isReadyToSend() )
 			return ( 1 );
 		else
@@ -79,4 +77,14 @@ bool	Requests::checkPendingToSend( void )
 	else
 		Log::Info( "No Requests on checkPendingToSend" );
 	return ( 0 );
+}
+
+Request*	Requests::getPending( void )
+{
+	size_t	pos = this->size();
+	Request	*r = NULL;
+
+	if ( pos > 0 )
+		r = this->front();
+	return ( r );
 }

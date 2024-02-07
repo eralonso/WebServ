@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 15:08:33 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/07 16:46:25 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,10 @@ Client::Client( void ): EventsTarget( NULL )
 	this->pipeCgiRead = -1;
 	this->servers = NULL;
 	this->res = NULL;
+	this->requestBodyRemain = 0;
+	this->responseBodyRemain = 0;
 	this->receptionist = NULL;
+	this->responseHeaderSent = false;
 	this->responseSent = false;
 	SUtils::memset( &this->addr, 0, sizeof( this->addr ) );
 }
@@ -49,7 +52,10 @@ Client::Client( socket_t socket, Events *bEvs, const ServersVector *servers, \
 	this->servers = servers;
 	this->addr = info;
 	this->res = NULL;
+	this->requestBodyRemain = 0;
+	this->responseBodyRemain = 0;
 	this->receptionist = recp;
+	this->responseHeaderSent = false;
 	this->responseSent = false;
 }
 
@@ -76,7 +82,10 @@ Client::Client( const Client& b ): Requests(), EventsTarget( b.evs )
 	this->servers = b.servers;
 	this->addr = b.addr;
 	this->res = b.res;
+	this->requestBodyRemain = b.requestBodyRemain;
+	this->responseBodyRemain = b.responseBodyRemain;
 	this->receptionist = b.receptionist;
+	this->responseHeaderSent = b.responseHeaderSent;
 	this->responseSent = b.responseSent;
 }
 
@@ -93,7 +102,10 @@ Client&	Client::operator=( const Client& b )
 		this->servers = b.servers;
 		this->addr = b.addr;
 		this->res = b.res;
+		this->requestBodyRemain = b.requestBodyRemain;
+		this->responseBodyRemain = b.responseBodyRemain;
 		this->receptionist = b.receptionist;
+		this->responseHeaderSent = b.responseHeaderSent;
 		this->responseSent = b.responseSent;
 	}
 	return ( *this );
@@ -159,15 +171,12 @@ void	Client::LogId( void ) const
 Request	*Client::findRecvRequest( void )
 {
 	Request				*req = NULL;
-	Requests::iterator	it = this->begin();
-	Requests::iterator	ite = this->end();
 
-	while ( it != ite )
+	if ( this->size() > 0 )
 	{
-		req = *it;
+		req = front();
 		if ( req && req->isReceiving() )
 			return ( req );
-		it++;
 	}
 	return ( NULL );
 }
@@ -175,13 +184,10 @@ Request	*Client::findRecvRequest( void )
 Request	*Client::findCompleteRecvRequest( void )
 {
 	Request				*req = NULL;
-	Requests::iterator	it = this->begin();
-	Requests::iterator	ite = this->end();
 
-	while ( it != ite )
+	if ( this->size() > 0 )
 	{
-		ite--;
-		req = *ite;
+		req = front();
 		if ( req && req->isCompleteRecv() )
 			return ( req );
 	}
@@ -191,12 +197,10 @@ Request	*Client::findCompleteRecvRequest( void )
 Request	*Client::findReadyToSendRequest( void )
 {
 	Request				*req;
-	Requests::iterator	ite = this->end();
 
 	if ( this->size() > 0 )
 	{
-		ite--;
-		req = *ite;
+		req = front();
 		if ( req && req->isReadyToSend() )
 			return ( req );
 	}
@@ -356,39 +360,13 @@ size_t	Client::purgeUsedRecv( void )
 	return ( pendSize );
 }
 
-// void	Client::allowPollWrite( bool value )
-// {
-// 	struct pollfd	*clientPoll = NULL;
-
-// 	if ( this->polls != NULL )
-// 	{
-// 		try
-// 		{
-// 			clientPoll = &( polls->operator[]( socket ) );
-// 		}
-// 		catch ( std::out_of_range& e )
-// 		{ 
-// 			Log::Info( "ClientPoll for [ " \
-// 				+ SUtils::longToString( this->socket ) \
-// 				+ " ]: not found" );
-// 			return ;
-// 		}
-// 		if ( value )
-// 			clientPoll->events = POLLOUT;
-// 		else 
-// 			clientPoll->events = POLLIN;
-// 	}
-// 	else
-// 		Log::Error( "Polls not found on Client " \
-// 			+ SUtils::longToString( this->id ) );
-// }
-
 bool	Client::checkPendingToSend( void )
 {
 	LogId();
-	if ( Requests::checkPendingToSend() )
+	if ( Requests::checkPendingToSend())
 	{
-		// allowPollWrite( true );
+		if (this->evs)
+			this->evs->setEventWrite(this, this->socket);
 		return ( true );
 	}
 	return ( false );
@@ -499,6 +477,7 @@ int	Client::onEventProcExit( Event& tevent )
 int	Client::onEventProcTimeout( Event& tevent )
 {
 	this->deleteEventProcExit(tevent.ident);
+	kill(tevent.ident, SIGKILL);
 	//TODO setError to Request, Response shoud update in accordance
 	this->cgiTimeout = true;
 	this->cgiFinished = true;
@@ -541,7 +520,10 @@ int	Client::onEventReadFile( Event& tevent )
 	if (this->res)
 		this->res->setBody( this->res->getBody() + content );
 	if(amountToRead - actualRead == 0)
+	{
 		this->readEOF = true;
+		close(tevent.ident);
+	}
 	return ( 0 );
 }
 
@@ -559,7 +541,10 @@ int	Client::onEventReadPipe( Event& tevent )
 	if (this->res)
 		this->res->setBody( this->res->getBody() + content );
 	if (tevent.flags & EV_EOF)
+	{
 		this->readEOF = true;
+		close(tevent.ident);
+	}
 	return ( 0 );
 }
 
@@ -578,7 +563,7 @@ int	Client::onEventWriteSocket( Event& tevent )
 
 int	Client::onEventWriteFile( Event& tevent )
 {
-	Request* req = this->operator[](0);	
+	Request* req = this->getPending();
 	if (!req)
 	{
 		this->writeEOF = true;
@@ -586,23 +571,21 @@ int	Client::onEventWriteFile( Event& tevent )
 	}
 	if ((size_t)tevent.data > 0)
 	{
-		std::string content = req->getBodyHead((size_t)tevent.data * 2);
-		size_t amountToWr = content.size();
-		if ( amountToWr > 0 )
-		{
-			ssize_t actualWr = write(tevent.ident, content.c_str(), amountToWr );
-			if (actualWr > 0)
-				req->eraseBody(actualWr);
-		}
+		ssize_t actualWr = write(tevent.ident, req->getBody().c_str(), BUFFER_SIZE );
+		if (actualWr > 0)
+			req->eraseBody(actualWr);
 	}
 	if (req->isCompleteRecv() && req->getBodyLength() > 0)
+	{
+		close(tevent.ident);
 		this->writeEOF = true;
+	}
 	return 0;
 }
 
 int	Client::onEventWritePipe( Event& tevent )
 {
-	Request* req = this->operator[](0);	
+	Request* req = this->getPending();
 	if (!req)
 	{
 		this->writeEOF = true;
@@ -610,17 +593,15 @@ int	Client::onEventWritePipe( Event& tevent )
 	}
 	if ((size_t)tevent.data > 0)
 	{
-		std::string content = req->getBodyHead((size_t)tevent.data * 2);
-		size_t amountToWr = content.size();
-		if ( amountToWr > 0 )
-		{
-			ssize_t actualWr = write(tevent.ident, content.c_str(), amountToWr );
-			if (actualWr > 0)
-				req->eraseBody(actualWr);
-		}
+		ssize_t actualWr = write(tevent.ident, req->getBody().c_str(), BUFFER_SIZE );
+		if (actualWr > 0)
+			req->eraseBody(actualWr);
 	}
 	if (tevent.flags & EV_EOF)
+	{
+		close(tevent.ident);
 		this->writeEOF = true;
+	}
 	return 0;
 }
 

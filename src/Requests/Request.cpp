@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 12:48:10 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/07 17:10:01 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -857,7 +857,7 @@ size_t	Request::getBodyLength( void ) const
 	return ( this->body.length() );
 }
 
-std::string	Request::getBody( void ) const
+const std::string&	Request::getBody( void ) const
 {
 	return ( this->body );
 }
