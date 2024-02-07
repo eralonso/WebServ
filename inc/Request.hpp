@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/30 17:15:19 by codespace        ###   ########.fr       */
+/*   Updated: 2024/02/07 12:42:41 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,7 @@ public:
 	std::string		getHeaderWithKey(const std::string &key);
 	size_t 			getBodyLength( void ) const;
 	std::string		getBody( void ) const;
+	std::string		getBodyHead( size_t size ) const;
 	size_t			getId( void ) const;
 	std::string		getFilePathWrite( void ) const;
 	std::string		getFilePathRead( void ) const;
@@ -151,6 +152,8 @@ public:
 	bool			isAutoindexAllow( void ) const;
 	std::string		toString( void );
 	void			setBody( const std::string& content );
+	void			appendBody( const std::string& content );
+	void			eraseBody( size_t size );
 	void			setReadyToSend( void );
 	void			setReceivedAll();
 	void			setCgiLaunched( void );

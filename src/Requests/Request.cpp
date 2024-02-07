@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/06 17:36:49 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/07 12:48:10 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -862,6 +862,13 @@ std::string	Request::getBody( void ) const
 	return ( this->body );
 }
 
+std::string	Request::getBodyHead( size_t size ) const
+{
+	if (body.size() < size)
+		size = body.size();
+	return (this->body.substr(0, size));
+}
+
 size_t	Request::getId( void ) const
 {
 	return ( this->id );
@@ -981,6 +988,18 @@ std::string	Request::toString( void )
 void	Request::setBody( const std::string& content )
 {
 	this->body = content;
+}
+
+void	Request::appendBody( const std::string& content )
+{
+	this->body += content;
+}
+
+void	Request::eraseBody( size_t size )
+{
+	if (size > body.size())
+		size = body.size();
+	body.erase(0, size);
 }
 
 void	Request::setReadyToSend( void )

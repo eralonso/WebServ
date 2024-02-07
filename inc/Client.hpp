@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 11:28:03 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/02/07 12:27:24 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ private:
 	size_t				responseBodyRemain;
 	bool				cgiFinished;
 	bool				responseSent;
+	bool				readEOF;
+	bool				writeEOF;
 public:
 	typedef enum e_sendStatus
 	{

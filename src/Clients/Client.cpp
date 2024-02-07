@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 11:52:27 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/02/07 13:12:55 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -506,36 +506,90 @@ int	Client::onEventReadFile( Event& tevent )
 		amountToRead = (size_t)tevent.data;
 	actualRead = read(tevent.ident, buffer, amountToRead);
 	std::string content(buffer, actualRead);
-	this-> += content;
-	printf("EVFILT_READ event called id: '%ld' filt: '%hd' data:'%ld' actual read: '%p'\n", 
-		tevent.ident, tevent.filter, tevent.data, content.c_str());
-	if (tevent.flags & EV_EOF)
-		printf("READ reached EOF\n");
-	return ( 1 );
+	if (this->res)
+		this->res->setBody( this->res->getBody() + content );
+	if(amountToRead - actualRead == 0)
+		this->readEOF = true;
+	return ( 0 );
 }
 
 int	Client::onEventReadPipe( Event& tevent )
 {
-	( void )tevent;
-	return ( 1 );
+	char	buffer[ BUFFER_SIZE ];
+	size_t	amountToRead = BUFFER_SIZE;
+	size_t	actualRead;
+
+	createNewResponse();
+	if (amountToRead > (size_t)tevent.data)
+		amountToRead = (size_t)tevent.data;
+	actualRead = read(tevent.ident, buffer, amountToRead);
+	std::string content(buffer, actualRead);
+	if (this->res)
+		this->res->setBody( this->res->getBody() + content );
+	if (tevent.flags & EV_EOF)
+		this->readEOF = true;
+	return ( 0 );
 }
 
 int	Client::onEventWriteSocket( Event& tevent )
 {
-	( void )tevent;
-	return ( 1 );
+	int			resSendStatus = Client::SENDING;
+
+	(void)tevent;
+	if ( this->res )
+	{
+		this->res->updateResString();
+		resSendStatus = sendResponse( this->res );
+	}
+	return ( 0 );
 }
 
 int	Client::onEventWriteFile( Event& tevent )
 {
-	( void )tevent;
-	return ( 1 );
+	Request* req = this->operator[](0);	
+	if (!req)
+	{
+		this->writeEOF = true;
+		return 0;
+	}
+	if ((size_t)tevent.data > 0)
+	{
+		std::string content = req->getBodyHead((size_t)tevent.data * 2);
+		size_t amountToWr = content.size();
+		if ( amountToWr > 0 )
+		{
+			ssize_t actualWr = write(tevent.ident, content.c_str(), amountToWr );
+			if (actualWr > 0)
+				req->eraseBody(actualWr);
+		}
+	}
+	if (req->isCompleteRecv() && req->getBodyLength() > 0)
+		this->writeEOF = true;
+	return 0;
 }
 
 int	Client::onEventWritePipe( Event& tevent )
 {
-	( void )tevent;
-	return ( 1 );
+	Request* req = this->operator[](0);	
+	if (!req)
+	{
+		this->writeEOF = true;
+		return 0;
+	}
+	if ((size_t)tevent.data > 0)
+	{
+		std::string content = req->getBodyHead((size_t)tevent.data * 2);
+		size_t amountToWr = content.size();
+		if ( amountToWr > 0 )
+		{
+			ssize_t actualWr = write(tevent.ident, content.c_str(), amountToWr );
+			if (actualWr > 0)
+				req->eraseBody(actualWr);
+		}
+	}
+	if (tevent.flags & EV_EOF)
+		this->writeEOF = true;
+	return 0;
 }
 
 int	Client::onEventRead( Event& tevent )
