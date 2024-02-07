@@ -123,7 +123,7 @@ int	Events::loopEvents( void )
 	Event			tevent;
 	EventsTarget	*et = NULL;
 
-	while ( ret > 0 && WSSignals::isSig == false )
+	while ( WSSignals::isSig == false )
 	{
 		ret = kevent( kq, NULL, 0, &tevent, 1, NULL );
 		if (ret > 0)
