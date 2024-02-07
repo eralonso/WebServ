@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/06 16:51:05 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/07 18:37:24 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,15 @@ private:
 	Router( const Router& );
 	Router&	operator=( const Router& );
 public:
-	static int			updateResponse(Response& res, Request& req);
-	static Response* 	getResponse(Request *req);
+	static int			updateResponse(Response& res, Request& req, Client& cli);
+	// static Response* 	getResponse(Request *req);
 	static std::string 	getRequestEmbed(Request& req);
 	static Response* 	formatErrorResponse(Response& res, int error);
 	static Response* 	formatGenericResponse(Response& res, Request& req);
     static bool 		parseCgiHeaderLine(Response &res, Request &req, const std::string &line);
     static bool 		parseCgiHeaders(Response &res, Request &req, const std::string &cgiOut);
-    static bool 		parseCgiOutput(Response &res, Request &req);
-    static Response 	*formatCgiResponse(Response &res, Request &req);
+    static bool 		parseCgiOutput(Response &res, Request &req, Client& cli);
+    static Response 	*formatCgiResponse(Response &res, Request &req, Client& cli);
 	static bool			processRequestHeaderReceived( Request &req );
 	static bool 		processRequestReceived(Request &req);
 	static std::string 	determineContentType(Response &res, Request &req);

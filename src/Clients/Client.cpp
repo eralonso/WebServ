@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 16:46:25 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/07 18:39:33 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,6 +163,11 @@ const ServersVector&	Client::getServers( void ) const
 	return ( *this->servers );
 }
 
+const std::string&	Client::getCgiOutput( void ) const
+{
+	return ( this->cgiOutput );
+}
+
 void	Client::LogId( void ) const
 {
 	Log::Info( "Client id: " + SUtils::longToString( id ) );
@@ -253,49 +258,49 @@ int	Client::manageCompleteRecv( void )
 	return ( count );
 }
 
-int	Client::managePollout( void )
-{
-	Request		*req = NULL;
-	int			resSendStatus = Client::SENDING;
+// int	Client::managePollout( void )
+// {
+// 	Request		*req = NULL;
+// 	int			resSendStatus = Client::SENDING;
 
-	if ( this->res )
-		resSendStatus = sendResponse( this->res );		
-	else if ( ( req = findReadyToSendRequest() ) )
-	{
-		this->res = Router::getResponse( req );
-		if ( this->res )
-		{
-			this->res->updateResString();
-			resSendStatus = sendResponse( this->res );
-		}
-		Requests::eraseRequest();
-	}
-	if ( resSendStatus == Client::SENT )
-		Log::Success( "Response sent [ " + SUtils::longToString( this->socket ) + " ]" );
-	return ( resSendStatus );
-}
+// 	if ( this->res )
+// 		resSendStatus = sendResponse( this->res );		
+// 	else if ( ( req = findReadyToSendRequest() ) )
+// 	{
+// 		this->res = Router::getResponse( req );
+// 		if ( this->res )
+// 		{
+// 			this->res->updateResString();
+// 			resSendStatus = sendResponse( this->res );
+// 		}
+// 		Requests::eraseRequest();
+// 	}
+// 	if ( resSendStatus == Client::SENT )
+// 		Log::Success( "Response sent [ " + SUtils::longToString( this->socket ) + " ]" );
+// 	return ( resSendStatus );
+// }
 
 bool	Client::getKeepAlive( void ) const
 {
 	return ( this->keepAlive );
 }
 
-int	Client::sendResponse( Response *res )
-{
-	int	resSendStatus = Client::ERROR;
+// int	Client::sendResponse( Response *res )
+// {
+// 	int	resSendStatus = Client::ERROR;
 
-	if ( this->socket >= 0 )
-	{
-		resSendStatus = Receptionist::sendResponse( this->socket, res );
-		if ( resSendStatus == Client::ERROR || resSendStatus == Client::SENT )
-		{
-			delete this->res;
-			this->res = NULL;
-			// allowPollWrite( false );
-		}
-	}
-	return ( resSendStatus );
-}
+// 	if ( this->socket >= 0 )
+// 	{
+// 		resSendStatus = Receptionist::sendResponse( this->socket, res );
+// 		if ( resSendStatus == Client::ERROR || resSendStatus == Client::SENT )
+// 		{
+// 			delete this->res;
+// 			this->res = NULL;
+// 			// allowPollWrite( false );
+// 		}
+// 	}
+// 	return ( resSendStatus );
+// }
 
 bool	Client::getLine( std::string& line )
 {
@@ -521,6 +526,8 @@ int	Client::onEventReadFile( Event& tevent )
 		this->res->setBody( this->res->getBody() + content );
 	if(amountToRead - actualRead == 0)
 	{
+		this->res->updateHeadersString();
+		this->setEventWriteSocket();
 		this->readEOF = true;
 		close(tevent.ident);
 	}
@@ -538,10 +545,15 @@ int	Client::onEventReadPipe( Event& tevent )
 		amountToRead = (size_t)tevent.data;
 	actualRead = read(tevent.ident, buffer, amountToRead);
 	std::string content(buffer, actualRead);
-	if (this->res)
-		this->res->setBody( this->res->getBody() + content );
+	this->cgiOutput += content;
 	if (tevent.flags & EV_EOF)
 	{
+		if (this->res && this->front())
+		{
+			Router::updateResponse( *this->res, *this->front(), *this );
+			this->res->updateHeadersString();
+		}
+		this->setEventWriteSocket();
 		this->readEOF = true;
 		close(tevent.ident);
 	}
@@ -550,13 +562,21 @@ int	Client::onEventReadPipe( Event& tevent )
 
 int	Client::onEventWriteSocket( Event& tevent )
 {
-	int			resSendStatus = Client::SENDING;
+	int			resSendStatus;
 
 	(void)tevent;
 	if ( this->res )
 	{
-		this->res->updateResString();
-		resSendStatus = sendResponse( this->res );
+		resSendStatus = this->res->sendResponse( this->socket );
+		if ( resSendStatus == Response::ERROR || resSendStatus == Response::SENT )
+		{
+			delete this->res;
+			this->res = NULL;
+			if ( this->front()->isReadyToSend() )
+				this->eraseRequest();
+			//TODO See if is time to remove the client
+				
+		}
 	}
 	return ( 0 );
 }

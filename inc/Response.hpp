@@ -6,12 +6,15 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:07 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/24 13:00:12 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/07 18:14:32 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _RESPONSE_HPP_
 # define _RESPONSE_HPP_
+
+# include <unistd.h>
+# include <sys/socket.h>
 
 # include <string>
 
@@ -21,6 +24,15 @@
 
 class Response
 {
+public:
+	typedef enum e_sendStatus
+	{
+		ERROR,
+		GETTING_DATA,
+		SENDING_HEADERS,
+		SENDING_BODY,
+		SENT
+	} t_sendStatus;
 private:
 	std::string		server;
 	std::string		protocol;
@@ -29,10 +41,12 @@ private:
 	unsigned int	status;
 	std::string		query;
 	Headers			headers;
+	std::string		headersString;
 	std::string		body;
 	bool			isCgi;
 	size_t			sendPos;
 	std::string		resString;
+	t_sendStatus	sendState;
 public:
 	Response( void );
 	~Response( void );
@@ -65,7 +79,9 @@ public:
 	size_t			getSendPos( void ) const;
 	const std::string&	getResString( void ) const;
 	std::string		toString( void ) const;
+	void			updateHeadersString( void );
 	void			updateResString( void );
+	int				sendResponse( socket_t socket );
 };
 
 #endif

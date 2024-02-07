@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 15:19:37 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/07 18:39:45 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ private:
 	size_t				id;
 	size_t				pending;
 	std::string			received;
+	std::string			cgiOutput;
 	bool				keepAlive;
 	struct sockaddr_in	addr;
 	Response			*res;
@@ -76,9 +77,9 @@ public:
 	Request*					findReadyToSendRequest( void );
 	int							manageRecv( std::string recv );
 	int							manageCompleteRecv( void );
-	int							managePollout( void );
+	// int							managePollout( void );
 	bool						getKeepAlive( void ) const;
-	int							sendResponse( Response *res );
+	// int							sendResponse( Response *res );
 	bool						getLine( std::string& line );
 	size_t						getNChars( std::string& data, size_t n );
 	size_t						getPendingSize( void ) const;
@@ -95,6 +96,7 @@ public:
 	int							getPipeCgiWrite( void ) const;
 	int							getPipeCgiRead( void ) const;
 	socket_t					getSocket( void ) const;
+	const std::string&			getCgiOutput( void ) const;
 	bool						isResponsePendingToSend( void ) const;
 	void						setFileFd( int fd );
 	void						setPipeCgiWrite( int fd );

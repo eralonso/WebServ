@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/06 18:16:27 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/07 17:34:09 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,29 +97,29 @@ const ServersVector&	Receptionist::getServers( void ) const
 	return ( this->_servers );
 }
 
-int	Receptionist::sendResponse( socket_t connected, Response *res )
-{
-	size_t		threshold;
-	const char	*str;
-	size_t		size;
-	int			ret;
-	size_t		pos;
+// int	Receptionist::sendResponse( socket_t socket, Response *res )
+// {
+// 	size_t		threshold;
+// 	const char	*str;
+// 	size_t		size;
+// 	int			ret;
+// 	size_t		pos;
 
-	pos = res->getSendPos();
-	size = res->getResString().size() - pos; 
-	str = res->getResString().c_str();
-	threshold = size > SEND_BUFFER_SIZE ? SEND_BUFFER_SIZE : size;
-	if ( ( ret = send( connected, str + pos, threshold, MSG_DONTWAIT ) < 0 ) )
-	{
-		Log::Error( "Failed to send response with code: " + SUtils::longToString( ret ) );
-		return ( Client::ERROR );
-	}
-	// Log::Info( "SendResponse[" + res->getResString() + "]" );
-	pos = res->increaseSendPos( threshold );
-	if ( pos >= res->getResString().size() )
-		return ( Client::SENT );
-	return ( Client::SENDING );
-}
+// 	pos = res->getSendPos();
+// 	size = res->getResString().size() - pos; 
+// 	str = res->getResString().c_str();
+// 	threshold = size > SEND_BUFFER_SIZE ? SEND_BUFFER_SIZE : size;
+// 	if ( ( ret = send( socket, str + pos, threshold, MSG_DONTWAIT ) < 0 ) )
+// 	{
+// 		Log::Error( "Failed to send response with code: " + SUtils::longToString( ret ) );
+// 		return ( Client::ERROR );
+// 	}
+// 	// Log::Info( "SendResponse[" + res->getResString() + "]" );
+// 	pos = res->increaseSendPos( threshold );
+// 	if ( pos >= res->getResString().size() )
+// 		return ( Client::SENT );
+// 	return ( Client::SENDING );
+// }
 
 int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
 {

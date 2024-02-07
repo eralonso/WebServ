@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 11:12:59 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/02/07 18:36:57 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,26 +31,26 @@ Router&	Router::operator=( const Router& )
 	return ( *this );
 }
 
-int	Router::updateResponse( Response &res, Request &req )
+int	Router::updateResponse( Response &res, Request &req, Client& cli )
 {
 	res.setServer( SERVER );
 	if ( req.getUseCgi() )
-		formatCgiResponse( res,req );
+		formatCgiResponse( res,req, cli );
 	else
 		formatGenericResponse( res, req );
 	return ( 0 );
 }
 
-Response	*Router::getResponse( Request *req )
-{
-	Response	*res = new Response;
+// Response	*Router::getResponse( Request *req )
+// {
+// 	Response	*res = new Response;
 
-	if ( !req )
-		formatErrorResponse( *res, HTTP_INTERNAL_SERVER_ERROR_CODE );
-	else
-		updateResponse( *res, *req );
-	return ( res );
-}
+// 	if ( !req )
+// 		formatErrorResponse( *res, HTTP_INTERNAL_SERVER_ERROR_CODE );
+// 	else
+// 		updateResponse( *res, *req );
+// 	return ( res );
+// }
 
 std::string	Router::getRequestEmbed( Request &req )
 {
@@ -272,9 +272,9 @@ bool	Router::parseCgiHeaders (Response& res, Request& req, const std::string& cg
 	return (it == ite);
 }
 
-bool	Router::parseCgiOutput (Response& res, Request& req)
+bool	Router::parseCgiOutput (Response& res, Request& req, Client& cli)
 {
-	const std::string& cgiOut = req.getCgiOutput();
+	const std::string& cgiOut = cli.getCgiOutput();
 	std::string	body;
 	bool nph = req.isDocumentNPH ();
 	if (nph)
@@ -286,13 +286,13 @@ bool	Router::parseCgiOutput (Response& res, Request& req)
 	return (parseCgiHeaders( res, req, cgiOut ));
 }
 
-Response	*Router::formatCgiResponse( Response& res, Request& req )
+Response	*Router::formatCgiResponse( Response& res, Request& req, Client& cli )
 {
 	res.setProtocol( req.getProtocol() );
 	res.setStatus( req.getError() );
 	res.setMethod( req.getMethod() );
 	if ( req.getError() < MIN_ERROR_CODE )
-		parseCgiOutput(res, req);
+		parseCgiOutput(res, req, cli);
 	else
 	{
 		res.appendHeader( Header( "Content-Type", "text/html" ) );
