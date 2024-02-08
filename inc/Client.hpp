@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 18:39:45 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/08 10:36:09 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,7 @@ public:
 	int							onEventRead( Event& tevent );
 	int							onEventWrite( Event& tevent );
 	int							onEvent( Event& tevent );
+	static int					readRequest( socket_t clientFd, std::string& readed );
 };
 
 #endif

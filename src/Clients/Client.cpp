@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 18:39:33 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/08 10:39:01 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -499,7 +499,7 @@ int	Client::onEventReadSocket( Event& tevent )
 		this->receptionist->eraseClient( this );
 		return ( 0 );
 	}
-	amount = Receptionist::readRequest( tevent.ident, readed );
+	amount = Client::readRequest( tevent.ident, readed );
 	if ( amount < 0 )
 	{
 		this->receptionist->eraseClient( this );
@@ -664,4 +664,18 @@ int	Client::onEvent( Event& tevent )
 	else if ( tevent.filter & EVFILT_TIMER )
 		return ( onEventProcTimeout( tevent ) );
 	return ( 0 );
+}
+
+int	Client::readRequest( socket_t clientFd, std::string& readed )
+{
+	char	buffer[ BUFFER_SIZE + 1 ];
+	ssize_t	amount;
+
+	amount = recv( clientFd, buffer, BUFFER_SIZE, MSG_DONTWAIT );
+	Log::Info( "amount: " + SUtils::longToString( amount ) );
+	Log::Info( "recv errno: " + SUtils::longToString( errno ) );
+	if ( amount < 0 )
+		return ( -1 );
+	readed += std::string(buffer, amount);
+	return ( amount );
 }

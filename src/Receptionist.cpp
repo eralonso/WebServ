@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 17:34:09 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/08 10:40:10 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,19 +121,19 @@ const ServersVector&	Receptionist::getServers( void ) const
 // 	return ( Client::SENDING );
 // }
 
-int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
-{
-	char	buffer[ BUFFER_SIZE + 1 ];
-	ssize_t	amount;
+// int	Receptionist::readRequest( socket_t clientFd, std::string& readed )
+// {
+// 	char	buffer[ BUFFER_SIZE + 1 ];
+// 	ssize_t	amount;
 
-	amount = recv( clientFd, buffer, BUFFER_SIZE, MSG_DONTWAIT );
-	Log::Info( "amount: " + SUtils::longToString( amount ) );
-	Log::Info( "recv errno: " + SUtils::longToString( errno ) );
-	if ( amount < 0 )
-		return ( -1 );
-	readed += std::string(buffer, amount);
-	return ( amount );
-}
+// 	amount = recv( clientFd, buffer, BUFFER_SIZE, MSG_DONTWAIT );
+// 	Log::Info( "amount: " + SUtils::longToString( amount ) );
+// 	Log::Info( "recv errno: " + SUtils::longToString( errno ) );
+// 	if ( amount < 0 )
+// 		return ( -1 );
+// 	readed += std::string(buffer, amount);
+// 	return ( amount );
+// }
 
 // int	Receptionist::addNewClient( socket_t serverFd )
 // {

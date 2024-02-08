@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:43:42 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 10:31:33 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/08 10:39:52 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,8 @@ public:
 											struct sockaddr_in& info, \
 		   									socket_t& serverFd );
 	int				mainLoop( void );
-	static int		sendResponse( socket_t connected, Response *res );
-	static int		readRequest( socket_t clientFd, std::string& readed );
+	// static int		sendResponse( socket_t connected, Response *res );
+	// static int		readRequest( socket_t clientFd, std::string& readed );
 	// int				addNewClient( socket_t serverFd );
 	// void			manageClient( socket_t clientFd );
 	// void			manageClientRead( socket_t clientFd, Client *cli );
