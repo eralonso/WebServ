@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:20:14 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 13:23:36 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/08 16:48:10 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,11 +190,20 @@ int	Client::readRequest( socket_t clientFd, std::string& readed )
 	ssize_t	amount;
 
 	amount = recv( clientFd, buffer, BUFFER_SIZE, MSG_DONTWAIT );
+	Log::Info("on recv on [" + SUtils::longToString(clientFd) + "]");
 	Log::Info( "amount: " + SUtils::longToString( amount ) );
 	Log::Info( "recv errno: " + SUtils::longToString( errno ) );
-	if ( amount < 0 )
-		return ( -1 );
-	readed += std::string(buffer, amount);
+	if (amount > 0)
+	{
+		std::string content(buffer, amount);
+		Log::Info("content read on [" + SUtils::longToString(clientFd) 
+			+ "]: \n----------------------------\n"
+			+ content
+			+ "-------------------------");
+		if ( amount < 0 )
+			return ( -1 );
+		readed += content;
+	}
 	return ( amount );
 }
 

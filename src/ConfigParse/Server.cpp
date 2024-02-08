@@ -6,11 +6,12 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2024/02/06 18:35:52 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/08 16:42:32 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Server.hpp>
+#include <Receptionist.hpp>
 
 Server::Server( void ): EventsTarget( NULL ), _directives( NULL ), \
 							_socketFd( 0 ), receptionist( NULL ) {}
@@ -359,13 +360,14 @@ int	Server::onNewClient( void )
 	clientFd = Sockets::acceptConnection( this->_socketFd, info );
 	if ( clientFd < 0 )
 		return ( -1 );
-	// if ( !this->receptionist->newClient( clientFd, this->evs, \
-	// 		&this->receptionist->getServers(), info, this->receptionist ) )
-	// {
-	// 	Log::Error( "Failed to append Request" );
-	// 	close( clientFd );
-	// 	return ( -1 );
-	// }
+	fcntl( clientFd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
+	if ( !this->receptionist->newClient(clientFd, this->evs, \
+			&this->receptionist->getServers(), info, this->receptionist ) )
+	{
+		Log::Error( "Failed to append Request" );
+		close( clientFd );
+		return ( -1 );
+	}
 	return ( 1 );
 }
 

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 14:11:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 14:17:37 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/08 16:04:57 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ bool	Router::processGetRequest( Request& req )
 	int			fd;
 	Client		*cli;
 
+	Log::Info("processGetRequest");
 	cli = req.getClient();
 	error = getFileToRead( req, path );
 	if ( error == EXIT_SUCCESS )
