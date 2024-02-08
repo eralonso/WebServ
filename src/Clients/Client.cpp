@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 10:39:01 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/08 11:10:06 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,12 +177,9 @@ Request	*Client::findRecvRequest( void )
 {
 	Request				*req = NULL;
 
-	if ( this->size() > 0 )
-	{
-		req = front();
-		if ( req && req->isReceiving() )
-			return ( req );
-	}
+	req = this->getPending();
+	if ( req && req->isReceiving() )
+		return ( req );
 	return ( NULL );
 }
 
@@ -190,12 +187,9 @@ Request	*Client::findCompleteRecvRequest( void )
 {
 	Request				*req = NULL;
 
-	if ( this->size() > 0 )
-	{
-		req = front();
-		if ( req && req->isCompleteRecv() )
-			return ( req );
-	}
+	req = this->getPending();
+	if ( req && req->isCompleteRecv() )
+		return ( req );
 	return ( NULL );
 }
 
@@ -203,12 +197,9 @@ Request	*Client::findReadyToSendRequest( void )
 {
 	Request				*req;
 
-	if ( this->size() > 0 )
-	{
-		req = front();
-		if ( req && req->isReadyToSend() )
-			return ( req );
-	}
+	req = this->getPending();
+	if ( req && req->isReadyToSend() )
+		return ( req );
 	return ( NULL );
 }
 
@@ -225,7 +216,7 @@ int	Client::manageRecv( std::string recv )
 		req = findRecvRequest();
 		if ( req == NULL )
 		{
-			req = Requests::appendRequest( this );
+			req = appendRequest( this );
 			if ( req == NULL )
 				fail = true;
 		}
@@ -499,7 +490,7 @@ int	Client::onEventReadSocket( Event& tevent )
 		this->receptionist->eraseClient( this );
 		return ( 0 );
 	}
-	amount = Client::readRequest( tevent.ident, readed );
+	amount = readRequest( tevent.ident, readed );
 	if ( amount < 0 )
 	{
 		this->receptionist->eraseClient( this );

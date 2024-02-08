@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:58:31 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 16:16:05 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/08 11:01:47 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,10 +81,7 @@ bool	Requests::checkPendingToSend( void )
 
 Request*	Requests::getPending( void )
 {
-	size_t	pos = this->size();
-	Request	*r = NULL;
-
-	if ( pos > 0 )
-		r = this->front();
-	return ( r );
+	if ( this->size() > 0 )
+		return (this->front());
+	return ( NULL );
 }
