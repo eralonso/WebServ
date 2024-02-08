@@ -6,7 +6,7 @@
 #    By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/22 10:08:41 by eralonso          #+#    #+#              #
-#    Updated: 2024/02/08 12:28:27 by omoreno-         ###   ########.fr        #
+#    Updated: 2024/02/08 14:15:57 by omoreno-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -62,10 +62,14 @@ FILES		:=	main Sockets WSSignals Receptionist \
 				TreeSplit Utils SplitString FolderLs ConfigParser \
 				Directives DirectivesParserInit DirectivesParser ActionMask \
 				CGIService ServerInit Server LocationInit Location Listen \
-				ClientMaxBodySize ErrorPage Client Clients Header Headers Request \
-				Requests Response StatusCodes \
-				CgiExecutor CgisMap Router ServerFinder ConfigApply ConfigUtils \
-				MimeMap EventsTarget Events
+				ClientMaxBodySize ErrorPage \
+				Client ClientGetters ClientSetters ClientEvsSet ClientOnEvs \
+				ClientFeats Clients Header Headers \
+				Request RequestGetters RequestSetters RequestStMach \
+				RequestParse RequestCnfg Requests Response StatusCodes \
+				CgiExecutor CgisMap Router RouterCgi RouterProcess \
+				ServerFinder ConfigApply ConfigUtils MimeMap \
+				EventsTarget Events
 
 #<---------------------------------->LANG<---------------------------------->#
 LANG		:=	CPP
