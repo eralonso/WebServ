@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PendingCgiTasks.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:32:31 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/30 11:29:46 by codespace        ###   ########.fr       */
+/*   Updated: 2024/02/08 10:22:16 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,12 @@
 PendingCgiTasks::PendingCgiTasks( void ) {}
 
 PendingCgiTasks::PendingCgiTasks( const PendingCgiTasks &b ): \
-							std::map< pid_t,PendingCgiTask >( b ) {}
+							CgiTaskMap( b ) {}
 
 PendingCgiTasks& PendingCgiTasks::operator=( const PendingCgiTasks& b )
 {
 	if ( this != &b )
-		std::map< pid_t,PendingCgiTask >::operator=( b );
+		CgiTaskMap::operator=( b );
 	return ( *this );
 }
 
@@ -29,7 +29,7 @@ PendingCgiTasks::~PendingCgiTasks( void ) {}
 
 int	PendingCgiTasks::appendTask( PendingCgiTask task )
 {
-	this->insert( std::pair< pid_t, PendingCgiTask >( task.getPid(), task ) );
+	this->insert( CgiTaskMapPair( task.getPid(), task ) );
 	return ( 0 );
 }
 

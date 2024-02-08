@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 11:18:34 by omoreno-          #+#    #+#             */
-/*   Updated: 2023/12/20 18:59:37 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/08 10:04:59 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,10 @@
 # include <map>
 # include <string>
 
-class CgisMap: std::map< std::string, std::string >
+typedef std::map< std::string, std::string > CgiDict;
+typedef std::pair< std::string, std::string > CgiDictPair;
+
+class CgisMap: CgiDict
 {
 private:
 public:

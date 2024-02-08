@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PendingCgiTasks.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 11:30:49 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/03 16:57:48 by codespace        ###   ########.fr       */
+/*   Updated: 2024/02/08 10:25:29 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,10 @@
 
 # include "PendingCgiTask.hpp"
 
-class PendingCgiTasks: public std::map< pid_t, PendingCgiTask >
+typedef std::map< pid_t, PendingCgiTask >	CgiTaskMap;
+typedef std::pair< pid_t, PendingCgiTask >	CgiTaskMapPair;
+
+class PendingCgiTasks: public CgiTaskMap
 {
 private:
 public:

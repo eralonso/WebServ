@@ -32,8 +32,8 @@ bool	Events::isCreate( void ) const
 
 int	Events::setEventFileSaved( EventsTarget* et, int fd )
 {
-	int				ret;
-	struct kevent	fileEvent;
+	int			ret;
+	Event		fileEvent;
 
 	EV_SET(&fileEvent, fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, NOTE_WRITE, 0, et);
 	ret = kevent(kq, &fileEvent, 1, NULL, 0, NULL);
@@ -44,8 +44,8 @@ int	Events::setEventFileSaved( EventsTarget* et, int fd )
 
 int	Events::setEventWrite( EventsTarget* et, int fd )
 {
-	int				ret;
-	struct kevent	writeEvent;
+	int			ret;
+	Event		writeEvent;
 
 	EV_SET(&writeEvent, fd, EVFILT_WRITE, EV_ADD | EV_EOF, 0, 0, et);
 	ret = kevent(kq, &writeEvent, 1, NULL, 0, NULL);
@@ -56,8 +56,8 @@ int	Events::setEventWrite( EventsTarget* et, int fd )
 
 int	Events::setEventRead( EventsTarget* et, int fd )
 {
-	int				ret;
-	struct kevent	readEvent;
+	int			ret;
+	Event		readEvent;
 
 	EV_SET(&readEvent, fd, EVFILT_READ, EV_ADD | EV_EOF, 0, 0, et);
 	ret = kevent(kq, &readEvent, 1, NULL, 0, NULL);
@@ -68,8 +68,8 @@ int	Events::setEventRead( EventsTarget* et, int fd )
 
 int	Events::setEventTimer( EventsTarget* et, int ident, long period, bool oneShot )
 {
-	int				ret;
-	struct kevent	timeEvent;
+	int			ret;
+	Event		timeEvent;
 
 	EV_SET(&timeEvent, ident, EVFILT_TIMER, EV_ADD | EV_CLEAR | \
 			(oneShot ? EV_ONESHOT : 0), 0, period, et);
@@ -81,8 +81,8 @@ int	Events::setEventTimer( EventsTarget* et, int ident, long period, bool oneSho
 
 int	Events::setEventProcExit( EventsTarget* et, pid_t pid, long timeout )
 {
-	int				ret;
-	struct kevent	procEvent[ 2 ];
+	int			ret;
+	Event		procEvent[ 2 ];
 
 	EV_SET(procEvent, pid, EVFILT_PROC, EV_ADD | EV_CLEAR, NOTE_EXIT, 0, et);
 	EV_SET(procEvent + 1, pid, EVFILT_TIMER, EV_ADD | EV_CLEAR | EV_ONESHOT, \
@@ -95,8 +95,8 @@ int	Events::setEventProcExit( EventsTarget* et, pid_t pid, long timeout )
 
 int		Events::enableEventRead( EventsTarget* et, int fd, bool enable )
 {
-	int				ret;
-	struct kevent	readEvent;
+	int			ret;
+	Event		readEvent;
 
 	EV_SET(&readEvent, fd, EVFILT_READ, EV_ADD | EV_EOF | ( enable ? EV_ENABLE : EV_DISABLE ), 0, 0, et);
 	ret = kevent(kq, &readEvent, 1, NULL, 0, NULL);
@@ -107,8 +107,8 @@ int		Events::enableEventRead( EventsTarget* et, int fd, bool enable )
 
 int		Events::enableEventWrite( EventsTarget* et, int fd, bool enable )
 {
-	int				ret;
-	struct kevent	writeEvent;
+	int			ret;
+	Event		writeEvent;
 
 	EV_SET(&writeEvent, fd, EVFILT_WRITE, EV_ADD | EV_EOF | ( enable ? EV_ENABLE : EV_DISABLE ), 0, 0, et);
 	ret = kevent(kq, &writeEvent, 1, NULL, 0, NULL);
@@ -119,8 +119,8 @@ int		Events::enableEventWrite( EventsTarget* et, int fd, bool enable )
 
 int		Events::deleteEventProcExit( EventsTarget* et, pid_t pid )
 {
-	int				ret;
-	struct kevent	procEvent;
+	int			ret;
+	Event		procEvent;
 
 	EV_SET(&procEvent, pid, EVFILT_PROC, EV_DELETE, NOTE_EXIT, 0, et);
 	ret = kevent(kq, &procEvent, 1, NULL, 0, NULL);
@@ -131,8 +131,8 @@ int		Events::deleteEventProcExit( EventsTarget* et, pid_t pid )
 
 int		Events::deleteEventProcTimeout( EventsTarget* et, pid_t pid )
 {
-	int				ret;
-	struct kevent	procEvent;
+	int			ret;
+	Event		procEvent;
 
 	EV_SET(&procEvent, pid, EVFILT_TIMER, EV_DELETE, \
 		NOTE_SECONDS, 0, et);

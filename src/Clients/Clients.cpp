@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:50 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/06 18:29:58 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/08 10:19:06 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,12 @@ Clients::~Clients( void )
 	}
 }
 
-Clients::Clients( const Clients& c ): std::map< socket_t, Client * >( c ) {}
+Clients::Clients( const Clients& c ): ClientMap( c ) {}
 
 Clients&	Clients::operator=( const Clients& c )
 {
 	if ( this != &c )
-		std::map< socket_t, Client * >::operator=( c );
+		ClientMap::operator=( c );
 	return ( *this );
 }
 
@@ -40,7 +40,7 @@ Client	*Clients::newClient( socket_t socket, Events *bEvs, \
 
 	if ( !cli )
 		return ( NULL );
-	this->insert( std::pair< socket_t, Client * >( socket, cli ) );
+	this->insert( ClientMapPair( socket, cli ) );
 	cli->setEventReadSocket();
 	return ( cli );
 }
@@ -52,7 +52,7 @@ Client	*Clients::newClient( socket_t socket, Events *bEvs, \
 //
 //	if ( !cli )
 //		return ( NULL );
-//	this->insert( std::pair< socket_t, Client * >( socket, cli ) );
+//	this->insert( ClientMapPair( socket, cli ) );
 //	return ( cli );
 //}
 
