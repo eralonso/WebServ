@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 12:26:42 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/08 12:32:31 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@
 #include <unistd.h>
 #include "Client.hpp"
 #include "CgiExecutor.hpp"
-
-// PendingCgiTasks	CgiExecutor::pendingTasks;
 
 CgiExecutor::CgiExecutor( Request& request ): request( request )
 {
@@ -145,13 +143,6 @@ bool CgiExecutor::checkFileReadable(std::string file)
 	return (res);
 }
 
-// std::string	CgiExecutor::getChildOutput( PendingCgiTask *task )
-// {
-// 	if ( !task )
-// 		return ( "" );
-// 	return ( task->getTaskOutput() );
-// }
-
 int	CgiExecutor::execute( void )
 {
 	pid_t	pid;
@@ -178,210 +169,3 @@ void	CgiExecutor::pushEnvVar( const std::string& variable, \
 {
 	this->envVars.push_back( variable + "=" + value );
 }
-
-//void	CgiExecutor::onParentProcess( pid_t childPid )
-//{
-//	std::string	body = request.getBody();
-//	// char		*reqBody = ( char * )body.c_str();
-//	size_t		reqBodySize = body.length();
-//	size_t		i;
-//	size_t		chunkSize = 1000;
-//
-//
-//	// Log::Info("CgiExecutor::onParentProcess start");
-//	close( this->fdToChild[ FDIN ] );
-//	close( this->fdFromChild[ FDOUT ] );
-//	i = 0;
-//	while (i < reqBodySize)
-//	{
-//		if ((reqBodySize - i) < chunkSize)
-//			chunkSize = reqBodySize - i;
-//		std::string chunk = body.substr(i, chunkSize);
-//		const char * chunkStr = chunk.c_str();
-//		// Log::Info("Size: " + SUtils::longToString(chunkSize));
-//		// write(1, chunkStr, chunkSize);
-//		if ( write( this->fdToChild[ FDOUT ], chunkStr, chunkSize ) < 0 )
-//			break ;
-//		// Log::Info("fd: " + SUtils::longToString(this->fdToChild[ FDOUT ]));
-//		i += chunkSize;
-//	}
-//	// Log::Info("CgiExecutor::onParentProcess passed write");
-//	close( this->fdToChild[ FDOUT ] );
-//	PendingCgiTask task( childPid, request, fdFromChild[ FDIN ] );
-//	CgiExecutor::pendingTasks.appendTask( task );
-//	// Log::Error("CgiExecutor::onParentProcess pid " + SUtils::longToString( childPid )
-//	// 	+ " timestamp: " + SUtils::longToString( std::clock() ) );
-//	attendPendingCgiTasks();
-//}
-
-// PendingCgiTask	*CgiExecutor::getCompletedTask( void )
-// {
-// 	pid_t	pid;
-	
-// 	pid = waitpid( -1, NULL, WNOHANG );
-// 	if ( pid < 1 )
-// 		return ( NULL );
-// 	if ( CgiExecutor::pendingTasks.empty() )
-// 		return ( NULL );
-// 	PendingCgiTask& tk = CgiExecutor::pendingTasks[ pid ];
-// 	if ( !tk.isMarkedToDelete() )
-// 		return ( &tk );
-// 	return ( NULL );
-// }
-
-// PendingCgiTask	*CgiExecutor::getTimeoutedTask( double to )
-// {
-// 	PendingCgiTasks::iterator	it = CgiExecutor::pendingTasks.begin();
-// 	PendingCgiTasks::iterator	ite = CgiExecutor::pendingTasks.end();
-
-// 	if ( CgiExecutor::pendingTasks.empty() )
-// 		return ( NULL );
-// 	while ( it != ite )
-// 	{
-// 		if ( !it->second.isMarkedToDelete() && it->second.isTimeout( to, false ) )
-// 			return ( &( it->second ) );
-// 		it++;
-// 	}
-// 	return ( NULL );
-// }
-
-// PendingCgiTask *CgiExecutor::getMarkedToDeleteTask( void )
-// {
-// 	PendingCgiTasks::iterator it = CgiExecutor::pendingTasks.begin();
-// 	PendingCgiTasks::iterator ite = CgiExecutor::pendingTasks.end();
-
-// 	if ( CgiExecutor::pendingTasks.empty() )
-// 		return ( NULL );
-// 	while ( it != ite )
-// 	{
-// 		if ( it->second.isMarkedToDelete() )
-// 			return ( &( it->second ) );
-// 		it++;
-// 	}
-// 	return ( NULL );
-// }
-
-// size_t	CgiExecutor::purgeTimeoutedTasks( double to, size_t max )
-// {
-// 	size_t			i = 0;
-// 	PendingCgiTask	*task = NULL;
-
-// 	if ( CgiExecutor::pendingTasks.empty() )
-// 		return 0;
-// 	while ( i < max && ( task = getTimeoutedTask( to ) ) )
-// 	{
-// 		CgiExecutor::pendingTasks.eraseTask( task->getPid() );
-// 		i++;
-// 	}
-// 	return ( i );
-// }
-
-// void	CgiExecutor::setCompletedRequest( Client *cli )
-// {
-// 	if (cli)
-// 		cli->setCompletedRequest();
-// 	// Request	*req = cli->getPending();
-// 	// if (req)
-// 	// {
-// 	// 	req->setError( HTTP_OK_CODE );
-// 	// 	req->setReadyToSend();
-// 	// }
-// }
-
-// void	CgiExecutor::checkCompletedTasks( void )
-// {
-// 	PendingCgiTask	*pTask = NULL;
-// 	Client			*cli = NULL;
-// 	Request			*req = NULL;
-
-// 	while ( ( pTask = CgiExecutor::getCompletedTask() ) )
-// 	{
-// 		// Log::Info( "Cgi Task completed" );
-// 		req = &pTask->getRequest();
-// 		pTask->applyTaskOutputToReq();
-// 		CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
-// 		cli = req->getClient();
-// 		setCompletedRequest(cli);
-// 		// req->setError( HTTP_OK_CODE );
-// 		// req->setReadyToSend();
-// 		// if ( cli != NULL )
-// 		// 	cli->allowPollWrite( true );
-// 	}
-// }
-
-// void	CgiExecutor::setTimeoutedRequest( Client *cli )
-// {
-// 	if (cli)
-// 		cli->setTimeoutedRequest();
-// 		// req.setError( HTTP_GATEWAY_TIMEOUT_CODE );
-// 		// Router::checkErrorRedir( req.getError(), req );
-// 		// Router::checkErrorBody( req, req.getError() );
-// 		// req.setReadyToSend();
-// 		// cli = req.getClient();		
-
-// }
-
-// void	CgiExecutor::checkTimeoutedTasks( void )
-// {
-// 	PendingCgiTask	*pTask = NULL;
-// 	Client			*cli = NULL;
-
-// 	if ( ( pTask = CgiExecutor::getTimeoutedTask( CGI_TO ) ) != NULL )
-// 	{
-// 		Request& req = pTask->getRequest();
-// 		pTask->isTimeout( CGI_TO, true );
-// 		// Log::Error( "Timeout of Req: " + SUtils::longToString( req.getId() )
-// 		// 	+ " process id: " + SUtils::longToString( pTask->getPid() ) );
-// 		pTask->killPendingTask();
-// 		CgiExecutor::pendingTasks.eraseTask( pTask->getPid() );
-// 		cli = req.getClient();		
-// 		setTimeoutedRequest(cli);
-// 		// req.setError( HTTP_GATEWAY_TIMEOUT_CODE );
-// 		// Router::checkErrorRedir( req.getError(), req );
-// 		// Router::checkErrorBody( req, req.getError() );
-// 		// req.setReadyToSend();
-// 		// if ( cli != NULL )
-// 		// 	cli->allowPollWrite( true );
-// 	}
-// }
-
-// void	CgiExecutor::checkMarkedToDeleteTasks( void )
-// {
-// 	PendingCgiTask	*pTask = NULL;
-
-// 	if ( CgiExecutor::pendingTasks.size() > 0 \
-// 		&& ( pTask = CgiExecutor::getMarkedToDeleteTask() ) != NULL ) 
-// 	{
-// 		Log::Error( "Delete Marked pending task for pid: " \
-// 			+ SUtils::longToString( pTask->getPid() ) );
-// 		CgiExecutor::pendingTasks.eraseTask( pTask->getPid() );
-// 	}
-// }
-
-// void	CgiExecutor::attendPendingCgiTasks( void )
-// {
-// 	checkCompletedTasks();
-// 	checkTimeoutedTasks();
-// 	checkMarkedToDeleteTasks();
-// }
-
-// size_t	CgiExecutor::getPendingTasksSize( void )
-// {
-// 	return ( CgiExecutor::pendingTasks.size() );
-// }
-
-// int CgiExecutor::purgeDiscardedRequest(Request *req)
-// {
-// 	pendingTasks.eraseTask(req);
-//     return 0;
-// }
-
-// pid_t CgiExecutor::findClientPendingPid(Client *cli)
-// {
-// 	pid_t pid = pendingTasks.findPid(cli);
-// 	if (pid > 0)
-// 		return (pid);
-//     return 0;
-// }
-
-

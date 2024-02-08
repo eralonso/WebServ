@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:34 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 12:26:59 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/08 12:32:54 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@
 
 # include "Utils.hpp"
 # include "Request.hpp"
-// # include "PendingCgiTask.hpp"
-// # include "PendingCgiTasks.hpp"
 # include "Router.hpp"
 # include "Client.hpp"
 # include <ServerFinder.hpp>
@@ -37,7 +35,6 @@
 class CgiExecutor
 {
 private:
-	// static PendingCgiTasks	pendingTasks;
 	std::string				binary;
 	std::string				argument;
 	StringVector			envVars;
@@ -48,7 +45,6 @@ private:
 	char					**childEnv;
 	CgiExecutor( const CgiExecutor& b);
 	CgiExecutor& operator=( const CgiExecutor& );
-	// static std::string		getChildOutput(PendingCgiTask *task);
 	void					onFailFork(void);
 	void					onFailToChildPipeOpen(void);
 	void					onFailFromChildPipeOpen(void);
@@ -63,19 +59,6 @@ public:
 	int						execute( void );
 	void					pushEnvVar( const std::string& variable, \
 								const std::string& value );
-	// static PendingCgiTask	*getCompletedTask( void );
-	// static PendingCgiTask	*getTimeoutedTask( double to );
-	// static PendingCgiTask	*getMarkedToDeleteTask( void );
-	// static size_t			purgeTimeoutedTasks( double to, size_t max );
-	// static void				setCompletedRequest(Client *cli);
-	// static void				setTimeoutedRequest(Client *cli);
-	// static void 			attendPendingCgiTasks(void);
-	// static void				checkCompletedTasks( void );
-	// static void				checkTimeoutedTasks( void );
-	// static void				checkMarkedToDeleteTasks( void );
-	// static size_t			getPendingTasksSize( void );
-	// static int				purgeDiscardedRequest(Request *req);
-	// static pid_t			findClientPendingPid(Client * cli);
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:50 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 10:19:06 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/08 12:38:16 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,17 +44,6 @@ Client	*Clients::newClient( socket_t socket, Events *bEvs, \
 	cli->setEventReadSocket();
 	return ( cli );
 }
-
-//Client	*Clients::newClient( socket_t socket, WSPoll& polls, \
-//							ServersVector& servers, struct sockaddr_in& info )
-//{
-//	Client	*cli = new Client( socket, polls, servers, info );
-//
-//	if ( !cli )
-//		return ( NULL );
-//	this->insert( ClientMapPair( socket, cli ) );
-//	return ( cli );
-//}
 
 size_t	Clients::eraseClient( Client *cli )
 {
