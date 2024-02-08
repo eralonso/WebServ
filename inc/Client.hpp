@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 10:36:09 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/08 12:09:34 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ private:
 	int					pipeCgiRead;
 	size_t				requestBodyRemain;
 	size_t				responseBodyRemain;
+	bool				cgiDriven;
 	bool				cgiFinished;
 	bool				cgiTimeout;
 	bool				responseHeaderSent;
@@ -121,7 +122,11 @@ public:
 	int							onEventRead( Event& tevent );
 	int							onEventWrite( Event& tevent );
 	int							onEvent( Event& tevent );
-	static int					readRequest( socket_t clientFd, std::string& readed );
+	static int 					readRequest(socket_t clientFd, std::string & readed);
+	void						setCompletedRequest( void );
+	void						setTimeoutedRequest( void );
+	void						performCgiCompletion(void);
+	void						resetCgiOperation( void );
 };
 
 #endif

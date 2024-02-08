@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 17:10:22 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/08 11:51:22 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,7 +173,8 @@ public:
 	void			setDefaultFavicon( void );
 	bool			findReturnUri( int& uriCode, std::string& uriRedir ) const;
 	std::string		getCookies(void) const;
-
+	void			setCompletedRequest( void );
+	void			setTimeoutedRequest( void );
 };
 
 #endif

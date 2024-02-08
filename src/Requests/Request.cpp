@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 17:10:01 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/08 12:22:07 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ Request::Request( Client *cli )
 
 Request::~Request( void ) 
 {
-	CgiExecutor::purgeDiscardedRequest(this);
+	// CgiExecutor::purgeDiscardedRequest(this);
 }
 
 Request::Request( const Request& b )
@@ -413,32 +413,6 @@ bool	Request::processLineOnRecvdChunkSize( const std::string &line )
 {
 	( void )line;
 	return ( true );
-	/*
-	 size_t len = line.length();
-
-	 if ( this->chunkSize == 0 )
-	 {
-	 	this->status = RECVD_LAST_CHUNK;
-	 	return ( true );
-	 }	
-	 if ( len == this->chunkSize )
-	 {
-	 	this->body += line;
-	 	if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
-	 		return ( setError( HTTP_BAD_REQUEST_CODE ) );
-	 	this->status = RECVD_CHUNK;
-	 	return ( true );
-	 }
-	 if ( ( len == this->chunkSize + 1 ) && ( line[ len - 1 ] <= ' ' ) )
-	 {
-	 	this->body += line.substr( 0, len - 1 );
-	 	if (this->body.size() > this->maxBodySize && this->maxBodySize != 0)
-	 		return ( setError( HTTP_BAD_REQUEST_CODE ) );
-	 	this->status = RECVD_CHUNK;
-	 	return ( true );
-	 }
-	 return ( true );
-	*/
 }
 
 bool	Request::processLineOnRecvdChunk( const std::string &line )
@@ -1114,4 +1088,18 @@ void	Request::logStatus( void )
 std::string Request::getCookies( void ) const
 {
 	return (headers.getCookies());	
+}
+
+void	Request::setCompletedRequest( void )
+{
+	this->setError( HTTP_OK_CODE );
+	this->setReadyToSend();
+}
+
+void	Request::setTimeoutedRequest( void )
+{
+	this->setError( HTTP_GATEWAY_TIMEOUT_CODE );
+	Router::checkErrorRedir( this->getError(), *this );
+	Router::checkErrorBody( *this, this->getError() );
+	this->setReadyToSend();
 }

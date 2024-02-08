@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 11:10:06 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/08 12:14:50 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,6 @@ Client::Client( void ): EventsTarget( NULL )
 	this->pending = 0;
 	this->socket = -1;
 	this->fileFd = -1;
-	this->pipeCgiWrite = -1;
-	this->pipeCgiRead = -1;
 	this->servers = NULL;
 	this->res = NULL;
 	this->requestBodyRemain = 0;
@@ -34,6 +32,7 @@ Client::Client( void ): EventsTarget( NULL )
 	this->receptionist = NULL;
 	this->responseHeaderSent = false;
 	this->responseSent = false;
+	this->resetCgiOperation();
 	SUtils::memset( &this->addr, 0, sizeof( this->addr ) );
 }
 
@@ -46,8 +45,6 @@ Client::Client( socket_t socket, Events *bEvs, const ServersVector *servers, \
 	this->pending = 0;
 	this->socket = socket;
 	this->fileFd = -1;
-	this->pipeCgiWrite = -1;
-	this->pipeCgiRead = -1;
 	this->evs = bEvs;
 	this->servers = servers;
 	this->addr = info;
@@ -57,6 +54,7 @@ Client::Client( socket_t socket, Events *bEvs, const ServersVector *servers, \
 	this->receptionist = recp;
 	this->responseHeaderSent = false;
 	this->responseSent = false;
+	this->resetCgiOperation();
 }
 
 Client::~Client( void )
@@ -87,6 +85,9 @@ Client::Client( const Client& b ): Requests(), EventsTarget( b.evs )
 	this->receptionist = b.receptionist;
 	this->responseHeaderSent = b.responseHeaderSent;
 	this->responseSent = b.responseSent;
+	this->cgiDriven = b.cgiDriven;
+	this->cgiTimeout = b.cgiTimeout;
+	this->cgiFinished = b.cgiFinished;
 }
 
 Client&	Client::operator=( const Client& b )
@@ -107,6 +108,9 @@ Client&	Client::operator=( const Client& b )
 		this->receptionist = b.receptionist;
 		this->responseHeaderSent = b.responseHeaderSent;
 		this->responseSent = b.responseSent;
+		this->cgiDriven = b.cgiDriven;
+		this->cgiTimeout = b.cgiTimeout;
+		this->cgiFinished = b.cgiFinished;
 	}
 	return ( *this );
 }
@@ -405,6 +409,7 @@ int	Client::setEventProc( int pipeRead, int pipeWrite, int pid )
 {
 	this->pipeCgiRead = pipeRead;
 	this->pipeCgiWrite = pipeWrite;
+	this->cgiDriven = true;
 	if ( this->evs )
 	{
 		if ( this->evs->setEventProcExit( this, pid, CGI_TO ) )
@@ -467,6 +472,7 @@ int	Client::onEventProcExit( Event& tevent )
 	this->deleteEventProcTimeout(tevent.ident);
 	this->cgiTimeout = false;
 	this->cgiFinished = true;
+	this->performCgiCompletion();
 	return (0);
 }
 
@@ -477,6 +483,7 @@ int	Client::onEventProcTimeout( Event& tevent )
 	//TODO setError to Request, Response shoud update in accordance
 	this->cgiTimeout = true;
 	this->cgiFinished = true;
+	this->performCgiCompletion();
 	return (0);
 }
 
@@ -547,6 +554,7 @@ int	Client::onEventReadPipe( Event& tevent )
 		this->setEventWriteSocket();
 		this->readEOF = true;
 		close(tevent.ident);
+		this->performCgiCompletion();
 	}
 	return ( 0 );
 }
@@ -612,6 +620,7 @@ int	Client::onEventWritePipe( Event& tevent )
 	{
 		close(tevent.ident);
 		this->writeEOF = true;
+		this->performCgiCompletion();
 	}
 	return 0;
 }
@@ -669,4 +678,39 @@ int	Client::readRequest( socket_t clientFd, std::string& readed )
 		return ( -1 );
 	readed += std::string(buffer, amount);
 	return ( amount );
+}
+
+void	Client::setCompletedRequest( void )
+{
+	Request	*req = getPending();
+	if (req)
+		req->setCompletedRequest();
+}
+
+void	Client::setTimeoutedRequest( void )
+{
+	Request	*req = getPending();
+	if (req)
+		req->setTimeoutedRequest();
+}
+
+void	Client::performCgiCompletion( void )
+{
+	if (this->cgiDriven && this->cgiFinished && this->readEOF && this->writeEOF)
+	{
+		if (this->cgiTimeout)
+			setTimeoutedRequest();
+		else
+			setCompletedRequest();
+	}		
+}
+
+void	Client::resetCgiOperation( void )
+{
+	this->cgiDriven = false;
+	this->cgiTimeout = false;
+	this->cgiFinished = false;
+	this->pipeCgiWrite = -1;
+	this->pipeCgiRead = -1;
+	this->cgiOutput = std::string("");
 }

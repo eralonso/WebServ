@@ -6,7 +6,7 @@
 #    By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/22 10:08:41 by eralonso          #+#    #+#              #
-#    Updated: 2024/02/06 18:40:20 by omoreno-         ###   ########.fr        #
+#    Updated: 2024/02/08 12:28:27 by omoreno-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -63,7 +63,7 @@ FILES		:=	main Sockets WSSignals Receptionist \
 				Directives DirectivesParserInit DirectivesParser ActionMask \
 				CGIService ServerInit Server LocationInit Location Listen \
 				ClientMaxBodySize ErrorPage Client Clients Header Headers Request \
-				Requests Response StatusCodes PendingCgiTask PendingCgiTasks \
+				Requests Response StatusCodes \
 				CgiExecutor CgisMap Router ServerFinder ConfigApply ConfigUtils \
 				MimeMap EventsTarget Events
 

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/06 18:39:39 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/08 12:26:42 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include "Client.hpp"
 #include "CgiExecutor.hpp"
 
-PendingCgiTasks	CgiExecutor::pendingTasks;
+// PendingCgiTasks	CgiExecutor::pendingTasks;
 
 CgiExecutor::CgiExecutor( Request& request ): request( request )
 {
@@ -131,6 +131,54 @@ void	CgiExecutor::onParentProcess( pid_t childPid )
 		cli->setEventProc( this->fdFromChild[ FDIN ], this->fdToChild[ FDOUT ], childPid );
 }
 
+bool CgiExecutor::checkFileExecutable(std::string file)
+{
+	bool res = (access(file.c_str(), F_OK) == 0);
+	res &= (access(file.c_str(), X_OK) == 0);
+	return (res);
+}
+
+bool CgiExecutor::checkFileReadable(std::string file)
+{
+	bool res = (access(file.c_str(), F_OK) == 0);
+	res &= (access(file.c_str(), R_OK) == 0);
+	return (res);
+}
+
+// std::string	CgiExecutor::getChildOutput( PendingCgiTask *task )
+// {
+// 	if ( !task )
+// 		return ( "" );
+// 	return ( task->getTaskOutput() );
+// }
+
+int	CgiExecutor::execute( void )
+{
+	pid_t	pid;
+
+	if ( pipe( this->fdToChild ) )
+		onFailToChildPipeOpen();
+	if ( pipe( this->fdFromChild ) )
+		onFailFromChildPipeOpen();
+	fcntl(this->fdFromChild[ FDIN ], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
+	fcntl(this->fdFromChild[ FDOUT ], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
+	fcntl(this->fdToChild[ FDIN ], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
+	fcntl(this->fdToChild[ FDOUT ], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
+	pid = fork();
+	if ( pid < 0 )
+		onFailFork();
+	if ( pid == 0 )
+		onChildProcess();
+	onParentProcess( pid );
+	return ( 0 );
+}
+
+void	CgiExecutor::pushEnvVar( const std::string& variable, \
+								const std::string& value )
+{
+	this->envVars.push_back( variable + "=" + value );
+}
+
 //void	CgiExecutor::onParentProcess( pid_t childPid )
 //{
 //	std::string	body = request.getBody();
@@ -166,194 +214,174 @@ void	CgiExecutor::onParentProcess( pid_t childPid )
 //	attendPendingCgiTasks();
 //}
 
-bool CgiExecutor::checkFileExecutable(std::string file)
-{
-	bool res = (access(file.c_str(), F_OK) == 0);
-	res &= (access(file.c_str(), X_OK) == 0);
-	return (res);
-}
-
-bool CgiExecutor::checkFileReadable(std::string file)
-{
-	bool res = (access(file.c_str(), F_OK) == 0);
-	res &= (access(file.c_str(), R_OK) == 0);
-	return (res);
-}
-
-std::string	CgiExecutor::getChildOutput( PendingCgiTask *task )
-{
-	if ( !task )
-		return ( "" );
-	return ( task->getTaskOutput() );
-}
-
-int	CgiExecutor::execute( void )
-{
-	pid_t	pid;
-
-	if ( pipe( this->fdToChild ) )
-		onFailToChildPipeOpen();
-	if ( pipe( this->fdFromChild ) )
-		onFailFromChildPipeOpen();
-	fcntl(this->fdFromChild[ FDIN ], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
-	fcntl(this->fdFromChild[ FDOUT ], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
-	fcntl(this->fdToChild[ FDIN ], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
-	fcntl(this->fdToChild[ FDOUT ], F_SETFL, O_NONBLOCK, FD_CLOEXEC);
-	pid = fork();
-	if ( pid < 0 )
-		onFailFork();
-	if ( pid == 0 )
-		onChildProcess();
-	onParentProcess( pid );
-	return ( 0 );
-}
-
-PendingCgiTask	*CgiExecutor::getCompletedTask( void )
-{
-	pid_t	pid;
+// PendingCgiTask	*CgiExecutor::getCompletedTask( void )
+// {
+// 	pid_t	pid;
 	
-	pid = waitpid( -1, NULL, WNOHANG );
-	if ( pid < 1 )
-		return ( NULL );
-	if ( CgiExecutor::pendingTasks.empty() )
-		return ( NULL );
-	PendingCgiTask& tk = CgiExecutor::pendingTasks[ pid ];
-	if ( !tk.isMarkedToDelete() )
-		return ( &tk );
-	return ( NULL );
-}
+// 	pid = waitpid( -1, NULL, WNOHANG );
+// 	if ( pid < 1 )
+// 		return ( NULL );
+// 	if ( CgiExecutor::pendingTasks.empty() )
+// 		return ( NULL );
+// 	PendingCgiTask& tk = CgiExecutor::pendingTasks[ pid ];
+// 	if ( !tk.isMarkedToDelete() )
+// 		return ( &tk );
+// 	return ( NULL );
+// }
 
-PendingCgiTask	*CgiExecutor::getTimeoutedTask( double to )
-{
-	PendingCgiTasks::iterator	it = CgiExecutor::pendingTasks.begin();
-	PendingCgiTasks::iterator	ite = CgiExecutor::pendingTasks.end();
+// PendingCgiTask	*CgiExecutor::getTimeoutedTask( double to )
+// {
+// 	PendingCgiTasks::iterator	it = CgiExecutor::pendingTasks.begin();
+// 	PendingCgiTasks::iterator	ite = CgiExecutor::pendingTasks.end();
 
-	if ( CgiExecutor::pendingTasks.empty() )
-		return ( NULL );
-	while ( it != ite )
-	{
-		if ( !it->second.isMarkedToDelete() && it->second.isTimeout( to, false ) )
-			return ( &( it->second ) );
-		it++;
-	}
-	return ( NULL );
-}
+// 	if ( CgiExecutor::pendingTasks.empty() )
+// 		return ( NULL );
+// 	while ( it != ite )
+// 	{
+// 		if ( !it->second.isMarkedToDelete() && it->second.isTimeout( to, false ) )
+// 			return ( &( it->second ) );
+// 		it++;
+// 	}
+// 	return ( NULL );
+// }
 
-PendingCgiTask *CgiExecutor::getMarkedToDeleteTask( void )
-{
-	PendingCgiTasks::iterator it = CgiExecutor::pendingTasks.begin();
-	PendingCgiTasks::iterator ite = CgiExecutor::pendingTasks.end();
+// PendingCgiTask *CgiExecutor::getMarkedToDeleteTask( void )
+// {
+// 	PendingCgiTasks::iterator it = CgiExecutor::pendingTasks.begin();
+// 	PendingCgiTasks::iterator ite = CgiExecutor::pendingTasks.end();
 
-	if ( CgiExecutor::pendingTasks.empty() )
-		return ( NULL );
-	while ( it != ite )
-	{
-		if ( it->second.isMarkedToDelete() )
-			return ( &( it->second ) );
-		it++;
-	}
-	return ( NULL );
-}
+// 	if ( CgiExecutor::pendingTasks.empty() )
+// 		return ( NULL );
+// 	while ( it != ite )
+// 	{
+// 		if ( it->second.isMarkedToDelete() )
+// 			return ( &( it->second ) );
+// 		it++;
+// 	}
+// 	return ( NULL );
+// }
 
-size_t	CgiExecutor::purgeTimeoutedTasks( double to, size_t max )
-{
-	size_t			i = 0;
-	PendingCgiTask	*task = NULL;
+// size_t	CgiExecutor::purgeTimeoutedTasks( double to, size_t max )
+// {
+// 	size_t			i = 0;
+// 	PendingCgiTask	*task = NULL;
 
-	if ( CgiExecutor::pendingTasks.empty() )
-		return 0;
-	while ( i < max && ( task = getTimeoutedTask( to ) ) )
-	{
-		CgiExecutor::pendingTasks.eraseTask( task->getPid() );
-		i++;
-	}
-	return ( i );
-}
+// 	if ( CgiExecutor::pendingTasks.empty() )
+// 		return 0;
+// 	while ( i < max && ( task = getTimeoutedTask( to ) ) )
+// 	{
+// 		CgiExecutor::pendingTasks.eraseTask( task->getPid() );
+// 		i++;
+// 	}
+// 	return ( i );
+// }
 
-void	CgiExecutor::checkCompletedTasks( void )
-{
-	PendingCgiTask	*pTask = NULL;
-	Client			*cli = NULL;
-	Request			*req = NULL;
+// void	CgiExecutor::setCompletedRequest( Client *cli )
+// {
+// 	if (cli)
+// 		cli->setCompletedRequest();
+// 	// Request	*req = cli->getPending();
+// 	// if (req)
+// 	// {
+// 	// 	req->setError( HTTP_OK_CODE );
+// 	// 	req->setReadyToSend();
+// 	// }
+// }
 
-	while ( ( pTask = CgiExecutor::getCompletedTask() ) )
-	{
-		// Log::Info( "Cgi Task completed" );
-		req = &pTask->getRequest();
-		pTask->applyTaskOutputToReq();
-		CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
-		cli = req->getClient();
-		req->setError( HTTP_OK_CODE );
-		req->setReadyToSend();
-		// if ( cli != NULL )
-		// 	cli->allowPollWrite( true );
-	}
-}
+// void	CgiExecutor::checkCompletedTasks( void )
+// {
+// 	PendingCgiTask	*pTask = NULL;
+// 	Client			*cli = NULL;
+// 	Request			*req = NULL;
 
-void	CgiExecutor::checkTimeoutedTasks( void )
-{
-	PendingCgiTask	*pTask = NULL;
-	Client			*cli = NULL;
+// 	while ( ( pTask = CgiExecutor::getCompletedTask() ) )
+// 	{
+// 		// Log::Info( "Cgi Task completed" );
+// 		req = &pTask->getRequest();
+// 		pTask->applyTaskOutputToReq();
+// 		CgiExecutor::pendingTasks.eraseTask(pTask->getPid());
+// 		cli = req->getClient();
+// 		setCompletedRequest(cli);
+// 		// req->setError( HTTP_OK_CODE );
+// 		// req->setReadyToSend();
+// 		// if ( cli != NULL )
+// 		// 	cli->allowPollWrite( true );
+// 	}
+// }
 
-	if ( ( pTask = CgiExecutor::getTimeoutedTask( CGI_TO ) ) != NULL )
-	{
-		Request& req = pTask->getRequest();
-		pTask->isTimeout( CGI_TO, true );
-		// Log::Error( "Timeout of Req: " + SUtils::longToString( req.getId() )
-		// 	+ " process id: " + SUtils::longToString( pTask->getPid() ) );
-		pTask->killPendingTask();
-		CgiExecutor::pendingTasks.eraseTask( pTask->getPid() );
-		req.setError( HTTP_GATEWAY_TIMEOUT_CODE );
-		Router::checkErrorRedir( req.getError(), req );
-		Router::checkErrorBody( req, req.getError() );
-		req.setReadyToSend();
-		cli = req.getClient();		
-		// if ( cli != NULL )
-		// 	cli->allowPollWrite( true );
-	}
-}
+// void	CgiExecutor::setTimeoutedRequest( Client *cli )
+// {
+// 	if (cli)
+// 		cli->setTimeoutedRequest();
+// 		// req.setError( HTTP_GATEWAY_TIMEOUT_CODE );
+// 		// Router::checkErrorRedir( req.getError(), req );
+// 		// Router::checkErrorBody( req, req.getError() );
+// 		// req.setReadyToSend();
+// 		// cli = req.getClient();		
 
-void	CgiExecutor::checkMarkedToDeleteTasks( void )
-{
-	PendingCgiTask	*pTask = NULL;
+// }
 
-	if ( CgiExecutor::pendingTasks.size() > 0 \
-		&& ( pTask = CgiExecutor::getMarkedToDeleteTask() ) != NULL ) 
-	{
-		Log::Error( "Delete Marked pending task for pid: " \
-			+ SUtils::longToString( pTask->getPid() ) );
-		CgiExecutor::pendingTasks.eraseTask( pTask->getPid() );
-	}
-}
+// void	CgiExecutor::checkTimeoutedTasks( void )
+// {
+// 	PendingCgiTask	*pTask = NULL;
+// 	Client			*cli = NULL;
 
-void	CgiExecutor::attendPendingCgiTasks( void )
-{
-	checkCompletedTasks();
-	checkTimeoutedTasks();
-	checkMarkedToDeleteTasks();
-}
+// 	if ( ( pTask = CgiExecutor::getTimeoutedTask( CGI_TO ) ) != NULL )
+// 	{
+// 		Request& req = pTask->getRequest();
+// 		pTask->isTimeout( CGI_TO, true );
+// 		// Log::Error( "Timeout of Req: " + SUtils::longToString( req.getId() )
+// 		// 	+ " process id: " + SUtils::longToString( pTask->getPid() ) );
+// 		pTask->killPendingTask();
+// 		CgiExecutor::pendingTasks.eraseTask( pTask->getPid() );
+// 		cli = req.getClient();		
+// 		setTimeoutedRequest(cli);
+// 		// req.setError( HTTP_GATEWAY_TIMEOUT_CODE );
+// 		// Router::checkErrorRedir( req.getError(), req );
+// 		// Router::checkErrorBody( req, req.getError() );
+// 		// req.setReadyToSend();
+// 		// if ( cli != NULL )
+// 		// 	cli->allowPollWrite( true );
+// 	}
+// }
 
-size_t	CgiExecutor::getPendingTasksSize( void )
-{
-	return ( CgiExecutor::pendingTasks.size() );
-}
+// void	CgiExecutor::checkMarkedToDeleteTasks( void )
+// {
+// 	PendingCgiTask	*pTask = NULL;
 
-int CgiExecutor::purgeDiscardedRequest(Request *req)
-{
-	pendingTasks.eraseTask(req);
-    return 0;
-}
+// 	if ( CgiExecutor::pendingTasks.size() > 0 \
+// 		&& ( pTask = CgiExecutor::getMarkedToDeleteTask() ) != NULL ) 
+// 	{
+// 		Log::Error( "Delete Marked pending task for pid: " \
+// 			+ SUtils::longToString( pTask->getPid() ) );
+// 		CgiExecutor::pendingTasks.eraseTask( pTask->getPid() );
+// 	}
+// }
 
-pid_t CgiExecutor::findClientPendingPid(Client *cli)
-{
-	pid_t pid = pendingTasks.findPid(cli);
-	if (pid > 0)
-		return (pid);
-    return 0;
-}
+// void	CgiExecutor::attendPendingCgiTasks( void )
+// {
+// 	checkCompletedTasks();
+// 	checkTimeoutedTasks();
+// 	checkMarkedToDeleteTasks();
+// }
 
-void	CgiExecutor::pushEnvVar( const std::string& variable, \
-								const std::string& value )
-{
-	this->envVars.push_back( variable + "=" + value );
-}
+// size_t	CgiExecutor::getPendingTasksSize( void )
+// {
+// 	return ( CgiExecutor::pendingTasks.size() );
+// }
+
+// int CgiExecutor::purgeDiscardedRequest(Request *req)
+// {
+// 	pendingTasks.eraseTask(req);
+//     return 0;
+// }
+
+// pid_t CgiExecutor::findClientPendingPid(Client *cli)
+// {
+// 	pid_t pid = pendingTasks.findPid(cli);
+// 	if (pid > 0)
+// 		return (pid);
+//     return 0;
+// }
+
+
