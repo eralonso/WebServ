@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:20:14 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 13:08:35 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 15:35:29 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,4 +241,23 @@ void	Client::resetCgiOperation( void )
 	this->pipeCgiWrite = -1;
 	this->pipeCgiRead = -1;
 	this->cgiOutput = std::string("");
+}
+
+void	Client::nextRequest( void )
+{
+	Log::Info( std::string("nextRequest"));
+	this->front()->logStatus();
+	if ( ! this->front()->isReceiving() )
+	{
+		enableEventWriteSocket(false);
+		Log::Info( std::string("nextRequest deleting Request & Response"));
+		delete this->res;
+		this->res = NULL;
+		this->eraseRequest();
+	}
+	
+	if (this->size() > 0 || this->getPendingSize() > 0 || this->getKeepAlive())
+		this->enableEventReadSocket( true );
+	else
+		delete this;
 }

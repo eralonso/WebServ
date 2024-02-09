@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 12:38:21 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 14:58:56 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,13 +213,16 @@ Response::t_sendStatus	Response::getSendStatus( void ) const
 
 void	Response::updateResString( void )
 {
+	Log::Info("updateResString");
 	if (!isCgi)
 	{
+		Log::Info("updateResString is set as: ");
 		this->resString = this->protocol + " " + SUtils::longToString( this->status );
 		this->resString += " " + getResult() + HEADER_SEP;
 		this->resString += this->headers.toString();
 		this->resString += HEADER_SEP;
 		this->resString += this->body;
+		Log::Info(this->resString);
 		return ;
 	}
 	this->resString = this->body;
@@ -259,6 +262,8 @@ int	Response::sendResponse( socket_t socket )
 	size = this->resString.size() - pos; 
 	str = this->resString.c_str();
 	threshold = size > SEND_BUFFER_SIZE ? SEND_BUFFER_SIZE : size;
+	if (this->sendState == Response::SENT || threshold == 0)
+		return ( this->sendState );
 	if ( ( ret = send( socket, str + pos, threshold, MSG_DONTWAIT ) ) < 0 )
 	{
 		Log::Error( "Failed to send response with code: " + SUtils::longToString( ret ) );

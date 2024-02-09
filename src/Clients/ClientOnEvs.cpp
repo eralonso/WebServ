@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:12:13 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 13:09:39 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 15:10:46 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,7 @@ int	Client::onEventWriteSocket( Event& tevent )
 
 	(void)tevent;
 	Log::Info( "onEventWriteSocket" );
+	createResponse();
 	if ( this->res )
 	{
 		if ( this->res->getSendStatus() == Response::GETTING_DATA )
@@ -127,13 +128,8 @@ int	Client::onEventWriteSocket( Event& tevent )
 		resSendStatus = this->res->sendResponse( this->socket );
 		if ( resSendStatus == Response::ERROR || resSendStatus == Response::SENT )
 		{
-			enableEventWriteSocket(false);
-			delete this->res;
-			this->res = NULL;
-			if ( this->front()->isReadyToSend() )
-				this->eraseRequest();
-			//TODO See if is time to remove the client
-				
+			Log::Info( std::string("onEventWriteSocket was ") + (resSendStatus == Response::ERROR ? "Response::ERROR" : "Response::SENT") );
+			nextRequest();
 		}
 	}
 	return ( 0 );

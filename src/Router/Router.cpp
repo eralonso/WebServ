@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 12:52:43 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 14:42:10 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,13 @@ Router&	Router::operator=( const Router& )
 
 int	Router::updateResponse( Response &res, Request &req, Client& cli )
 {
+	Log::Info("updateResponse");
 	res.setServer( SERVER );
 	if ( req.getUseCgi() )
 		formatCgiResponse( res,req, cli );
 	else
 		formatGenericResponse( res, req );
+	res.updateResString();
 	return ( 0 );
 }
 
@@ -77,6 +79,7 @@ std::string Router::determineContentType(Response& res, Request& req)
 
 Response	*Router::formatGenericResponse( Response& res, Request& req )
 {
+	Log::Info("formatGenericResponse");
 	res.appendHeader( Header( "Content-Type", determineContentType( res, req ) ) );
 	res.setProtocol( req.getProtocol() );
 	if ( req.getRedir() == true )
