@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 14:11:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 16:04:57 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 13:09:51 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,34 @@ bool	Router::processPostRequest( Request& req )
 	Client		*cli;
 	int			fd;
 
+	Log::Info( "processPost" );
+	cli = req.getClient();
+	if ( !req.isDirectiveSet( "upload_store" ) || document.size() == 0 )
+		return ( req.setError( HTTP_FORBIDDEN_CODE ) );
+	path = req.getFilePathWrite();
+	if ( isDir( path ) )
+		return ( req.setError( HTTP_CONFLICT_CODE ) );
+	Log::Info( "isn't a dir" );
+	fd = openWriteFile( path );
+	if ( fd < 0 )
+		return ( req.setError( HTTP_FORBIDDEN_CODE ) );
+	Log::Info( "valid file" );
+	if ( cli )
+		cli->setEventWriteFile( fd );
+	req.setStatus( HTTP_CREATED_CODE );
+	return ( false );
+}
+
+bool	Router::processPutRequest( Request& req )
+{
+	std::string	route = req.getRoute();
+	std::string bodyContent = req.getBody();
+	std::string	document = req.getDocument();
+	std::string path;
+	Client		*cli;
+	int			fd;
+
+	Log::Info( "processPut" );
 	cli = req.getClient();
 	if ( !req.isDirectiveSet( "upload_store" ) || document.size() == 0 )
 		return ( req.setError( HTTP_FORBIDDEN_CODE ) );
@@ -99,33 +127,17 @@ bool	Router::processPostRequest( Request& req )
 		return ( req.setError( HTTP_FORBIDDEN_CODE ) );
 	if ( cli )
 		cli->setEventWriteFile( fd );
-	return ( req.setError( HTTP_CREATED_CODE ) );
-}
-	// if ( !writeFile( path, bodyContent ) )
-	// 	return ( req.setError( HTTP_FORBIDDEN_CODE ) );
-
-bool	Router::processPutRequest( Request& req )
-{
-	std::string	route = req.getRoute();
-	std::string bodyContent = req.getBody();
-	std::string	document = req.getDocument();
-	std::string path;
-	
-	if ( !req.isDirectiveSet( "upload_store" ) || document.size() == 0 )
-		return ( req.setError( HTTP_FORBIDDEN_CODE ) );
-	path = req.getFilePathWrite();
-	if ( isDir( path ) )
-		return ( req.setError( HTTP_CONFLICT_CODE ) );
-	// if ( !writeFile( path, bodyContent ) )
-	// 	return ( req.setError( HTTP_FORBIDDEN_CODE ) );
-	return ( req.setError( HTTP_CREATED_CODE ) );
+	req.setStatus( HTTP_CREATED_CODE );
+	return ( false );
 }
 
 bool	Router::processDeleteRequest( Request& req )
 {
 	std::string	path;
 	std::string	file;
+	Client		*cli;
 
+	cli = req.getClient();
 	path = req.getFilePathRead();
 	if ( checkPathExist( req, path ) == false )
 		return ( false );
@@ -133,7 +145,9 @@ bool	Router::processDeleteRequest( Request& req )
 	if ( isDir( path ) == true )
 		return (req.setError( HTTP_FORBIDDEN_CODE ));
 	std::remove(path.c_str());
-	req.setError( HTTP_NO_CONTENT_CODE );
+	req.setStatus( HTTP_NO_CONTENT_CODE );
+	if ( cli )
+		cli->setEventWriteSocket();
 	return ( false );
 }
 
@@ -143,10 +157,12 @@ bool	Router::processRequestHeaderReceived( Request &req )
 	std::string	requestMethod = req.getMethod();
 	int			error = 0;
 	Client		*cli;
+	Response	*res;
 
+	Log::Info( "ProcessRequestHeaderReceived" );
 	cli = req.getClient();
 	if ( cli )
-		cli->createNewResponse();
+		res = cli->createResponse();
 	checkRedir( req );
 	if ( req.getError() < MIN_ERROR_CODE )
 	{
@@ -159,30 +175,36 @@ bool	Router::processRequestHeaderReceived( Request &req )
 		else
 			req.setError( HTTP_NOT_ALLOWED_CODE );
 	}
-	checkErrorRedir( req.getError(), req );
-	checkErrorBody( req, req.getError() );
-	return ( true );
-}
-
-bool	Router::processRequestReceived( Request &req )
-{
-	int			i = 0;
-	std::string	requestMethod = req.getMethod();
-
-	checkRedir( req );
-	if ( req.getError() < MIN_ERROR_CODE )
+	if ( error )
 	{
-		if ( req.getUseCgi() )
-			return ( processCgi( req ) );
-		while ( i < METHODS_NB && Router::methods[ i ] != requestMethod )
-			i++;
-		if ( i < METHODS_NB )
-			Router::process[ i ]( req );
-		else
-			req.setError( HTTP_NOT_ALLOWED_CODE );
+		Log::Error( "Fail request" );
+		cli->setEventWriteSocket();
 	}
 	checkErrorRedir( req.getError(), req );
 	checkErrorBody( req, req.getError() );
-	req.setReadyToSend();
 	return ( true );
 }
+
+// bool	Router::processRequestReceived( Request &req )
+// {
+// 	int			i = 0;
+// 	std::string	requestMethod = req.getMethod();
+
+// 	Log::Info( "ProcessRequestReceived" );
+// 	checkRedir( req );
+// 	if ( req.getError() < MIN_ERROR_CODE )
+// 	{
+// 		if ( req.getUseCgi() )
+// 			return ( processCgi( req ) );
+// 		while ( i < METHODS_NB && Router::methods[ i ] != requestMethod )
+// 			i++;
+// 		if ( i < METHODS_NB )
+// 			Router::process[ i ]( req );
+// 		else
+// 			req.setError( HTTP_NOT_ALLOWED_CODE );
+// 	}
+// 	checkErrorRedir( req.getError(), req );
+// 	checkErrorBody( req, req.getError() );
+// 	req.setReadyToSend();
+// 	return ( true );
+// }

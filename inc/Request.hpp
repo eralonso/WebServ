@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 11:51:22 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 12:28:45 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ private:
 	const Server	*svr;
 	const Location	*lc;
 	size_t			outputLength;
+	size_t			recvBodyLength;
 private:
 	void 	parseHostPortFromRoute( void );
 	void	parseQueryStringFromRoute( void );
@@ -144,6 +145,7 @@ public:
 	std::string		getUriRedir( void ) const;
 	size_t			getOutputLength( void ) const;
 	std::string		getPathInfo( void ) const;
+	bool			isBadRequest( void ) const;
     bool			isDirectiveSet( std::string directive ) const;
     bool			isCompleteRecv( void ) const;
 	bool			isReadyToSend( void ) const;
@@ -166,6 +168,7 @@ public:
 	void			setRedirection( std::string uri, int code );
 	void			setOutputLength( size_t size );
 	void			setDocExt( std::string ext );
+	void			setStatus( int value );
 	void			logStatus( void );
 	bool			processLine( const std::string& line );
 	bool 			processRecv( void );

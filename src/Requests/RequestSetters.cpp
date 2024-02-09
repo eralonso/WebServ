@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:36:29 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 13:43:00 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 13:18:05 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,11 +64,26 @@ void	Request::setOutput( std::string str )
 
 bool	Request::setError( int value )
 {
+	Client*		cli;
+	Response*	res;
+
 	if ( value >= HTTP_BAD_REQUEST_CODE )
+	{
 		this->badRequest = true;
-	this->status = RECVD_ALL;
+		this->status = RECVD_ALL;
+		cli = this->getClient();
+		res = cli->createResponse();
+		res->setStatus(value);
+		cli->setEventWriteSocket();
+		cli->enableEventReadSocket(false);
+	}
 	this->error = value;
 	return ( this->badRequest != true );
+}
+
+void	Request::setStatus( int value )
+{
+	this->error = value;
 }
 
 void Request::setDefaultFavicon(void)
@@ -93,7 +108,7 @@ void	Request::setRedirection( std::string uri, int code )
 {
 	this->redir = true;
 	this->uriRedir = uri;
-	setError( code );
+	setStatus( code );
 }
 
 void	Request::setOutputLength( size_t size )

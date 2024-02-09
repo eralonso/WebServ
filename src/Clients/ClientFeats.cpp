@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:20:14 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 16:48:10 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 13:08:35 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,11 @@ int Client::bindClientPoll( socket_t socket )
 	return ( 0 );
 }
 
-void	Client::createNewResponse( void )
+Response	*Client::createResponse( void )
 {
 	if ( !this->res )
 		this->res = new Response;
+	return ( this->res );
 }
 
 Request	*Client::findRecvRequest( void )
@@ -77,7 +78,13 @@ int	Client::manageRecv( std::string recv )
 			cont = req->processRecv();
 			if ( req->isCompleteRecv() )
 				cont = false;
+			if ( req->isBadRequest() )
+			{
+				setEventWriteSocket();
+				enableEventReadSocket( false );
+			}
 		}
+		Log::Info( "Client loop" );
 	}
 	purgeUsedRecv();
 	if ( fail == true )
@@ -90,15 +97,9 @@ int	Client::manageRecv( std::string recv )
 
 int	Client::manageCompleteRecv( void )
 {
-	Request		*req = NULL;
-	int			count = 0;
-
-	while ( ( req = findCompleteRecvRequest() ) )
-	{
-		if ( Router::processRequestReceived( *req ) )
-			count++;
-	}
-	return ( count );
+	if ( findCompleteRecvRequest() )
+		return ( 1 );
+	return ( 0 );
 }
 
 // int	Client::managePollout( void )

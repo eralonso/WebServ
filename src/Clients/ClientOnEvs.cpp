@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:12:13 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 13:13:41 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 13:09:39 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 int	Client::onEventProcExit( Event& tevent )
 {
-
+	Log::Info( "onEventProcExit" );
 	this->deleteEventProcTimeout(tevent.ident);
 	this->cgiTimeout = false;
 	this->cgiFinished = true;
@@ -25,6 +25,7 @@ int	Client::onEventProcExit( Event& tevent )
 
 int	Client::onEventProcTimeout( Event& tevent )
 {
+	Log::Info( "onEventProcTimeout" );
 	this->deleteEventProcExit(tevent.ident);
 	kill(tevent.ident, SIGKILL);
 	//TODO setError to Request, Response shoud update in accordance
@@ -39,6 +40,7 @@ int	Client::onEventReadSocket( Event& tevent )
 	std::string	readed;
 	int			amount;
 
+	Log::Info( "onEventReadSocket" );
 	if ( tevent.flags & EV_EOF )
 	{
 		this->receptionist->eraseClient( this );
@@ -62,7 +64,10 @@ int	Client::onEventReadFile( Event& tevent )
 	size_t	amountToRead = BUFFER_SIZE;
 	size_t	actualRead;
 
-	createNewResponse();
+	Log::Info( "onEventReadFile" );
+	Log::Info( "ident: " + SUtils::longToString( tevent.ident ) );
+	Log::Info( "filter: " + SUtils::longToString( tevent.filter ) );
+	createResponse();
 	if (amountToRead > (size_t)tevent.data)
 		amountToRead = (size_t)tevent.data;
 	actualRead = read(tevent.ident, buffer, amountToRead);
@@ -71,10 +76,11 @@ int	Client::onEventReadFile( Event& tevent )
 		this->res->setBody( this->res->getBody() + content );
 	if(amountToRead - actualRead == 0)
 	{
-		this->res->updateHeadersString();
+		this->res->updateResString();
 		this->setEventWriteSocket();
 		this->readEOF = true;
 		close(tevent.ident);
+		this->fileFd = -1;
 	}
 	return ( 0 );
 }
@@ -85,7 +91,8 @@ int	Client::onEventReadPipe( Event& tevent )
 	size_t	amountToRead = BUFFER_SIZE;
 	size_t	actualRead;
 
-	createNewResponse();
+	Log::Info( "onEventReadPipe" );
+	createResponse();
 	if (amountToRead > (size_t)tevent.data)
 		amountToRead = (size_t)tevent.data;
 	actualRead = read(tevent.ident, buffer, amountToRead);
@@ -96,11 +103,12 @@ int	Client::onEventReadPipe( Event& tevent )
 		if (this->res && this->front())
 		{
 			Router::updateResponse( *this->res, *this->front(), *this );
-			this->res->updateHeadersString();
+			this->res->updateResString();
 		}
 		this->setEventWriteSocket();
 		this->readEOF = true;
 		close(tevent.ident);
+		this->pipeCgiRead = -1;
 		this->performCgiCompletion();
 	}
 	return ( 0 );
@@ -111,11 +119,15 @@ int	Client::onEventWriteSocket( Event& tevent )
 	int			resSendStatus;
 
 	(void)tevent;
+	Log::Info( "onEventWriteSocket" );
 	if ( this->res )
 	{
+		if ( this->res->getSendStatus() == Response::GETTING_DATA )
+			Router::updateResponse( *this->res, *this->front(), *this );
 		resSendStatus = this->res->sendResponse( this->socket );
 		if ( resSendStatus == Response::ERROR || resSendStatus == Response::SENT )
 		{
+			enableEventWriteSocket(false);
 			delete this->res;
 			this->res = NULL;
 			if ( this->front()->isReadyToSend() )
@@ -129,6 +141,9 @@ int	Client::onEventWriteSocket( Event& tevent )
 
 int	Client::onEventWriteFile( Event& tevent )
 {
+	size_t	size;
+
+	Log::Info( "onEventWriteFile" );
 	Request* req = this->getPending();
 	if (!req)
 	{
@@ -137,20 +152,28 @@ int	Client::onEventWriteFile( Event& tevent )
 	}
 	if ((size_t)tevent.data > 0)
 	{
-		ssize_t actualWr = write(tevent.ident, req->getBody().c_str(), BUFFER_SIZE );
+		size = req->getBodyLength();
+		if ( size > BUFFER_SIZE )
+			size = BUFFER_SIZE;
+		ssize_t actualWr = write(tevent.ident, req->getBody().c_str(), size );
 		if (actualWr > 0)
 			req->eraseBody(actualWr);
 	}
-	if (req->isCompleteRecv() && req->getBodyLength() > 0)
+	if (req->isCompleteRecv() && req->getBodyLength() == 0)
 	{
-		close(tevent.ident);
 		this->writeEOF = true;
+		Router::updateResponse( *this->res, *this->front(), *this );
+		this->res->updateResString();
+		setEventWriteSocket();
+		close(tevent.ident);
+		this->fileFd = -1;
 	}
 	return 0;
 }
 
 int	Client::onEventWritePipe( Event& tevent )
 {
+	Log::Info( "onEventWritePipe" );
 	Request* req = this->getPending();
 	if (!req)
 	{
@@ -165,9 +188,10 @@ int	Client::onEventWritePipe( Event& tevent )
 	}
 	if (tevent.flags & EV_EOF)
 	{
-		close(tevent.ident);
 		this->writeEOF = true;
 		this->performCgiCompletion();
+		close(tevent.ident);
+		this->pipeCgiWrite = -1;
 	}
 	return 0;
 }
@@ -202,13 +226,13 @@ int	Client::onEventWrite( Event& tevent )
 
 int	Client::onEvent( Event& tevent )
 {
-	if ( tevent.filter & EVFILT_READ )
+	if ( tevent.filter == EVFILT_READ )
 		return ( onEventRead( tevent ) );
-	else if ( tevent.filter & EVFILT_WRITE )
+	if ( tevent.filter == EVFILT_WRITE )
 		return ( onEventWrite( tevent ) );
-	else if ( tevent.filter & EVFILT_PROC )
+	if ( tevent.filter == EVFILT_PROC )
 		return ( onEventProcExit( tevent ) );
-	else if ( tevent.filter & EVFILT_TIMER )
+	if ( tevent.filter == EVFILT_TIMER )
 		return ( onEventProcTimeout( tevent ) );
 	return ( 0 );
 }

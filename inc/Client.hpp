@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 12:09:34 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 13:09:10 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ public:
 	bool						setKeepAlive( bool value );
 	size_t						purgeUsedRecv( void );
 	bool						checkPendingToSend( void );
-	void						createNewResponse( void );
+	Response					*createResponse( void );
 	const ServersVector&		getServers( void ) const;
 	const struct sockaddr_in&	getAddr( void ) const;
 	std::string					getIpString( void ) const;

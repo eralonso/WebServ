@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:44:22 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 13:46:14 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 12:26:10 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 
 	if ( len == 0 || ( len == 1 && line[ 0 ] <= ' ' ) )
 	{
+		Log::Info( "END headers" );
 		this->status = RECVD_HEADER;
 		checkKeepAlive();
 		if (!updateServerConfig())
@@ -58,6 +59,7 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 		updateFilePaths();
 		if ( checkChunked() )
 			return ( true );
+		Log::Info( "MID" );
 		if ( !checkEmptyContent( contentSize ) && (maxBodySize == 0 || contentSize <= maxBodySize) )
 		{
 			got = this->client->getNChars(data, contentSize);
@@ -65,8 +67,12 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 			if ( got == contentSize )
 				this->status = RECVD_ALL;
 		}
+		Log::Info( "END" );
 		if (maxBodySize != 0 && contentSize > maxBodySize)
+		{
+			Log::Error( "clientMaxBodySize" );
 			return ( setError( HTTP_BAD_REQUEST_CODE ) );
+		}
 		Router::processRequestHeaderReceived( *this );
 		return ( true );
 	}
@@ -86,10 +92,11 @@ bool	Request::processOnReceivingBody( void )
 		contentSize = SUtils::atol( clHead->getValue().c_str() );
 		if ( maxBodySize != 0 && contentSize > maxBodySize )
 			return ( setError( HTTP_BAD_REQUEST_CODE ) );
-		take = contentSize - this->body.size();
+		take = contentSize - this->recvBodyLength;
 		this->client->getNChars( data, take );
 		this->body += data;
-		if ( this->body.size() >= contentSize )
+		this->recvBodyLength += data.length();
+		if ( this->recvBodyLength >= contentSize )
 			this->status = RECVD_ALL;
 	}
 	return ( !this->isCompleteRecv() );
@@ -106,7 +113,7 @@ bool	Request::processLineOnRecvdHeader( const std::string &line )
 		contentSize = SUtils::atol( clHead->getValue().c_str() );
 		if (maxBodySize != 0 && contentSize > maxBodySize)
 			return ( setError( HTTP_BAD_REQUEST_CODE ) );
-		if ( this->body.size() >= contentSize )
+		if ( this->recvBodyLength >= contentSize )
 			this->status = RECVD_ALL;
 		return ( this->client->getPendingSize() > 0 );
 	}

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 13:59:26 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 12:15:06 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ Request::Request( void )
 	this->maxBodySize = 1 << 20;
 	this->redir = false;
 	this->outputLength = 0;
+	this->recvBodyLength = 0;
 }
 
 Request::Request( Client *cli )
@@ -45,6 +46,7 @@ Request::Request( Client *cli )
 	this->maxBodySize = 1 << 20;
 	this->redir = false;
 	this->outputLength = 0;
+	this->recvBodyLength = 0;
 	// Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
@@ -79,6 +81,7 @@ Request::Request( const Request& b )
 	this->redir = b.redir;
 	this->uriRedir = b.uriRedir;
 	this->outputLength = b.outputLength;
+	this->recvBodyLength = b.recvBodyLength;
 }
 
 Request&	Request::operator=( const Request& b )
@@ -107,6 +110,7 @@ Request&	Request::operator=( const Request& b )
 		this->redir = b.redir;
 		this->uriRedir = b.uriRedir;
 		this->outputLength = b.outputLength;
+		this->recvBodyLength = b.recvBodyLength;
 	}
 	return ( *this );
 }

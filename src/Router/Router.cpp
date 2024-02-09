@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 14:14:54 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 12:52:43 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,7 @@ int	Router::openReadFile( std::string file )
 	fd = open( file.c_str(), O_RDONLY | O_NONBLOCK );
 	if ( fd < 0 )
 		return ( fd );
+	Log::Success( "Open file read: " + SUtils::longToString( fd ) );
 	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
 	return ( fd );
 }
@@ -118,9 +119,10 @@ int	Router::openWriteFile( std::string file )
 {
 	int	fd;
 
-	fd = open( file.c_str(), O_WRONLY | O_TRUNC | O_NONBLOCK );
+	fd = open( file.c_str(), O_WRONLY | O_TRUNC | O_NONBLOCK | O_CREAT, 0666 );
 	if ( fd < 0 )
 		return ( fd );
+	Log::Success( "Open file write: " + SUtils::longToString( fd ) );
 	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
 	return ( fd );
 }
@@ -184,7 +186,7 @@ bool	Router::processDirectory( Request& req, std::string path, \
 {
 	if ( req.isAutoindexAllow() == true \
 		&& FolderLs::getLs( output, path, req.getRoute() ) == LsEntry::NONE )
-		req.setError( HTTP_OK_CODE );
+		req.setStatus( HTTP_OK_CODE );
 	else
 		req.setError( HTTP_FORBIDDEN_CODE );
 	return ( req.getError() == HTTP_OK_CODE );
@@ -243,7 +245,7 @@ int	Router::getFileToRead( Request& req, std::string& retFile )
 	if ( checkPathCanRead( req, file ) == false )
 		return ( EACCES );
 	retFile = file;
-	req.setError( HTTP_OK_CODE );
+	req.setStatus( HTTP_OK_CODE );
 	return ( EXIT_SUCCESS );
 }
 

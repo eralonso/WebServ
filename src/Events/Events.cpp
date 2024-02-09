@@ -22,6 +22,7 @@ Events::Events( void )
 
 Events::~Events( void )
 {
+	Log::Error( "close kqueue" );
 	close( this->kq );
 }
 
@@ -163,6 +164,7 @@ int	Events::loopEvents( void )
 			if ( et )
 				et->onEvent( tevent );
 		}
+		Log::Info( "LOOP" );
 	}
 	return ( ret < 0 );
 }

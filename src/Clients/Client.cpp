@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 13:23:40 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 12:06:47 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ Client::Client( socket_t socket, Events *bEvs, const ServersVector *servers, \
 
 Client::~Client( void )
 {
+	Log::Error( "Client destroy [ " + SUtils::longToString( this->socket ) + " ]" );
 	if ( this->res != NULL )
 		delete this->res;
 	close( this->socket );

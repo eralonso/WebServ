@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 18:37:58 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 12:38:21 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,30 +195,35 @@ const std::string&	Response::getResString( void ) const
 	return ( this->resString );
 }
 
-void	Response::updateHeadersString( void )
+Response::t_sendStatus	Response::getSendStatus( void ) const
 {
-	if (!isCgi)
-	{
-		this->headersString = this->protocol + " " + SUtils::longToString( this->status );
-		this->headersString += " " + getResult() + HEADER_SEP;
-		this->headersString += this->headers.toString();
-		this->headersString += HEADER_SEP;
-	}
+	return ( this->sendState );
 }
 
-// void	Response::updateResString( void )
+// void	Response::updateHeadersString( void )
 // {
 // 	if (!isCgi)
 // 	{
-// 		this->resString = this->protocol + " " + SUtils::longToString( this->status );
-// 		this->resString += " " + getResult() + HEADER_SEP;
-// 		this->resString += this->headers.toString();
-// 		this->resString += HEADER_SEP;
-// 		this->resString += this->body;
-// 		return ;
+// 		this->headersString = this->protocol + " " + SUtils::longToString( this->status );
+// 		this->headersString += " " + getResult() + HEADER_SEP;
+// 		this->headersString += this->headers.toString();
+// 		this->headersString += HEADER_SEP;
 // 	}
-// 	this->resString = this->body;
 // }
+
+void	Response::updateResString( void )
+{
+	if (!isCgi)
+	{
+		this->resString = this->protocol + " " + SUtils::longToString( this->status );
+		this->resString += " " + getResult() + HEADER_SEP;
+		this->resString += this->headers.toString();
+		this->resString += HEADER_SEP;
+		this->resString += this->body;
+		return ;
+	}
+	this->resString = this->body;
+}
 
 std::string	Response::toString( void ) const
 {
@@ -245,21 +250,22 @@ int	Response::sendResponse( socket_t socket )
 	size_t		threshold;
 	const char	*str;
 	size_t		size;
-	int			ret;
+	ssize_t		ret;
 	size_t		pos;
 
+	if ( this->sendState == Response::GETTING_DATA )
+		this->sendState = Response::SENDING;
 	pos = this->sendPos;
 	size = this->resString.size() - pos; 
 	str = this->resString.c_str();
 	threshold = size > SEND_BUFFER_SIZE ? SEND_BUFFER_SIZE : size;
-	if ( ( ret = send( socket, str + pos, threshold, MSG_DONTWAIT ) < 0 ) )
+	if ( ( ret = send( socket, str + pos, threshold, MSG_DONTWAIT ) ) < 0 )
 	{
 		Log::Error( "Failed to send response with code: " + SUtils::longToString( ret ) );
 		return ( Response::ERROR );
 	}
-	// Log::Info( "SendResponse[" + res->getResString() + "]" );
-	pos = increaseSendPos( threshold );
+	pos = increaseSendPos( ret );
 	if ( pos >= this->resString.size() )
-		return ( Response::SENT );
-	return ( Response::SENDING_HEADERS );
+		this->sendState = Response::SENT;
+	return ( this->sendState );
 }

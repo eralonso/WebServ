@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 14:04:22 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 14:06:58 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 10:53:41 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ bool	Router::parseCgiHeaderLine (Response& res, Request& req, const std::string&
 			return (false);
 		long stat = SUtils::atol(statCodeStr);
 		res.setStatus(stat);
-		req.setError(stat);
+		req.setStatus(stat);
 		return (true);
 	}
 	res.appendHeader(Header(headKey, headValue));

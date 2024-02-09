@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:07 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 18:14:32 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 12:38:07 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,7 @@ public:
 	{
 		ERROR,
 		GETTING_DATA,
-		SENDING_HEADERS,
-		SENDING_BODY,
+		SENDING,
 		SENT
 	} t_sendStatus;
 private:
@@ -78,6 +77,7 @@ public:
 	bool			getIsCgi( void ) const;
 	size_t			getSendPos( void ) const;
 	const std::string&	getResString( void ) const;
+	t_sendStatus	getSendStatus( void ) const;
 	std::string		toString( void ) const;
 	void			updateHeadersString( void );
 	void			updateResString( void );

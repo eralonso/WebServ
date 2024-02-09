@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:29:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 13:40:51 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 12:29:24 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -317,4 +317,9 @@ bool	Request::isAutoindexAllow( void ) const
 std::string Request::getCookies( void ) const
 {
 	return (headers.getCookies());	
+}
+
+bool	Request::isBadRequest( void ) const
+{
+	return ( this->badRequest );
 }
