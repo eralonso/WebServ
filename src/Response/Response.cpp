@@ -6,12 +6,13 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 14:58:56 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 18:24:17 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Utils.hpp"
 #include "Response.hpp"
+#include "Events.hpp"
 
 Response::Response( void ): server( SERVER ), isCgi( false ), sendPos( 0 ), sendState( GETTING_DATA ) {}
 
@@ -248,7 +249,7 @@ std::string	Response::toString( void ) const
 	return (body);
 }
 
-int	Response::sendResponse( socket_t socket )
+int	Response::sendResponse( Event& tevent )
 {
 	size_t		threshold;
 	const char	*str;
@@ -262,9 +263,10 @@ int	Response::sendResponse( socket_t socket )
 	size = this->resString.size() - pos; 
 	str = this->resString.c_str();
 	threshold = size > SEND_BUFFER_SIZE ? SEND_BUFFER_SIZE : size;
+	// threshold = 1;
 	if (this->sendState == Response::SENT || threshold == 0)
 		return ( this->sendState );
-	if ( ( ret = send( socket, str + pos, threshold, MSG_DONTWAIT ) ) < 0 )
+	if ( ( ret = send( tevent.ident, str + pos, threshold, MSG_DONTWAIT ) ) < 0 )
 	{
 		Log::Error( "Failed to send response with code: " + SUtils::longToString( ret ) );
 		return ( Response::ERROR );

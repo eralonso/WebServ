@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:07 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 12:38:07 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 18:24:25 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include "Headers.hpp"
 # include "StatusCodes.hpp"
 # include "Defines.hpp"
+# include "Events.hpp"
 
 class Response
 {
@@ -81,7 +82,7 @@ public:
 	std::string		toString( void ) const;
 	void			updateHeadersString( void );
 	void			updateResString( void );
-	int				sendResponse( socket_t socket );
+	int				sendResponse( Event& tevent );
 };
 
 #endif

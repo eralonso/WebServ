@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 14:11:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 13:09:51 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 17:55:06 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ bool	Router::processGetRequest( Request& req )
 	error = getFileToRead( req, path );
 	if ( error == EXIT_SUCCESS )
 	{
+		Log::Info( "file to read: " + path );
 		fd = openReadFile( path );
 		if ( cli )
 			cli->setEventReadFile( fd );
@@ -47,7 +48,10 @@ bool	Router::processGetRequest( Request& req )
 			req.setDocExt( "html" );
 		}
 		if ( cli )
+		{
+			Log::Error( "is dir event write" );
 			cli->setEventWriteSocket();
+		}
 	}
 	return ( req.getError() >= 400 );
 }

@@ -48,7 +48,7 @@ int	Events::setEventWrite( EventsTarget* et, int fd )
 	int			ret;
 	Event		writeEvent;
 
-	EV_SET(&writeEvent, fd, EVFILT_WRITE, EV_ADD | EV_EOF, 0, 0, et);
+	EV_SET(&writeEvent, fd, EVFILT_WRITE, EV_ADD | EV_EOF | EV_ENABLE, 0, 0, et);
 	ret = kevent(kq, &writeEvent, 1, NULL, 0, NULL);
 	if (ret == -1)
 		Log::Error( "kevent Write register" );
@@ -60,7 +60,7 @@ int	Events::setEventRead( EventsTarget* et, int fd )
 	int			ret;
 	Event		readEvent;
 
-	EV_SET(&readEvent, fd, EVFILT_READ, EV_ADD | EV_EOF, 0, 0, et);
+	EV_SET(&readEvent, fd, EVFILT_READ, EV_ADD | EV_EOF | EV_ENABLE, 0, 0, et);
 	ret = kevent(kq, &readEvent, 1, NULL, 0, NULL);
 	if (ret == -1)
 		Log::Error( "kevent Read register" );
@@ -154,6 +154,7 @@ int	Events::loopEvents( void )
 		ret = kevent( kq, NULL, 0, &tevent, 1, NULL );
 		if (ret > 0)
 		{
+			Log::Info( "loopEvents" );
 			if ( tevent.flags & EV_ERROR )
 			{
 				Log::Error( "Attempting catch an event with ident [ " \

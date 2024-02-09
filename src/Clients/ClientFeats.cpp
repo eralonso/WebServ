@@ -6,12 +6,13 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:20:14 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 15:35:29 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/09 17:53:31 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 #include "Router.hpp"
+#include "Receptionist.hpp"
 
 int Client::bindClientPoll( socket_t socket )
 {
@@ -80,6 +81,7 @@ int	Client::manageRecv( std::string recv )
 				cont = false;
 			if ( req->isBadRequest() )
 			{
+				Log::Error( "Client [ " + SUtils::longToString( this->socket ) + " ] -> bad Request" );
 				setEventWriteSocket();
 				enableEventReadSocket( false );
 			}
@@ -259,5 +261,5 @@ void	Client::nextRequest( void )
 	if (this->size() > 0 || this->getPendingSize() > 0 || this->getKeepAlive())
 		this->enableEventReadSocket( true );
 	else
-		delete this;
+		this->receptionist->eraseClient( this );
 }
