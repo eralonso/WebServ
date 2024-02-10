@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:34:13 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/26 12:40:46 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 12:37:26 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,37 @@ namespace Log
 	{
 		std::cout << GREEN << "Success: "<< str << DEF << std::endl;
 	}	
+
+	void	Debug( const std::string str )
+	{
+		#ifdef LOG_DEBUG
+		std::cout << BLUE << "Debug: "<< str << DEF << std::endl;
+		#else
+		(void)str;
+		#endif
+	}
+
+	void	Timeout( bool reset )
+	{
+		static std::string	starWait = "|/-\\";
+		static size_t		starLength = starWait.length();
+		static size_t		count;
+
+		if ( count == starLength )
+			count = 0;
+		if ( reset )
+		{
+			// std::cout << "|" << std::endl;
+			Log::DropOneLine();
+		}
+		std::cout << CYAN"Waiting events " << starWait[ count ] << DEF << std::endl;
+		count++;
+	}
+
+	void	DropOneLine( void )
+	{
+		std::cout << GO_UP_LINES( 1 ) << CLEAR_LINE;
+	}
 }
 
 namespace SUtils

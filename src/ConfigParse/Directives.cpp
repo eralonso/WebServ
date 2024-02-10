@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Directives.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:55:51 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/30 16:46:51 by codespace        ###   ########.fr       */
+/*   Updated: 2024/02/10 11:20:32 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,39 +195,39 @@ bool	Directives::findReturnUri( int& uriCode, std::string& uriRedir ) const
 
 void	Directives::print( void ) const
 {
-	Log::Info( "[ Config ] root: " + this->_root );
-	Log::Info( "[ Config ] host: " + this->_host );
-	Log::Info( "[ Config ] port: " + SUtils::longToString( this->_port ) );
-	Log::Info( "[ Config ] server_name: " \
+	Log::Debug( "[ Config ] root: " + this->_root );
+	Log::Debug( "[ Config ] host: " + this->_host );
+	Log::Debug( "[ Config ] port: " + SUtils::longToString( this->_port ) );
+	Log::Debug( "[ Config ] server_name: " \
 				+ STLUtils::vectorToString< StringVector >( \
 				this->_serverNames.begin(), this->_serverNames.end(), " " ) );
-	Log::Info( "[ Config ] error_page: " \
+	Log::Debug( "[ Config ] error_page: " \
 				+ STLUtils::mapToString< ErrorPagesMap >( \
 				this->_errorPages.begin(), this->_errorPages.end() ) );
-	Log::Info( "[ Config ] client_max_body_size: " \
+	Log::Debug( "[ Config ] client_max_body_size: " \
 				+ SUtils::longToString( this->_clientMaxBodySize ) );
-	Log::Info( "[ Config ] upload_store: " + this->_uploadStore );
-	Log::Info( "[ Config ] index: " \
+	Log::Debug( "[ Config ] upload_store: " + this->_uploadStore );
+	Log::Debug( "[ Config ] index: " \
 				+ STLUtils::vectorToString< StringVector >( \
 				this->_index.begin(), this->_index.end(), " " ) );
-	Log::Info( "[ Config ] autoindex: " + std::string( \
+	Log::Debug( "[ Config ] autoindex: " + std::string( \
 				this->_autoindex == true ? "on" : "off" ) );
-	Log::Info( "[ Config ] alias: " + this->_alias );
-	Log::Info( "[ Config ] return: " \
+	Log::Debug( "[ Config ] alias: " + this->_alias );
+	Log::Debug( "[ Config ] return: " \
 				+ SUtils::longToString( this->_return.first ) \
 				+ " -> " \
 				+ this->_return.second );
-	Log::Info( "[ Config ] allow_methods: " \
+	Log::Debug( "[ Config ] allow_methods: " \
 				+ std::string( this->_allowMethods.getAction( \
 						ActionMask::GET ) == true ? "GET " : "" ) \
 				+ std::string( this->_allowMethods.getAction( \
 						ActionMask::POST ) == true ? "POST " : "" ) \
 				+ std::string( this->_allowMethods.getAction( \
 						ActionMask::DELETE ) == true ? "DELETE" : "" ) );
-	// Log::Info( "[ Config ] cgi: "
+	// Log::Debug( "[ Config ] cgi: "
 	// 			+ STLUtils::mapToString< std::map< std::string, std::string > >(
 	// 			this->_cgis.begin(), this->_cgis.end() ) );
-	Log::Info( "[ Config ] servers: " );
-	Log::Info( "[ Config ] location: " );
+	Log::Debug( "[ Config ] servers: " );
+	Log::Debug( "[ Config ] location: " );
 	std::cout << std::endl;
 }

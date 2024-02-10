@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:43:42 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 12:48:25 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 12:48:27 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 # include "CgiExecutor.hpp"
 # include <Directives.hpp>
 
-# define BACKLOG 200
+# define BACKLOG 511
 
 class Receptionist: public Clients
 {

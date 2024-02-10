@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 18:40:46 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 11:26:51 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ Router&	Router::operator=( const Router& )
 
 int	Router::updateResponse( Response &res, Request &req, Client& cli )
 {
-	Log::Info("updateResponse");
+	Log::Debug("updateResponse");
 	res.setServer( SERVER );
 	if ( req.getUseCgi() )
 		formatCgiResponse( res,req, cli );
@@ -79,7 +79,7 @@ std::string Router::determineContentType(Response& res, Request& req)
 
 Response	*Router::formatGenericResponse( Response& res, Request& req )
 {
-	Log::Info("formatGenericResponse");
+	Log::Debug("formatGenericResponse");
 	res.appendHeader( Header( "Content-Type", determineContentType( res, req ) ) );
 	res.setProtocol( req.getProtocol() );
 	if ( req.getRedir() == true )
@@ -116,7 +116,7 @@ int	Router::openReadFile( std::string file )
 	fd = open( file.c_str(), O_RDONLY | O_NONBLOCK );
 	if ( fd < 0 )
 		return ( fd );
-	Log::Success( "Open file read: " + SUtils::longToString( fd ) );
+	Log::Debug( "Open file read: " + SUtils::longToString( fd ) );
 	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
 	return ( fd );
 }
@@ -190,9 +190,14 @@ bool	Router::isValidDirectory( std::string dir )
 bool	Router::processDirectory( Request& req, std::string path, \
 									std::string& output )
 {
-	if ( req.isAutoindexAllow() == true \
+	if ( isValidDirectory( path ) == false )
+		req.setError( HTTP_NOT_FOUND_CODE );
+	else if ( req.isAutoindexAllow() == true \
 		&& FolderLs::getLs( output, path, req.getRoute() ) == LsEntry::NONE )
+	{
 		req.setStatus( HTTP_OK_CODE );
+		req.setDocExt( "html" );
+	}
 	else
 		req.setError( HTTP_FORBIDDEN_CODE );
 	return ( req.getError() == HTTP_OK_CODE );
@@ -253,6 +258,15 @@ int	Router::getFileToRead( Request& req, std::string& retFile )
 	retFile = file;
 	req.setStatus( HTTP_OK_CODE );
 	return ( EXIT_SUCCESS );
+}
+
+ssize_t	Router::getFileSize( std::string file )
+{
+	struct stat	info;
+
+	if ( stat( file.c_str(), &info ) == -1 )
+		return ( -1 );
+	return ( info.st_size );
 }
 
 std::string	Router::getDefaultErrorPage( unsigned int code )

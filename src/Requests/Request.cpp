@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:18:23 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 12:15:06 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 11:28:31 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ Request::Request( Client *cli )
 	this->redir = false;
 	this->outputLength = 0;
 	this->recvBodyLength = 0;
-	// Log::Info("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
+	// Log::Debug("Created request id: " + SUtils::longToString(id) + " & address " + SUtils::longToString((long)this));
 }
 
 Request::~Request( void ) 
@@ -161,39 +161,39 @@ void	Request::logStatus( void )
 	switch ( status )
 	{
 		case IDLE:
-			Log::Success( "status = IDLE" );
+			Log::Debug( "status = IDLE" );
 			break ;
 		case FD_BOND:
-			Log::Success( "status = FD_BOND" );
+			Log::Debug( "status = FD_BOND" );
 			break ;
 		case RECVD_START:
-			Log::Success( "status = RECVD_START" );
+			Log::Debug( "status = RECVD_START" );
 			break ;
 		case RECVD_REQ_LINE:
-			Log::Success( "status = RECVD_REQ_LINE" );
+			Log::Debug( "status = RECVD_REQ_LINE" );
 			break ;
 		case RECVD_HEADER:
-			Log::Success( "status = RECVD_HEADER" );
+			Log::Debug( "status = RECVD_HEADER" );
 			break ;
 		case RECVD_CHUNK_SIZE:
-			Log::Success( "status = RECVD_CHUNK_SIZE" );
+			Log::Debug( "status = RECVD_CHUNK_SIZE" );
 			break ;
 		case RECVD_CHUNK:
-			Log::Success( "status = RECVD_CHUNK" );
+			Log::Debug( "status = RECVD_CHUNK" );
 			break ;
 		case RECVD_LAST_CHUNK:
-			Log::Success( "status = RECVD_LAST_CHUNK" );
+			Log::Debug( "status = RECVD_LAST_CHUNK" );
 			break ;
 		case RECVD_ALL:
-			Log::Success( "status = RECVD_ALL" );
+			Log::Debug( "status = RECVD_ALL" );
 			break ;
 		case CGI_LAUNCHED:
-			Log::Success( "status = CGI_LAUNCHED" );
+			Log::Debug( "status = CGI_LAUNCHED" );
 			break ;
 		case RESP_RENDERED:
-			Log::Success( "status = RESP_RENDERED" );
+			Log::Debug( "status = RESP_RENDERED" );
 			break ;
 		default:
-			Log::Success( "status = " + SUtils::longToString( status ) );
+			Log::Debug( "status = " + SUtils::longToString( status ) );
 	}
 }

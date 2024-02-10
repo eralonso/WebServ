@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:29:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 12:29:24 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 11:20:32 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,7 @@ bool Request::getHostPort(std::string& host, std::string& port) const
 	std::string defPort("8000");
 	if (this->routeHost.size() > 0 || this->routePort.size() > 0)
 	{
-		Log::Info("Request::getHostPort");
+		Log::Debug("Request::getHostPort");
 		if (this->routeHost.size() == 0)
 			this->routeHost.copy((char*)defHost.c_str(), defHost.size());
 		if (this->routePort.size() == 0)

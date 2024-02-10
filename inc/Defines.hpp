@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 19:10:16 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/26 11:27:06 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 12:09:00 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,9 @@
 # define BLUE "\033[1;94m"
 # define PURPLE "\033[1;95m"
 # define CYAN "\033[1;96m"
+
+# define GO_UP_LINES( t ) "\033[" + SUtils::longToString( t ) + "A"
+# define CLEAR_LINE "\033[2K"
 
 # define ISSPACE "\t\n\v\f\r "
 

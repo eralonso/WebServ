@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:12:13 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 18:32:47 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 11:34:15 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 int	Client::onEventProcExit( Event& tevent )
 {
-	Log::Info( "onEventProcExit [" + SUtils::longToString(tevent.ident) + "]" );
+	Log::Debug( "onEventProcExit [" + SUtils::longToString(tevent.ident) + "]" );
 	this->deleteEventProcTimeout(tevent.ident);
 	this->cgiTimeout = false;
 	this->cgiFinished = true;
@@ -25,7 +25,7 @@ int	Client::onEventProcExit( Event& tevent )
 
 int	Client::onEventProcTimeout( Event& tevent )
 {
-	Log::Info( "onEventProcTimeout [" + SUtils::longToString(tevent.ident) + "]" );
+	Log::Debug( "onEventProcTimeout [" + SUtils::longToString(tevent.ident) + "]" );
 	this->deleteEventProcExit(tevent.ident);
 	kill(tevent.ident, SIGKILL);
 	//TODO setError to Request, Response shoud update in accordance
@@ -40,7 +40,7 @@ int	Client::onEventReadSocket( Event& tevent )
 	std::string	readed;
 	int			amount;
 
-	Log::Info( "onEventReadSocket [" + SUtils::longToString(tevent.ident) + "]" );
+	Log::Debug( "onEventReadSocket [" + SUtils::longToString(tevent.ident) + "]" );
 	if ( tevent.flags & EV_EOF )
 	{
 		this->receptionist->eraseClient( this );
@@ -53,11 +53,11 @@ int	Client::onEventReadSocket( Event& tevent )
 		return ( -1 );
 	}
 	manageRecv( readed );
-	if ( manageCompleteRecv() && !isResponseSent() )
-	{
-		Log::Error( "onEventReadSocket" );
+	// if ( manageCompleteRecv() && !isResponseSent() )
+	// {
+		// Log::Error( "onEventReadSocket" );
 		// enableEventReadSocket( false );
-	}
+	// }
 	return ( 0 );
 }
 
@@ -67,13 +67,13 @@ int	Client::onEventReadFile( Event& tevent )
 	size_t	amountToRead = BUFFER_SIZE;
 	size_t	actualRead;
 
-	Log::Info( "onEventReadFile [" + SUtils::longToString(tevent.ident) + "]" );
+	Log::Debug( "onEventReadFile [" + SUtils::longToString(tevent.ident) + "]" );
 	createResponse();
 	if (amountToRead > (size_t)tevent.data)
 		amountToRead = (size_t)tevent.data;
 	actualRead = read(tevent.ident, buffer, amountToRead);
-	Log::Info( "actualRead: " + SUtils::longToString( actualRead ) );
-	Log::Info( "data: " + SUtils::longToString( tevent.data ) );
+	Log::Debug( "actualRead: " + SUtils::longToString( actualRead ) );
+	Log::Debug( "data: " + SUtils::longToString( tevent.data ) );
 	std::string content(buffer, actualRead);
 	if (this->res)
 		this->res->setBody( this->res->getBody() + content );
@@ -91,7 +91,7 @@ int	Client::onEventWriteFile( Event& tevent )
 {
 	size_t	size;
 
-	Log::Info( "onEventWriteFile [" + SUtils::longToString(tevent.ident) + "]" );
+	Log::Debug( "onEventWriteFile [" + SUtils::longToString(tevent.ident) + "]" );
 	Request* req = this->getPending();
 	if (!req)
 	{
@@ -123,7 +123,7 @@ int	Client::onEventReadPipe( Event& tevent )
 	size_t	amountToRead = BUFFER_SIZE;
 	size_t	actualRead;
 
-	Log::Info( "onEventReadPipe [" + SUtils::longToString(tevent.ident) + "]" );
+	Log::Debug( "onEventReadPipe [" + SUtils::longToString(tevent.ident) + "]" );
 	createResponse();
 	if (amountToRead > (size_t)tevent.data)
 		amountToRead = (size_t)tevent.data;
@@ -144,7 +144,7 @@ int	Client::onEventReadPipe( Event& tevent )
 
 int	Client::onEventWritePipe( Event& tevent )
 {
-	Log::Info( "onEventWritePipe [" + SUtils::longToString(tevent.ident) + "]" );
+	Log::Debug( "onEventWritePipe [" + SUtils::longToString(tevent.ident) + "]" );
 	Request* req = this->getPending();
 	if (!req)
 	{
@@ -172,7 +172,7 @@ int	Client::onEventWriteSocket( Event& tevent )
 	int			resSendStatus;
 
 	// (void)tevent;
-	Log::Info( "onEventWriteSocket [" + SUtils::longToString(tevent.ident) + "]");
+	Log::Debug( "onEventWriteSocket [" + SUtils::longToString(tevent.ident) + "]");
 	createResponse();
 	if ( this->res )
 	{
@@ -181,7 +181,7 @@ int	Client::onEventWriteSocket( Event& tevent )
 		resSendStatus = this->res->sendResponse( tevent );
 		if ( resSendStatus == Response::ERROR || resSendStatus == Response::SENT )
 		{
-			Log::Info( std::string("onEventWriteSocket was ") + (resSendStatus == Response::ERROR ? "Response::ERROR" : "Response::SENT") );
+			Log::Debug( std::string("onEventWriteSocket was ") + (resSendStatus == Response::ERROR ? "Response::ERROR" : "Response::SENT") );
 			nextRequest();
 		}
 	}
@@ -218,7 +218,7 @@ int	Client::onEventWrite( Event& tevent )
 
 int	Client::onEvent( Event& tevent )
 {
-	Log::Info( "onEvent" );
+	Log::Debug( "onEvent" );
 	if ( tevent.filter == EVFILT_READ )
 		return ( onEventRead( tevent ) );
 	if ( tevent.filter == EVFILT_WRITE )

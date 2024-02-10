@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 12:32:31 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 11:20:32 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ CgiExecutor::CgiExecutor( Request& request ): request( request )
 {
 	this->binary = request.getCgiBinary( request.getDocExt() );
 	this->argument = request.getFilePathRead();
-	// Log::Info( "CgiExecutor binary: " + this->binary );
-	// Log::Info( "CgiExecutor argment: " + this->argument );
-	// Log::Info( "Route chain: " + request.getRouteChaineString() );
+	// Log::Debug( "CgiExecutor binary: " + this->binary );
+	// Log::Debug( "CgiExecutor argment: " + this->argument );
+	// Log::Debug( "Route chain: " + request.getRouteChaineString() );
 	if (!checkFileReadable(this->argument))
 	{
 		throw std::runtime_error("Either not found or not readable: " + this->argument);

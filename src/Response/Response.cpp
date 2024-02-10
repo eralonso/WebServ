@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 18:24:17 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 11:20:32 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,10 @@
 #include "Response.hpp"
 #include "Events.hpp"
 
-Response::Response( void ): server( SERVER ), isCgi( false ), sendPos( 0 ), sendState( GETTING_DATA ) {}
+Response::Response( void ): server( SERVER ), isCgi( false ), sendPos( 0 ), sendState( GETTING_DATA )
+{
+	this->headers.push_back( Header( "Content-Length", "0" ) );
+}
 
 Response::~Response( void ) {}
 
@@ -214,16 +217,16 @@ Response::t_sendStatus	Response::getSendStatus( void ) const
 
 void	Response::updateResString( void )
 {
-	Log::Info("updateResString");
+	Log::Debug("updateResString");
 	if (!isCgi)
 	{
-		Log::Info("updateResString is set as: ");
+		Log::Debug("updateResString is set as: ");
 		this->resString = this->protocol + " " + SUtils::longToString( this->status );
 		this->resString += " " + getResult() + HEADER_SEP;
 		this->resString += this->headers.toString();
 		this->resString += HEADER_SEP;
 		this->resString += this->body;
-		Log::Info(this->resString);
+		Log::Debug(this->resString);
 		return ;
 	}
 	this->resString = this->body;
@@ -235,17 +238,17 @@ std::string	Response::toString( void ) const
 
 	if (!isCgi)
 	{
-		// Log::Info("Response::toString compose response");
+		// Log::Debug("Response::toString compose response");
 		ret = this->protocol + " " + SUtils::longToString( this->status );
 		ret += " " + getResult() + HEADER_SEP;
 		ret += this->headers.toString();
 		ret += HEADER_SEP;
 		ret += this->body;
-		// Log::Info(ret);
+		// Log::Debug(ret);
 		return ( ret );
 	}
-	// Log::Info("Response::toString use only body content");
-	// Log::Info(body);
+	// Log::Debug("Response::toString use only body content");
+	// Log::Debug(body);
 	return (body);
 }
 

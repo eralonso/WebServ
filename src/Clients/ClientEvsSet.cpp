@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:05:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 18:34:41 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 11:24:06 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,25 +16,22 @@
 
 int	Client::setEventReadSocket( void )
 {
-	Log::Info("setEventReadSocket [" + SUtils::longToString(this->socket) + "]");
+	Log::Debug("setEventReadSocket [" + SUtils::longToString(this->socket) + "]");
 	if ( this->evs )
 		return ( this->evs->setEventRead( this, this->socket ) );
 	return ( 0 );
 }
 int	Client::setEventWriteSocket( void )
 {
-	Log::Info("setEventWriteSocket [" + SUtils::longToString(this->socket) + "]");
+	Log::Debug("setEventWriteSocket [" + SUtils::longToString(this->socket) + "]");
 	if ( this->evs )
-	{
-		Log::Success("setEventWriteSocket");
 		return ( this->evs->setEventWrite( this, this->socket ) );
-	}
 	return ( 0 );
 }
 
 int	Client::setEventProc( int pipeRead, int pipeWrite, int pid )
 {
-	Log::Info("setEventProc [" + SUtils::longToString(pid) + "]");
+	Log::Debug("setEventProc [" + SUtils::longToString(pid) + "]");
 	this->pipeCgiRead = pipeRead;
 	this->pipeCgiWrite = pipeWrite;
 	this->cgiDriven = true;
@@ -52,7 +49,7 @@ int	Client::setEventProc( int pipeRead, int pipeWrite, int pid )
 
 int	Client::setEventReadFile( int fd )
 {
-	Log::Info("setEventReadFile [" + SUtils::longToString(fd) + "]");
+	Log::Debug("setEventReadFile [" + SUtils::longToString(fd) + "]");
 	this->writeEOF = true;
 	this->fileFd = fd;
 	if ( this->evs )
@@ -62,7 +59,7 @@ int	Client::setEventReadFile( int fd )
 
 int	Client::setEventWriteFile( int fd )
 {
-	Log::Info("setEventWriteFile [" + SUtils::longToString(fd) + "]");
+	Log::Debug("setEventWriteFile [" + SUtils::longToString(fd) + "]");
 	this->readEOF = true;
 	this->fileFd = fd;
 	if ( this->evs )
@@ -72,7 +69,7 @@ int	Client::setEventWriteFile( int fd )
 
 int	Client::enableEventReadSocket( bool enable )
 {
-	Log::Info(std::string("enableEventReadSocket [" + SUtils::longToString(this->socket) + "] ") + (enable ? "enable" : "disable"));
+	Log::Debug(std::string("enableEventReadSocket [" + SUtils::longToString(this->socket) + "] ") + (enable ? "enable" : "disable"));
 	if ( this->evs )
 		return ( this->evs->enableEventRead( this, this->socket, enable ) );
 	return ( 0 );
@@ -80,7 +77,7 @@ int	Client::enableEventReadSocket( bool enable )
 
 int	Client::enableEventWriteSocket( bool enable )
 {
-	Log::Info(std::string("enableEventWriteSocket  [" + SUtils::longToString(this->socket) + "]") + (enable ? "enable" : "disable"));
+	Log::Debug(std::string("enableEventWriteSocket  [" + SUtils::longToString(this->socket) + "]") + (enable ? "enable" : "disable"));
 	if ( this->evs )
 		return ( this->evs->enableEventWrite( this, this->socket, enable ) );
 	return ( 0 );

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:44:22 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 12:26:10 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 11:20:32 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 
 	if ( len == 0 || ( len == 1 && line[ 0 ] <= ' ' ) )
 	{
-		Log::Info( "END headers" );
+		Log::Debug( "END headers" );
 		this->status = RECVD_HEADER;
 		checkKeepAlive();
 		if (!updateServerConfig())
@@ -59,7 +59,7 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 		updateFilePaths();
 		if ( checkChunked() )
 			return ( true );
-		Log::Info( "MID" );
+		Log::Debug( "MID" );
 		if ( !checkEmptyContent( contentSize ) && (maxBodySize == 0 || contentSize <= maxBodySize) )
 		{
 			got = this->client->getNChars(data, contentSize);
@@ -67,7 +67,7 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 			if ( got == contentSize )
 				this->status = RECVD_ALL;
 		}
-		Log::Info( "END" );
+		Log::Debug( "END" );
 		if (maxBodySize != 0 && contentSize > maxBodySize)
 		{
 			Log::Error( "clientMaxBodySize" );
@@ -196,13 +196,13 @@ bool	Request::processLine( const std::string &line )
 		case RECVD_LAST_CHUNK:
 			return ( processLineOnRecvdLastChunk( line ) );
 		case RECVD_ALL:
-			Log::Info( "processLine with RECVD_ALL" );
+			Log::Debug( "processLine with RECVD_ALL" );
 			return ( false );
 		case CGI_LAUNCHED:
-			Log::Info( "processLine with CGI_LAUNCHED" );
+			Log::Debug( "processLine with CGI_LAUNCHED" );
 			return ( false );
 		case RESP_RENDERED:
-			Log::Info( "processLine with RESP_RENDERED" );
+			Log::Debug( "processLine with RESP_RENDERED" );
 			return ( false );
 	}
 	return ( false );

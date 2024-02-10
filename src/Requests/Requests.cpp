@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:58:31 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 11:01:47 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 11:20:32 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,14 +68,14 @@ bool	Requests::checkPendingToSend( void )
 		if ( r->isReadyToSend() )
 			return ( 1 );
 		else
-			Log::Info( "Last Request " \
+			Log::Debug( "Last Request " \
 				+ SUtils::longToString( r->getId() ) \
 				+ " in " \
 				+ SUtils::longToString( pos ) \
 				+ " pos, is not ReadyToSend" );
 	}
 	else
-		Log::Info( "No Requests on checkPendingToSend" );
+		Log::Debug( "No Requests on checkPendingToSend" );
 	return ( 0 );
 }
 

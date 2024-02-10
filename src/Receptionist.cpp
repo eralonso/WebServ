@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 12:49:21 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 11:43:33 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,5 +99,6 @@ const ServersVector&	Receptionist::getServers( void ) const
 
 int	Receptionist::mainLoop( void )
 {
+	// this->evs.setEventTimer( NULL, 0, 1000, false );
 	return ( this->evs.loopEvents() );
 }

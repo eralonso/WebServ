@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 14:11:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 17:55:06 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 11:20:32 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,33 +20,45 @@ bool ( *Router::process[ METHODS_NB ] )( Request& req ) = { &Router::processGetR
 													&Router::processDeleteRequest, \
 													&Router::processHeadRequest };
 
+void	Router::processGetFileRead( Request& req, Client *cli, std::string path)
+{
+	ssize_t		size;
+	int			fd;
+
+	if ( !cli )
+		return ;
+	Log::Debug( "file to read: " + path );
+	size = getFileSize( path );
+	if ( size == -1 )
+	{
+		req.setError( HTTP_INTERNAL_SERVER_ERROR_CODE );
+		return ;
+	}
+	if ( !size )
+	{
+		cli->setEventWriteSocket();
+		return ;
+	}
+	fd = openReadFile( path );
+	if ( cli )
+		cli->setEventReadFile( fd );
+}
+
 bool	Router::processGetRequest( Request& req )
 {
 	std::string	path;
 	std::string	output;
-	int			error;
-	int			fd;
+	int			pathStatus;
 	Client		*cli;
 
-	Log::Info("processGetRequest");
+	Log::Debug("processGetRequest");
 	cli = req.getClient();
-	error = getFileToRead( req, path );
-	if ( error == EXIT_SUCCESS )
+	pathStatus = getFileToRead( req, path );
+	if ( pathStatus == EXIT_SUCCESS )
+		processGetFileRead( req, cli, path );
+	else if ( pathStatus == EISDIR && processDirectory( req, path, output ) )
 	{
-		Log::Info( "file to read: " + path );
-		fd = openReadFile( path );
-		if ( cli )
-			cli->setEventReadFile( fd );
-	}
-	else if ( error == EISDIR )
-	{
-		if ( isValidDirectory( path ) == false )
-			req.setError( HTTP_NOT_FOUND_CODE );
-		else if ( processDirectory( req, path, output ) == true )
-		{
-			req.setOutput( output );
-			req.setDocExt( "html" );
-		}
+		req.setOutput( output );
 		if ( cli )
 		{
 			Log::Error( "is dir event write" );
@@ -68,16 +80,8 @@ bool	Router::processHeadRequest( Request& req )
 	error = getFileToRead( req, path );
 	if ( error == EXIT_SUCCESS && !stat( path.c_str(), &info ) )
 		req.setOutputLength( info.st_size );
-	else if ( error == EISDIR )
-	{
-		if ( isValidDirectory( path ) == false )
-			req.setError( HTTP_NOT_FOUND_CODE );
-		else if ( processDirectory( req, path, output ) == true )
-		{	
-			req.setOutputLength( output.length() );
-			req.setDocExt( "html" );
-		}
-	}
+	else if ( error == EISDIR && processDirectory( req, path, output ) )
+		req.setOutputLength( output.length() );
 	if ( cli )
 		cli->enableEventWriteSocket( true );
 	return ( req.getError() >= 400 );
@@ -92,18 +96,18 @@ bool	Router::processPostRequest( Request& req )
 	Client		*cli;
 	int			fd;
 
-	Log::Info( "processPost" );
+	Log::Debug( "processPost" );
 	cli = req.getClient();
 	if ( !req.isDirectiveSet( "upload_store" ) || document.size() == 0 )
 		return ( req.setError( HTTP_FORBIDDEN_CODE ) );
 	path = req.getFilePathWrite();
 	if ( isDir( path ) )
 		return ( req.setError( HTTP_CONFLICT_CODE ) );
-	Log::Info( "isn't a dir" );
+	Log::Debug( "isn't a dir" );
 	fd = openWriteFile( path );
 	if ( fd < 0 )
 		return ( req.setError( HTTP_FORBIDDEN_CODE ) );
-	Log::Info( "valid file" );
+	Log::Debug( "valid file" );
 	if ( cli )
 		cli->setEventWriteFile( fd );
 	req.setStatus( HTTP_CREATED_CODE );
@@ -119,7 +123,7 @@ bool	Router::processPutRequest( Request& req )
 	Client		*cli;
 	int			fd;
 
-	Log::Info( "processPut" );
+	Log::Debug( "processPut" );
 	cli = req.getClient();
 	if ( !req.isDirectiveSet( "upload_store" ) || document.size() == 0 )
 		return ( req.setError( HTTP_FORBIDDEN_CODE ) );
@@ -159,14 +163,12 @@ bool	Router::processRequestHeaderReceived( Request &req )
 {
 	int			i = 0;
 	std::string	requestMethod = req.getMethod();
-	int			error = 0;
 	Client		*cli;
-	Response	*res;
 
-	Log::Info( "ProcessRequestHeaderReceived" );
+	Log::Debug( "ProcessRequestHeaderReceived" );
 	cli = req.getClient();
 	if ( cli )
-		res = cli->createResponse();
+		cli->createResponse();
 	checkRedir( req );
 	if ( req.getError() < MIN_ERROR_CODE )
 	{
@@ -175,14 +177,9 @@ bool	Router::processRequestHeaderReceived( Request &req )
 		while ( i < METHODS_NB && Router::methods[ i ] != requestMethod )
 			i++;
 		if ( i < METHODS_NB )
-			error = Router::process[ i ]( req );
+			Router::process[ i ]( req );
 		else
 			req.setError( HTTP_NOT_ALLOWED_CODE );
-	}
-	if ( error )
-	{
-		Log::Error( "Fail request" );
-		cli->setEventWriteSocket();
 	}
 	checkErrorRedir( req.getError(), req );
 	checkErrorBody( req, req.getError() );
@@ -194,7 +191,7 @@ bool	Router::processRequestHeaderReceived( Request &req )
 // 	int			i = 0;
 // 	std::string	requestMethod = req.getMethod();
 
-// 	Log::Info( "ProcessRequestReceived" );
+// 	Log::Debug( "ProcessRequestReceived" );
 // 	checkRedir( req );
 // 	if ( req.getError() < MIN_ERROR_CODE )
 // 	{

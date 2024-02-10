@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 18:37:24 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 10:45:56 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,9 @@ private:
     static bool processPostRequest(Request &req);
     static bool	processPutRequest(Request &req);
     static bool processDeleteRequest(Request &req);
+	static void	processGetFileRead( Request& req, Client *cli, std::string path);
+	static bool	processDirectory( Request& req, std::string path, \
+							std::string& output );
 private:
 	Router( void );
 	~Router();
@@ -66,10 +69,9 @@ public:
     // static bool			writeFile(std::string file, std::string content);
     static bool 		checkPathExist(Request &req, std::string path);
     static bool			checkPathCanRead( Request& req, std::string path );
-	static bool			processDirectory( Request& req, std::string path, \
-							std::string& output );
 	static std::string	getDefaultErrorPage( unsigned int code );
 	static int			getFileToRead( Request& req, std::string& file );
+	static ssize_t		getFileSize( std::string file );
 	static void			checkRedir( Request& req );
 	static void 		checkErrorRedir( int errorStatus, Request& req );
 	static void			checkErrorBody( Request& req, int errorStatus );

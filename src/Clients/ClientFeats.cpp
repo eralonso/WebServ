@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:20:14 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 17:53:31 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 11:20:32 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ int	Client::manageRecv( std::string recv )
 				enableEventReadSocket( false );
 			}
 		}
-		Log::Info( "Client loop" );
+		Log::Debug( "Client loop" );
 	}
 	purgeUsedRecv();
 	if ( fail == true )
@@ -193,13 +193,13 @@ int	Client::readRequest( socket_t clientFd, std::string& readed )
 	ssize_t	amount;
 
 	amount = recv( clientFd, buffer, BUFFER_SIZE, MSG_DONTWAIT );
-	Log::Info("on recv on [" + SUtils::longToString(clientFd) + "]");
-	Log::Info( "amount: " + SUtils::longToString( amount ) );
-	Log::Info( "recv errno: " + SUtils::longToString( errno ) );
+	Log::Debug("on recv on [" + SUtils::longToString(clientFd) + "]");
+	Log::Debug( "amount: " + SUtils::longToString( amount ) );
+	Log::Debug( "recv errno: " + SUtils::longToString( errno ) );
 	if (amount > 0)
 	{
 		std::string content(buffer, amount);
-		Log::Info("content read on [" + SUtils::longToString(clientFd) 
+		Log::Debug("content read on [" + SUtils::longToString(clientFd) 
 			+ "]: \n----------------------------\n"
 			+ content
 			+ "-------------------------");
@@ -247,12 +247,12 @@ void	Client::resetCgiOperation( void )
 
 void	Client::nextRequest( void )
 {
-	Log::Info( std::string("nextRequest"));
+	Log::Debug( std::string("nextRequest"));
 	this->front()->logStatus();
 	if ( ! this->front()->isReceiving() )
 	{
 		enableEventWriteSocket(false);
-		Log::Info( std::string("nextRequest deleting Request & Response"));
+		Log::Debug( std::string("nextRequest deleting Request & Response"));
 		delete this->res;
 		this->res = NULL;
 		this->eraseRequest();

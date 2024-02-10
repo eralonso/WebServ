@@ -148,13 +148,23 @@ int	Events::loopEvents( void )
 	int				ret = 0;
 	Event			tevent;
 	EventsTarget	*et = NULL;
+	bool			resetLine = false;
+	const timespec	timeout = { 0, 5 * CLOCKS_PER_SEC * 100 };
 
 	while ( WSSignals::isSig == false )
 	{
-		ret = kevent( kq, NULL, 0, &tevent, 1, NULL );
-		if (ret > 0)
+		ret = kevent( kq, NULL, 0, &tevent, 1, &timeout );
+		if ( ret < 0 )
+			Log::Error( "kevent" );
+		if ( ret == 0 )
 		{
-			Log::Info( "loopEvents" );
+			Log::Timeout( resetLine );
+			resetLine = true;
+		}
+		else if (ret > 0)
+		{
+			resetLine = false;
+			Log::Debug( "loopEvents" );
 			if ( tevent.flags & EV_ERROR )
 			{
 				Log::Error( "Attempting catch an event with ident [ " \
@@ -165,7 +175,7 @@ int	Events::loopEvents( void )
 			if ( et )
 				et->onEvent( tevent );
 		}
-		Log::Info( "LOOP" );
+		// Log::Info( "LOOP" );
 	}
 	return ( ret < 0 );
 }
