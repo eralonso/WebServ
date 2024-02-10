@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/10 11:20:32 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 16:28:37 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,6 +276,9 @@ int	Response::sendResponse( Event& tevent )
 	}
 	pos = increaseSendPos( ret );
 	if ( pos >= this->resString.size() )
+	{
 		this->sendState = Response::SENT;
+		Log::Debug( "Response sent [ " + SUtils::longToString( tevent.ident ) + " ]" );
+	}
 	return ( this->sendState );
 }

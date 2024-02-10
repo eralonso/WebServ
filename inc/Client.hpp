@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 15:07:35 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 16:00:59 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,6 +128,7 @@ public:
 	void						performCgiCompletion(void);
 	void						resetCgiOperation( void );
 	void						nextRequest( void );
+	void						reset( void );
 };
 
 #endif

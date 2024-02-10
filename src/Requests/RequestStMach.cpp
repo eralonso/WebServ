@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:44:22 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/10 11:20:32 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 16:56:46 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,10 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 			return ( setError( HTTP_NOT_ALLOWED_CODE ) );
 		updateFilePaths();
 		if ( checkChunked() )
+		{
+			Router::processRequestHeaderReceived( *this );
 			return ( true );
+		}
 		Log::Debug( "MID" );
 		if ( !checkEmptyContent( contentSize ) && (maxBodySize == 0 || contentSize <= maxBodySize) )
 		{

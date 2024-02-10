@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:12:13 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/10 11:34:15 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 17:17:51 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,11 +53,18 @@ int	Client::onEventReadSocket( Event& tevent )
 		return ( -1 );
 	}
 	manageRecv( readed );
-	// if ( manageCompleteRecv() && !isResponseSent() )
-	// {
-		// Log::Error( "onEventReadSocket" );
-		// enableEventReadSocket( false );
-	// }
+	if ( manageCompleteRecv() && isResponseSent() )
+	{
+		Log::Error( "onEventReadSocket, response sent [ " + SUtils::longToString( this->socket ) + " ]" );
+		this->eraseRequest();
+		this->reset();
+		enableEventReadSocket( true );
+	}
+	else if ( manageCompleteRecv() && !isResponseSent() )
+	{
+		Log::Error( "onEventReadSocket, response sending [ " + SUtils::longToString( this->socket ) + " ]" );
+		enableEventReadSocket( false );
+	}
 	return ( 0 );
 }
 
@@ -104,8 +111,11 @@ int	Client::onEventWriteFile( Event& tevent )
 		if ( size > BUFFER_SIZE )
 			size = BUFFER_SIZE;
 		ssize_t actualWr = write(tevent.ident, req->getBody().c_str(), size );
-		if (actualWr > 0)
+		if ( actualWr < 0 )
+			Log::Error( "can't write on file" );
+		else if ( actualWr > 0)
 			req->eraseBody(actualWr);
+		Log::Debug( "amount of bytes wrote [ " + SUtils::longToString( actualWr ) + " ]" );
 	}
 	if (req->isCompleteRecv() && req->getBodyLength() == 0)
 	{
@@ -114,6 +124,7 @@ int	Client::onEventWriteFile( Event& tevent )
 		close(tevent.ident);
 		this->fileFd = -1;
 	}
+	Log::Debug( "req->getBodyLength() [ " + SUtils::longToString( req->getBodyLength() ) + " ]" );
 	return 0;
 }
 
@@ -144,6 +155,8 @@ int	Client::onEventReadPipe( Event& tevent )
 
 int	Client::onEventWritePipe( Event& tevent )
 {
+	size_t	size;	
+
 	Log::Debug( "onEventWritePipe [" + SUtils::longToString(tevent.ident) + "]" );
 	Request* req = this->getPending();
 	if (!req)
@@ -153,7 +166,10 @@ int	Client::onEventWritePipe( Event& tevent )
 	}
 	if ((size_t)tevent.data > 0)
 	{
-		ssize_t actualWr = write(tevent.ident, req->getBody().c_str(), BUFFER_SIZE );
+		size = req->getBodyLength();
+		if ( size > BUFFER_SIZE )
+			size = BUFFER_SIZE;
+		ssize_t actualWr = write(tevent.ident, req->getBody().c_str(), size );
 		if (actualWr > 0)
 			req->eraseBody(actualWr);
 	}

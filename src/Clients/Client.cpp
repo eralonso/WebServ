@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/10 11:22:31 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 16:50:08 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,10 +61,14 @@ Client::~Client( void )
 	Log::Error( "Client destroy [ " + SUtils::longToString( this->socket ) + " ]" );
 	if ( this->res != NULL )
 		delete this->res;
-	close( this->socket );
-	close( this->fileFd );
-	close( this->pipeCgiRead );
-	close( this->pipeCgiWrite );
+	if ( this->socket > 0 )
+		close( this->socket );
+	if ( this->fileFd > 0 )
+		close( this->fileFd );
+	if ( this->pipeCgiRead > 0 )
+		close( this->pipeCgiRead );
+	if ( this->pipeCgiWrite > 0 )
+		close( this->pipeCgiWrite );
 }
 
 Client::Client( const Client& b ): Requests(), EventsTarget( b.evs )

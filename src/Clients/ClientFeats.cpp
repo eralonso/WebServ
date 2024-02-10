@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:20:14 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/10 11:20:32 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/10 17:42:44 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,19 +247,47 @@ void	Client::resetCgiOperation( void )
 
 void	Client::nextRequest( void )
 {
+	bool	badRequest = this->front()->isBadRequest();
+
 	Log::Debug( std::string("nextRequest"));
 	this->front()->logStatus();
-	if ( ! this->front()->isReceiving() )
+	if ( ! this->front()->isReceiving() || badRequest )
 	{
-		enableEventWriteSocket(false);
-		Log::Debug( std::string("nextRequest deleting Request & Response"));
+		this->eraseRequest();
+		this->reset();
+	}
+	else
+	{
 		delete this->res;
 		this->res = NULL;
-		this->eraseRequest();
+		this->responseSent = true;
 	}
+	enableEventWriteSocket(false);
+	Log::Debug( std::string("nextRequest deleting Request & Response"));
 	
-	if (this->size() > 0 || this->getPendingSize() > 0 || this->getKeepAlive())
+	if ( ( this->size() > 0 || this->getPendingSize() > 0 || this->getKeepAlive() ) && !badRequest )
 		this->enableEventReadSocket( true );
 	else
 		this->receptionist->eraseClient( this );
+}
+
+void	Client::reset( void )
+{
+	if ( this->res )
+		delete this->res;
+	if ( this->fileFd > 0 )
+		close( this->fileFd );
+	this->fileFd = -1;
+	this->res = NULL;
+	this->requestBodyRemain = 0;
+	this->responseBodyRemain = 0;
+	this->responseHeaderSent = false;
+	this->responseSent = false;
+	this->readEOF = false;
+	this->writeEOF = false;
+	if ( this->pipeCgiWrite > 0 )
+		close( this->pipeCgiWrite );
+	if ( this->pipeCgiRead > 0 )
+		close( this->pipeCgiRead );
+	this->resetCgiOperation();	
 }
