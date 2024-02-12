@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 11:47:49 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 14:56:14 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 14:11:23 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,20 @@
 # include "Event.hpp"
 # include "Utils.hpp"
 # include "WSSignals.hpp"
+// # include "Receptionist.hpp"
 
 class EventsTarget;
+class Receptionist;
 
 class Events
 {
 private:
 	int		kq;
 public:
+	static bool	resetLine;
+public:
 	Events( void );
+
 	~Events( void );
 public:
 	bool	isCreate( void ) const;

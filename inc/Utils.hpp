@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:31:42 by eralonso          #+#    #+#             */
-/*   Updated: 2024/02/12 13:32:36 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 14:08:18 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ namespace Log
 	void	Success( const std::string str );
 	void	Debug( const std::string str );
 	void	DropOneLine( void );
-	void	Timeout( bool reset );
+	void	Timeout( bool reset, std::string add );
 }
 
 namespace Binary

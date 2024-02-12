@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 13:04:03 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/06 09:05:51 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/02/12 14:16:35 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 class EventsTarget
 {
 protected:
-	Events			*evs;
+	Events	*evs;
 public:
 	EventsTarget( Events* evs );
 	virtual ~EventsTarget( void );

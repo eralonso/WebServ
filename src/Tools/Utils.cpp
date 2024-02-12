@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:34:13 by eralonso          #+#    #+#             */
-/*   Updated: 2024/02/10 12:37:26 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 14:09:45 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ namespace Log
 		#endif
 	}
 
-	void	Timeout( bool reset )
+	void	Timeout( bool reset, std::string add )
 	{
 		static std::string	starWait = "|/-\\";
 		static size_t		starLength = starWait.length();
@@ -63,11 +63,8 @@ namespace Log
 		if ( count == starLength )
 			count = 0;
 		if ( reset )
-		{
-			// std::cout << "|" << std::endl;
 			Log::DropOneLine();
-		}
-		std::cout << CYAN"Waiting events " << starWait[ count ] << DEF << std::endl;
+		std::cout << CYAN"Waiting events " << starWait[ count ] << add << DEF << std::endl;
 		count++;
 	}
 

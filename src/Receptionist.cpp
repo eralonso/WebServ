@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/10 11:43:33 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 14:21:07 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,23 @@
 #include <Response.hpp>
 
 Receptionist::Receptionist( ServersVector& servers ): Clients(), \
+													EventsTarget( new Events() ), \
 													_servers( servers ), \
 													timeout( 1 )
 {
-	if ( evs.isCreate() == false )
+	if ( this->evs->isCreate() == false )
 		throw std::runtime_error( "Cant't create a kqueue" );
 	setupServers();
 }
 
 Receptionist::~Receptionist( void )
 {
+	if ( this->evs )
+		delete this->evs;
 }
 
 Receptionist::Receptionist( const Receptionist& b ): Clients(), \
+													EventsTarget( new Events() ), \
 													_servers( b._servers ), \
 													timeout( b.timeout ) {}
 
@@ -61,7 +65,7 @@ void	Receptionist::setupServers( void )
 			it->setAddr( info );
 			it->setSocketFd( serverFd );
 			it->setReceptionist( this );
-			it->setEvents( &this->evs );
+			it->setEvents( this->evs );
 			it->setEventRead();
 			it++;
 		}
@@ -97,8 +101,15 @@ const ServersVector&	Receptionist::getServers( void ) const
 	return ( this->_servers );
 }
 
+int	Receptionist::onEvent( Event & )
+{
+	Log::Timeout( Events::resetLine, " Pending Clients [ " + SUtils::longToString( this->size() ) + " ]" );
+	Events::resetLine = true;
+	return ( 0 );
+}
+
 int	Receptionist::mainLoop( void )
 {
-	// this->evs.setEventTimer( NULL, 0, 1000, false );
-	return ( this->evs.loopEvents() );
+	this->evs->setEventTimer( this, 0, 500000, false );
+	return ( this->evs->loopEvents() );
 }

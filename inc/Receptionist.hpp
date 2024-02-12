@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:43:42 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/10 12:48:27 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 14:14:51 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,13 @@
 # include "Clients.hpp"
 # include "CgiExecutor.hpp"
 # include <Directives.hpp>
+# include <EventsTarget.hpp>
 
 # define BACKLOG 511
 
-class Receptionist: public Clients
+class Receptionist: public Clients, public EventsTarget
 {
 private:
-	Events			evs;
 	ServersVector	_servers;
 	int				timeout;
 public:
@@ -45,6 +45,7 @@ public:
 											struct sockaddr_in& info, \
 		   									socket_t& serverFd );
 	int				mainLoop( void );
+	int				onEvent( Event &tevent );
 	const ServersVector&	getServers( void ) const;
 };
 

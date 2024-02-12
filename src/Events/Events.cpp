@@ -15,6 +15,8 @@
 #include "Events.hpp"
 #include "EventsTarget.hpp"
 
+bool Events::resetLine = false;
+
 Events::Events( void )
 {
 	this->kq = kqueue();
@@ -72,8 +74,8 @@ int	Events::setEventTimer( EventsTarget* et, int ident, long period, bool oneSho
 	int			ret;
 	Event		timeEvent;
 
-	EV_SET(&timeEvent, ident, EVFILT_TIMER, EV_ADD | EV_CLEAR | \
-			(oneShot ? EV_ONESHOT : 0), 0, period, et);
+	EV_SET(&timeEvent, ident, EVFILT_TIMER, EV_ADD | EV_ENABLE | \
+			(oneShot ? EV_ONESHOT : 0), NOTE_USECONDS, period, et);
 	ret = kevent(kq, &timeEvent, 1, NULL, 0, NULL);
 	if (ret == -1)
 		Log::Error( "kevent Timer register" );
@@ -148,23 +150,23 @@ int	Events::loopEvents( void )
 	int				ret = 0;
 	Event			tevent;
 	EventsTarget	*et = NULL;
-	bool			resetLine = false;
-	const timespec	timeout = { 0, 5 * CLOCKS_PER_SEC * 100 };
+	// bool			resetLine = false;
+	// const timespec	timeout = { 0, 5 * CLOCKS_PER_SEC * 100 };
 
+		// if ( ret == 0 )
+		// {
+		// 	Log::Timeout( resetLine );
+		// 	resetLine = true;
+		// }
 	while ( WSSignals::isSig == false )
 	{
-		ret = kevent( kq, NULL, 0, &tevent, 1, &timeout );
+		ret = kevent( kq, NULL, 0, &tevent, 1, NULL );
 		if ( ret < 0 )
 			Log::Error( "kevent" );
-		if ( ret == 0 )
-		{
-			Log::Timeout( resetLine );
-			resetLine = true;
-		}
 		else if (ret > 0)
 		{
-			resetLine = false;
-			//Log::Debug( "loopEvents" );
+			Events::resetLine = tevent.ident == 0 ? true : false;
+			Log::Debug( "loopEvents" );
 			if ( tevent.flags & EV_ERROR )
 			{
 				Log::Error( "Attempting catch an event with ident [ " \
