@@ -4,3 +4,4 @@ webserv
 *.sw*
 *.log
 a.out
+*.ignore

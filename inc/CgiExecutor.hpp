@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:34 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 12:32:54 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 09:20:05 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 
 # define FDIN 0
 # define FDOUT 1
-# define CGI_TO 2
+# define CGI_TO 5
 
 class CgiExecutor
 {

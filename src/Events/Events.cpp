@@ -164,7 +164,7 @@ int	Events::loopEvents( void )
 		else if (ret > 0)
 		{
 			resetLine = false;
-			Log::Debug( "loopEvents" );
+			//Log::Debug( "loopEvents" );
 			if ( tevent.flags & EV_ERROR )
 			{
 				Log::Error( "Attempting catch an event with ident [ " \

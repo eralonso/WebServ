@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:12:13 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/10 17:17:51 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 09:41:29 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,9 +97,9 @@ int	Client::onEventReadFile( Event& tevent )
 int	Client::onEventWriteFile( Event& tevent )
 {
 	size_t	size;
+	Request	*req = this->getPending();
 
 	Log::Debug( "onEventWriteFile [" + SUtils::longToString(tevent.ident) + "]" );
-	Request* req = this->getPending();
 	if (!req)
 	{
 		this->writeEOF = true;
@@ -110,11 +110,11 @@ int	Client::onEventWriteFile( Event& tevent )
 		size = req->getBodyLength();
 		if ( size > BUFFER_SIZE )
 			size = BUFFER_SIZE;
-		ssize_t actualWr = write(tevent.ident, req->getBody().c_str(), size );
+		ssize_t actualWr = write( tevent.ident, req->getBody().c_str(), size );
 		if ( actualWr < 0 )
 			Log::Error( "can't write on file" );
 		else if ( actualWr > 0)
-			req->eraseBody(actualWr);
+			req->eraseBody( actualWr );
 		Log::Debug( "amount of bytes wrote [ " + SUtils::longToString( actualWr ) + " ]" );
 	}
 	if (req->isCompleteRecv() && req->getBodyLength() == 0)
@@ -157,7 +157,7 @@ int	Client::onEventWritePipe( Event& tevent )
 {
 	size_t	size;	
 
-	Log::Debug( "onEventWritePipe [" + SUtils::longToString(tevent.ident) + "]" );
+	//Log::Debug( "onEventWritePipe [" + SUtils::longToString(tevent.ident) + "]" );
 	Request* req = this->getPending();
 	if (!req)
 	{
@@ -172,8 +172,9 @@ int	Client::onEventWritePipe( Event& tevent )
 		ssize_t actualWr = write(tevent.ident, req->getBody().c_str(), size );
 		if (actualWr > 0)
 			req->eraseBody(actualWr);
+		//Log::Debug( "write pipe size: " + SUtils::longToString( actualWr ) );
 	}
-	if (tevent.flags & EV_EOF)
+	if ( tevent.flags & EV_EOF || ( req->isCompleteRecv() && req->getBodyLength() == 0 ) )
 	{
 		this->writeEOF = true;
 		this->performCgiCompletion();
@@ -234,7 +235,7 @@ int	Client::onEventWrite( Event& tevent )
 
 int	Client::onEvent( Event& tevent )
 {
-	Log::Debug( "onEvent" );
+	//Log::Debug( "onEvent" );
 	if ( tevent.filter == EVFILT_READ )
 		return ( onEventRead( tevent ) );
 	if ( tevent.filter == EVFILT_WRITE )
