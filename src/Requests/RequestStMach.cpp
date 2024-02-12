@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:44:22 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/10 16:56:46 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 13:13:54 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,10 @@ bool	Request::processLineOnRecvdStart( const std::string &line )
 bool	Request::processLineOnRecvdReqLine( const std::string &line )
 {
 	size_t		len = line.length();
-	size_t		contentSize = 0;
-	std::string	data;
-	size_t		got;
+	// size_t		contentSize = 0;
 
 	if ( len == 0 || ( len == 1 && line[ 0 ] <= ' ' ) )
 	{
-		Log::Debug( "END headers" );
 		this->status = RECVD_HEADER;
 		checkKeepAlive();
 		if (!updateServerConfig())
@@ -62,20 +59,12 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 			Router::processRequestHeaderReceived( *this );
 			return ( true );
 		}
-		Log::Debug( "MID" );
-		if ( !checkEmptyContent( contentSize ) && (maxBodySize == 0 || contentSize <= maxBodySize) )
-		{
-			got = this->client->getNChars(data, contentSize);
-			this->body += data;
-			if ( got == contentSize )
-				this->status = RECVD_ALL;
-		}
-		Log::Debug( "END" );
-		if (maxBodySize != 0 && contentSize > maxBodySize)
-		{
-			Log::Error( "clientMaxBodySize" );
-			return ( setError( HTTP_BAD_REQUEST_CODE ) );
-		}
+		processOnReceivingBody();
+		// if (maxBodySize != 0 && contentSize > maxBodySize)
+		// {
+		// 	Log::Error( "clientMaxBodySize" );
+		// 	return ( setError( HTTP_BAD_REQUEST_CODE ) );
+		// }
 		Router::processRequestHeaderReceived( *this );
 		return ( true );
 	}
@@ -101,6 +90,10 @@ bool	Request::processOnReceivingBody( void )
 		this->recvBodyLength += data.length();
 		if ( this->recvBodyLength >= contentSize )
 			this->status = RECVD_ALL;
+	}
+	else
+	{
+		this->status = RECVD_ALL;
 	}
 	return ( !this->isCompleteRecv() );
 }
@@ -218,6 +211,7 @@ bool	Request::processRecv( void )
 
 	if ( this->status == IDLE || this->client == NULL )
 		return ( false );
+	this->logStatus();
 	while ( cont && !this->isCompleteRecv() && this->client->getPendingSize() > 0 )
 	{
 		if ( this->status == RECVD_HEADER )

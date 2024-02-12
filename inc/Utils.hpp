@@ -6,13 +6,13 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:31:42 by eralonso          #+#    #+#             */
-/*   Updated: 2024/02/10 15:01:34 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 13:32:36 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _UTILS_HPP_
 # define _UTILS_HPP_
-# define LOG_DEBUG
+// # define LOG_DEBUG
 
 # include <string>
 # include <iostream>

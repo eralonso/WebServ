@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/10 16:00:59 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 13:24:27 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,10 +77,7 @@ public:
 	Request*					findCompleteRecvRequest( void );
 	Request*					findReadyToSendRequest( void );
 	int							manageRecv( std::string recv );
-	int							manageCompleteRecv( void );
-	// int							managePollout( void );
 	bool						getKeepAlive( void ) const;
-	// int							sendResponse( Response *res );
 	bool						getLine( std::string& line );
 	size_t						getNChars( std::string& data, size_t n );
 	size_t						getPendingSize( void ) const;

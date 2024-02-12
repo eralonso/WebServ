@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:12:13 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/12 09:41:29 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/02/12 13:22:46 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,18 +53,14 @@ int	Client::onEventReadSocket( Event& tevent )
 		return ( -1 );
 	}
 	manageRecv( readed );
-	if ( manageCompleteRecv() && isResponseSent() )
+	if ( findCompleteRecvRequest() && isResponseSent() )
 	{
-		Log::Error( "onEventReadSocket, response sent [ " + SUtils::longToString( this->socket ) + " ]" );
 		this->eraseRequest();
 		this->reset();
 		enableEventReadSocket( true );
 	}
-	else if ( manageCompleteRecv() && !isResponseSent() )
-	{
-		Log::Error( "onEventReadSocket, response sending [ " + SUtils::longToString( this->socket ) + " ]" );
+	else if ( findCompleteRecvRequest() && !isResponseSent() )
 		enableEventReadSocket( false );
-	}
 	return ( 0 );
 }
 
@@ -124,6 +120,7 @@ int	Client::onEventWriteFile( Event& tevent )
 		close(tevent.ident);
 		this->fileFd = -1;
 	}
+	req->logStatus();
 	Log::Debug( "req->getBodyLength() [ " + SUtils::longToString( req->getBodyLength() ) + " ]" );
 	return 0;
 }
@@ -157,7 +154,7 @@ int	Client::onEventWritePipe( Event& tevent )
 {
 	size_t	size;	
 
-	//Log::Debug( "onEventWritePipe [" + SUtils::longToString(tevent.ident) + "]" );
+	// Log::Debug( "onEventWritePipe [" + SUtils::longToString(tevent.ident) + "]" );
 	Request* req = this->getPending();
 	if (!req)
 	{
@@ -174,6 +171,7 @@ int	Client::onEventWritePipe( Event& tevent )
 			req->eraseBody(actualWr);
 		//Log::Debug( "write pipe size: " + SUtils::longToString( actualWr ) );
 	}
+	// if ( tevent.flags & EV_EOF || ( req->getBodyLength() == 0 ) )
 	if ( tevent.flags & EV_EOF || ( req->isCompleteRecv() && req->getBodyLength() == 0 ) )
 	{
 		this->writeEOF = true;
@@ -181,6 +179,8 @@ int	Client::onEventWritePipe( Event& tevent )
 		close(tevent.ident);
 		this->pipeCgiWrite = -1;
 	}
+	req->logStatus();
+	// Log::Debug( "req->getBodyLength() [ " + SUtils::longToString( req->getBodyLength() ) + " ]" );
 	return 0;
 }
 

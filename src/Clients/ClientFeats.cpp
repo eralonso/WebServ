@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:20:14 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/10 17:42:44 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 13:24:16 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ int	Client::manageRecv( std::string recv )
 		}
 		if ( !fail )
 		{
+			Log::Debug("Client::manageRecv: remainning received length [" + SUtils::longToString(this->received.length()) +  "]");
 			cont = req->processRecv();
 			if ( req->isCompleteRecv() )
 				cont = false;
@@ -96,52 +97,6 @@ int	Client::manageRecv( std::string recv )
 	}
 	return ( 0 );
 }
-
-int	Client::manageCompleteRecv( void )
-{
-	if ( findCompleteRecvRequest() )
-		return ( 1 );
-	return ( 0 );
-}
-
-// int	Client::managePollout( void )
-// {
-// 	Request		*req = NULL;
-// 	int			resSendStatus = Client::SENDING;
-
-// 	if ( this->res )
-// 		resSendStatus = sendResponse( this->res );		
-// 	else if ( ( req = findReadyToSendRequest() ) )
-// 	{
-// 		this->res = Router::getResponse( req );
-// 		if ( this->res )
-// 		{
-// 			this->res->updateResString();
-// 			resSendStatus = sendResponse( this->res );
-// 		}
-// 		Requests::eraseRequest();
-// 	}
-// 	if ( resSendStatus == Client::SENT )
-// 		Log::Success( "Response sent [ " + SUtils::longToString( this->socket ) + " ]" );
-// 	return ( resSendStatus );
-// }
-
-// int	Client::sendResponse( Response *res )
-// {
-// 	int	resSendStatus = Client::ERROR;
-
-// 	if ( this->socket >= 0 )
-// 	{
-// 		resSendStatus = Receptionist::sendResponse( this->socket, res );
-// 		if ( resSendStatus == Client::ERROR || resSendStatus == Client::SENT )
-// 		{
-// 			delete this->res;
-// 			this->res = NULL;
-// 			// allowPollWrite( false );
-// 		}
-// 	}
-// 	return ( resSendStatus );
-// }
 
 bool	Client::getLine( std::string& line )
 {

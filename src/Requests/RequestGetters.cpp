@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:29:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/10 11:20:32 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 13:17:22 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -287,7 +287,7 @@ bool	Request::isReadyToSend( void ) const
 
 bool	Request::isCompleteRecv( void ) const
 {
-	return ( this->status == RECVD_ALL );
+	return ( this->status >= RECVD_ALL );
 }
 
 bool	Request::isCgiLaunched( void ) const
