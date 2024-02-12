@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/12 14:21:07 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 15:39:53 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ const ServersVector&	Receptionist::getServers( void ) const
 int	Receptionist::onEvent( Event & )
 {
 	Log::Timeout( Events::resetLine, " Pending Clients [ " + SUtils::longToString( this->size() ) + " ]" );
-	Events::resetLine = true;
+	Events::resetLine = false;
 	return ( 0 );
 }
 

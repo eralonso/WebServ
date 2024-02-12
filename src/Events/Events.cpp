@@ -24,7 +24,7 @@ Events::Events( void )
 
 Events::~Events( void )
 {
-	Log::Error( "close kqueue" );
+	Log::Info( "close kqueue" );
 	close( this->kq );
 }
 
@@ -150,23 +150,14 @@ int	Events::loopEvents( void )
 	int				ret = 0;
 	Event			tevent;
 	EventsTarget	*et = NULL;
-	// bool			resetLine = false;
-	// const timespec	timeout = { 0, 5 * CLOCKS_PER_SEC * 100 };
 
-		// if ( ret == 0 )
-		// {
-		// 	Log::Timeout( resetLine );
-		// 	resetLine = true;
-		// }
 	while ( WSSignals::isSig == false )
 	{
 		ret = kevent( kq, NULL, 0, &tevent, 1, NULL );
 		if ( ret < 0 )
-			Log::Error( "kevent" );
+			Log::Info( "kevent returned negative" );
 		else if (ret > 0)
 		{
-			Events::resetLine = tevent.ident == 0 ? true : false;
-			Log::Debug( "loopEvents" );
 			if ( tevent.flags & EV_ERROR )
 			{
 				Log::Error( "Attempting catch an event with ident [ " \
@@ -176,8 +167,8 @@ int	Events::loopEvents( void )
 			et = static_cast< EventsTarget * >( tevent.udata );
 			if ( et )
 				et->onEvent( tevent );
+			Events::resetLine = tevent.ident == 0 ? true : false;
 		}
-		// Log::Info( "LOOP" );
 	}
 	return ( ret < 0 );
 }

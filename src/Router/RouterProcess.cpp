@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 14:11:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/10 11:20:32 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 15:05:34 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,7 @@ bool	Router::processGetRequest( Request& req )
 	{
 		req.setOutput( output );
 		if ( cli )
-		{
-			Log::Error( "is dir event write" );
 			cli->setEventWriteSocket();
-		}
 	}
 	return ( req.getError() >= 400 );
 }

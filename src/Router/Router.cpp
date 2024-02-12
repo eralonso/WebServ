@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/10 11:26:51 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 15:22:56 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ int	Router::openWriteFile( std::string file )
 	fd = open( file.c_str(), O_WRONLY | O_TRUNC | O_NONBLOCK | O_CREAT, 0666 );
 	if ( fd < 0 )
 		return ( fd );
-	Log::Success( "Open file write: " + SUtils::longToString( fd ) );
+	Log::Debug( "Open file write: " + SUtils::longToString( fd ) );
 	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
 	return ( fd );
 }
