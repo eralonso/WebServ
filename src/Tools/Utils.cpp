@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:34:13 by eralonso          #+#    #+#             */
-/*   Updated: 2024/02/12 14:09:45 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 17:47:38 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -272,6 +272,16 @@ namespace SUtils
 		if (srcSize <= maxSize - 5)
 			return (src);
 		return (src.substr(0, headSize) + " ...\n" + src.substr(srcSize - tailSize, tailSize));
+	}
+
+	std::string	toLower( std::string src )
+	{
+		for ( size_t i = 0; src[ i ] != '\0'; i++ )
+		{
+			if ( src[ i ] >= 'A' && src[ i ] <= 'Z' )
+				src[ i ] += 32;
+		}
+		return ( src );
 	}
 }
 

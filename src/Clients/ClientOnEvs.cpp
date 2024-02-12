@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:12:13 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/12 13:22:46 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 18:56:01 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,8 +138,16 @@ int	Client::onEventReadPipe( Event& tevent )
 	actualRead = read(tevent.ident, buffer, amountToRead);
 	std::string content(buffer, actualRead);
 	this->cgiOutput += content;
-	if (tevent.flags & EV_EOF)
+	if (! this->front()->isDocumentNPH() && this->cgiHeaderReached == -1)
 	{
+		this->cgiHeaderReached = this->CgiFindHeaderReached();
+		if (this->cgiHeaderReached != -1)
+			this->cgiContentLength = this->CgiFindContentLength();
+	}
+	// if (tevent.flags & EV_EOF)
+	if (tevent.flags & EV_EOF || isCgiContentLengthOverpass())
+	{
+		adjustCgiContentLengthOverpass();
 		this->setEventWriteSocket();
 		this->readEOF = true;
 		close(tevent.ident);

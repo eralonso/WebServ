@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Headers.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 10:20:03 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/17 16:45:09 by codespace        ###   ########.fr       */
+/*   Updated: 2024/02/12 17:51:59 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Headers.hpp"
+#include "Utils.hpp"
 
 Headers::Headers( void ) {}
 
@@ -33,7 +34,7 @@ Headers	Headers::filterKey( const std::string& key )
 
 	while ( it != ite )
 	{
-		if ( toLower( it->getKey() ) == toLower( key ) )
+		if ( SUtils::toLower( it->getKey() ) == SUtils::toLower( key ) )
 			fil.push_back( *it );
 		it++;
 	}
@@ -47,7 +48,7 @@ Header	*Headers::firstWithKey( const std::string& key )
 
 	while ( it != ite )
 	{
-		if ( toLower( it->getKey() ) == toLower( key ) )
+		if ( SUtils::toLower( it->getKey() ) == SUtils::toLower( key ) )
 			return ( &( *it ) );
 		it++;
 	}
@@ -61,7 +62,7 @@ const Header	*Headers::firstWithKey( const std::string& key ) const
 
 	while ( it != ite )
 	{
-		if ( toLower( it->getKey() ) == toLower( key ) )
+		if ( SUtils::toLower( it->getKey() ) == SUtils::toLower( key ) )
 			return ( &( *it ) );
 		it++;
 	}
@@ -129,15 +130,6 @@ std::string	Headers::toString( void ) const
 	return ( ret );
 }
 
-std::string	Headers::toLower( std::string src )
-{
-	for ( size_t i = 0; src[ i ] != '\0'; i++ )
-	{
-		if ( src[ i ] >= 'A' && src[ i ] <= 'Z' )
-			src[ i ] += 32;
-	}
-	return ( src );
-}
 std::string Headers::getCookies( void ) const
 {
 	std::string	ret;
@@ -146,7 +138,7 @@ std::string Headers::getCookies( void ) const
 
 	while (it != ite)
 	{
-		if (toLower(it->getKey()) == "cookie")
+		if (SUtils::toLower(it->getKey()) == "cookie")
 			ret += it->getValue() + ";";
 		it++;
 	}

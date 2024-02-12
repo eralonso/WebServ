@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/12 13:24:27 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 18:30:30 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ private:
 	bool				cgiDriven;
 	bool				cgiFinished;
 	bool				cgiTimeout;
+	ssize_t				cgiHeaderReached;
+	ssize_t				cgiContentLength;
 	bool				responseHeaderSent;
 	bool				responseSent;
 	bool				readEOF;
@@ -126,6 +128,11 @@ public:
 	void						resetCgiOperation( void );
 	void						nextRequest( void );
 	void						reset( void );
+	ssize_t						CgiFindHeaderReached( void );
+	ssize_t						CgiFindContentLength( void );
+	bool						isCgiContentLengthOverpass( void ) const;
+	void						adjustCgiContentLengthOverpass( void );
+
 };
 
 #endif

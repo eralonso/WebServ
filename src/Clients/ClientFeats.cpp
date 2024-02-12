@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:20:14 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/12 13:24:16 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 18:55:49 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,6 +197,8 @@ void	Client::resetCgiOperation( void )
 	this->cgiFinished = false;
 	this->pipeCgiWrite = -1;
 	this->pipeCgiRead = -1;
+	this->cgiHeaderReached = -1;
+	this->cgiContentLength = -1;
 	this->cgiOutput = std::string("");
 }
 
@@ -245,4 +247,57 @@ void	Client::reset( void )
 	if ( this->pipeCgiRead > 0 )
 		close( this->pipeCgiRead );
 	this->resetCgiOperation();	
+}
+
+ssize_t	Client::CgiFindHeaderReached()
+{
+	size_t pos;
+
+	pos = 0;
+	do
+	{
+		pos = this->cgiOutput.find("\n", pos);
+		if (pos != std::string::npos && 
+				(cgiOutput[pos + 1] == '\n' ||
+					(cgiOutput[pos + 1] && cgiOutput[pos + 1] <= ' ' && 
+						cgiOutput[pos + 2] == '\n' )
+				) 
+			)
+			return (pos);
+		// Log::Error( "pos: " + SUtils::longToString( pos ) );
+		pos += pos != std::string::npos ? 1 : 0;
+	} while (pos != std::string::npos );
+	return (-1);
+}
+
+ssize_t	Client::CgiFindContentLength( )
+{
+	size_t pos;
+	std::string str;
+
+	str = SUtils::toLower(cgiOutput.substr(0, cgiHeaderReached));
+	pos = str.find("content-length:");
+	if (pos != std::string::npos)
+		return (SUtils::atol( str.substr(pos + 15) ));
+	return (-1);
+}
+
+bool	Client::isCgiContentLengthOverpass( void ) const
+{
+	return ((this->cgiHeaderReached != -1 && this->cgiContentLength != -1 
+			&& (this->cgiOutput.length() - (size_t)this->cgiHeaderReached) 
+				>= (size_t)this->cgiContentLength));
+}
+
+void	Client::adjustCgiContentLengthOverpass( void )
+{
+	size_t	passed_pos;
+	size_t	passed_size;
+
+	if (isCgiContentLengthOverpass())
+	{
+		passed_pos = this->cgiHeaderReached + this->cgiContentLength;
+		passed_size = this->cgiOutput.length() - passed_pos;
+		this->cgiOutput.erase(passed_pos, passed_size);
+	}
 }

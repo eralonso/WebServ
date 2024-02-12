@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:31:42 by eralonso          #+#    #+#             */
-/*   Updated: 2024/02/12 14:08:18 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 17:51:04 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ namespace SUtils
 							size_t maxSize, \
 							size_t headSize, \
 							size_t tailSize);
+	std::string		toLower( std::string src );
 }
 
 namespace STLUtils

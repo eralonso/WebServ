@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:53 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/12 15:23:20 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 17:11:38 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,9 @@ Client::Client( const Client& b ): Requests(), EventsTarget( b.evs )
 	this->cgiDriven = b.cgiDriven;
 	this->cgiTimeout = b.cgiTimeout;
 	this->cgiFinished = b.cgiFinished;
+	this->cgiHeaderReached = b.cgiHeaderReached;
+	this->cgiContentLength = b.cgiContentLength;
+
 }
 
 Client&	Client::operator=( const Client& b )
@@ -115,6 +118,8 @@ Client&	Client::operator=( const Client& b )
 		this->cgiDriven = b.cgiDriven;
 		this->cgiTimeout = b.cgiTimeout;
 		this->cgiFinished = b.cgiFinished;
+		this->cgiHeaderReached = b.cgiHeaderReached;
+		this->cgiContentLength = b.cgiContentLength;
 	}
 	return ( *this );
 }
