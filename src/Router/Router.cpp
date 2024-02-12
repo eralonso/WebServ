@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/12 15:22:56 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/12 16:37:09 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,17 +34,6 @@ int	Router::updateResponse( Response &res, Request &req, Client& cli )
 	res.updateResString();
 	return ( 0 );
 }
-
-// Response	*Router::getResponse( Request *req )
-// {
-// 	Response	*res = new Response;
-
-// 	if ( !req )
-// 		formatErrorResponse( *res, HTTP_INTERNAL_SERVER_ERROR_CODE );
-// 	else
-// 		updateResponse( *res, *req );
-// 	return ( res );
-// }
 
 std::string	Router::getRequestEmbed( Request &req )
 {
@@ -132,35 +121,6 @@ int	Router::openWriteFile( std::string file )
 	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
 	return ( fd );
 }
-
-// std::string	Router::readFile( std::string file )
-// {
-// 	std::string		storage;
-// 	char			buffer[ BUFFER_SIZE + 1 ];
-// 	int				readBytes;
-// 	int				fd;
-
-// 	fd = open( file.c_str(), O_RDONLY | O_NONBLOCK );
-// 	if ( fd < 0 )
-// 		return ( "" );
-// 	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
-// 	while ( ( readBytes = read( fd, buffer, BUFFER_SIZE ) ) > 0 )
-// 		storage += std::string( buffer, readBytes );
-// 	close( fd );
-// 	return ( storage );
-// }
-
-// bool	Router::writeFile( std::string file, std::string content )
-// {
-// 	std::ofstream	outfile;
-
-// 	outfile.open(file.c_str(), std::ios::out | std::ios::trunc);
-// 	if (!outfile.is_open())
-// 		return ( false );
-// 	outfile.write(content.c_str(), content.size());
-// 	outfile.close();
-// 	return (true);
-// }
 
 bool	Router::checkPathExist( Request& req, std::string path )
 {
