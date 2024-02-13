@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/12 18:30:30 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/13 11:14:13 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <CgisMap.hpp>
 # include <TypesDefines.hpp>
 # include <EventsTarget.hpp>
+# include <Log.hpp>
 
 class Client: public Requests, public EventsTarget
 {

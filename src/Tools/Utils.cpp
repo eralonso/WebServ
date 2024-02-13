@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:34:13 by eralonso          #+#    #+#             */
-/*   Updated: 2024/02/12 17:47:38 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/13 11:12:05 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,52 +25,6 @@ namespace PUtils
 				std::cout << "\n";
 		}
 		std::cout << std::endl;
-	}
-}
-
-namespace Log
-{
-	void	Info( const std::string str )
-	{
-		std::cout << YELLOW << "Info: " << str << DEF << std::endl;
-	}
-	
-	void	Error( const std::string str )
-	{
-		std::cerr << RED << "Error: " << str << DEF << std::endl;
-	}
-
-	void	Success( const std::string str )
-	{
-		std::cout << GREEN << "Success: "<< str << DEF << std::endl;
-	}	
-
-	void	Debug( const std::string str )
-	{
-		#ifdef LOG_DEBUG
-		std::cout << BLUE << "Debug: "<< str << DEF << std::endl;
-		#else
-		(void)str;
-		#endif
-	}
-
-	void	Timeout( bool reset, std::string add )
-	{
-		static std::string	starWait = "|/-\\";
-		static size_t		starLength = starWait.length();
-		static size_t		count;
-
-		if ( count == starLength )
-			count = 0;
-		if ( reset )
-			Log::DropOneLine();
-		std::cout << CYAN"Waiting events " << starWait[ count ] << add << DEF << std::endl;
-		count++;
-	}
-
-	void	DropOneLine( void )
-	{
-		std::cout << GO_UP_LINES( 1 ) << CLEAR_LINE;
 	}
 }
 

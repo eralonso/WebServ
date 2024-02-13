@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 13:56:30 by eralonso          #+#    #+#             */
-/*   Updated: 2023/12/24 11:56:11 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/02/13 11:12:31 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 
 # include <Defines.hpp>
 # include <Utils.hpp>
+# include <Log.hpp>
 
 class Sockets
 {

@@ -15,8 +15,6 @@
 #include "Events.hpp"
 #include "EventsTarget.hpp"
 
-bool Events::resetLine = false;
-
 Events::Events( void )
 {
 	this->kq = kqueue();
@@ -167,7 +165,6 @@ int	Events::loopEvents( void )
 			et = static_cast< EventsTarget * >( tevent.udata );
 			if ( et )
 				et->onEvent( tevent );
-			Events::resetLine = tevent.ident == 0 ? true : false;
 		}
 	}
 	return ( ret < 0 );

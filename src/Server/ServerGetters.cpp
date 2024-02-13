@@ -1,79 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Server.cpp                                         :+:      :+:    :+:   */
+/*   ServerGetters.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2024/02/08 16:42:32 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/13 12:19:46 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Server.hpp>
 #include <Receptionist.hpp>
-
-Server::Server( void ): EventsTarget( NULL ), _directives( NULL ), \
-							_socketFd( 0 ), receptionist( NULL ) {}
-
-Server::Server( const Server& s ): EventsTarget( s.evs )
-{
-	this->_directives = NULL;
-	if ( s._directives != NULL )
-	{
-		this->_directives = new Directives( *s._directives );
-		this->_socketFd = s._socketFd;
-		this->receptionist = s.receptionist;
-	}
-}
-
-Server::~Server( void )
-{
-	if ( this->_directives != NULL )
-		delete this->_directives;
-}
-
-Server&	Server::operator=( const Server& s )
-{
-	if ( this != &s )
-	{
-		if ( this->_directives != NULL )
-			delete this->_directives;
-		this->_directives = NULL;
-		if ( s._directives != NULL )
-			this->_directives = new Directives( *s._directives );
-		this->_socketFd = s._socketFd;
-		this->receptionist = s.receptionist;
-	}
-	return ( *this );
-}
-
-void	Server::setAddr( const struct sockaddr_in& info )
-{
-	this->addr = info;
-}
-
-void	Server::setSocketFd( socket_t fd )
-{
-	this->_socketFd = fd;
-}
-
-void	Server::setReceptionist( Receptionist *recp )
-{
-	this->receptionist = recp;
-}
-
-void	Server::setEvents( Events *bEvs )
-{
-	this->evs = bEvs;
-}
-
-int	Server::setEventRead( void )
-{
-	if ( this->evs )
-		return ( this->evs->setEventRead( this, this->_socketFd ) );
-	return ( 0 );
-}
 
 Directives	*Server::getDirectives( void ) const { return ( this->_directives ); }
 
@@ -120,43 +58,6 @@ bool	Server::isSet( std::string directive ) const
 	if ( this->_directives != NULL )
 		return ( this->_directives->isSet( directive ) );
 	return ( false );
-}
-
-bool	Server::strongServerMatch( std::string host, std::string port, \
-									unsigned int ip ) const
-{
-	Directives						*directives = this->_directives;
-	StringVector::const_iterator	it;
-	StringVector::const_iterator	ite;
-
-	if ( directives == NULL || weakServerMatch( host, port, ip ) == false )
-		return ( false );
-	ite = directives->getServerNames().end();
-	for ( it = directives->getServerNames().begin(); it != ite; it++ )
-	{
-		if ( *it == host )
-			return ( true );
-	}
-	return ( false );
-}
-
-bool	Server::weakServerMatch( std::string host, std::string port, \
-								unsigned int ip ) const
-{
-	if ( this->_directives == NULL )
-		return ( false );
-	if ( SUtils::compareNumbersAsStrings( port, \
-		SUtils::longToString( this->_directives->getPort() ) ) )
-		return ( false );
-	if ( DirectivesParser::checkValidIp( host ) == true )
-	{
-		std::string IpStr = getIpString(); 
-		if ( IpStr == "0.0.0.0" || host == "0.0.0.0" )
-			return ( true );
-		return ( IpStr == host );
-	}
-	unsigned int ipNwk = getIpNetworkOrder();
-	return (ipNwk == 0 || ipNwk == ip );
 }
 
 Location	*Server::getLocationAtPath( std::string path ) const
@@ -329,51 +230,4 @@ bool	Server::isAutoindexAllow( const Location *lc ) const
 	else if ( isSet( "autoindex" ) == true )
 		return ( this->_directives->getAutoindex() );
 	return ( false );
-}
-
-bool	Server::tryIndexFiles( std::string& file, std::string path, \
-								const Location *lc ) const
-{
-	if ( lc != NULL && lc->isSet( "index" ) == true )
-		return ( lc->tryIndexFiles( file, path ) );
-	else if ( isSet( "index" ) == true )
-		return ( this->_directives->tryIndexFiles( file, path ) );
-	return ( false );
-}
-
-bool	Server::findReturnUri( int& uriCode, std::string& uriRedirection, \
-									const Location *lc ) const
-{
-	if ( isSet( "return" ) == true )
-		return ( this->_directives->findReturnUri( uriCode, uriRedirection ) );
-	else if ( lc != NULL && lc->isSet( "return" ) == true )
-		return ( lc->findReturnUri( uriCode, uriRedirection ) );
-	return ( false );
-}
-
-int	Server::onNewClient( void )
-{
-
-	socket_t			clientFd;
-	struct sockaddr_in	info;
-	
-	clientFd = Sockets::acceptConnection( this->_socketFd, info );
-	if ( clientFd < 0 )
-		return ( -1 );
-	fcntl( clientFd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
-	if ( !this->receptionist->newClient(clientFd, this->evs, \
-			&this->receptionist->getServers(), info, this->receptionist ) )
-	{
-		Log::Error( "Failed to append Request" );
-		close( clientFd );
-		return ( -1 );
-	}
-	return ( 1 );
-}
-
-int	Server::onEvent( Event &tevent )
-{
-	if ( tevent.filter & EVFILT_READ )
-		return ( onNewClient() );
-	return ( 0 );
 }

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:36 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 10:19:09 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/13 11:14:07 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <Client.hpp>
 # include <map>
 # include <Sockets.hpp>
+# include <Log.hpp>
 
 typedef std::map< socket_t, Client * >	ClientMap;
 typedef std::pair< socket_t, Client * >	ClientMapPair;

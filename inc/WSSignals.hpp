@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:59:50 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/29 17:03:01 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/13 11:12:40 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <signal.h>
 
 # include <Utils.hpp>
+# include <Log.hpp>
 
 class WSSignals
 {

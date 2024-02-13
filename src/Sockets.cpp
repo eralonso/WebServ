@@ -111,7 +111,7 @@ socket_t	Sockets::acceptConnection( socket_t fd, struct sockaddr_in& addr )
 	Log::Success( "Connection accepted [ " \
 			+ SUtils::longToString( connected ) \
 			+ " ]" );
-	Log::Info( "addr.sin_addr.s_addr [ decode ] -> " \
+	Log::Info( "Client IP Address -> " \
 		   		+ Binary::decodeAddress( ntohl( addr.sin_addr.s_addr ) ) );
 	return ( connected );
 }
@@ -223,7 +223,7 @@ socket_t	Sockets::createPassiveSocket( std::string host, int port, \
 	fcntl( fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC );
 	setsockopt( fd, SOL_SOCKET, SO_REUSEADDR, &optVal, sizeof( int ) );
 	info = codeHostPassiveToAddr( host.c_str(), port );
-	Log::Info( "Address -> " + Binary::decodeAddress( ntohl( ( ( \
+	Log::Info( "Server IP Address -> " + Binary::decodeAddress( ntohl( ( ( \
 		( struct sockaddr_in * )&info ) )->sin_addr.s_addr ) ) );
 	try
 	{

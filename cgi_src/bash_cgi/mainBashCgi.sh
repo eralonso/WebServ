@@ -16,8 +16,8 @@ format_env()
 format_body()
 {
 	BODY="<body>"$LINEEND;
-	BODY+="<h1>Made in Bash though CGI</h1>"$LINEEND;
-	BODY+="<h3>This is the environment</h3>"$LINEEND;
+	BODY+="<h1 style=\"color: #0FF00F;\">Made in Bash though CGI</h1>"$LINEEND;
+	BODY+="<h3 style=\"color: #000F0F;\">This is the environment</h3>"$LINEEND;
 	BODY+="<details close>"$LINEEND;
 	BODY+="<summary>Environment Variables</summary>"$LINEEND;
 	BODY+="<div style="background-color:AA9988">"$LINEEND;

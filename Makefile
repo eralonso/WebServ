@@ -6,7 +6,7 @@
 #    By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/22 10:08:41 by eralonso          #+#    #+#              #
-#    Updated: 2024/02/12 18:57:54 by omoreno-         ###   ########.fr        #
+#    Updated: 2024/02/13 12:29:33 by omoreno-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,25 +51,25 @@ HEADERS		:=	$(INC_ROOT)
 
 #<---------------------------------->DIRS<----------------------------------->#
 SRC_DIRS	:=	./:Tools/:ConfigParse/:Clients/:Headers/:Requests/:Response/\
-				:Cgi/:Router/:ConfigResolver/:Events/
+				:Cgi/:Router/:ConfigResolver/:Events/:Server/
 SRC_DIRS	:=	$(subst :,$(SPACE),$(SRC_DIRS))
 SRC_DIRS	:=	$(addprefix $(SRC_ROOT),$(SRC_DIRS))
 SRC_DIRS	:=	$(subst $(SPACE),:,$(SRC_DIRS))
 
 #<--------------------------------->FILES<---------------------------------->#
 
-FILES		:=	main Sockets WSSignals Receptionist \
-				TreeSplit Utils SplitString FolderLs ConfigParser \
+FILES		:=	main Sockets WSSignals Receptionist\
+				TreeSplit Utils SplitString FolderLs ConfigParser CGIService \
 				Directives DirectivesParserInit DirectivesParser ActionMask \
-				CGIService ServerInit Server LocationInit Location Listen \
-				ClientMaxBodySize ErrorPage \
+				ServerInit Server ServerGetters ServerSetters ServerOnEvs \
+				LocationInit Location Listen ClientMaxBodySize ErrorPage \
 				Client ClientGetters ClientSetters ClientEvsSet ClientOnEvs \
 				ClientFeats Clients Header Headers \
 				Request RequestGetters RequestSetters RequestStMach \
 				RequestParse RequestCnfg Requests Response StatusCodes \
 				CgiExecutor CgisMap Router RouterCgi RouterProcess \
 				ServerFinder ConfigApply ConfigUtils MimeMap \
-				EventsTarget Events
+				EventsTarget Events Log
 
 #<---------------------------------->LANG<---------------------------------->#
 LANG		:=	CPP

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:43:42 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/12 14:14:51 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/13 11:10:11 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # include "CgiExecutor.hpp"
 # include <Directives.hpp>
 # include <EventsTarget.hpp>
+# include "Log.hpp"
 
 # define BACKLOG 511
 

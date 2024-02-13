@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:07 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 18:24:25 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/13 11:13:32 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include "StatusCodes.hpp"
 # include "Defines.hpp"
 # include "Events.hpp"
+# include "Log.hpp"
 
 class Response
 {
@@ -64,6 +65,7 @@ public:
 	void			setIsCgi(bool value);
 	size_t			increaseSendPos( size_t value );
 	void	 		appendHeader( Header header );
+	void	 		replaceHeader( Header header );
 	std::string		getServer( void ) const;
 	std::string		getProtocol( void ) const;
 	std::string		getMethod( void ) const;

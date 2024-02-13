@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/12 16:37:09 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/13 10:49:02 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,8 @@ Response	*Router::formatGenericResponse( Response& res, Request& req )
 	{
 		if ( req.getOutput().length() > 0 )
 			res.setBody( req.getOutput() );
+		else if (! res.getHeaders().firstWithKey("Content-Length"))
+			res.appendHeader(Header("Content-Length", "0"));
 	}
 	else
 		res.setBodyLength( req.getOutputLength() );

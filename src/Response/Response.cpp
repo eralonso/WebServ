@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/10 16:28:37 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/13 11:27:38 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 Response::Response( void ): server( SERVER ), isCgi( false ), sendPos( 0 ), sendState( GETTING_DATA )
 {
-	this->headers.push_back( Header( "Content-Length", "0" ) );
+	// this->headers.push_back( Header( "Content-Length", "0" ) );
 }
 
 Response::~Response( void ) {}
@@ -116,6 +116,11 @@ size_t Response::increaseSendPos(size_t value)
 void Response::appendHeader(Header header)
 {
 	this->headers.append( header );
+}
+
+void Response::replaceHeader(Header header)
+{
+	this->headers.replace( header );
 }
 
 std::string	Response::getServer( void ) const
@@ -266,12 +271,12 @@ int	Response::sendResponse( Event& tevent )
 	size = this->resString.size() - pos; 
 	str = this->resString.c_str();
 	threshold = size > SEND_BUFFER_SIZE ? SEND_BUFFER_SIZE : size;
-	// threshold = 1;
 	if (this->sendState == Response::SENT || threshold == 0)
 		return ( this->sendState );
 	if ( ( ret = send( tevent.ident, str + pos, threshold, MSG_DONTWAIT ) ) < 0 )
 	{
-		Log::Error( "Failed to send response with code: " + SUtils::longToString( ret ) );
+		Log::Info( "Client [ " + SUtils::longToString( tevent.ident ) \
+			+ " ] aborted connection" );
 		return ( Response::ERROR );
 	}
 	pos = increaseSendPos( ret );

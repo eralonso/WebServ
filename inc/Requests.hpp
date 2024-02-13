@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 11:53:27 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/07 16:12:51 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/13 11:13:42 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <queue>
 # include <Request.hpp>
+# include <Log.hpp>
 
 typedef std::queue< Request * >	RequestQueue;
 

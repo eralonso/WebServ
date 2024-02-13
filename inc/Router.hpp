@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/10 10:45:56 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/13 11:13:18 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # include <MimeMap.hpp>
 # include <SplitString.hpp>
 # include <Defines.hpp>
+# include <Log.hpp>
 
 class Router
 {

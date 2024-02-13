@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 10:31:42 by eralonso          #+#    #+#             */
-/*   Updated: 2024/02/12 17:51:04 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/13 11:11:48 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,16 +75,6 @@ namespace STLUtils
 	template < typename T >
 	int			charCount( typename T::iterator begin, typename T::iterator end, \
 							char toFind );
-}
-
-namespace Log
-{
-	void	Info( const std::string str );
-	void	Error( const std::string str );
-	void	Success( const std::string str );
-	void	Debug( const std::string str );
-	void	DropOneLine( void );
-	void	Timeout( bool reset, std::string add );
 }
 
 namespace Binary

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:20:14 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/12 18:55:49 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/13 10:15:49 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,13 +257,15 @@ ssize_t	Client::CgiFindHeaderReached()
 	do
 	{
 		pos = this->cgiOutput.find("\n", pos);
-		if (pos != std::string::npos && 
-				(cgiOutput[pos + 1] == '\n' ||
-					(cgiOutput[pos + 1] && cgiOutput[pos + 1] <= ' ' && 
+		if ( pos != std::string::npos )
+		{
+
+			if ( cgiOutput[pos + 1] == '\n' )
+				return (pos + 1);
+			if ( cgiOutput[pos + 1] && cgiOutput[pos + 1] <= ' ' && 
 						cgiOutput[pos + 2] == '\n' )
-				) 
-			)
-			return (pos);
+				return (pos + 2);
+		} 
 		// Log::Error( "pos: " + SUtils::longToString( pos ) );
 		pos += pos != std::string::npos ? 1 : 0;
 	} while (pos != std::string::npos );

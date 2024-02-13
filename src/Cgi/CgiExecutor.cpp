@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 14:58:11 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/10 11:20:32 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/13 12:13:09 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,6 @@ CgiExecutor::CgiExecutor( Request& request ): request( request )
 {
 	this->binary = request.getCgiBinary( request.getDocExt() );
 	this->argument = request.getFilePathRead();
-	// Log::Debug( "CgiExecutor binary: " + this->binary );
-	// Log::Debug( "CgiExecutor argment: " + this->argument );
-	// Log::Debug( "Route chain: " + request.getRouteChaineString() );
-	if (!checkFileReadable(this->argument))
-	{
-		throw std::runtime_error("Either not found or not readable: " + this->argument);
-	}
 	if (!checkFileExecutable(this->binary))
 	{
 		throw std::runtime_error("Either not found or not executable: " + this->binary);
@@ -100,7 +93,6 @@ void	CgiExecutor::onChildProcess( void )
 	signal( SIGINT, SIG_DFL );
 	signal( SIGQUIT, SIG_DFL );
 	signal( SIGPIPE, SIG_DFL );
-	// Log::Error( "CgiExecutor::onChildProcess: -----------------");
 	getEnvVarList();
 	close( this->fdToChild[ FDOUT ] );
 	close( this->fdFromChild[ FDIN ] );
@@ -112,7 +104,6 @@ void	CgiExecutor::onChildProcess( void )
 			+ SUtils::longToString( errno ) );
 	close( this->fdToChild[ FDIN ] );
 	close( this->fdFromChild[ FDOUT ] );
-	// Log::Error( "CgiExecutor::onChildProcess: about to execve");
 	execve( binary.c_str(), argv, childEnv );
 	Log::Error( "execve: Not found binary " + binary);
 	return; //exit(1) not allowed?

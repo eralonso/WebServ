@@ -36,8 +36,8 @@ function getBody()
 {
 	let env = Object.keys(process.env).map(it => ("<p>" + it + ": " + process.env[it] + "</p>\r")).join("\n");
 	let evalBody = ("<body>\r\n");
-	evalBody += ("<h1>Rendered with CGI through NODEJS</h1>\r\n");
-	evalBody += ("<h3>This is the environment</h3>\r\n");
+	evalBody += ("<h1 style=\"color: #0F0FF0;\">Rendered with CGI through NODEJS</h1>\r\n");
+	evalBody += ("<h3 style=\"color: #0F0F00;\">This is the environment</h3>\r\n");
 	evalBody += ("<details close>\r\n");
 	evalBody += ("<summary>Environment Variables</summary>\r\n");
 	evalBody += ("<div style=\"background-color:9900FF\">\r\n");

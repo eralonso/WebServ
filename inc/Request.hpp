@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:16:44 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/09 12:28:45 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/13 11:13:54 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <DefinesFunctions.hpp>
 # include <Server.hpp>
 # include <ConfigUtils.hpp>
+# include <Log.hpp>
 
 class Client;
 
