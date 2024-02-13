@@ -6,7 +6,7 @@
 #    By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/22 10:08:41 by eralonso          #+#    #+#              #
-#    Updated: 2024/02/13 12:29:33 by omoreno-         ###   ########.fr        #
+#    Updated: 2024/02/13 17:27:45 by omoreno-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,21 +30,10 @@ NULL		:=
 SPACE		:=	$(NULL) #
 
 #<--------------------------------->ROOTS<----------------------------------->#
-LIB_ROOT	:=	lib/
-
-LIBFT_ROOT	:=	$(LIB_ROOT)libft/
-
 SRC_ROOT	:=	src/
 OBJ_ROOT	:=	.objs/
 DEP_ROOT	:=	.deps/
 INC_ROOT	:=	inc/
-
-#<-------------------------------->LIBRARYS<--------------------------------->#
-LIB_A		:=
-
-LIB_ADD_DIR	:=
-
-LIB_SEARCH	:=
 
 #<-------------------------------->HEADERS<---------------------------------->#
 HEADERS		:=	$(INC_ROOT)
@@ -74,14 +63,6 @@ FILES		:=	main Sockets WSSignals Receptionist\
 #<---------------------------------->LANG<---------------------------------->#
 LANG		:=	CPP
 CFLAGS		:=	-Wall -Wextra -Werror
-
-ifdef ASAN
-	CFLAGS += -fsanitize=address
-endif
-
-ifdef DEBUG
-	CFLAGS += -g
-endif
 
 ifeq ($(LANG),C)
 	CC := cc
@@ -116,7 +97,7 @@ vpath %.d $(DEP_ROOT)
 #<-------------------------------->FUNCTIONS<-------------------------------->#
 
 define msg_creating
-	printf "\r$(3)$(1): $(YELLOW)$(2)...$(DEF_COLOR)                                                               \r"
+	printf "$(3)$(1): $(YELLOW)$(2)...$(DEF_COLOR)\n"
 endef
 
 create_dir = $(shell $(MKD) $(1))
@@ -127,20 +108,22 @@ all : $(NAME)
 
 .SECONDEXPANSION:
 
-$(DEP_ROOT)%.d : %.$(SUFFIX) $(MK) | $$(call create_dir,$$(dir $$@))
-	$(call msg_creating,Dependence,$*,$(BLUE))
+$(DEP_ROOT)%.d : %.$(SUFFIX) $(MK) | $$(call create_dir,$$(dir $$@)) $$(call create_dir,$$(dir $$(OBJ_ROOT)))
+	$(call msg_creating,Compiling,$*,$(BLUE))
 	$(CC) $(CFLAGS) -MMD -MF $@ $(INCLUDE) -c $< \
-		&& rm -rf $(addsuffix .o,$(notdir $*))
-	sed -i.tmp '1 s|:| $@ :|' $@ && rm -rf $(addsuffix .tmp,$@)
-	sed -i.tmp '1 s|^$*|$(OBJ_ROOT)$*|' $@ && rm -rf $(addsuffix .tmp,$@)
+		&& mv $(addsuffix .o,$(notdir $*)) $(OBJ_ROOT)
+	sed -i "" '1 s|:| $@ :|' $@
+	sed -i "" '1 s|^$*|$(OBJ_ROOT)$*|' $@
 
-$(OBJ_ROOT)%.o : %.$(SUFFIX) $(MK) %.d $(LIB_A) | $$(call create_dir,$$(dir $$@))
+$(OBJ_ROOT)%.o : %.$(SUFFIX) $(MK) | $$(call create_dir,$$(dir $$@))
 	$(call msg_creating,Object,$*,$(PINK))
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 $(NAME): $(DEPS) $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 	echo "\n$(GREEN)"$(NAME)" has been compiled\n$(DEF_COLOR)"
+
+bonus : $(NAME)
 
 clean :
 	$(RM) $(OBJ_ROOT) $(DEP_ROOT)
@@ -160,10 +143,10 @@ re :
 	echo ""
 	echo "$(CIAN)$(NAME) has been recompiled$(DEF_COLOR)"
 
-.PHONY : all clean fclean re
+.PHONY : all clean fclean re bonus
 
 .SILENT :
 
-ifeq (,$(filter-out all $(NAME),$(MAKECMDGOALS)))
+ifeq (,$(filter-out all $(NAME) bonus,$(MAKECMDGOALS)))
  -include $(DEPS)
 endif
