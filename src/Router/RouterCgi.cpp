@@ -6,11 +6,15 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 14:04:22 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/13 11:50:39 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/13 14:08:28 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Router.hpp>
+
+std::string	Router::neededCgiHeaders[ NEEDED_CGI_HEADERS_NB ] = { "status", \
+																	"location", \
+																	"content-type" };
 
 bool	Router::processCgi( Request& req )
 {
@@ -74,13 +78,18 @@ bool	Router::processCgi( Request& req )
 	return ( true );
 }
 
-bool	Router::parseCgiHeaderLine (Response& res, Request& req, const std::string& line)
+bool	Router::parseCgiHeaderLine (Response& res, Request& req, const std::string& line, bool& isValid)
 {
 	std::string	headKey;
 	std::string	headValue;
+	std::string	headKeyLower;
 
 	if (! SplitString::splitHeaderLine(headKey, headValue, line))
 		return (false);
+	headKeyLower = SUtils::toLower( headKey );
+	for ( size_t i = 0; i < NEEDED_CGI_HEADERS_NB && !isValid; i++ )
+		if ( headKeyLower == Router::neededCgiHeaders[ i ] )
+			isValid = true;
 	if (headKey == "Status")
 	{
 		StringVector sv = SplitString::split(headValue, " ");
@@ -102,6 +111,7 @@ bool	Router::parseCgiHeaderLine (Response& res, Request& req, const std::string&
 bool	Router::parseCgiHeaders (Response& res, Request& req, const std::string& cgiOut)
 {
 	std::string	body;
+	bool		isValid = false;
 	
 	res.setIsCgi(false);
 	StringVector sv = SplitString::splitHeaderBody(body, cgiOut);
@@ -109,9 +119,14 @@ bool	Router::parseCgiHeaders (Response& res, Request& req, const std::string& cg
 	StringVector::iterator ite = sv.end();
 	while (it != ite)
 	{
-		if (!parseCgiHeaderLine(res, req, *it))
+		if (!parseCgiHeaderLine(res, req, *it, isValid))
 		 	break;
 		it++;
+	}
+	if ( !isValid )
+	{
+		res.setStatus( HTTP_INTERNAL_SERVER_ERROR_CODE );
+		return ( false );
 	}
 	res.setBody(body);
 	return (it == ite);
@@ -144,6 +159,11 @@ Response	*Router::formatCgiResponse( Response& res, Request& req, Client& cli )
 		res.setBody( req.getOutput() );
 	}
 	checkErrorRedir( res.getStatus(), req );
+	if ( checkErrorBody( req, res.getStatus() ) )
+	{
+		res.setBody( req.getOutput() );
+		res.appendHeader( Header( "Content-Type", "text/html" ) );
+	}
 	if ( req.getRedir() == true )
 	{
 		res.setStatus( req.getError() );

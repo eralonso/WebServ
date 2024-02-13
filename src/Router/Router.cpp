@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/13 10:49:02 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/13 14:06:48 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,13 +190,15 @@ void 	Router::checkErrorRedir( int errorStatus, Request& req )
 	}
 }
 
-void	Router::checkErrorBody( Request& req, int errorStatus )
+bool	Router::checkErrorBody( Request& req, int errorStatus )
 {
 	if ( errorStatus >= MIN_ERROR_CODE )
 	{
 		req.setOutput( getDefaultErrorPage( errorStatus ) );
 		req.setDocExt( "html" );
+		return ( true );
 	}
+	return ( false );
 }
 
 int	Router::getFileToRead( Request& req, std::string& retFile )

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/13 11:13:18 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/13 14:07:04 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,12 @@
 # include <Defines.hpp>
 # include <Log.hpp>
 
+# define NEEDED_CGI_HEADERS_NB 3
+
 class Router
 {
 private:
+	static std::string	neededCgiHeaders[ NEEDED_CGI_HEADERS_NB ];
 	static std::string	methods[ METHODS_NB ];
 	static bool ( *process[ METHODS_NB ] )( Request& req );
 	static bool	processGetRequest( Request& req );
@@ -55,7 +58,7 @@ public:
 	static std::string 	getRequestEmbed(Request& req);
 	static Response* 	formatErrorResponse(Response& res, int error);
 	static Response* 	formatGenericResponse(Response& res, Request& req);
-    static bool 		parseCgiHeaderLine(Response &res, Request &req, const std::string &line);
+    static bool 		parseCgiHeaderLine(Response &res, Request &req, const std::string &line, bool& isValid);
     static bool 		parseCgiHeaders(Response &res, Request &req, const std::string &cgiOut);
     static bool 		parseCgiOutput(Response &res, Request &req, Client& cli);
     static Response 	*formatCgiResponse(Response &res, Request &req, Client& cli);
@@ -75,7 +78,7 @@ public:
 	static ssize_t		getFileSize( std::string file );
 	static void			checkRedir( Request& req );
 	static void 		checkErrorRedir( int errorStatus, Request& req );
-	static void			checkErrorBody( Request& req, int errorStatus );
+	static bool			checkErrorBody( Request& req, int errorStatus );
 	static bool			isValidDirectory( std::string dir );
 	static int			openReadFile( std::string file );
 	static int			openWriteFile( std::string file );

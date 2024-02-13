@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:12:13 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/12 18:56:01 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/13 13:14:22 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,9 +204,15 @@ int	Client::onEventWriteSocket( Event& tevent )
 		if ( this->res->getSendStatus() == Response::GETTING_DATA )
 			Router::updateResponse( *this->res, *this->front(), *this );
 		resSendStatus = this->res->sendResponse( tevent );
-		if ( resSendStatus == Response::ERROR || resSendStatus == Response::SENT )
+		if ( resSendStatus == Response::ERROR)
 		{
-			Log::Debug( std::string("onEventWriteSocket was ") + (resSendStatus == Response::ERROR ? "Response::ERROR" : "Response::SENT") );
+			Log::Debug( "onEventWriteSocket was Response::ERROR" );
+			this->receptionist->eraseClient( this );
+			return ( 0 );
+		}
+		if ( resSendStatus == Response::SENT )
+		{
+			Log::Debug( std::string("onEventWriteSocket was Response::SENT") );
 			nextRequest();
 		}
 	}
