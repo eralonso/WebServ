@@ -6,15 +6,15 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:44:28 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/13 11:11:33 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 10:50:28 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <Receptionist.hpp>
 #include <Response.hpp>
 
-Receptionist::Receptionist( ServersVector& servers ): Clients(), \
-													EventsTarget( new Events() ), \
+Receptionist::Receptionist( ServersVector& servers, Events *bEvs ): Clients(), \
+													EventsTarget( bEvs ), \
 													_servers( servers ), \
 													timeout( 1 )
 {
@@ -23,14 +23,10 @@ Receptionist::Receptionist( ServersVector& servers ): Clients(), \
 	setupServers();
 }
 
-Receptionist::~Receptionist( void )
-{
-	if ( this->evs )
-		delete this->evs;
-}
+Receptionist::~Receptionist( void ) {}
 
 Receptionist::Receptionist( const Receptionist& b ): Clients(), \
-													EventsTarget( new Events() ), \
+													EventsTarget( new Events( *b.evs ) ), \
 													_servers( b._servers ), \
 													timeout( b.timeout ) {}
 
@@ -40,6 +36,7 @@ Receptionist& 	Receptionist::operator=( const Receptionist& b )
 	{
 		this->_servers = b._servers;
 		this->timeout = b.timeout;
+		*this->evs = *b.evs;
 	}
 	return ( *this );
 }

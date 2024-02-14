@@ -6,19 +6,13 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:20:14 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/13 13:18:50 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 11:57:16 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 #include "Router.hpp"
 #include "Receptionist.hpp"
-
-int Client::bindClientPoll( socket_t socket )
-{
-	this->socket = socket;
-	return ( 0 );
-}
 
 Response	*Client::createResponse( void )
 {
@@ -43,16 +37,6 @@ Request	*Client::findCompleteRecvRequest( void )
 
 	req = this->getPending();
 	if ( req && req->isCompleteRecv() )
-		return ( req );
-	return ( NULL );
-}
-
-Request	*Client::findReadyToSendRequest( void )
-{
-	Request				*req;
-
-	req = this->getPending();
-	if ( req && req->isReadyToSend() )
 		return ( req );
 	return ( NULL );
 }
@@ -82,12 +66,11 @@ int	Client::manageRecv( std::string recv )
 				cont = false;
 			if ( req->isBadRequest() )
 			{
-				Log::Error( "Client [ " + SUtils::longToString( this->socket ) + " ] -> bad Request" );
+				Log::Debug( "Client [ " + SUtils::longToString( this->socket ) + " ] -> bad Request" );
 				setEventWriteSocket();
 				enableEventReadSocket( false );
 			}
 		}
-		Log::Debug( "Client loop" );
 	}
 	purgeUsedRecv();
 	if ( fail == true )
@@ -263,7 +246,6 @@ ssize_t	Client::CgiFindHeaderReached()
 						cgiOutput[pos + 2] == '\n' )
 				return (pos + 2);
 		} 
-		// Log::Error( "pos: " + SUtils::longToString( pos ) );
 		pos += pos != std::string::npos ? 1 : 0;
 	} while (pos != std::string::npos );
 	return (-1);

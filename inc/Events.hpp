@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 11:47:49 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/13 11:12:53 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 11:27:18 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,10 @@ private:
 public:
 	Events( void );
 	~Events( void );
+	Events( const Events& );
+	Events&	operator=( const Events& );
 public:
 	bool	isCreate( void ) const;
-	int		setEventFileSaved( EventsTarget *et, int fd );
 	int		setEventRead( EventsTarget* et, int fd );
 	int		setEventWrite( EventsTarget *et, int fd );
 	int		setEventTimer( EventsTarget *et, int ident, long period, bool oneShot );

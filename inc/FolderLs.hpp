@@ -6,14 +6,14 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 11:44:16 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/01/18 16:30:24 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 12:22:45 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef _FOLDERSLS_HPP_
 # define _FOLDERSLS_HPP_
 
-# include <stdio.h>
+# include <cstdio>
 # include <dirent.h>
 
 # include <string>

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 11:43:42 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/13 11:10:11 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 10:40:24 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ private:
 	ServersVector	_servers;
 	int				timeout;
 public:
-	Receptionist( ServersVector& servers );
+	Receptionist( ServersVector& servers, Events *bEvs );
 	~Receptionist( void );
 	Receptionist( const Receptionist& b );
 	Receptionist& 	operator=( const Receptionist& b );

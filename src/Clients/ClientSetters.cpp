@@ -6,11 +6,16 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 12:58:18 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 13:03:33 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 11:52:26 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
+
+void Client::setSocket( socket_t socket )
+{
+	this->socket = socket;
+}
 
 bool	Client::setKeepAlive( bool value )
 {

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:41:50 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 12:38:16 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 12:02:48 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,36 +58,4 @@ size_t	Clients::eraseClient( Client *cli )
 		return ( s );
 	}
 	return ( 0 );
-}
-
-size_t	Clients::eraseClient( socket_t socket )
-{
-	Client	*cli = NULL;
-
-	try
-	{
-		cli = this->at( socket );
-		if ( cli != NULL )
-			delete cli;
-	}
-	catch ( const std::exception& e )
-	{
-		return ( 0 );
-	}
-	return ( this->erase( socket ) );
-}
-
-bool	Clients::checkPendingToSend( void )
-{
-	Clients::iterator	it = this->begin();
-	Clients::iterator	ite = this->end();
-	bool				somePending = false;
-
-	while ( it != ite )
-	{
-		if ( it->second != NULL )
-			somePending |= it->second->checkPendingToSend();
-		it++;
-	}
-	return ( somePending );
 }

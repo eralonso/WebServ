@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:41:41 by eralonso          #+#    #+#             */
-/*   Updated: 2024/02/10 11:20:32 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 12:11:24 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ Directives	*DirectivesParser::parseDirectives( std::string content, \
 			throw std::logic_error( e.what() );
 		}
 	}
-	// d->print();
 	return ( d );
 }
 
@@ -370,7 +369,6 @@ void	DirectivesParser::parseServer( std::string head, std::string body, \
 	if ( args.size() > 1 )
 		throw std::logic_error( INVALID_NUMBER_ARGUMENTS_DIRECTIVE( \
 					std::string( "server" ) ) );
-	//Log::Debug( "[ Config ] SERVER\n" );
 	s._directives = DirectivesParser::parseDirectives( body, \
 						Server::allowedDirectives );
 	d->_servers.push_back( s );
@@ -395,7 +393,6 @@ void	DirectivesParser::parseLocation( std::string head, std::string body, \
 	if ( isPathDup( d->_locations, lc ) == true )
 		throw std::logic_error( "Duplicate path in \"location\" directive \"" \
 				+ lc._path + "\"" );
-	//Log::Debug( "[ Config ] LOCATION " + lc._path + "\n" );
 	lc._directives = DirectivesParser::parseDirectives( body, \
 						Location::allowedDirectives );
 	d->_locations.insert( new Location( lc ) );

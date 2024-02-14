@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/04 11:18:34 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 10:04:59 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 12:07:08 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ public:
 	CgisMap&	operator=( const CgisMap& b );
 	int			appendCgi( std::string ext, std::string binary );
 	std::string	getBinary( std::string ext ) const;
-	bool		findCgi( std::string ext, std::string &binary );
 };
 
 #endif

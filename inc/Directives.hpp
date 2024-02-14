@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Directives.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:50:07 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/02 15:58:28 by codespace        ###   ########.fr       */
+/*   Updated: 2024/02/14 12:17:56 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@
 
 class Directives
 {
-	//Friend classes
 	friend class Server;
 	friend class Location;
 	friend class ConfigParser;

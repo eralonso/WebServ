@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 14:04:22 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/13 14:08:28 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 11:35:29 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,7 @@ bool	Router::processCgi( Request& req )
 		cgiExe.pushEnvVar("SERVER_PROTOCOL", req.getProtocol());
 		cgiExe.pushEnvVar("SERVER_PORT", port);
 		cgiExe.pushEnvVar("REQUEST_METHOD", req.getMethod());
-		// cgiExe.pushEnvVar(std::string("FILEPATH_INFO"), req.getRouteChaineString());
-		// cgiExe.pushEnvVar("PATH_INFO", req.getRoute());
 		cgiExe.pushEnvVar("PATH_INFO", req.getFilePathRead());
-		//cgiExe.pushEnvVar("PATH_INFO", req.getPathInfo() );
-		// Log::Error( "get route: " + req.getRoute() );
-		// cgiExe.pushEnvVar("PATH_INFO", "../cgi_src/mainTest.tst" );
-		// cgiExe.pushEnvVar("PATH_TRANSLATED", "../" + req.getFilePathRead());
-		// cgiExe.pushEnvVar("SCRIPT_NAME", req.getRoute());
 		cgiExe.pushEnvVar("SCRIPT_FILENAME", req.getFilePathRead());
 		cgiExe.pushEnvVar("QUERY_STRING", req.getQuery());
 		Client *cli = req.getClient();
@@ -53,14 +46,10 @@ bool	Router::processCgi( Request& req )
 			cgiExe.pushEnvVar("REMOTE_HOST", "0.0.0.0");
 			cgiExe.pushEnvVar("REMOTE_ADDRESS", "0.0.0.0");
 		}
-		// cgiExe.pushEnvVar("AUTH_TYPE", "none");
-		// cgiExe.pushEnvVar("REMOTE_USER", "user");
-		// cgiExe.pushEnvVar("REMOTE_IDENT", "user");
 		
 		cgiExe.pushEnvVar("HTTP_COOKIE", req.getCookies());
 		if (req.getBody().size() > 0)
 			cgiExe.pushEnvVar("CONTENT_TYPE", req.getHeaderWithKey("Content-Type"));
-		//cgiExe.pushEnvVar("CONTENT_LENGTH", SUtils::longToString(req.getBody().size()));
 		cgiExe.pushEnvVar("HTTP_ACCEPT", req.getHeaderWithKey("Accept"));
 		cgiExe.pushEnvVar("USER_AGENT", req.getHeaderWithKey("User-Agent"));
 		cgiExe.execute();
@@ -74,7 +63,6 @@ bool	Router::processCgi( Request& req )
 		checkErrorBody( req, req.getError() );
 		req.setReadyToSend();
 	}
-	// Once finished CgiTaskPending will send event to change request state to ready to send
 	return ( true );
 }
 

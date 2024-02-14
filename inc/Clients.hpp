@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:36 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/13 11:14:07 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 12:02:39 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,6 @@ public:
 							const ServersVector *servers, struct sockaddr_in& info, \
 	   						Receptionist *recp );
 	size_t		eraseClient( Client* cli );
-	size_t		eraseClient( socket_t socket );
-	bool		checkPendingToSend( void );
 };
 
 #endif

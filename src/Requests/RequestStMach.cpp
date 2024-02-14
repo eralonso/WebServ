@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:44:22 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/12 13:13:54 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 11:18:58 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ bool	Request::processLineOnRecvdStart( const std::string &line )
 bool	Request::processLineOnRecvdReqLine( const std::string &line )
 {
 	size_t		len = line.length();
-	// size_t		contentSize = 0;
 
 	if ( len == 0 || ( len == 1 && line[ 0 ] <= ' ' ) )
 	{
@@ -50,7 +49,7 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 			return ( setError( HTTP_BAD_REQUEST_CODE ) );
 		updateLocation();
 		this->useCgi = checkCgiInRoute();
-		maxBodySize = svr->getMaxBodySize(getRoute());
+		maxBodySize = svr->getMaxBodySize( this->lc );
 		if (svr->getIsAllowedMethod( this->lc, this->method ) == false)
 			return ( setError( HTTP_NOT_ALLOWED_CODE ) );
 		updateFilePaths();
@@ -60,11 +59,6 @@ bool	Request::processLineOnRecvdReqLine( const std::string &line )
 			return ( true );
 		}
 		processOnReceivingBody();
-		// if (maxBodySize != 0 && contentSize > maxBodySize)
-		// {
-		// 	Log::Error( "clientMaxBodySize" );
-		// 	return ( setError( HTTP_BAD_REQUEST_CODE ) );
-		// }
 		Router::processRequestHeaderReceived( *this );
 		return ( true );
 	}

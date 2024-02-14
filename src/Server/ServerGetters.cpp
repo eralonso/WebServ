@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 13:10:34 by eralonso          #+#    #+#             */
-/*   Updated: 2024/02/13 12:19:46 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 11:24:21 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,19 +87,6 @@ Location	*Server::getLocationAtPath( std::string path ) const
 	return ( lc );
 }
 
-size_t	Server::getMaxBodySize( std::string route ) const
-{
-	if ( this->_directives != NULL )
-	{
-		const Location	*loc = getLocationAtPath( route );
-
-		if ( loc != NULL && loc->isSet( "client_max_body_size" ) == true )
-			return ( loc->getMaxBodySize() );
-		return ( this->_directives->getClientMaxBodySize() );
-	}	
-	return ( 1 << 20 );
-}
-
 size_t	Server::getMaxBodySize( const Location *loc ) const
 {
 	if ( loc != NULL && loc->isSet( "client_max_body_size" ) == true )
@@ -109,41 +96,12 @@ size_t	Server::getMaxBodySize( const Location *loc ) const
 	return ( 1 << 20 );
 }
 
-bool	Server::getIsAllowedMethod( std::string route, std::string method ) const
-{
-	if ( this->_directives != NULL )
-	{
-		const Location	*loc = getLocationAtPath( route );
-		
-		if ( loc != NULL && loc->isSet( "allow_methods" ) == true )
-			return ( loc->getIsAllowedMethod( method ) );
-		return ( this->_directives->getIsAllowedMethod( method ) );
-	}	
-	return ( false );
-}
-
 bool	Server::getIsAllowedMethod( const Location *loc, std::string method ) const
 {
 	if ( loc != NULL && loc->isSet( "allow_methods" ) == true )
 		return ( loc->getIsAllowedMethod( method ) );
 	if ( isSet( "allow_methods" ) == true )
 		return ( this->_directives->getIsAllowedMethod( method ) );
-	return ( false );
-}
-
-bool	Server::getErrorPageWithCode( unsigned int code, std::string& page, \
-										std::string path ) const
-{
-	const Location	*lc = NULL;
-
-	if ( this->_directives != NULL )
-	{
-		lc = getLocationAtPath( path );
-		if ( lc != NULL && lc->isSet( "error_page" ) == true )
-			return ( lc->getErrorPageWithCode( code, page ) );
-		if ( isSet( "error_page" ) == true )
-			return ( this->_directives->getErrorPageWithCode( code, page ) );
-	}
 	return ( false );
 }
 
@@ -157,32 +115,11 @@ bool	Server::getErrorPageWithCode( unsigned int code, std::string& page, \
 	return ( false );
 }
 
-const std::string	Server::getCgiBinary( std::string ext, std::string route ) const
-{
-	Location	*loc = getLocationAtPath( route );
-
-	if ( loc != NULL )
-		return ( loc->getCgiBinary( ext ) );
-	return ( "" );
-}
-
 const std::string	Server::getCgiBinary( std::string ext, const Location *loc ) const
 {
 	if ( loc != NULL )
 		return ( loc->getCgiBinary( ext ) );
 	return ( "" );
-}
-
-std::string	Server::getFinalPath( const std::string path ) const
-{
-	const Location	*loc = getLocationAtPath( path );
-	std::string	fpath;
-
-	if ( loc != NULL && loc->getFinalPath( path, fpath ) == true )
-		return ( fpath );
-	if ( isSet( "root" ) == true )
-		return ( ConfigApply::applyRoot( path, this->_directives->getRoot() ) );
-	return ( ConfigUtils::pathJoin( ".", path ) );
 }
 
 std::string	Server::getFinalPath( const std::string path, \
@@ -194,19 +131,6 @@ std::string	Server::getFinalPath( const std::string path, \
 		return ( fpath );
 	if ( isSet( "root" ) == true )
 		return ( ConfigApply::applyRoot( path, this->_directives->getRoot() ) );
-	return ( ConfigUtils::pathJoin( ".", path ) );
-}
-
-std::string	Server::getFinalUploadPath( const std::string path ) const
-{
-	const Location	*loc = getLocationAtPath( path );
-	std::string		fpath;
-
-	if ( loc != NULL && loc->getFinalUploadPath( path, fpath ) == true )
-		return ( fpath );
-	if ( isSet( "upload_store" ) == true )
-		return ( ConfigApply::applyAlias( path, loc->getPath(), \
-					this->_directives->getUploadStore() ) );
 	return ( ConfigUtils::pathJoin( ".", path ) );
 }
 

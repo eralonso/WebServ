@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:35 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/13 14:07:04 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 11:09:05 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,23 +54,16 @@ private:
 	Router&	operator=( const Router& );
 public:
 	static int			updateResponse(Response& res, Request& req, Client& cli);
-	// static Response* 	getResponse(Request *req);
-	static std::string 	getRequestEmbed(Request& req);
-	static Response* 	formatErrorResponse(Response& res, int error);
 	static Response* 	formatGenericResponse(Response& res, Request& req);
     static bool 		parseCgiHeaderLine(Response &res, Request &req, const std::string &line, bool& isValid);
     static bool 		parseCgiHeaders(Response &res, Request &req, const std::string &cgiOut);
     static bool 		parseCgiOutput(Response &res, Request &req, Client& cli);
     static Response 	*formatCgiResponse(Response &res, Request &req, Client& cli);
 	static bool			processRequestHeaderReceived( Request &req );
-	static bool 		processRequestReceived(Request &req);
 	static std::string 	determineContentType(Response &res, Request &req);
 	static bool			processCgi( Request& req );
 	static bool			checkStatMode( std::string path, unsigned int mode );
 	static bool			isDir( std::string path );
-	static bool			isFile( std::string path );
-	// static std::string	readFile( std::string file );
-    // static bool			writeFile(std::string file, std::string content);
     static bool 		checkPathExist(Request &req, std::string path);
     static bool			checkPathCanRead( Request& req, std::string path );
 	static std::string	getDefaultErrorPage( unsigned int code );

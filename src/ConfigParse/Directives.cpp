@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 16:55:51 by eralonso          #+#    #+#             */
-/*   Updated: 2024/02/10 11:20:32 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 12:06:51 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,9 +224,6 @@ void	Directives::print( void ) const
 						ActionMask::POST ) == true ? "POST " : "" ) \
 				+ std::string( this->_allowMethods.getAction( \
 						ActionMask::DELETE ) == true ? "DELETE" : "" ) );
-	// Log::Debug( "[ Config ] cgi: "
-	// 			+ STLUtils::mapToString< std::map< std::string, std::string > >(
-	// 			this->_cgis.begin(), this->_cgis.end() ) );
 	Log::Debug( "[ Config ] servers: " );
 	Log::Debug( "[ Config ] location: " );
 	std::cout << std::endl;

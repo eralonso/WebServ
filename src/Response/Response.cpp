@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/13 11:27:38 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 11:33:46 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 
 Response::Response( void ): server( SERVER ), isCgi( false ), sendPos( 0 ), sendState( GETTING_DATA )
 {
-	// this->headers.push_back( Header( "Content-Length", "0" ) );
 }
 
 Response::~Response( void ) {}
@@ -209,17 +208,6 @@ Response::t_sendStatus	Response::getSendStatus( void ) const
 	return ( this->sendState );
 }
 
-// void	Response::updateHeadersString( void )
-// {
-// 	if (!isCgi)
-// 	{
-// 		this->headersString = this->protocol + " " + SUtils::longToString( this->status );
-// 		this->headersString += " " + getResult() + HEADER_SEP;
-// 		this->headersString += this->headers.toString();
-// 		this->headersString += HEADER_SEP;
-// 	}
-// }
-
 void	Response::updateResString( void )
 {
 	Log::Debug("updateResString");
@@ -235,26 +223,6 @@ void	Response::updateResString( void )
 		return ;
 	}
 	this->resString = this->body;
-}
-
-std::string	Response::toString( void ) const
-{
-	std::string ret;
-
-	if (!isCgi)
-	{
-		// Log::Debug("Response::toString compose response");
-		ret = this->protocol + " " + SUtils::longToString( this->status );
-		ret += " " + getResult() + HEADER_SEP;
-		ret += this->headers.toString();
-		ret += HEADER_SEP;
-		ret += this->body;
-		// Log::Debug(ret);
-		return ( ret );
-	}
-	// Log::Debug("Response::toString use only body content");
-	// Log::Debug(body);
-	return (body);
 }
 
 int	Response::sendResponse( Event& tevent )

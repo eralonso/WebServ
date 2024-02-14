@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 14:11:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/12 15:05:34 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 11:11:17 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,27 +182,3 @@ bool	Router::processRequestHeaderReceived( Request &req )
 	checkErrorBody( req, req.getError() );
 	return ( true );
 }
-
-// bool	Router::processRequestReceived( Request &req )
-// {
-// 	int			i = 0;
-// 	std::string	requestMethod = req.getMethod();
-
-// 	Log::Debug( "ProcessRequestReceived" );
-// 	checkRedir( req );
-// 	if ( req.getError() < MIN_ERROR_CODE )
-// 	{
-// 		if ( req.getUseCgi() )
-// 			return ( processCgi( req ) );
-// 		while ( i < METHODS_NB && Router::methods[ i ] != requestMethod )
-// 			i++;
-// 		if ( i < METHODS_NB )
-// 			Router::process[ i ]( req );
-// 		else
-// 			req.setError( HTTP_NOT_ALLOWED_CODE );
-// 	}
-// 	checkErrorRedir( req.getError(), req );
-// 	checkErrorBody( req, req.getError() );
-// 	req.setReadyToSend();
-// 	return ( true );
-// }

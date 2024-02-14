@@ -26,21 +26,13 @@ Events::~Events( void )
 	close( this->kq );
 }
 
+Events::Events( const Events& ): kq( kqueue() ) {}
+
+Events&	Events::operator=( const Events& ) { return ( *this ); }
+
 bool	Events::isCreate( void ) const
 {
 	return ( kq != -1 );
-}
-
-int	Events::setEventFileSaved( EventsTarget* et, int fd )
-{
-	int			ret;
-	Event		fileEvent;
-
-	EV_SET(&fileEvent, fd, EVFILT_VNODE, EV_ADD | EV_CLEAR, NOTE_WRITE, 0, et);
-	ret = kevent(kq, &fileEvent, 1, NULL, 0, NULL);
-	if (ret == -1)
-		Log::Error( "kevent FileSaved register" );
-	return 0;
 }
 
 int	Events::setEventWrite( EventsTarget* et, int fd )

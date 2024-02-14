@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 12:28:17 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/13 14:06:48 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 11:09:11 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,26 +33,6 @@ int	Router::updateResponse( Response &res, Request &req, Client& cli )
 		formatGenericResponse( res, req );
 	res.updateResString();
 	return ( 0 );
-}
-
-std::string	Router::getRequestEmbed( Request &req )
-{
-	std::string	html;
-
-	html += "\t<h3 style=\"color: #888888;\">Request received in server</h2>\n";
-	html += "<p>";
-	html += req.toString();
-	html += "</p>";
-	return ( html );
-}
-
-Response	*Router::formatErrorResponse( Response &res, int error )
-{
-	res.appendHeader( Header( "Content-Type", MimeMap::getMime("html") ) );
-	res.setProtocol( "HTTP/1.1" );
-	res.setStatus( error );
-	res.setBody( "Error: " + SUtils::longToString( error ) );
-	return ( &res );
 }
 
 std::string Router::determineContentType(Response& res, Request& req)
@@ -97,8 +77,6 @@ bool	Router::checkStatMode( std::string path, unsigned int mode )
 }
 
 bool	Router::isDir( std::string path ) { return ( checkStatMode( path, S_IFDIR ) ); }
-
-bool	Router::isFile( std::string path ) { return ( checkStatMode( path, S_IFREG ) ); }
 
 int	Router::openReadFile( std::string file )
 {

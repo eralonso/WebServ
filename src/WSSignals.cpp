@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 12:04:00 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/10 13:35:26 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 09:28:16 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,7 @@ void	WSSignals::sighandler( int sig )
 {
 	Log::Info( "Signal detected: " + SUtils::longToString( sig ) );
 	if ( sig == SIGINT || sig == SIGQUIT )
-	{
 		WSSignals::isSig = true;
-		system("leaks webserv");
-	}
 }
 
 void	WSSignals::signalHandler( void )

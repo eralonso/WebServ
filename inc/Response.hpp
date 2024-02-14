@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 15:49:07 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/13 11:13:32 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 11:33:38 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,6 @@ public:
 	size_t			getSendPos( void ) const;
 	const std::string&	getResString( void ) const;
 	t_sendStatus	getSendStatus( void ) const;
-	std::string		toString( void ) const;
-	void			updateHeadersString( void );
 	void			updateResString( void );
 	int				sendResponse( Event& tevent );
 };

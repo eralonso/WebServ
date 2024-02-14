@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ConfigApply.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eralonso <eralonso@student.42barcel>       +#+  +:+       +#+        */
+/*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/24 12:28:39 by eralonso          #+#    #+#             */
-/*   Updated: 2024/01/16 11:31:11 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/02/14 11:45:46 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,4 @@ namespace ConfigApply
 		return ( root + path );
 	}
 
-	const std::string	applyUploadStore( const std::string& path, \
-												const std::string uploadRoot )
-	{
-		return ( uploadRoot + path );
-	}
 }

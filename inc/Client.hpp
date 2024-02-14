@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/27 10:42:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/13 11:14:13 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 11:54:37 by omoreno-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,14 +71,12 @@ public:
 	Client( const Client& b );
 	Client&	operator=( const Client& b );
 public:
-	int							bindClientPoll( socket_t socket );
 	bool						isResponseSent( void ) const;
 	socket_t					getClientSocket( void ) const;
 	size_t						getId( void ) const;
 	void						LogId( void ) const;
 	Request*					findRecvRequest( void );
 	Request*					findCompleteRecvRequest( void );
-	Request*					findReadyToSendRequest( void );
 	int							manageRecv( std::string recv );
 	bool						getKeepAlive( void ) const;
 	bool						getLine( std::string& line );
@@ -99,6 +97,7 @@ public:
 	socket_t					getSocket( void ) const;
 	const std::string&			getCgiOutput( void ) const;
 	bool						isResponsePendingToSend( void ) const;
+	void						setSocket( socket_t socket );
 	void						setFileFd( int fd );
 	void						setPipeCgiWrite( int fd );
 	void						setPipeCgiRead( int fd );
