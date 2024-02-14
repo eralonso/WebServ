@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 14:11:02 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/14 11:11:17 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/14 18:25:36 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,6 +178,8 @@ bool	Router::processRequestHeaderReceived( Request &req )
 		else
 			req.setError( HTTP_NOT_ALLOWED_CODE );
 	}
+	else
+		cli->setEventWriteSocket();
 	checkErrorRedir( req.getError(), req );
 	checkErrorBody( req, req.getError() );
 	return ( true );
