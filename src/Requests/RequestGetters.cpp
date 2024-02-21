@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:29:33 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/12 13:17:22 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/21 15:30:17 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,7 @@ std::string Request::getPort( void ) const
 		if (tokens.size() > 1)		
 			return (tokens[1]);
 	}
-	return std::string("80");
+	return std::string("8000");
 }
 
 bool Request::getHostPort(std::string& host, std::string& port) const

@@ -6,3 +6,4 @@ webserv
 a.out
 *.ignore
 *.ln
+.DS_Store

@@ -6,7 +6,7 @@
 /*   By: omoreno- <omoreno-@student.42barcelona.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 13:47:43 by omoreno-          #+#    #+#             */
-/*   Updated: 2024/02/08 13:51:23 by omoreno-         ###   ########.fr       */
+/*   Updated: 2024/02/21 15:54:03 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,13 @@ void	Request::parseQueryStringFromRoute( void )
 	//	this->badRequest = true;
 	//	return ;
 	//}
-	this->url = SUtils::trim( tokens[ 0 ] );
-	this->route = this->url;
-	if ( len > 1 )
-		this->query = SUtils::trim( tokens[ 1 ] );
+	if ( len > 0 )
+	{
+		this->url = SUtils::trim( tokens[ 0 ] );
+		this->route = this->url;
+		if ( len > 1 )
+			this->query = SUtils::trim( tokens[ 1 ] );
+	}
 }
 
 bool	Request::parseDropHttp(StringVector& tokens,  size_t& tokensSize, bool& httpDropped)
